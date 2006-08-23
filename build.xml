@@ -1,0 +1,186 @@
+<?xml version="1.0"?>
+
+<project name="PoppyDumbster" default="main" basedir=".">
+
+<!-- ==========================================================================================
+	PROPERTY SETUP
+     ========================================================================================== -->
+
+  <property name="Name" value="GreenMail"/>
+
+  <property name="version" value="1.0"/>
+  <!-- Set the properties for intermediate directory -->
+  <property name="build.dir" value="build"/>
+  <property name="build.lib" value="${build.dir}/lib"/>
+  <property name="build.classes" value="${build.dir}/classes"/>
+  <property name="test.classes" value="${build.dir}/testclasses"/>
+  <property name="build.javadocs" value="${build.dir}/javadocs"/>
+
+  <!-- Set the properties for source directories -->
+  <property name="src.dir" value="src"/>
+  <property name="java.dir" value="${src.dir}/java"/>
+  <property name="test.dir" value="${src.dir}/test"/>
+  <property name="conf.dir" value="${src.dir}/conf"/>
+  <property name="bin.dir" value="${src.dir}/bin"/>
+
+  <property name="dist.base" value="distributions"/>
+
+  <path id="project.class.path">
+    <pathelement path="${java.class.path}" />
+    <pathelement path="${build.classes}" />
+    <fileset dir="lib">
+      <include name="*.jar" />
+    </fileset>
+  </path>
+  <property name="project.class.path" refid="project.class.path"/>
+
+
+  <!-- Compiles project -->
+  <target name="compile">
+
+    <mkdir dir="${build.classes}"/>
+
+    <javac srcdir="${java.dir}"
+           destdir="${build.classes}"
+           source="1.4"
+           debug="1"
+           optimize="0">
+      <classpath refid="project.class.path" />
+    </javac>
+
+    <copy todir="${build.classes}">
+      <fileset dir="${java.dir}">
+        <exclude name="**/test/**"/>
+        <exclude name="**/*.java"/>
+      </fileset>
+    </copy>
+
+    <mkdir dir="${test.classes}"/>
+
+    <javac srcdir="${test.dir}"
+           destdir="${test.classes}"
+           source="1.4"
+           debug="1"
+           optimize="0">
+      <classpath refid="project.class.path" />
+    </javac>
+
+    <copy todir="${test.classes}">
+      <fileset dir="${test.dir}">
+        <exclude name="**/*"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!-- Jars up project -->
+  <target name="jars" depends="compile">
+
+    <mkdir dir="${build.lib}"/>
+    <jar jarfile="${build.lib}/greenmail-${version}.jar" basedir="${build.classes}"/>
+    <copy todir="${build.lib}" >
+        <fileset dir="lib">
+          <include name="*.jar" />
+        </fileset>
+    </copy>
+  </target>
+
+  <target name="dist" depends="clean,jars,javadocs">
+
+    <zip zipfile="${build.dir}/greenmail-${version}-src.zip" update="false">
+        <zipfileset dir=".">
+            <include name="lib/**"/>
+
+            <include name="src/**"/>
+            <include name="build.xml"/>
+
+            <include name="*.html"/>
+            <include name="stylesheet.css"/>
+            <include name="pics/greenmail.gif"/>
+            <include name="pics/footer.gif"/>
+
+            <include name="lgpl.txt"/>
+        </zipfileset>
+        <zipfileset dir="${build.dir}">
+            <include name="javadocs/**"/>
+        </zipfileset>
+    </zip>
+    <zip zipfile="${build.dir}/greenmail-${version}.zip" update="false">
+        <zipfileset dir="${build.dir}">
+            <include name="lib/greenmail*.jar"/>
+            <include name="lib/activation*.jar"/>
+            <include name="lib/javamail*.jar"/>
+        </zipfileset>
+        <zipfileset dir=".">
+            <include name="*.html"/>
+            <include name="stylesheet.css"/>
+            <include name="pics/greenmail.gif"/>
+            <include name="pics/footer.gif"/>
+
+            <include name="lgpl.txt"/>
+        </zipfileset>
+        <zipfileset dir="${build.dir}">
+            <include name="javadocs/**"/>
+            <include name="greenmail-${version}-src.zip"/>
+        </zipfileset>
+    </zip>
+
+  </target>
+
+  <target name="main" depends="jars" description="Default target to generate build products minus docs"/>
+  <target name="all" depends="main,docs" description="Generate build products including docs"/>
+
+<!-- ==========================================================================================
+	DOCUMENTATION GENERATION
+========================================================================================== -->
+
+	<!-- Creates all docs -->
+	<target name="docs" depends="javadocs" description="generates all the documentation"/>
+
+	<!-- Creates javadocs -->
+	<target name="javadocs" depends="compile" description="Generates the javadocs" unless="skip.javadocs">
+		<!-- this is a workaround for IDE problems -->
+		<delete>
+			<fileset dir="${build.dir}">
+				<include name="**/*Test.class"/>
+			</fileset>
+		</delete>
+
+		<mkdir dir="${build.javadocs}"/>
+		<javadoc packagenames="com.icegreen.*"
+		sourcepath="${java.dir}"
+		destdir="${build.javadocs}">
+		<classpath refid="project.class.path" />
+		<doclet name="com.sun.tools.doclets.standard.Standard">
+			<param name="-author"/>
+			<param name="-version"/>
+			<param name="-doctitle" value="${Name}"/>
+			<param name="-windowtitle" value="${Name} API"/>
+			<param name="-link" value="http://java.sun.com/j2se/1.4/docs/api/"/>
+			<param name="-link" value="http://jakarta.apache.org/avalon/api/"/>
+		</doclet>
+		</javadoc>
+	</target>
+
+    <target name="clean">
+      <delete dir="${build.dir}" />
+    </target>
+
+    <target name="test" depends="compile" >
+        <mkdir dir="test.runs"/>
+        <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
+          <classpath>
+            <pathelement location="${test.classes}"/>
+            <pathelement path="${build.classes}"/>
+            <pathelement path="${project.class.path}"/>
+          </classpath>
+
+          <formatter type="plain"/>
+          <batchtest fork="yes" todir="test.runs">
+            <fileset dir="${test.dir}">
+              <include name="**/*Test.java"/>
+            </fileset>
+          </batchtest>
+        </junit>
+        <fail message="Test failure(s)" if="junit.failure"/>
+    </target>
+</project>

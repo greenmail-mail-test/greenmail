@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <title>GreenMail - Email Test Servers</title>
+  <link rel="stylesheet" href="stylesheet.css" type="text/css" />
+</head>
+<body>
+
+<div id="header">
+<img src="pics/greenmail.gif" title="GreenMail - Testing SMTP, POP3, IMAP">
+Latest Release GreenMail v1.0 - Feb 16, 2006
+</div>
+
+<div class="pages">
+
+<span class="page"><a href="readme.html">About</a></span>
+| <span class="page"><a href="examples.html">Examples</a></span>
+| <span class="page"><a href="faq.html">FAQ</a></span>
+| <span class="page"><a href="javadocs/index.html">Javadocs</a></span>
+| <span class="page"><a href="http://www.icegreen.com/articles">Blog</a></span>
+| <span class="page"><a href="http://sourceforge.net/project/showfiles.php?group_id=159695">Download</a></span>
+
+| <span class="page"><a href="feedback.html">Feedback</a></span>
+</div>
+<br>
+
+<table width="100%">
+<tr><td valign="top">
+<h2 class="faq">Is any mail delivered?</h2>
+No. Further, GreenMail stores all recieved messages in memory.
+
+<h2 class="faq">Which versions of JDK does GreenMail run under?</h2>
+JDK 1.4 and above
+
+<h2 class="faq">How do I create User Accounts?</h2>
+<div class="codeSample">
+
+   Servers server ...;
+   User user = server.setUser("email@address.com", "login", "password");
+</div>
+<h2 class="faq">How come I don't have to create any accounts to send/retrieve?</h2>
+By default GreenMail accepts all incoming emails. If there is no corresponding existing email account, one is automatically created with login and password being the same as the to-address.
+
+
+<h2 class="faq">What other library dependencies are there?</h2>
+<div class="codeSample">
+	javamail.jar
+	activation.jar
+</div>
+These two libraries ship with the distribution.
+
+<h2 class="faq">How come I don't need to install any SSL/TLS related certificates?</h2>
+GreenMail is designed to be used out of the box with no need to generate, sign or install any cerificates into your keystore.
+GreenMail ships with a builtin keystore with a self signed RSA key. Refer to the source code of <a href="javadocs/com/icegreen/greenmail/util/DummySSLServerSocketFactory.html">DummySSLServerSocketFactory</a> for details.
+
+
+</td>
+<td class="gads" >
+<script type="text/javascript"><!--
+google_ad_client = "pub-2104788530662674";
+google_ad_width = 160;
+google_ad_height = 600;
+google_ad_format = "160x600_as";
+google_ad_type = "text";
+google_ad_channel ="2021857531";
+google_color_border = "FDEFD2";
+google_color_bg = "FDEFD2";
+google_color_link = "0000CC";
+google_color_url = "008000";
+google_color_text = "000000";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</td>
+</tr>
+
+</table>
+
+<br>
+<br>
+<br>
+<div class="footer">
+Copyright &copy; 2006 <a href="http://www.icegreen.com">Icegreen Technologies</a>
+
+<br><br>
+<a href="http://sourceforge.net/donate/index.php?group_id=159695"><img src="http://images.sourceforge.net/images/project-support.jpg" width="88" height="32" border="0" alt="Support This Project" /> </a>
+<a href="http://sourceforge.net"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=159695&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net Logo" /></a>
+</div>
+
+</body>
+</html>

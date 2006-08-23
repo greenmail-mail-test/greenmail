@@ -1,0 +1,224 @@
+body {
+  font-family: Lucida Grande, Verdana, Tahoma, Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  background : white;
+  color : black;
+  text-align: left;
+  margin: 16px;
+}
+h2,h3 {
+font-family: georgia, serif;
+font-size:				1.3em;
+    font-weight: 			bold;
+    font-style:				normal;
+    color:					#01194B;
+    text-transform:			none;
+    line-height:			1.8em;
+    padding:10px 0 0 0px;
+    margin:0;
+}
+h3{
+	font-size:				1.1em;
+}
+h2.faq {
+	border-top:1px solid grey;
+	margin-top:30px;
+}
+th, td {
+font-size: 13px;
+}
+img { border: none; }
+blockquote {
+  border-left: solid silver 4px;
+  padding-left: 8px;
+  font-size: 12px;
+}
+.small {
+  font-size: 11px;
+}
+#header {
+  background : white;
+  color: black;
+  font-weight: bold;
+  padding: 8px;
+  border-top: dotted gray 1px;
+}
+.commentssection {
+  font-size: 13px;
+  font-weight: bold;
+margin-left:0;
+padding-left:0;
+    background: #e2ffea;
+    border-top: solid 1px grey;
+    padding:2px;
+    color: #4031a8;
+}
+
+.header a:link, .header a:visited, .header a:active {
+  color : white;
+}
+li {
+padding:0;
+margin-left:25px;
+cursor: default;
+}
+ul.compact
+ {
+/*Remove all spacings from the list items*/
+	margin-left:0px;
+	padding: 0;
+	cursor: default;
+	display: inline;
+}
+div.list {
+	margin-left:50px; 
+	padding:4px;
+	width:480px; 
+	border: 1px solid #333333; 
+	background-color: #EEEEEE; 
+	color: #333333;
+	font-size: 10px;
+	text-align: left;
+	margin-bottom:15px;
+}
+.search {
+  float: right;
+  padding-top: 55px;
+  position: relative;
+  width: 50%;
+  text-align: right;
+  font-size: 11px;
+}
+.headerLinks, .footerLinks {
+  float: right;
+  position: relative;
+  width: 33%;
+  font-size: 11px;
+  text-align: right;
+}
+.headerLinks a:link, .headerLinks a:visited, .headerLinks a:active,
+.footerLinks a:link, .footerLinks a:visited, .footerLinks a:active {
+  color : white;
+}
+.pages {
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  font-size: 11px;
+  color : white;
+  font-weight: bold;
+  background-image: url(pics/footer.gif);
+  background-position: top;
+  background-repeat: repeat-x;
+  width:100%;
+
+}
+.gads{
+	vertical-align:top;
+	text-align:right;
+}	
+.page a:link, .page a:visited, .page a:active {
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 2px;
+  padding-right: 2px;
+  color : white;
+}
+.page{
+}
+.page a:hover, .selectedPage {
+  color: black;
+  background: white;
+  text-decoration: none;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 2px;
+  padding-right: 2px;
+}
+.photo {
+  padding-top: 0px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+  padding-left: 0px;
+  border-top: solid black 1px;
+  border-right: solid black 1px;
+  border-bottom: solid black 1px;
+  border-left: solid black 1px;
+  text-align: center;
+}
+div.codeSample {
+  font-family: Courier, sans-serif;
+  border-top: solid #F0F0F0 1px;
+  border-right: solid #F0F0F0 1px;
+  border-bottom: solid #F0F0F0 1px;
+  border-left: solid #F0F0F0 1px;
+  text-align: left;
+  background: #dfdfdf;
+  margin-left: 32px;
+  margin-right: 32px;
+  padding: 16px;
+  overflow: auto;
+  white-space: pre;
+}
+a:link, a:visited, a:active {
+  color: #4169AA;
+  text-decoration: none;
+  font-weight: bold;
+}
+a:hover {
+  text-decoration: underline;
+}
+.content {
+  background : white;
+  padding-top: 16px;
+  padding-right: 8px;
+  padding-bottom: 8px;
+  padding-left: 8px;
+  margin-left: 200px;
+}
+.bodyContent {
+  background : white;
+}
+.bodyContentEven {
+  background: #e2ffea;
+}
+.bodyContentOdd {
+  background: white;
+}
+.sidebar {
+  text-align: left;
+  float: left;
+  position: relative;
+  width: 200px;
+  padding-left: 8px;
+  padding-top: 8px;
+  padding-right: 8px;
+  padding-bottom: 32px;
+}
+.footer {
+clear: both;
+	position: relative;
+	width: 100%;
+	color: #999;
+	margin-right: auto;
+	margin-left: auto;
+	text-align: center;
+	padding-bottom: 2em;
+	padding-top: 1em;
+	border-top: 1px dotted gray;
+ /* clear: both;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 25px;
+  padding-bottom: 4px;
+  font-size: 11px;
+  font-weight: bold;
+   border-top: solid 1px gray;
+*/
+
+}
+.footer a:link, .footer a:visited, .footer a:active {
+  color : gray;
+}
+

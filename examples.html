@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <title>GreenMail - Email Test Servers</title>
+  <link rel="stylesheet" href="stylesheet.css" type="text/css" />
+</head>
+<body>
+
+<div id="header">
+<img src="pics/greenmail.gif" title="GreenMail - Testing SMTP, POP3, IMAP">
+Latest Release GreenMail v1.0 - Feb 16, 2006
+</div>
+
+<div class="pages">
+
+<span class="page"><a href="readme.html">About</a></span>
+| <span class="page"><a href="examples.html">Examples</a></span>
+| <span class="page"><a href="faq.html">FAQ</a></span>
+| <span class="page"><a href="javadocs/index.html">Javadocs</a></span>
+| <span class="page"><a href="http://www.icegreen.com/articles">Blog</a></span>
+| <span class="page"><a href="http://sourceforge.net/project/showfiles.php?group_id=159695">Download</a></span>
+
+| <span class="page"><a href="feedback.html">Feedback</a></span>
+</div>
+<br>
+
+<table width="100%">
+<tr><td>
+
+
+
+<h2>Testing Your Sending Code</h2>
+<div class="codeSample">
+Servers servers;
+
+protected void tearDown() throws Exception {
+    if (null!=servers) {
+        servers.stop();
+    }
+    super.tearDown();
+}
+
+public void testYourSendingCode() throws Exception {
+    //start all email servers using non-default ports.
+    //See <a href="javadocs/com/icegreen/greenmail/util/ServerSetupTest.html">Javadoc</a> for details
+    servers = new Servers(ServerSetupTest.ALL); 
+    servers.start();
+    
+    //use random content to avoid potential residual lingering problems
+    final String subject = servers.util().random(); 
+    final String body = servers.util().random();
+    
+    <b>&lt;PLACE YOUR SEND CODE HERE&gt;</b>
+
+    
+    //wait for max 5s for 1 email to arrive
+    assertTrue(servers.waitForIncomingEmail(5000, 1)); 
+    
+    //Retrieve using GreenMail API
+    Message[] messages = servers.getReceivedMessages();
+    assertEquals(1, messages.length);
+    assertEquals(subject, messages[0].getSubject());
+    assertEquals(body, servers.util().getBody(messages[0]).trim());
+    
+    //if your send content is a 2 part multipart...
+    assertTrue(messages[0].getContent() instanceof MimeMultipart);
+    MimeMultipart mp = (MimeMultipart) messages[0].getContent();
+    assertEquals(2, mp.getCount());
+    BodyPart bp;
+    assertEquals(multipart_body1, servers.util().getBody(mp.getBodyPart(0)).trim());
+    assertEquals(multipart_body2, servers.util().getBody(mp.getBodyPart(1)).trim());
+}    
+</div>
+
+
+<h2>Test Your Retrieving Code</h2>
+<div class="codeSample">
+protected void tearDown() throws Exception {
+    if (null!=servers) {
+        servers.stop();
+    }
+    super.tearDown();
+}
+
+/**
+ * Sends an email using SMTP for testing your retrieval code
+ */
+public void testYourRetrievingCodeBySending() throws Exception {
+    //start all email servers using non-default ports.
+    //See <a href="javadocs/com/icegreen/greenmail/util/ServerSetupTest.html">Javadoc</a> for details
+    servers = new Servers(ServerSetupTest.ALL); 
+    servers.start();
+    
+    //use random content to avoid potential residual lingering problems
+    final String subject = servers.util().random(); 
+    final String body = servers.util().random();
+    servers.util().sendTextEmailTest("test@localhost.com", "from@localhost.com", subject, body);
+    
+    //wait for max 5s for 1 email to arrive
+    assertTrue(servers.waitForIncomingEmail(5000, 1));
+    
+    <b>&lt;PLACE YOUR RETRIVE AND VERIFICATION CODE HERE&gt;</b>
+}
+
+/**
+ * Places an email in a users inbox directly for testing your retrieval code
+ */
+public void testYourRetrievingCode_by_insertion() throws Exception {
+    //start all email servers using non-default ports.
+    //See <a href="javadocs/com/icegreen/greenmail/util/ServerSetupTest.html">Javadoc</a> for details
+    servers = new Servers(ServerSetupTest.ALL); 
+    servers.start();
+    
+    //use random content to avoid potential residual lingering problems
+    final String subject = servers.util().random(); 
+    final String body = servers.util().random();
+    MimeMessage message = <b>&lt;CONSTRUCT MESSAGE &gt;</b>
+
+    User user = servers.setUser("wael@localhost.com", "waelc", "soooosecret");
+    user.deliver(message);
+    assertEquals(1, servers.getReceivedMessages().length);
+    
+    <b>&lt;PLACE YOUR RETRIVE AND VERIFICATION CODE HERE&gt;</b>
+}
+
+</div>
+
+</td>
+<td class="gads"> 
+<script type="text/javascript"><!--
+google_ad_client = "pub-2104788530662674";
+google_ad_width = 160;
+google_ad_height = 600;
+google_ad_format = "160x600_as";
+google_ad_type = "text";
+google_ad_channel ="2021857531";
+google_color_border = "FDEFD2";
+google_color_bg = "FDEFD2";
+google_color_link = "0000CC";
+google_color_url = "008000";
+google_color_text = "000000";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</td>
+</tr>
+
+</table>
+
+<br>
+<br>
+<br>
+<div class="footer">
+Copyright &copy; 2006 <a href="http://www.icegreen.com">Icegreen Technologies</a>
+<br><br>
+<a href="http://sourceforge.net/donate/index.php?group_id=159695"><img src="http://images.sourceforge.net/images/project-support.jpg" width="88" height="32" border="0" alt="Support This Project" /> </a>
+<a href="http://sourceforge.net"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=159695&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net Logo" /></a>
+</div>
+
+</body>
+
+</html>
