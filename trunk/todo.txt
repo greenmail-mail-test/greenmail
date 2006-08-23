@@ -1,0 +1,46 @@
+=================================================
+greenmail and IBM JDK 1.4.2
+=================================================
+
+Hello!
+
+First, thanks for your mock mail server; we had tried Dumbster but had a few problems with it and yours works much better.
+
+I'd just like to note that under Linux / IBM JDK 1.4.2 com.icegreen.greenmail mail server mock has these exception:
+
+java.security.NoSuchProviderException: No such provider: SunJSSE
+at javax.net.ssl.SSLSecurity.a(Unknown Source)
+at javax.net.ssl.KeyManagerFactory.getInstance(Unknown Source)
+at com.icegreen.greenmail.util.DummySSLServerSocketFactory.<init>(Unknown Source)
+at com.icegreen.greenmail.util.DummySSLServerSocketFactory.getDefault(Unknown Source)
+at com.icegreen.greenmail.AbstractServer.openServerSocket(Unknown Source)
+at com.icegreen.greenmail.smtp.SmtpServer.run(Unknown Source)
+java.security.NoSuchProviderException: No such provider: SunJSSE
+at javax.net.ssl.SSLSecurity.a(Unknown Source)
+at javax.net.ssl.KeyManagerFactory.getInstance(Unknown Source)
+at com.icegreen.greenmail.util.DummySSLServerSocketFactory.<init>(Unknown Source)
+at com.icegreen.greenmail.util.DummySSLServerSocketFactory.getDefault(Unknown Source)
+at com.icegreen.greenmail.AbstractServer.openServerSocket(Unknown Source)
+at com.icegreen.greenmail.pop3.Pop3Server.run(Unknown Source)
+java.security.NoSuchProviderException: No such provider: SunJSSE
+at javax.net.ssl.SSLSecurity.a(Unknown Source)
+at javax.net.ssl.KeyManagerFactory.getInstance(Unknown Source)
+at com.icegreen.greenmail.util.DummySSLServerSocketFactory.<init>(Unknown Source)
+at com.icegreen.greenmail.util.DummySSLServerSocketFactory.getDefault(Unknown Source)
+at com.icegreen.greenmail.AbstractServer.openServerSocket(Unknown Source)
+at com.icegreen.greenmail.imap.ImapServer.run(Unknown Source)
+
+The test then hangs there.
+
+Of course, if I only activate what I need instead of ServerSetupTest.ALL it works but I just thought it would be better if it failed more gracefully or ideally also work under other JDKs.
+
+Thanks,
+
+Ricky Ng-Adam
+
+
+
+
+=================================================
+
+=================================================
