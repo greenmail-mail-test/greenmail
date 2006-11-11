@@ -57,6 +57,10 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
         return new DummySSLServerSocketFactory();
     }
 
+    public ServerSocket createServerSocket() throws IOException {
+        return addAnonCipher(factory.createServerSocket());
+    }
+
     public ServerSocket createServerSocket(int i) throws IOException {
         return addAnonCipher(factory.createServerSocket(i));
     }

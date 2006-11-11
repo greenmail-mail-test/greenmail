@@ -48,6 +48,11 @@ public class DummySSLSocketFactory extends SSLSocketFactory {
         return ssl;
     }
 
+    public Socket createSocket()
+            throws IOException {
+        return addAnonCipher(factory.createSocket());
+    }
+
     public Socket createSocket(Socket socket, String s, int i, boolean flag)
             throws IOException {
         return addAnonCipher(factory.createSocket(socket, s, i, flag));

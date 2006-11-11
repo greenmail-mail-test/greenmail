@@ -22,7 +22,10 @@ public class SmtpServer extends AbstractServer {
     }
 
     public void quit() {
-        smtpHandler.quit();
+        if (null != smtpHandler) {
+            smtpHandler.quit();
+        }
+        
         try {
             if (null != clientSocket) {
                 clientSocket.close();

@@ -75,6 +75,26 @@ public class GreenMailUtil {
         }
     }
 
+    public boolean hasNonTextAttachments(Part m) {
+        try {
+            Object content = m.getContent();
+            if (content instanceof MimeMultipart) {
+                MimeMultipart mm = (MimeMultipart) content;
+                for (int i=0;i<mm.getCount();i++) {
+                    BodyPart p = mm.getBodyPart(i);
+                    if (hasNonTextAttachments(p)) {
+                        return true;
+                    }
+                }
+                return false;
+            } else {
+                return !m.getContentType().trim().toLowerCase().startsWith("text");
+            }
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * @return Returns the number of lines in any string
      */

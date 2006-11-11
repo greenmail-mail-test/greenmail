@@ -11,6 +11,7 @@ import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.util.ServerSetup;
 
 import java.io.IOException;
+import java.net.BindException;
 
 public final class ImapServer extends AbstractServer {
     private ImapHandler imapHandler = null;
@@ -21,8 +22,10 @@ public final class ImapServer extends AbstractServer {
 
 
 
-    public void quit() {
-        imapHandler.resetHandler();
+    public synchronized void quit() {
+        if (null != imapHandler) {
+            imapHandler.resetHandler();
+        }
         try {
             if (null != clientSocket) {
                 clientSocket.close();
