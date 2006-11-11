@@ -12,14 +12,12 @@ Latest Release GreenMail v1.0 - Feb 16, 2006
 </div>
 
 <div class="pages">
-
 <span class="page"><a href="readme.html">About</a></span>
 | <span class="page"><a href="examples.html">Examples</a></span>
 | <span class="page"><a href="faq.html">FAQ</a></span>
 | <span class="page"><a href="javadocs/index.html">Javadocs</a></span>
 | <span class="page"><a href="http://www.icegreen.com/articles">Blog</a></span>
 | <span class="page"><a href="http://sourceforge.net/project/showfiles.php?group_id=159695">Download</a></span>
-
 | <span class="page"><a href="feedback.html">Feedback</a></span>
 </div>
 <br>
@@ -51,7 +49,6 @@ public void testYourSendingCode() throws Exception {
     final String body = servers.util().random();
     
     <b>&lt;PLACE YOUR SEND CODE HERE&gt;</b>
-
     
     //wait for max 5s for 1 email to arrive
     assertTrue(servers.waitForIncomingEmail(5000, 1)); 
@@ -115,7 +112,6 @@ public void testYourRetrievingCode_by_insertion() throws Exception {
     final String subject = servers.util().random(); 
     final String body = servers.util().random();
     MimeMessage message = <b>&lt;CONSTRUCT MESSAGE &gt;</b>
-
     User user = servers.setUser("wael@localhost.com", "waelc", "soooosecret");
     user.deliver(message);
     assertEquals(1, servers.getReceivedMessages().length);
@@ -159,5 +155,4 @@ Copyright &copy; 2006 <a href="http://www.icegreen.com">Icegreen Technologies</a
 </div>
 
 </body>
-
 </html>

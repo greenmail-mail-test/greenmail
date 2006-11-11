@@ -492,13 +492,13 @@ public class InMemoryStore
         private void expungeMessage(int msn) {
             // Notify all the listeners of the pending delete
             synchronized (_mailboxListeners) {
+                deleteMessage(msn);
                 for (int j = 0; j < _mailboxListeners.size(); j++) {
                     FolderListener expungeListener = (FolderListener) _mailboxListeners.get(j);
                     expungeListener.expunged(msn);
                 }
             }
 
-            deleteMessage(msn);
         }
 
         public void addListener(FolderListener listener) {

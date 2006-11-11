@@ -20,7 +20,10 @@ public class Pop3Server extends AbstractServer {
     }
 
     public void quit() {
-        pop3Handler.quit();
+        if (null != pop3Handler) {
+            pop3Handler.quit();
+        }
+        
         try {
             if (null != clientSocket) {
                 clientSocket.close();

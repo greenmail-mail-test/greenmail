@@ -45,13 +45,12 @@ public class SmtpManager {
         return null;
     }
 
-    public void send(SmtpState state) {
+    public synchronized void send(SmtpState state) {
         _incomingQueue.enqueue(state.getMessage());
         for (int i = 0; i < notifyList.size(); i++) {
             WaitObject o = (WaitObject) notifyList.get(i);
-            o.setArrived();
             synchronized (o) {
-                o.notify();
+                o.emailReceived();
             }
         }
     }
@@ -59,16 +58,27 @@ public class SmtpManager {
     /**
      * @return null if no need to wait. Otherwise caller must call wait() on the returned object
      */
-    public WaitObject createAndAddNewWaitObject(int emailCount) {
-        if (imapHostManager.getAllMessages().size() >= emailCount) {
+    public synchronized WaitObject createAndAddNewWaitObject(int emailCount) {
+        final int existingCount = imapHostManager.getAllMessages().size();
+        if (existingCount >= emailCount) {
             return null;
         }
-        WaitObject ret = new WaitObject(emailCount);
+        WaitObject ret = new WaitObject(emailCount - existingCount);
         notifyList.add(ret);
         return ret;
     }
 
     //~----------------------------------------------------------------------------------------------------------------
+    /**
+     * This Object is used by a thread to wait until a number of emails have arrived.
+     * (for example Server's waitForIncomingEmail method)
+     * 
+     * Every time an email has arrived, the method emailReceived() must be called.
+     * 
+     * The notify() or notifyALL() methods should not be called on this object unless
+     * you want to notify waiting threads even if not all the required emails have arrived.
+     * 
+     */
     public static class WaitObject {
         private boolean arrived = false;
         private int emailCount;
@@ -85,14 +95,22 @@ public class SmtpManager {
             return arrived;
         }
 
-        void setArrived() {
+        private void setArrived() {
             arrived = true;
+        }
+        
+        public void emailReceived()
+        {
+            emailCount--;
+            if (emailCount<=0) {
+                setArrived();
+                this.notifyAll();
+            }
         }
     }
 
     private class Incoming {
         boolean _stopping;
-        List _queue = Collections.synchronizedList(new LinkedList());
 
 
         public void enqueue(MovingMessage msg) {
