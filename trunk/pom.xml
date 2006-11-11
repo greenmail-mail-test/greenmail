@@ -13,7 +13,7 @@
   <artifactId>greenmail</artifactId>
   <packaging>jar</packaging>
   <!-- This version should get inherited to all subprojects. -->
-  <version>1.0</version>
+  <version>1.05</version>
   
   <licenses>
     <license>
@@ -69,17 +69,24 @@
       <name>Wael Chatila</name>
       <id>waelc</id>
       <email>contact.2006@icegreen.com</email>
-      <url></url>
+      <url>http://waelchatila.com</url>
       <organization>IceGreen Technologies</organization>
       <organizationUrl>http://www.icegreen.com</organizationUrl>
       <roles>
-        <role>Developer</role>
+        <role>Lead Developer</role>
       </roles>
     </developer>
   </developers>
   <contributors>
     <contributor>
+      <name>Stephen Fenech</name>
+      <email></email>
+      <id>zegon</id>
+      <url></url>
+    </contributor>
+    <contributor>
       <name>Marcel May</name>
+      <id>marcel_may</id>
       <email>marcel.may@metacube.net</email>
       <url>http://www.metacube.net</url>
     </contributor>
