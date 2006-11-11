@@ -13,7 +13,7 @@
   <artifactId>greenmail</artifactId>
   <packaging>jar</packaging>
   <!-- This version should get inherited to all subprojects. -->
-  <version>1.05</version>
+  <version>1.1</version>
   
   <licenses>
     <license>
@@ -68,7 +68,7 @@
     <developer>
       <name>Wael Chatila</name>
       <id>waelc</id>
-      <email>contact.2006@icegreen.com</email>
+      <email>see my blog</email>
       <url>http://waelchatila.com</url>
       <organization>IceGreen Technologies</organization>
       <organizationUrl>http://www.icegreen.com</organizationUrl>
