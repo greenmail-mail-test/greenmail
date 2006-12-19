@@ -80,13 +80,17 @@
   <contributors>
     <contributor>
       <name>Stephen Fenech</name>
+      <properties>
+        <id>zegon</id>
+      </properties>
       <email></email>
-      <id>zegon</id>
       <url></url>
     </contributor>
     <contributor>
       <name>Marcel May</name>
-      <id>marcel_may</id>
+      <properties>
+        <id>marcel_may</id>
+      </properties>
       <email>marcel.may@metacube.net</email>
       <url>http://www.metacube.net</url>
     </contributor>
