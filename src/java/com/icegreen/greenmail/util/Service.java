@@ -17,7 +17,7 @@ abstract public class Service extends Thread {
 
     public abstract void quit();
 
-    private boolean keepRunning = false;
+    private volatile boolean keepRunning = false;
 
     //---------
     public void init(Object obj) {
@@ -32,7 +32,7 @@ abstract public class Service extends Thread {
         return keepRunning;
     }
 
-    public void startService(Object obj) {
+    public synchronized void startService(Object obj) {
         if (!keepRunning) {
             keepRunning = true;
             init(obj);
@@ -47,7 +47,7 @@ abstract public class Service extends Thread {
      * @param obj
      * @param millis value in ms
      */
-    public final void stopService(Object obj, Long millis) {
+    public synchronized final void stopService(Object obj, Long millis) {
         boolean doDestroy = keepRunning;
         try {
             if (keepRunning) {

@@ -40,12 +40,41 @@ GreenMail is useful in the following scenarios:
 <li>Note that retrieval of emails can be made with a simple java method or through a provided POP3, IMAP retriever helper class.</li>
 </ul>
 
+
+<div class="codeSample">
+public void testYourSendingCode() throws Exception {
+    Servers servers = new Servers(); 
+    servers.start(); 
+    <b>&lt;PLACE YOUR SEND CODE HERE&gt;</b>
+    assertTrue(servers.waitForIncomingEmail(5000, 1)); 
+    assertEquals("test subject", servers.getReceivedMessages()[0].getSubject());
+    servers.stop();
+}    
+</div>
+
+
 <h3>Test Your Retrieving Code</h3>
 <ul>
 <li>Again GreenMail can be used for system or unit testing an application needing to use POP3 or IMAP  by responding like a standard compliant POP3 or IMAP server. Support for POP3S and IMAPS (SSL) is also enabled. </li>
 <li>Messages can be placed directly in users mailboxes or by using SMTP.</li>
 <li>GreenMail ships with helper classes for sending and retrieving.</li>
 </ul>
+
+
+<div class="codeSample">
+public void testYourRetrievingCode() throws Exception {
+    Servers servers = new Servers(); 
+    servers.start();
+    
+    MimeMessage message = <b>&lt;CONSTRUCT MESSAGE &gt;</b>
+    User user = servers.setUser("to@localhost.com", "login-id", "password");
+    user.deliver(message);
+    servers.util().sendTextEmailTest("to@localhost.com", "from@localhost.com", subject, body);
+    assertEquals(<b>2</b>, servers.getReceivedMessages().length);
+    
+    <b>&lt;PLACE YOUR RETRIVE CODE HERE&gt;</b>
+}
+</div>
 
 <h3>Sending and Retrieving</h3>
 GreenMail can easily be configured to use all or a combination of ports, protocols, and bind addresses.  For example it’s possible to run GreenMail on SMTP, POP3, POP3S and IMAPS ports as easily as only SMTP.
@@ -65,22 +94,6 @@ GreenMail's protocol source code is based on a cocktail of <a href="http://foedu
 
 </td>
 <td class="gads">
-<script type="text/javascript"><!--
-google_ad_client = "pub-2104788530662674";
-google_ad_width = 160;
-google_ad_height = 600;
-google_ad_format = "160x600_as";
-google_ad_type = "text";
-google_ad_channel ="2021857531";
-google_color_border = "FDEFD2";
-google_color_bg = "FDEFD2";
-google_color_link = "0000CC";
-google_color_url = "008000";
-google_color_text = "000000";
-//--></script>
-<script type="text/javascript"
-  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-</script>
 </td>
 </tr>
 

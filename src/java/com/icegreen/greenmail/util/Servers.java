@@ -53,14 +53,14 @@ public class Servers {
     }
 
 
-    public void start() {
+    public synchronized void start() {
         for (Iterator it = services.values().iterator(); it.hasNext();) {
             Service service = (Service) it.next();
             service.startService(null);
         }
     }
 
-    public void stop() {
+    public synchronized void stop() {
         for (Iterator it = services.values().iterator(); it.hasNext();) {
             Service service = (Service) it.next();
             service.stopService(null);
