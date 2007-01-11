@@ -26,8 +26,22 @@ Latest Release GreenMail v1.1 - Nov 11, 2006
 <tr><td>
 
 
+<h2>Testing Your Sending Code - Example 1</h2>
+<div class="codeSample">
+public void testYourSendingCode() throws Exception {
+    Servers servers = new Servers(); 
+    servers.start(); 
+    
+    <b>&lt;PLACE YOUR SEND CODE HERE&gt;</b>
+ 
+    assertEquals("test subject", servers.getReceivedMessages()[0].getSubject());
+    servers.stop();
+}    
+</div>
 
-<h2>Testing Your Sending Code</h2>
+
+<h2>Testing Your Sending Code - Example 2</h2>
+This example is basically the same as the one above but contains demonstration on additional features, utility methods and comments.
 <div class="codeSample">
 Servers servers;
 

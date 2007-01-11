@@ -38,7 +38,7 @@ public abstract class AbstractServer extends Service {
         this.managers = managers;
     }
 
-    protected ServerSocket openServerSocket() throws IOException {
+    protected synchronized ServerSocket openServerSocket() throws IOException {
         ServerSocket ret;
         if (setup.isSecure()) {
             ret = (SSLServerSocket) DummySSLServerSocketFactory.getDefault().createServerSocket(setup.getPort(), 0, bindTo);
