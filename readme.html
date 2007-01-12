@@ -36,19 +36,19 @@ GreenMail is useful in the following scenarios:
 <h3>Test Your Sending Code</h3>
 <ul>
 <li>System testing an application. GreenMail responds like a regular SMTP server but does not deliver any email, which enables it to be used in real life applications and real test cases.  Messages can easily be extracted, verified, and modified. Support for SMTPS (SSL) is enabled. </li>
-<li>GreenMail is an excellent choice for unit testing code that needs to send email with a succinct, efficient (non-polling) way to wait for messages to arrive, retrieve, verify. and modify messages. </li>
+<li>GreenMail is an excellent choice for unit testing code that needs to send email with a succinct, efficient (non-polling) way to wait for messages to arrive, retrieve, verify, and modify messages. </li>
 <li>Note that retrieval of emails can be made with a simple java method or through a provided POP3, IMAP retriever helper class.</li>
 </ul>
 
 
 <div class="codeSample">
 public void testYourSendingCode() throws Exception {
-    Servers servers = new Servers(); 
-    servers.start(); 
-    <b>&lt;PLACE YOUR SEND CODE HERE&gt;</b>
-    assertTrue(servers.waitForIncomingEmail(5000, 1)); 
-    assertEquals("test subject", servers.getReceivedMessages()[0].getSubject());
-    servers.stop();
+    GreenMail greenMail = new GreenMail(); //uses test ports by default
+    greenMail.start();
+    GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", "body"); //replace this with your send code
+    assertEquals("body", GreenMailUtil.getBody(messages[0]));
+    greenMail.stop();
+    //<b>That's it!</b>
 }    
 </div>
 
@@ -57,22 +57,22 @@ public void testYourSendingCode() throws Exception {
 <ul>
 <li>Again GreenMail can be used for system or unit testing an application needing to use POP3 or IMAP  by responding like a standard compliant POP3 or IMAP server. Support for POP3S and IMAPS (SSL) is also enabled. </li>
 <li>Messages can be placed directly in users mailboxes or by using SMTP.</li>
-<li>GreenMail ships with helper classes for sending and retrieving.</li>
+<li>GreenMail ships with helper classes for sending and retrieving. See the javadocs for the <a href="javadocs/com/icegreen/greenmail/util/Retriever.html">Retriever.java</a> class</li>
 </ul>
 
 
 <div class="codeSample">
 public void testYourRetrievingCode() throws Exception {
-    Servers servers = new Servers(); 
-    servers.start();
+    GreenMail greenMail = new GreenMail(); //uses test ports by default
+    greenMail.start();
     
     MimeMessage message = <b>&lt;CONSTRUCT MESSAGE &gt;</b>
-    User user = servers.setUser("to@localhost.com", "login-id", "password");
+    User user = greenMail.setUser("to@localhost.com", "login-id", "password");
     user.deliver(message);
-    servers.util().sendTextEmailTest("to@localhost.com", "from@localhost.com", subject, body);
-    assertEquals(<b>2</b>, servers.getReceivedMessages().length);
+    GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", subject, body);
+    assertEquals(<b>2</b>, greenMail.getReceivedMessages().length);
     
-    <b>&lt;PLACE YOUR RETRIVE CODE HERE&gt;</b>
+    <b>&lt;PLACE YOUR POP3/IMAP RETRIVE CODE HERE&gt;</b>
 }
 </div>
 

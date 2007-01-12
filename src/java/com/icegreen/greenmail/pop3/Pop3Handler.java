@@ -102,8 +102,6 @@ public class Pop3Handler extends Thread {
             }
         } catch(IOException ignored) {
             //empty
-        } finally{
-            _socket = null;
-        }
+        } 
     }
 }

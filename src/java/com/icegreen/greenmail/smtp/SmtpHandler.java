@@ -123,8 +123,6 @@ class SmtpHandler extends Thread {
             }
         } catch(IOException ignored) {
             //empty
-        } finally{
-            _socket = null;
-        }
+        } 
     }
 }
