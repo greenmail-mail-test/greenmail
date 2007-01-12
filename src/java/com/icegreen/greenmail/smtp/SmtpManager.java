@@ -20,13 +20,13 @@ public class SmtpManager {
     Incoming _incomingQueue;
     UserManager userManager;
     private ImapHostManager imapHostManager;
-    List notifyList;
+    Vector notifyList;
 
     public SmtpManager(ImapHostManager imapHostManager, UserManager userManager) {
         this.imapHostManager = imapHostManager;
         this.userManager = userManager;
         _incomingQueue = new Incoming();
-        notifyList = new ArrayList();
+        notifyList = new Vector();
     }
 
 

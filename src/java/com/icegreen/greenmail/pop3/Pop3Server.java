@@ -7,33 +7,35 @@ package com.icegreen.greenmail.pop3;
 
 import com.icegreen.greenmail.AbstractServer;
 import com.icegreen.greenmail.Managers;
+import com.icegreen.greenmail.imap.ImapHandler;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.pop3.commands.Pop3CommandRegistry;
 
 import java.io.IOException;
+import java.util.Vector;
+import java.util.Iterator;
+import java.net.Socket;
 
 public class Pop3Server extends AbstractServer {
-    private Pop3Handler pop3Handler = null;
 
     public Pop3Server(ServerSetup setup, Managers managers) {
         super(setup, managers);
     }
 
-    public void quit() {
-        if (null != pop3Handler) {
-            pop3Handler.quit();
-        }
-        
+    public synchronized void quit() {
+
         try {
-            if (null != clientSocket) {
-                clientSocket.close();
+            for (Iterator iterator = handlers.iterator(); iterator.hasNext();) {
+                Pop3Handler pop3Handler = (Pop3Handler) iterator.next();
+                pop3Handler.quit();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         try {
-            if (null != serverSocket) {
+            if (null != serverSocket && !serverSocket.isClosed()) {
                 serverSocket.close();
+                serverSocket = null;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -41,7 +43,7 @@ public class Pop3Server extends AbstractServer {
     }
 
     public void run() {
-        pop3Handler = new Pop3Handler(new Pop3CommandRegistry(), managers.getUserManager());
+        try {
 
         try {
             serverSocket = openServerSocket();
@@ -51,11 +53,16 @@ public class Pop3Server extends AbstractServer {
 
         while (keepOn()) {
             try {
-                clientSocket = serverSocket.accept();
-                pop3Handler.handleConnection(clientSocket);
+                Socket clientSocket = serverSocket.accept();
+                Pop3Handler pop3Handler = new Pop3Handler(new Pop3CommandRegistry(), managers.getUserManager(), clientSocket);
+                handlers.add(pop3Handler);
+                pop3Handler.start();
             } catch (IOException ignored) {
                 //ignored
             }
+        }
+        } finally{
+            quit();
         }
     }
 }

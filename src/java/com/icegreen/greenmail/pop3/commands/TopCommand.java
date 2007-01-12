@@ -46,7 +46,7 @@ public class TopCommand
 
             int numLines = Integer.parseInt(cmdLine[2]);
 
-            BufferedReader in = new BufferedReader(new StringReader(GreenMailUtil.instance().getWholeMessage(msg.getMimeMessage())));
+            BufferedReader in = new BufferedReader(new StringReader(GreenMailUtil.getWholeMessage(msg.getMimeMessage())));
 
             conn.println("+OK");
 

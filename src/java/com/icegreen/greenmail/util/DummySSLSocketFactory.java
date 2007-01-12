@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2006 Wael Chatila / Icegreen Technologies. All Rights Reserved.
- * This software is released under the LGPL which is available at http://www.gnu.org/copyleft/lesser.html
- *
- */
+* Copyright (c) 2006 Wael Chatila / Icegreen Technologies. All Rights Reserved.
+* This software is released under the LGPL which is available at http://www.gnu.org/copyleft/lesser.html
+*
+*/
 package com.icegreen.greenmail.util;
 
 import javax.net.SocketFactory;
@@ -41,9 +41,15 @@ public class DummySSLSocketFactory extends SSLSocketFactory {
     private Socket addAnonCipher(Socket socket) {
         SSLSocket ssl = (SSLSocket) socket;
         final String[] ciphers = ssl.getEnabledCipherSuites();
-        final String[] newCiphers = new String[ciphers.length + 1];
+        final String[] anonCiphers = { "SSL_DH_anon_WITH_RC4_128_MD5"
+                                       , "SSL_DH_anon_WITH_RC4_128_MD5"
+                                       , "SSL_DH_anon_WITH_3DES_EDE_CBC_SHA"
+                                       , "SSL_DH_anon_WITH_DES_CBC_SHA"
+                                       , "SSL_DH_anon_EXPORT_WITH_RC4_40_MD5"
+                                       , "SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA" };
+        final String[] newCiphers = new String[ciphers.length + anonCiphers.length];
         System.arraycopy(ciphers, 0, newCiphers, 0, ciphers.length);
-        newCiphers[newCiphers.length - 1] = "SSL_DH_anon_WITH_RC4_128_MD5";
+        System.arraycopy(anonCiphers, 0, newCiphers, ciphers.length, anonCiphers.length);
         ssl.setEnabledCipherSuites(newCiphers);
         return ssl;
     }

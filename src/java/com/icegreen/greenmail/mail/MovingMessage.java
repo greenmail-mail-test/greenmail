@@ -117,7 +117,7 @@ public class MovingMessage {
             }
         }
         try {
-            message = GreenMailUtil.instance().newMimeMessage(_content.getAsString());
+            message = GreenMailUtil.newMimeMessage(_content.getAsString());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

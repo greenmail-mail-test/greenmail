@@ -9,7 +9,6 @@ package com.icegreen.greenmail.pop3;
 import com.icegreen.greenmail.pop3.commands.Pop3Command;
 import com.icegreen.greenmail.pop3.commands.Pop3CommandRegistry;
 import com.icegreen.greenmail.user.UserManager;
-import com.icegreen.greenmail.foedus.util.Quittable;
 
 import java.io.IOException;
 import java.net.ProtocolException;
@@ -18,25 +17,25 @@ import java.net.SocketTimeoutException;
 import java.util.StringTokenizer;
 
 
-public class Pop3Handler
-        implements Quittable {
+public class Pop3Handler extends Thread {
     Pop3CommandRegistry _registry;
     Pop3Connection _conn;
     UserManager _manager;
     Pop3State _state;
     boolean _quitting;
     String _currentLine;
+    private Socket _socket;
 
     public Pop3Handler(Pop3CommandRegistry registry,
-                       UserManager manager) {
+                       UserManager manager, Socket socket) {
         _registry = registry;
         _manager = manager;
+        _socket = socket;
     }
 
-    public void handleConnection(Socket socket)
-            throws IOException, ProtocolException {
+    public void run() {
         try {
-            _conn = new Pop3Connection(this, socket);
+            _conn = new Pop3Connection(this, _socket);
             _state = new Pop3State(_manager);
 
             _quitting = false;
@@ -54,7 +53,7 @@ public class Pop3Handler
         } catch (Exception e) {
         } finally {
             try {
-                socket.close();
+                _socket.close();
             } catch (IOException ioe) {
             }
         }
@@ -96,6 +95,15 @@ public class Pop3Handler
     }
 
     public void quit() {
-        _quitting = true;
+         _quitting = true;
+        try {
+            if (_socket != null && !_socket.isClosed()) {
+                _socket.close();
+            }
+        } catch(IOException ignored) {
+            //empty
+        } finally{
+            _socket = null;
+        }
     }
 }

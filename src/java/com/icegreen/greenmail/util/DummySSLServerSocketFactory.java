@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2006 Wael Chatila / Icegreen Technologies. All Rights Reserved.
- * This software is released under the LGPL which is available at http://www.gnu.org/copyleft/lesser.html
- *
- */
+* Copyright (c) 2006 Wael Chatila / Icegreen Technologies. All Rights Reserved.
+* This software is released under the LGPL which is available at http://www.gnu.org/copyleft/lesser.html
+*
+*/
 package com.icegreen.greenmail.util;
 
 import javax.net.ServerSocketFactory;
@@ -27,7 +27,8 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
     public DummySSLServerSocketFactory() {
         try {
             SSLContext sslcontext = SSLContext.getInstance("TLS");
-            KeyManagerFactory km = KeyManagerFactory.getInstance("SunX509", "SunJSSE");
+            String defaultAlg = KeyManagerFactory.getDefaultAlgorithm();
+            KeyManagerFactory km = KeyManagerFactory.getInstance(defaultAlg);
             KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
             char[] pass = "changeit".toString().toCharArray();
             ks.load(new ByteArrayInputStream(hardCodedKeystore), pass);
@@ -37,6 +38,7 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
                     new TrustManager[]{new DummyTrustManager()},
                     null);
             factory = (SSLServerSocketFactory) sslcontext.getServerSocketFactory();
+//            factory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(-1);
@@ -46,14 +48,21 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
     private SSLServerSocket addAnonCipher(ServerSocket socket) {
         SSLServerSocket ssl = (SSLServerSocket) socket;
         final String[] ciphers = ssl.getEnabledCipherSuites();
-        final String[] newCiphers = new String[ciphers.length + 1];
+        final String[] anonCiphers = { "SSL_DH_anon_WITH_RC4_128_MD5"
+                                       , "SSL_DH_anon_WITH_RC4_128_MD5"
+                                       , "SSL_DH_anon_WITH_3DES_EDE_CBC_SHA"
+                                       , "SSL_DH_anon_WITH_DES_CBC_SHA"
+                                       , "SSL_DH_anon_EXPORT_WITH_RC4_40_MD5"
+                                       , "SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA" };
+        final String[] newCiphers = new String[ciphers.length + anonCiphers.length];
         System.arraycopy(ciphers, 0, newCiphers, 0, ciphers.length);
-        newCiphers[newCiphers.length - 1] = "SSL_DH_anon_WITH_RC4_128_MD5";
+        System.arraycopy(anonCiphers, 0, newCiphers, ciphers.length, anonCiphers.length);
         ssl.setEnabledCipherSuites(newCiphers);
         return ssl;
     }
 
     public static ServerSocketFactory getDefault() {
+//        return SSLServerSocketFactory.getDefault();
         return new DummySSLServerSocketFactory();
     }
 

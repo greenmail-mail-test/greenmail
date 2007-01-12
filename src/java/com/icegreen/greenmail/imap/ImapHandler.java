@@ -20,7 +20,7 @@ import java.net.Socket;
  * @author Federico Barbieri <scoobie@systemy.it>
  * @author Peter M. Goldstein <farsight@alum.mit.edu>
  */
-public class ImapHandler implements ImapConstants {
+public class ImapHandler extends Thread implements ImapConstants {
 
     private ImapRequestHandler requestHandler = new ImapRequestHandler();
     private ImapSession session;
@@ -54,9 +54,10 @@ public class ImapHandler implements ImapConstants {
     UserManager userManager;
     private ImapHostManager imapHost;
 
-    public ImapHandler(UserManager userManager, ImapHostManager imapHost) {
+    public ImapHandler(UserManager userManager, ImapHostManager imapHost, Socket socket) {
         this.userManager = userManager;
         this.imapHost = imapHost;
+        this.socket = socket;
     }
 
     public void forceConnectionClose(final String message) {
@@ -65,20 +66,18 @@ public class ImapHandler implements ImapConstants {
         resetHandler();
     }
 
-    public void handleConnection(Socket connection)
-            throws IOException {
+    public void run() {
 
         String remoteHost = "";
         String remoteIP = "";
 
         try {
-            this.socket = connection;
             ins = socket.getInputStream();
             in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "ASCII"), 512);
             remoteIP = socket.getInetAddress().getHostAddress();
             remoteHost = socket.getInetAddress().getHostName();
         } catch (IOException e) {
-            throw e;
+            throw new RuntimeException(e);
         }
 
         try {
@@ -119,9 +118,8 @@ public class ImapHandler implements ImapConstants {
         // Close and clear streams, sockets
 
         try {
-            if (socket != null) {
+            if (socket != null && !socket.isClosed()) {
                 socket.close();
-                socket = null;
             }
         } catch (IOException ioe) {
             // Ignoring exception on close

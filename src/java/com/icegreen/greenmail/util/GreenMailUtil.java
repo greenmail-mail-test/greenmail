@@ -1,17 +1,14 @@
 /*
- * Copyright (c) 2006 Wael Chatila / Icegreen Technologies. All Rights Reserved.
- * This software is released under the LGPL which is available at http://www.gnu.org/copyleft/lesser.html
- *
- */
+* Copyright (c) 2006 Wael Chatila / Icegreen Technologies. All Rights Reserved.
+* This software is released under the LGPL which is available at http://www.gnu.org/copyleft/lesser.html
+*
+*/
 package com.icegreen.greenmail.util;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.*;
 import java.io.*;
 import java.util.Properties;
 import java.util.Random;
@@ -43,7 +40,7 @@ public class GreenMailUtil {
      *
      * @throws IOException
      */
-    public void copyStream(final InputStream src, OutputStream dest) throws IOException {
+    public static void copyStream(final InputStream src, OutputStream dest) throws IOException {
         byte[] buffer = new byte[1024];
         int read = 0;
         while ((read = src.read(buffer)) > -1) {
@@ -54,11 +51,13 @@ public class GreenMailUtil {
 
     /**
      * Convenience method which creates a new {@link MimeMessage} from an input stream
-     *
-     * @throws MessagingException
      */
-    public MimeMessage newMimeMessage(InputStream inputStream) throws MessagingException {
-        return new MimeMessage(Session.getDefaultInstance(new Properties()), inputStream);
+    public static  MimeMessage newMimeMessage(InputStream inputStream)  {
+        try {
+            return new MimeMessage(Session.getDefaultInstance(new Properties()), inputStream);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -66,7 +65,7 @@ public class GreenMailUtil {
      *
      * @throws MessagingException
      */
-    public MimeMessage newMimeMessage(String mailString) throws MessagingException {
+    public static MimeMessage newMimeMessage(String mailString) throws MessagingException {
         try {
             byte[] bytes = mailString.getBytes("US-ASCII");
             return newMimeMessage(new ByteArrayInputStream(bytes));
@@ -75,7 +74,7 @@ public class GreenMailUtil {
         }
     }
 
-    public boolean hasNonTextAttachments(Part m) {
+    public static boolean hasNonTextAttachments(Part m) {
         try {
             Object content = m.getContent();
             if (content instanceof MimeMultipart) {
@@ -98,7 +97,7 @@ public class GreenMailUtil {
     /**
      * @return Returns the number of lines in any string
      */
-    public int getLineCount(String str) {
+    public static int getLineCount(String str) {
         BufferedReader reader = new BufferedReader(new StringReader(str));
         int ret = 0;
         try {
@@ -114,7 +113,7 @@ public class GreenMailUtil {
     /**
      * @return The content of an email (or a Part)
      */
-    public String getBody(Part msg) {
+    public static String getBody(Part msg) {
         String all = getWholeMessage(msg);
         int i = all.indexOf("\r\n\r\n");
         return all.substring(i + 4, all.length());
@@ -123,7 +122,7 @@ public class GreenMailUtil {
     /**
      * @return The headers of an email (or a Part)
      */
-    public String getHeaders(Part msg) {
+    public static String getHeaders(Part msg) {
         String all = getWholeMessage(msg);
         int i = all.indexOf("\r\n\r\n");
         return all.substring(0, i);
@@ -132,7 +131,7 @@ public class GreenMailUtil {
     /**
      * @return The both header and body for an email (or a Part)
      */
-    public String getWholeMessage(Part msg) {
+    public static String getWholeMessage(Part msg) {
         try {
             ByteArrayOutputStream bodyOut = new ByteArrayOutputStream();
             msg.writeTo(bodyOut);
@@ -142,18 +141,18 @@ public class GreenMailUtil {
         }
     }
 
-    public byte[] getBodyAsBytes(Part msg) {
+    public static byte[] getBodyAsBytes(Part msg) {
         return getBody(msg).getBytes();
     }
 
-    public byte[] getHeaderAsBytes(Part part) {
+    public static  byte[] getHeaderAsBytes(Part part) {
         return getHeaders(part).getBytes();
     }
 
     /**
      * @return same as {@link #getWholeMessage(javax.mail.Part)} }
      */
-    public String toString(Part msg) {
+    public static String toString(Part msg) {
         return getWholeMessage(msg);
     }
 
@@ -167,13 +166,13 @@ public class GreenMailUtil {
      *
      * @return
      */
-    public String random() {
+    public static String random() {
         Random r = new Random();
         int nbrOfLetters = r.nextInt(3) + 5;
         return random(nbrOfLetters);
     }
 
-    public String random(int nbrOfLetters) {
+    public static String random(int nbrOfLetters) {
         Random r = new Random();
         StringBuffer ret = new StringBuffer();
         for (/* empty */; nbrOfLetters > 0; nbrOfLetters--) {
@@ -183,25 +182,38 @@ public class GreenMailUtil {
         return ret.toString();
     }
 
-    public void sendTextEmailTest(String to, String from, String subject, String msg) throws MessagingException {
-        sendTextEmail(to, from, subject, msg, ServerSetupTest.SMTP);
+    public static void sendTextEmailTest(String to, String from, String subject, String msg) {
+        try {
+            sendTextEmail(to, from, subject, msg, ServerSetupTest.SMTP);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void sendTextEmailSecureTest(String to, String from, String subject, String msg) throws MessagingException {
-        sendTextEmail(to, from, subject, msg, ServerSetupTest.SMTPS);
+    public static  void sendTextEmailSecureTest(String to, String from, String subject, String msg) {
+        try {
+            sendTextEmail(to, from, subject, msg, ServerSetupTest.SMTPS);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private void sendTextEmail(String to, String from, String subject, String msg, final ServerSetup setup) throws MessagingException {
-        Session session = getSession(setup);
+    private static void sendTextEmail(String to, String from, String subject, String msg, final ServerSetup setup) {
+        try {
+            Session session = getSession(setup);
 
-        Address[] tos = new InternetAddress[]{new InternetAddress(to)};
-        Address[] froms = new InternetAddress[]{new InternetAddress(from)};
-        MimeMessage mimeMessage = new MimeMessage(session);
-        mimeMessage.setSubject(subject);
-        mimeMessage.setFrom(froms[0]);
+            Address[] tos = new javax.mail.Address[0];
+            tos = new InternetAddress[]{new InternetAddress(to)};
+            Address[] froms = new InternetAddress[]{new InternetAddress(from)};
+            MimeMessage mimeMessage = new MimeMessage(session);
+            mimeMessage.setSubject(subject);
+            mimeMessage.setFrom(froms[0]);
 
-        mimeMessage.setText(msg);
-        Transport.send(mimeMessage, tos);
+            mimeMessage.setText(msg);
+            Transport.send(mimeMessage, tos);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static Session getSession(final ServerSetup setup) {
@@ -217,7 +229,7 @@ public class GreenMailUtil {
         return session;
     }
 
-    public void sendAttachmentEmail(String to, String from, String subject, String msg, final byte[] attachment, final String contentType, final String filename, final String description, final ServerSetup setup) throws MessagingException, IOException {
+    public static void sendAttachmentEmail(String to, String from, String subject, String msg, final byte[] attachment, final String contentType, final String filename, final String description, final ServerSetup setup) throws MessagingException, IOException {
         Session session = getSession(setup);
 
         Address[] tos = new InternetAddress[]{new InternetAddress(to)};

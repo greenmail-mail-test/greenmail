@@ -103,7 +103,7 @@ public class SimpleMessageAttributes
      * TODO this is a mess, and should be completely revamped.
      */
     void parseMimePart(MimePart part) throws MessagingException {
-        size = GreenMailUtil.instance().getBody(part).length();
+        size = GreenMailUtil.getBody(part).length();
 
         // Section 1 - Message Headers
         if (part instanceof MimeMessage) {
@@ -257,7 +257,7 @@ public class SimpleMessageAttributes
     }
 
     private int getLineCount(MimePart part) throws MessagingException {
-        return GreenMailUtil.instance().getLineCount(GreenMailUtil.instance().getBody(part));
+        return GreenMailUtil.getLineCount(GreenMailUtil.getBody(part));
     }
 
     /**

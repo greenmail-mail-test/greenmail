@@ -5,7 +5,6 @@
  */
 package com.icegreen.greenmail.smtp;
 
-import com.icegreen.greenmail.foedus.util.Quittable;
 import com.icegreen.greenmail.util.InternetPrintWriter;
 
 import java.io.*;
@@ -33,10 +32,10 @@ public class SmtpConnection {
     InetAddress clientAddress;
     InternetPrintWriter out;
     BufferedReader in;
-    Quittable handler;
+    SmtpHandler handler;
     String heloName;
 
-    public SmtpConnection(Quittable handler, Socket sock)
+    public SmtpConnection(SmtpHandler handler, Socket sock)
             throws IOException {
         this.sock = sock;
         sock.setSoTimeout(TIMEOUT_MILLIS);
