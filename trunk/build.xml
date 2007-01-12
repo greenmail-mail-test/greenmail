@@ -8,7 +8,7 @@
 
   <property name="Name" value="GreenMail"/>
 
-  <property name="version" value="1.2_RC0"/>
+  <property name="version" value="1.2_rc0"/>
   <!-- Set the properties for intermediate directory -->
   <property name="build.dir" value="build"/>
   <property name="build.lib" value="${build.dir}/lib"/>
@@ -167,7 +167,8 @@
 
     <target name="test" depends="compile" >
         <mkdir dir="test.runs"/>
-        <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
+        <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure" >
+          <jvmarg value="-Xmx512M"/>
           <classpath>
             <pathelement location="${test.classes}"/>
             <pathelement path="${build.classes}"/>

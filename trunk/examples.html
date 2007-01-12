@@ -8,7 +8,7 @@
 
 <div id="header">
 <img src="pics/greenmail.gif" title="GreenMail - Testing SMTP, POP3, IMAP">
-Latest Release GreenMail v1.1 - Nov 11, 2006
+Latest Release GreenMail v1.2 - Nov 11, 2006
 </div>
 
 <div class="pages">
@@ -29,25 +29,24 @@ Latest Release GreenMail v1.1 - Nov 11, 2006
 <h2>Testing Your Sending Code - Example 1</h2>
 <div class="codeSample">
 public void testYourSendingCode() throws Exception {
-    Servers servers = new Servers(); 
-    servers.start(); 
-    
-    <b>&lt;PLACE YOUR SEND CODE HERE&gt;</b>
- 
-    assertEquals("test subject", servers.getReceivedMessages()[0].getSubject());
-    servers.stop();
+    GreenMail greenMail = new GreenMail(); //uses test ports by default
+    greenMail.start();
+    GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", "body");
+    assertEquals("subject", greenMail.getReceivedMessages()[0].getSubject());
+    greenMail.stop();
+    //<b>That's it!</b>
 }    
 </div>
 
 
 <h2>Testing Your Sending Code - Example 2</h2>
-This example is basically the same as the one above but contains demonstration on additional features, utility methods and comments.
+This example does basically the same as the one above but is more complex as it's purpose is to demonstrate additional features and utility methods.
 <div class="codeSample">
-Servers servers;
+GreenMail greenMail;
 
 protected void tearDown() throws Exception {
-    if (null!=servers) {
-        servers.stop();
+    if (null!=greenMail) {
+        greenMail.stop();
     }
     super.tearDown();
 }
@@ -55,31 +54,32 @@ protected void tearDown() throws Exception {
 public void testYourSendingCode() throws Exception {
     //start all email servers using non-default ports.
     //See <a href="javadocs/com/icegreen/greenmail/util/ServerSetupTest.html">Javadoc</a> for details
-    servers = new Servers(ServerSetupTest.ALL); 
-    servers.start();
+    greenMail = new GreenMail(ServerSetupTest.ALL);
+    greenMail.start();
     
     //use random content to avoid potential residual lingering problems
-    final String subject = servers.util().random(); 
-    final String body = servers.util().random();
+    final String subject = GreenMailUtil.random();
+    final String body = GreenMailUtil.random();
     
     <b>&lt;PLACE YOUR SEND CODE HERE&gt;</b>
     
     //wait for max 5s for 1 email to arrive
-    assertTrue(servers.waitForIncomingEmail(5000, 1)); 
+    //waitForIncomingEmail() is useful if you're sending stuff asynchronously in a separate thread
+    assertTrue(greenMail.waitForIncomingEmail(5000, 1));
     
     //Retrieve using GreenMail API
-    Message[] messages = servers.getReceivedMessages();
+    Message[] messages = greenMail.getReceivedMessages();
     assertEquals(1, messages.length);
     assertEquals(subject, messages[0].getSubject());
-    assertEquals(body, servers.util().getBody(messages[0]).trim());
+    assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
     
     //if your send content is a 2 part multipart...
     assertTrue(messages[0].getContent() instanceof MimeMultipart);
     MimeMultipart mp = (MimeMultipart) messages[0].getContent();
     assertEquals(2, mp.getCount());
     BodyPart bp;
-    assertEquals(multipart_body1, servers.util().getBody(mp.getBodyPart(0)).trim());
-    assertEquals(multipart_body2, servers.util().getBody(mp.getBodyPart(1)).trim());
+    assertEquals(multipart_body1, GreenMailUtil.getBody(mp.getBodyPart(0)).trim());
+    assertEquals(multipart_body2, GreenMailUtil.getBody(mp.getBodyPart(1)).trim());
 }    
 </div>
 
@@ -87,30 +87,10 @@ public void testYourSendingCode() throws Exception {
 <h2>Test Your Retrieving Code</h2>
 <div class="codeSample">
 protected void tearDown() throws Exception {
-    if (null!=servers) {
-        servers.stop();
+    if (null!=greenMail) {
+        greenMail.stop();
     }
     super.tearDown();
-}
-
-/**
- * Sends an email using SMTP for testing your retrieval code
- */
-public void testYourRetrievingCodeBySending() throws Exception {
-    //start all email servers using non-default ports.
-    //See <a href="javadocs/com/icegreen/greenmail/util/ServerSetupTest.html">Javadoc</a> for details
-    servers = new Servers(ServerSetupTest.ALL); 
-    servers.start();
-    
-    //use random content to avoid potential residual lingering problems
-    final String subject = servers.util().random(); 
-    final String body = servers.util().random();
-    servers.util().sendTextEmailTest("test@localhost.com", "from@localhost.com", subject, body);
-    
-    //wait for max 5s for 1 email to arrive
-    assertTrue(servers.waitForIncomingEmail(5000, 1));
-    
-    <b>&lt;PLACE YOUR RETRIVE AND VERIFICATION CODE HERE&gt;</b>
 }
 
 /**
@@ -119,16 +99,36 @@ public void testYourRetrievingCodeBySending() throws Exception {
 public void testYourRetrievingCode_by_insertion() throws Exception {
     //start all email servers using non-default ports.
     //See <a href="javadocs/com/icegreen/greenmail/util/ServerSetupTest.html">Javadoc</a> for details
-    servers = new Servers(ServerSetupTest.ALL); 
-    servers.start();
+    greenMail = new GreenMail(ServerSetupTest.ALL);
+    greenMail.start();
+
+    //use random content to avoid potential residual lingering problems
+    final String subject = GreenMailUtil.random();
+    final String body = GreenMailUtil.random();
+    MimeMessage message = <b>&lt;CONSTRUCT MESSAGE &gt;</b>
+    User user = greenMail.setUser("wael@localhost.com", "waelc", "soooosecret");
+    user.deliver(message);
+    assertEquals(1, greenMail.getReceivedMessages().length);
+
+    <b>&lt;PLACE YOUR RETRIVE AND VERIFICATION CODE HERE&gt;</b>
+}
+
+/**
+ * Sends an email using SMTP for testing your retrieval code
+ */
+public void testYourRetrievingCodeBySending() throws Exception {
+    //start all email servers using non-default ports.
+    //See <a href="javadocs/com/icegreen/greenmail/util/ServerSetupTest.html">Javadoc</a> for details
+    greenMail = new GreenMail(ServerSetupTest.ALL);
+    greenMail.start();
     
     //use random content to avoid potential residual lingering problems
-    final String subject = servers.util().random(); 
-    final String body = servers.util().random();
-    MimeMessage message = <b>&lt;CONSTRUCT MESSAGE &gt;</b>
-    User user = servers.setUser("wael@localhost.com", "waelc", "soooosecret");
-    user.deliver(message);
-    assertEquals(1, servers.getReceivedMessages().length);
+    final String subject = GreenMailUtil.random();
+    final String body = GreenMailUtil.random();
+    GreenMailUtil.sendTextEmailTest("test@localhost.com", "from@localhost.com", subject, body);
+    
+    //wait for max 5s for 1 email to arrive
+    assertTrue(greenMail.waitForIncomingEmail(5000, 1));
     
     <b>&lt;PLACE YOUR RETRIVE AND VERIFICATION CODE HERE&gt;</b>
 }

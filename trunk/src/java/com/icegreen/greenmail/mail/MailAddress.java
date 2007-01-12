@@ -22,7 +22,11 @@ public class MailAddress {
 
         String[] strs = email.split("@");
         user = strs[0];
-        host = strs[1];
+        if (strs.length>1) {
+            host = strs[1];
+        } else {
+            host = "localhost";
+        }
     }
 
     public String getName() {
