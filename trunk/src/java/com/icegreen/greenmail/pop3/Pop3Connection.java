@@ -5,7 +5,6 @@
  */
 package com.icegreen.greenmail.pop3;
 
-import com.icegreen.greenmail.foedus.util.Quittable;
 import com.icegreen.greenmail.foedus.util.StreamUtils;
 import com.icegreen.greenmail.util.InternetPrintWriter;
 
@@ -18,7 +17,7 @@ import java.net.SocketException;
 public class Pop3Connection {
 
     // protocol stuff
-    Quittable _handler;
+    Pop3Handler _handler;
 
     // networking stuff
     private static final int TIMEOUT_MILLIS = 1000 * 30;
@@ -29,7 +28,7 @@ public class Pop3Connection {
     BufferedReader _in;
     InternetPrintWriter _out;
 
-    public Pop3Connection(Quittable handler, Socket socket)
+    public Pop3Connection(Pop3Handler handler, Socket socket)
             throws IOException {
         configureSocket(socket);
         configureStreams();

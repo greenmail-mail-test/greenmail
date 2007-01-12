@@ -3,10 +3,7 @@
  */
 package com.icegreen.greenmail.test;
 
-import com.icegreen.greenmail.util.ServerSetup;
-import com.icegreen.greenmail.util.Servers;
-import com.icegreen.greenmail.util.Retriever;
-import com.icegreen.greenmail.util.ServerSetupTest;
+import com.icegreen.greenmail.util.*;
 import junit.framework.TestCase;
 
 import javax.mail.BodyPart;
@@ -21,11 +18,11 @@ import java.io.ByteArrayOutputStream;
  */
 public class Pop3ServerTest extends TestCase {
 
-    Servers servers;
+    GreenMail greenMail;
 
     protected void tearDown() throws Exception {
         try {
-            servers.stop();
+            greenMail.stop();
         } catch (NullPointerException ignored) {
             //empty
         }
@@ -33,53 +30,53 @@ public class Pop3ServerTest extends TestCase {
     }
 
     public void testRetreive() throws Exception {
-        servers = new Servers(ServerSetupTest.SMTP_POP3);
-        assertNotNull(servers.getPop3());
-        servers.start();
-        final String subject = servers.util().random();
-        final String body = servers.util().random() + "\r\n" + servers.util().random() + "\r\n" + servers.util().random();
+        greenMail = new GreenMail(ServerSetupTest.SMTP_POP3);
+        assertNotNull(greenMail.getPop3());
+        greenMail.start();
+        final String subject = GreenMailUtil.random();
+        final String body = GreenMailUtil.random() + "\r\n" + GreenMailUtil.random() + "\r\n" + GreenMailUtil.random();
         String to = "test@localhost.com";
-        servers.util().sendTextEmailTest(to, "from@localhost.com", subject, body);
-        servers.waitForIncomingEmail(5000, 1);
+        GreenMailUtil.sendTextEmailTest(to, "from@localhost.com", subject, body);
+        greenMail.waitForIncomingEmail(5000, 1);
 
-        Retriever retriever = new Retriever(servers.getPop3());
+        Retriever retriever = new Retriever(greenMail.getPop3());
         Message[] messages = retriever.getMessages(to);
         assertEquals(1, messages.length);
         assertEquals(subject, messages[0].getSubject());
-        assertEquals(body, servers.util().getBody(messages[0]).trim());
+        assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
     }
 
     public void testPop3sReceive() throws Throwable {
-        servers = new Servers(new ServerSetup[]{ServerSetupTest.SMTPS, ServerSetupTest.POP3S});
-        assertNull(servers.getPop3());
-        assertNotNull(servers.getPop3s());
-        servers.start();
-        final String subject = servers.util().random();
-        final String body = servers.util().random();
+        greenMail = new GreenMail(new ServerSetup[]{ServerSetupTest.SMTPS, ServerSetupTest.POP3S});
+        assertNull(greenMail.getPop3());
+        assertNotNull(greenMail.getPop3s());
+        greenMail.start();
+        final String subject = GreenMailUtil.random();
+        final String body = GreenMailUtil.random();
         String to = "test@localhost.com";
-        servers.util().sendTextEmailSecureTest(to, "from@localhost.com", subject, body);
-        servers.waitForIncomingEmail(5000, 1);
+        GreenMailUtil.sendTextEmailSecureTest(to, "from@localhost.com", subject, body);
+        greenMail.waitForIncomingEmail(5000, 1);
 
-        Retriever retriever = new Retriever(servers.getPop3s());
+        Retriever retriever = new Retriever(greenMail.getPop3s());
         Message[] messages = retriever.getMessages(to);
         assertEquals(1, messages.length);
         assertEquals(subject, messages[0].getSubject());
-        assertEquals(body, servers.util().getBody(messages[0]).trim());
+        assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
     }
 
     public void testRetreiveWithNonDefaultPassword() throws Exception {
-        servers = new Servers(ServerSetupTest.SMTP_POP3);
-        assertNotNull(servers.getPop3());
+        greenMail = new GreenMail(ServerSetupTest.SMTP_POP3);
+        assertNotNull(greenMail.getPop3());
         final String to = "test@localhost.com";
         final String password = "donotharmanddontrecipricateharm";
-        servers.setUser(to, password);
-        servers.start();
-        final String subject = servers.util().random();
-        final String body = servers.util().random();
-        servers.util().sendTextEmailTest(to, "from@localhost.com", subject, body);
-        servers.waitForIncomingEmail(5000, 1);
+        greenMail.setUser(to, password);
+        greenMail.start();
+        final String subject = GreenMailUtil.random();
+        final String body = GreenMailUtil.random();
+        GreenMailUtil.sendTextEmailTest(to, "from@localhost.com", subject, body);
+        greenMail.waitForIncomingEmail(5000, 1);
 
-        Retriever retriever = new Retriever(servers.getPop3());
+        Retriever retriever = new Retriever(greenMail.getPop3());
         boolean login_failed = false;
         try {
             Message[] messages = retriever.getMessages(to, "wrongpassword");
@@ -91,21 +88,21 @@ public class Pop3ServerTest extends TestCase {
         Message[] messages = retriever.getMessages(to, password);
         assertEquals(1, messages.length);
         assertEquals(subject, messages[0].getSubject());
-        assertEquals(body, servers.util().getBody(messages[0]).trim());
+        assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
     }
 
     public void testRetriveMultipart() throws Exception {
-        servers = new Servers(ServerSetupTest.SMTP_POP3);
-        assertNotNull(servers.getPop3());
-        servers.start();
+        greenMail = new GreenMail(ServerSetupTest.SMTP_POP3);
+        assertNotNull(greenMail.getPop3());
+        greenMail.start();
 
-        String subject = servers.util().random();
-        String body = servers.util().random();
+        String subject = GreenMailUtil.random();
+        String body = GreenMailUtil.random();
         String to = "test@localhost.com";
-        servers.util().sendAttachmentEmail(to, "from@localhost.com", subject, body, new byte[]{0, 1, 2}, "image/gif", "testimage_filename", "testimage_description", ServerSetupTest.SMTP);
-        servers.waitForIncomingEmail(5000, 1);
+        GreenMailUtil.sendAttachmentEmail(to, "from@localhost.com", subject, body, new byte[]{0, 1, 2}, "image/gif", "testimage_filename", "testimage_description", ServerSetupTest.SMTP);
+        greenMail.waitForIncomingEmail(5000, 1);
 
-        Retriever retriever = new Retriever(servers.getPop3());
+        Retriever retriever = new Retriever(greenMail.getPop3());
         Message[] messages = retriever.getMessages(to);
 
         Object o = messages[0].getContent();
@@ -114,13 +111,13 @@ public class Pop3ServerTest extends TestCase {
         assertEquals(2, mp.getCount());
         BodyPart bp;
         bp = mp.getBodyPart(0);
-        assertEquals(body, servers.util().getBody(bp).trim());
+        assertEquals(body, GreenMailUtil.getBody(bp).trim());
 
         bp = mp.getBodyPart(1);
-        assertEquals("AAEC", servers.util().getBody(bp).trim());
+        assertEquals("AAEC", GreenMailUtil.getBody(bp).trim());
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        servers.util().copyStream(bp.getInputStream(), bout);
+        GreenMailUtil.copyStream(bp.getInputStream(), bout);
         byte[] gif = bout.toByteArray();
         for (int i = 0; i < gif.length; i++) {
             assertEquals(i, gif[i]);

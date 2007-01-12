@@ -41,7 +41,7 @@ public class RetrCommand
             }
 
             SimpleStoredMessage msg = (SimpleStoredMessage) msgList.get(0);
-            String email = GreenMailUtil.instance().getWholeMessage(msg.getMimeMessage());
+            String email = GreenMailUtil.getWholeMessage(msg.getMimeMessage());
             conn.println("+OK");
             conn.print(new StringReader(email));
             conn.println();

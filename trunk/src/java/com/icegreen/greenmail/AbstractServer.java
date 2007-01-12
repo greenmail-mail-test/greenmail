@@ -15,6 +15,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Vector;
 
 /**
  * @author Wael Chatila
@@ -24,7 +25,7 @@ import java.net.UnknownHostException;
 public abstract class AbstractServer extends Service {
     protected InetAddress bindTo;
     protected ServerSocket serverSocket = null;
-    protected Socket clientSocket = null;
+    protected Vector handlers = null;
     protected Managers managers;
     protected ServerSetup setup;
 
@@ -36,6 +37,7 @@ public abstract class AbstractServer extends Service {
             throw new RuntimeException(e);
         }
         this.managers = managers;
+        handlers = new Vector();
     }
 
     protected synchronized ServerSocket openServerSocket() throws IOException {

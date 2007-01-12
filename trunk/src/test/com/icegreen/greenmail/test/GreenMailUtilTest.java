@@ -1,5 +1,8 @@
-/*
- * Copyright (c) 2006 Your Corporation. All Rights Reserved.
+/* -------------------------------------------------------------------
+ * Copyright (c) 2007 Wael Chatila / Icegreen Technologies. All Rights Reserved.
+ * This software is released under the LGPL which is available at http://www.gnu.org/copyleft/lesser.html
+ * This file has been modified by the copyright holder. Original file can be found at http://james.apache.org
+ * -------------------------------------------------------------------
  */
 package com.icegreen.greenmail.test;
 
@@ -15,15 +18,15 @@ import java.io.IOException;
  * @version $Id: $
  * @since Jan 29, 2006
  */
-public class PoppyUtilTest extends TestCase {
+public class GreenMailUtilTest extends TestCase {
     public void testMimeMessageLoading() throws MessagingException {
-        MimeMessage message = GreenMailUtil.instance().newMimeMessage(sampleEmail);
+        MimeMessage message = GreenMailUtil.newMimeMessage(sampleEmail);
         assertEquals("wassup", message.getSubject());
     }
 
     public void testGetBody() throws MessagingException, IOException {
-        MimeMessage message = GreenMailUtil.instance().newMimeMessage(sampleEmail);
-        String body = GreenMailUtil.instance().getBody(message);
+        MimeMessage message = GreenMailUtil.newMimeMessage(sampleEmail);
+        String body = GreenMailUtil.getBody(message);
         assertEquals("Yo wassup Bertil", body.trim());
     }
 

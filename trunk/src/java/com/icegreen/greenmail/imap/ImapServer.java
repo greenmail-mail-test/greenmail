@@ -12,9 +12,11 @@ import com.icegreen.greenmail.util.ServerSetup;
 
 import java.io.IOException;
 import java.net.BindException;
+import java.net.Socket;
+import java.util.Vector;
+import java.util.Iterator;
 
 public final class ImapServer extends AbstractServer {
-    private ImapHandler imapHandler = null;
 
     public ImapServer(ServerSetup setup, Managers managers) {
         super(setup, managers);
@@ -23,20 +25,19 @@ public final class ImapServer extends AbstractServer {
 
 
     public synchronized void quit() {
-        if (null != imapHandler) {
-            imapHandler.resetHandler();
-        }
         try {
-            if (null != clientSocket) {
-                clientSocket.close();
+            for (Iterator iterator = handlers.iterator(); iterator.hasNext();) {
+                ImapHandler imapHandler = (ImapHandler) iterator.next();
+                imapHandler.resetHandler();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
         try {
-            if (null != serverSocket) {
+            if (null != serverSocket && !serverSocket.isClosed()) {
                 serverSocket.close();
+                serverSocket = null;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -44,21 +45,26 @@ public final class ImapServer extends AbstractServer {
     }
 
     public void run() {
-        imapHandler = new ImapHandler(managers.getUserManager(), managers.getImapHostManager());
-
         try {
-            serverSocket = openServerSocket();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
-        while (keepOn()) {
             try {
-                clientSocket = serverSocket.accept();
-                imapHandler.handleConnection(clientSocket);
-            } catch (IOException ignored) {
-                //ignored
+                serverSocket = openServerSocket();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
+
+            while (keepOn()) {
+                try {
+                    Socket clientSocket = serverSocket.accept();
+                    ImapHandler imapHandler = new ImapHandler(managers.getUserManager(), managers.getImapHostManager(), clientSocket);
+                    handlers.add(imapHandler);
+                    imapHandler.start();
+                } catch (IOException ignored) {
+                    //ignored
+                }
+            }
+        } finally{
+            quit();
         }
     }
 }

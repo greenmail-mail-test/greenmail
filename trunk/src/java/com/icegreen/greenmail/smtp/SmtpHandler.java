@@ -7,15 +7,13 @@ package com.icegreen.greenmail.smtp;
 
 import com.icegreen.greenmail.smtp.commands.SmtpCommand;
 import com.icegreen.greenmail.smtp.commands.SmtpCommandRegistry;
-import com.icegreen.greenmail.foedus.util.Quittable;
 import com.icegreen.greenmail.foedus.util.Workspace;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
-class SmtpHandler
-        implements Quittable {
+class SmtpHandler extends Thread {
 
     // protocol and configuration global stuff
     SmtpCommandRegistry _registry;
@@ -29,21 +27,20 @@ class SmtpHandler
     // command parsing stuff
     boolean _quitting;
     String _currentLine;
+    private Socket _socket;
 
     public SmtpHandler(SmtpCommandRegistry registry,
-                       SmtpManager manager, Workspace workspace) {
+                       SmtpManager manager, Workspace workspace, Socket socket) {
         _registry = registry;
         _manager = manager;
         _workspace = workspace;
+        _socket = socket;
     }
 
-    public void handleConnection(Socket socket)
-            throws IOException {
-        _conn = new SmtpConnection(this, socket);
-        _state = new SmtpState(_workspace);
-
-
+    public void run() {
         try {
+            _conn = new SmtpConnection(this, _socket);
+            _state = new SmtpState(_workspace);
             _quitting = false;
 
             sendGreetings();
@@ -120,5 +117,14 @@ class SmtpHandler
 
     public void quit() {
         _quitting = true;
+        try {
+            if (_socket != null && !_socket.isClosed()) {
+                _socket.close();
+            }
+        } catch(IOException ignored) {
+            //empty
+        } finally{
+            _socket = null;
+        }
     }
 }

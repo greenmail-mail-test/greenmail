@@ -14,11 +14,8 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * A common abstract base class for message protocols and service providers
- * supported by the java mail api.
- *
  * @author Wael Chatila
- * @version $Id: //depot/projects/justonemail/src/com/icegreen/justonemail/mail/RetreiverJavaMail.java#12 $
+ * @version $Id: $
  * @since Apr 16, 2005
  */
 public class Retriever {
@@ -32,6 +29,19 @@ public class Retriever {
     private String host;
     private Store store = null;
 
+    /**
+     * Creates a retriever object for a particular server<br>
+     * Example:<br>
+     * <i>
+     * GreenMail greenMail = new GreenMail();<br>
+     * ...<br>
+     * Retriever r = new Retriever(greenMail.getPop3())<br>;
+     * r.getMessages("bill@microsoft.com");<br>
+     * </i>
+     * This will fetch all available messages for Billy using POP3.
+     *
+     * @param server
+     */
     public Retriever(AbstractServer server) {
         this.protocol = server.getProtocol();
         port = server.getPort();

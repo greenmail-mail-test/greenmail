@@ -124,7 +124,7 @@ class AppendCommand extends AuthenticatedStateCommand {
             String mailString = consumeLiteral(request);
 
             try {
-                return GreenMailUtil.instance().newMimeMessage(mailString);
+                return GreenMailUtil.newMimeMessage(mailString);
             } catch (Exception e) {
                 throw new ProtocolException("UnexpectedException: " + e.getMessage());
             }

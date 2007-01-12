@@ -190,7 +190,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             String[] strs = sectionSpecifier.trim().split("\\.");
             int partNumber = Integer.parseInt(strs[0]) - 1;
             MimeMultipart mp = (MimeMultipart) mimeMessage.getContent();
-            byte[] bytes = GreenMailUtil.instance().getHeaderAsBytes(mp.getBodyPart(partNumber));
+            byte[] bytes = GreenMailUtil.getHeaderAsBytes(mp.getBodyPart(partNumber));
             bytes = doPartial(partial, bytes, response);
             addLiteral(bytes, response);
         } else if (sectionSpecifier.equalsIgnoreCase("TEXT")) {
@@ -198,13 +198,13 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             // TODO - this is a hack. To get just the body content, I'm using a null
             // input stream to take the headers. Need to have a way of ignoring headers.
 
-            byte[] bytes = GreenMailUtil.instance().getBodyAsBytes(mimeMessage);
+            byte[] bytes = GreenMailUtil.getBodyAsBytes(mimeMessage);
             bytes = doPartial(partial, bytes, response);
             addLiteral(bytes, response);
         } else {
             int partNumber = Integer.parseInt(sectionSpecifier) - 1;
             MimeMultipart mp = (MimeMultipart) mimeMessage.getContent();
-            byte[] bytes = GreenMailUtil.instance().getBodyAsBytes(mp.getBodyPart(partNumber));
+            byte[] bytes = GreenMailUtil.getBodyAsBytes(mp.getBodyPart(partNumber));
             bytes = doPartial(partial, bytes, response);
             addLiteral(bytes, response);
         }
