@@ -168,7 +168,7 @@ public class GreenMail {
         GreenMailUser user = managers.getUserManager().getUser(email);
         if (null == user) {
             try {
-                managers.getUserManager().createUser(email, login, password);
+                user = managers.getUserManager().createUser(email, login, password);
             } catch (UserException e) {
                 throw new RuntimeException(e);
             }
