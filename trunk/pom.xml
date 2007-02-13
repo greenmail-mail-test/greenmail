@@ -9,7 +9,7 @@
   <url>http://www.icegreen.com/greenmail/</url>
   <inceptionYear>2006</inceptionYear>
   
-  <groupId>com.icegreen.greenmail</groupId>
+  <groupId>com.icegreen</groupId>
   <artifactId>greenmail</artifactId>
   <packaging>jar</packaging>
   <!-- This version should get inherited to all subprojects. -->
