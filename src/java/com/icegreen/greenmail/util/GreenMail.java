@@ -29,14 +29,26 @@ public class GreenMail {
     Managers managers;
     HashMap services;
 
+    /**
+     * Creates a SMTP, SMTPS, POP3, POP3S, IMAP, and IMAPS server binding onto non-default ports.
+     * The ports numbers are defined in {@link ServerSetupTest}
+     */
     public GreenMail() {
         this(ServerSetupTest.ALL);
     }
 
+    /**
+     * Call this constructor if you want to run one of the email servers only
+     * @param config
+     */
     public GreenMail(ServerSetup config) {
         this(new ServerSetup[]{config});
     }
 
+    /**
+     * Call this constructor if you want to run more than one of the email servers
+     * @param config
+     */
     public GreenMail(ServerSetup[] config) {
         managers = new Managers();
         services = new HashMap();
@@ -105,6 +117,7 @@ public class GreenMail {
 
     //~ Convenience Methods, often needed while testing ---------------------------------------------------------------
     /**
+     * Use this method if you are sending email in a different thread from the one you're testing from.
      * Block waits for an email to arrive in any mailbox for any user.
      * Implementation Detail: No polling wait implementation
      *
@@ -143,6 +156,7 @@ public class GreenMail {
     }
     /**
      * @return Returns all messags in all folders for all users
+     * {@link GreenMailUtil} has a bunch of static helper methods to extract body text etc.
      */
     public MimeMessage[] getReceivedMessages() {
         List msgs = managers.getImapHostManager().getAllMessages();
@@ -155,7 +169,8 @@ public class GreenMail {
     }
 
     /**
-     * Sets the password for the account linked to email. If no account exits, on is automatically created
+     * Sets the password for the account linked to email. If no account exits, one is automatically created when an email is received
+     * The automatically created account has the account login and password equal to the email address.
      *
      * @param email
      * @param password

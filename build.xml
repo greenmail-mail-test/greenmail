@@ -8,7 +8,7 @@
 
   <property name="Name" value="GreenMail"/>
 
-  <property name="version" value="1.2_rc0"/>
+  <property name="version" value="1.2"/>
   <!-- Set the properties for intermediate directory -->
   <property name="build.dir" value="build"/>
   <property name="build.lib" value="${build.dir}/lib"/>
