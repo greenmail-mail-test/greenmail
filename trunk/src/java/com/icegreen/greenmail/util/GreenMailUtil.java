@@ -198,6 +198,20 @@ public class GreenMailUtil {
         }
     }
 
+    public static String getAddressList(Address[] addresses) {
+        if (null == addresses) {
+            return null;
+        }
+        StringBuffer ret = new StringBuffer();
+        for (int i = 0; i < addresses.length; i++) {
+            if (i>0) {
+                ret.append(", ");
+            }
+            ret.append(addresses[i].toString());
+        }
+        return ret.toString();
+    }
+
     private static void sendTextEmail(String to, String from, String subject, String msg, final ServerSetup setup) {
         try {
             Session session = getSession(setup);
