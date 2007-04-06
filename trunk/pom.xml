@@ -131,11 +131,12 @@
       <plugin>
         <!-- javadoc report -->
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.1</version>
+        <version>2.2</version>
         <configuration>
           <aggregate>true</aggregate>
           <links>
-            <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
+            <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+            <link>http://java.sun.com/products/javamail/javadocs/</link>
             <link>http://www.junit.org/junit/javadoc/</link>
           </links>
         </configuration>
