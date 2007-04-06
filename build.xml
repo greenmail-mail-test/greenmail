@@ -156,6 +156,7 @@
 			<param name="-doctitle" value="${Name}"/>
 			<param name="-windowtitle" value="${Name} API"/>
 			<param name="-link" value="http://java.sun.com/j2se/1.4/docs/api/"/>
+			<param name="-link" value="http://java.sun.com/products/javamail/javadocs/"/>
 			<param name="-link" value="http://jakarta.apache.org/avalon/api/"/>
 		</doclet>
 		</javadoc>
