@@ -264,6 +264,7 @@
         <configuration>
           <downloadSources>true</downloadSources>
           <linkModules>true</linkModules>
+          <jdkLevel>1.4</jdkLevel>
         </configuration>
       </plugin>
       <plugin>
