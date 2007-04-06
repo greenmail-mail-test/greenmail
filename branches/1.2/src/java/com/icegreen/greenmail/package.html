@@ -1,0 +1,81 @@
+<html>
+<head>
+<title>Package com.icegreen.greenmail</title>
+</head>
+<body>
+
+<p>GreenMail is an intuitive and easy-to-use test suite of
+email servers for testing purposes. Supports SMTP, POP3, IMAP with SSL socket
+support. </p>
+
+
+<p >GreenMail is the first project that offers a test
+framework for both receiving and retrieving emails from Java. </p>
+
+
+<p >GreenMail is useful in the following scenarios:</p>
+
+
+<p >SENDING</p>
+
+<ul type=disc>
+ <li >System testing an application. GreenMail responds like a
+     regular SMTP server but does not deliver any email, which enables it to be
+     used in real life applications and real test cases.  Messages can easily
+     be extracted, verified, and modified. Support for SMTPS (SSL) is enabled. </li>
+ <li >GreenMail is an excellent choice for unit testing code
+     that needs to send email with a succinct, efficient (non-polling) way to
+     wait for messages to arrive, retrieve, verify. and modify messages. </li>
+ <li>Note that retrieval of emails can be made with a simple
+     java method or through a provided POP3, IMAP retriever helper class.</li>
+ <li>GreenMail SMTP is a far better and powerful than <a
+     href="http://dumbster.sourceforge.net/">http://dumbster.sourceforge.net</a>
+     while still being lightweight and fast. Dumbster has a hard to use API for
+     retrieving messages and is using polling wait for some of its operations.
+     Dumbster is only for SMTP testing, GreenMail is an entire email test
+     solution.</li>
+</ul>
+
+<p >&nbsp;</p>
+
+<p >RETRIEVING</p>
+
+<ul >
+ <li>Again GreenMail can be used for system or unit testing an
+     application needing to use POP3 or IMAP  by responding like a standard
+     compliant POP3 or IMAP server. Support for SMTPS (SSL) is enabled. </li>
+ <li>GreenMail ships with an easy-to-use helper class for
+     retrieving.</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>SENDING AND RETRIEVING</p>
+
+<ul>
+<li>GreenMail can easily been
+configured to use all or a combination of ports, protocols, and bind
+addresses.  For example it’s possible to run GreenMail on SMTP, POP3, POP3S and
+IMAPS ports as easily as only SMTP.</li>
+
+<li>Many systems might already be
+running these servers or don’t allow non root users to open the default ports
+which is why GreenMail ships with a special configuration for testing.   </li>
+</ul>
+
+
+
+<table border="1" width="100%">
+  
+  <tr>
+    <th>Copyright</th>
+    <td>Copyright &copy; 2006 Wael Chatila / Icegreen Technologies
+  </tr>
+  <tr>
+    <th>Author</th>
+    <td>Wael Chatila</td>
+  </tr>
+</table>
+
+</body>
+</html>
