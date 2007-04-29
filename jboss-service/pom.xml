@@ -1,0 +1,165 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.icegreen</groupId>
+  <artifactId>greenmail-jboss-service</artifactId>
+  <version>1.2-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>${project.artifactId}</name>
+  <description>JBoss Service MBean for GreenMail</description>
+
+  <!--
+  <scm>
+    <connection>scm:svn:${scm.url}</connection>
+    <developerConnection>scm:svn:${scm.url}</developerConnection>
+    <url>http://svn.consol.de/svn/cm/cmas/trunk/modules/esb/mail</url>
+  </scm>
+  -->
+
+  <developers>
+    <developer>
+      <name>Wael Chatila</name>
+      <id>waelc</id>
+      <email>see my blog</email>
+      <url>http://waelchatila.com</url>
+      <organization>IceGreen Technologies</organization>
+      <organizationUrl>http://www.icegreen.com</organizationUrl>
+      <roles>
+        <role>Lead Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Marcel May</name>
+      <properties>
+        <id>marcel_may</id>
+      </properties>
+      <email>marcel.may@metacube.net</email>
+      <url>http://www.metacube.net</url>
+      <organization>ConSol Software GmbH</organization>
+      <organizationUrl>http://www.consol.de</organizationUrl>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.icegreen</groupId>
+      <artifactId>greenmail</artifactId>
+      <version>1.2</version>
+    </dependency>
+    <!-- JBoss
+      Note: this is a wicked version mix ... but these are the best available JBoss artifacts
+    -->
+    <dependency>
+      <groupId>jboss</groupId>
+      <artifactId>jboss-system</artifactId>
+      <version>4.0.2</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>jboss</groupId>
+      <artifactId>jboss-jmx</artifactId>
+      <version>4.0.2</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>jboss</groupId>
+      <artifactId>jboss</artifactId>
+      <version>3.2.3</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- Misc -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging-api</artifactId>
+      <version>1.1</version>
+      <!-- Comes with JBoss distribution -->
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <!-- http://maven.apache.org/plugins/maven-compile-plugin/plugin-info.html -->
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.1</version>
+        <configuration>
+          <archive>
+            <addMavenDescriptor>false</addMavenDescriptor>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.0-alpha-4</version>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <excludeScope>provided</excludeScope>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <configuration>
+              <tasks>
+                <jar
+                    destfile="${project.build.directory}/${project.artifactId}-${project.version}.sar">
+                  <fileset dir="${project.build.directory}/classes"/>
+                  <fileset dir="${project.build.directory}/dependency/"/>
+                </jar>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- IDE plugins -->
+      <plugin>
+        <!-- http://maven.apache.org/plugins/maven-idea-plugin/plugin-info.html -->
+        <artifactId>maven-idea-plugin</artifactId>
+        <configuration>
+          <downloadSources>true</downloadSources>
+          <linkModules>true</linkModules>
+          <jdkLevel>1.5</jdkLevel>
+        </configuration>
+      </plugin>
+      <plugin>
+        <!-- http://maven.apache.org/plugins/maven-eclipse-plugin/plugin-info.html -->
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <downloadSources>true</downloadSources>
+          <downloadJavadoc>false</downloadJavadoc>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

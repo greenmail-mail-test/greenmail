@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE server>
+
+<server>
+
+  <!-- The GreenMail service configration
+  -->
+  <mbean code="com.icegreen.greenmail.jboss.GreenMailService"
+         name="com.icegreen:type=service,name=GreenMail">
+    <attribute name="Users">
+      test1:pwd1@localhost
+      test2:pwd2@localhost
+    </attribute>
+  </mbean>
+
+</server>
