@@ -9,13 +9,11 @@
   <name>${project.artifactId}</name>
   <description>JBoss Service MBean for GreenMail</description>
 
-  <!--
   <scm>
     <connection>scm:svn:${scm.url}</connection>
     <developerConnection>scm:svn:${scm.url}</developerConnection>
-    <url>http://svn.consol.de/svn/cm/cmas/trunk/modules/esb/mail</url>
+    <url>https://greenmail.svn.sourceforge.net/svnroot/greenmail/trunk/jboss-service</url>
   </scm>
-  -->
 
   <developers>
     <developer>
