@@ -20,6 +20,8 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
     /** New logger. */
     protected final Log log = LogFactory.getLog(getClass());
 
+    /** Default port offset is 3000. */
+    public static final int DEFAULT_PORT_OFFSET = 3000;
     /** The mail server. */
     private GreenMail mGreenMail;
 
@@ -38,7 +40,7 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
     /** Users. */
     private String[] mUsers;
     /** Port offset (default is 3000) */
-    private int mPortOffset = 3000;
+    private int mPortOffset = DEFAULT_PORT_OFFSET;
     /** Hostname. Default is null (= localhost). */
     private String mHostname = "localhost";
     /** Helper array. */
@@ -252,10 +254,10 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
     /**
      * Setter for property 'portOffset'.
      *
-     * @param pPortOffset Value to set for property 'portOffset'.
+     * @param thePortOffset Value to set for property 'portOffset'.
      */
-    public void setPortOffset(final int pPortOffset) {
-        mPortOffset = pPortOffset;
+    public void setPortOffset(final int thePortOffset) {
+        mPortOffset = thePortOffset;
     }
 
 
