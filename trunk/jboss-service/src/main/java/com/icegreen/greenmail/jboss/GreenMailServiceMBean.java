@@ -82,7 +82,14 @@ public interface GreenMailServiceMBean extends ServiceMBean {
      */
     boolean isImap();
 
-     /**
+    /**
+     * Sets the port offset.
+     *
+     * @param thePortOffset the port offset, defaults to {@link com.icegreen.greenmail.jboss.GreenMailService#DEFAULT_PORT_OFFSET}.
+     */
+    void setPortOffset(int thePortOffset);
+
+    /**
      * Sends a mail.
      *
      * @param theTo      the 'TO' field.

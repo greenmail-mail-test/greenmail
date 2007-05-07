@@ -4,13 +4,18 @@
 
 <server>
 
-  <!-- The GreenMail service configration
-  -->
+  <!-- The GreenMail service configration -->
   <mbean code="com.icegreen.greenmail.jboss.GreenMailService"
          name="com.icegreen:type=service,name=GreenMail">
+    <!-- Some mail users - format is USER:PWD@HOST -->
     <attribute name="Users">
       test1:pwd1@localhost
       test2:pwd2@localhost
+    </attribute>
+
+    <!-- Port offset for services. Default is 3000, so eg SMTP will be 3000+25 = 3025 . -->
+    <attribute name="PortOffset">
+      3000
     </attribute>
   </mbean>
 
