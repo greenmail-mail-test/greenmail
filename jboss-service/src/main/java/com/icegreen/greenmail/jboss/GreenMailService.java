@@ -4,12 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.mail.Address;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jboss.system.ServiceMBeanSupport;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 /**
  * Implements the GreenMailServiceMBean.
@@ -18,9 +24,9 @@ import org.jboss.system.ServiceMBeanSupport;
  */
 public class GreenMailService extends ServiceMBeanSupport implements GreenMailServiceMBean {
     /** New logger. */
-    protected final Log log = LogFactory.getLog(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    /** Default port offset is 3000. */
+    /** Default port offset is {@value #DEFAULT_PORT_OFFSET}. */
     public static final int DEFAULT_PORT_OFFSET = 3000;
     /** The mail server. */
     private GreenMail mGreenMail;
@@ -39,12 +45,14 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
     private boolean mImapsProtocoll;
     /** Users. */
     private String[] mUsers;
-    /** Port offset (default is 3000) */
+    /** Port offset (default is {@value #DEFAULT_PORT_OFFSET}) */
     private int mPortOffset = DEFAULT_PORT_OFFSET;
     /** Hostname. Default is null (= localhost). */
     private String mHostname = "localhost";
     /** Helper array. */
     private static final ServerSetup[] SERVER_SETUP_ARRAY = new ServerSetup[0];
+    /** All server setups configured. */
+    private List<ServerSetup> mServerSetups;
 
     // ****** GreenMail service methods
 
@@ -104,9 +112,33 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
                          final String theBody) {
         if (log.isDebugEnabled()) {
             log.debug("Sending mail, TO: <" + theTo + ">, FROM: <" + theFrom +
-                    ">, SUBJECT: <" + theSubject + ">, CONTENT: <" + theBody);
+                    ">, SUBJECT: <" + theSubject + ">, CONTENT: <" + theBody+'>');
         }
-        GreenMailUtil.sendTextEmailTest(theTo, theFrom, theSubject, theBody);
+
+        try {
+            Session session = GreenMailUtil.getSession(getSmtpServerSetup());
+
+            Address[] tos = new InternetAddress[]{new InternetAddress(theTo)};
+            Address from = new InternetAddress(theFrom);
+            MimeMessage mimeMessage = new MimeMessage(session);
+            mimeMessage.setSubject(theSubject);
+            mimeMessage.setFrom(from);
+
+            mimeMessage.setText(theBody);
+            Transport.send(mimeMessage, tos);
+        } catch (Throwable e) {
+            throw new RuntimeException("Can not send mail", e);
+        }
+    }
+
+    private ServerSetup getSmtpServerSetup() {
+        // TODO: allow the user to choose
+        for (ServerSetup setup : mServerSetups) {
+            if (setup.getProtocol().toUpperCase().startsWith("SMTP")) {
+                return setup;
+            }
+        }
+        throw new IllegalStateException("No SMTP(S) server setup found");
     }
 
     /** {@inheritDoc} */
@@ -115,6 +147,7 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
     }
 
     // ****** JBoss Service methods
+
     @Override
     public void startService() throws Exception {
         super.start();
@@ -137,17 +170,18 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
     // ****** Helper
     private void createGreenMail() throws Exception {
         if (null == mGreenMail) {
-            mGreenMail = new GreenMail(createServerSetup().toArray(SERVER_SETUP_ARRAY));
+            mServerSetups = createServerSetup();
+            mGreenMail = new GreenMail(mServerSetups.toArray(SERVER_SETUP_ARRAY));
             if (log.isDebugEnabled()) {
                 StringBuffer msg = new StringBuffer("Starting greenmail service ( ");
-                if(isSmtpProtocoll()) {
+                if (isSmtpProtocoll()) {
                     msg.append("SMTP:").append(mGreenMail.getSmtp().getPort()).append(' ');
                 }
-                if(isPop3Protocoll()) {
+                if (isPop3Protocoll()) {
                     msg.append("POP3:").append(mGreenMail.getPop3().getPort()).append(' ');
                 }
                 msg.append(" )");
-                log.debug(msg);
+                log.debug(msg.toString());
             }
             if (null != mUsers) {
                 for (String user : mUsers) {
