@@ -3,10 +3,15 @@
 <!DOCTYPE server>
 
 <server>
+  <!-- Prevent JBoss classloader issues -->
+  <loader-repository>
+    com.icegreen.greenmail.jboss-service:loader=greenmail-jboss-service
+  </loader-repository>
 
   <!-- The GreenMail service configration -->
   <mbean code="com.icegreen.greenmail.jboss.GreenMailService"
          name="com.icegreen:type=service,name=GreenMail">
+
     <!-- Some mail users - format is USER:PWD@HOST -->
     <attribute name="Users">
       test1:pwd1@localhost
