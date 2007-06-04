@@ -5,17 +5,25 @@
  */
 package com.icegreen.greenmail.pop3;
 
-import com.icegreen.greenmail.foedus.util.StreamUtils;
-import com.icegreen.greenmail.util.InternetPrintWriter;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 
+import com.icegreen.greenmail.foedus.util.StreamUtils;
+import com.icegreen.greenmail.util.InternetPrintWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class Pop3Connection {
-
+    // Logger.
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     // protocol stuff
     Pop3Handler _handler;
 
@@ -61,7 +69,9 @@ public class Pop3Connection {
     }
 
     public void println(String line) {
-        System.out.println("S: " + line);
+        if(log.isDebugEnabled()) {
+            log.debug("S: " + line);
+        }
         _out.print(line);
         println();
     }
@@ -80,7 +90,10 @@ public class Pop3Connection {
     public String readLine()
             throws IOException {
         String line = _in.readLine();
-        System.out.println("C: " + line);
+        
+        if(log.isDebugEnabled()) {
+            log.debug("C: " + line);
+        }
 
         return line;
     }
