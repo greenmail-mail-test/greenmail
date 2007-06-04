@@ -80,9 +80,19 @@ public void testYourRetrievingCode() throws Exception {
 GreenMail can easily be configured to use all or a combination of ports, protocols, and bind addresses.  For example it’s possible to run GreenMail on SMTP, POP3, POP3S and IMAPS ports as easily as only SMTP.
 Many systems might already be running these servers or don’t allow non root users to open the default ports which is why GreenMail ships with a special configuration for testing.   
 
+<h3>Mocking a mail server for your development environment</h3>
+GreenMail provides a <a href="TODO">JBoss GreenMail service</a> for mocking a mail server for development.
+It safes you the overhead of either installing a full productive server (like <a href="http://james.apache.org/">Apache James</a> or <a href="http://wiki.jboss.org/wiki/Wiki.jsp?page=JBossMailServer">JBoss Mail</a>).
+
 <h2>Implementation</h2>
 
-The implementation is in 100% Java with no library dependencies other than javamail.jar and activation.jar<br>
+The implementation is in 100% Java with only a few library dependencies:
+<ul>
+  <li>javamail.jar - <a href="http://java.sun.com/products/javamail/">JavaMail API</a></li>
+  <li>activation.jar - <a href="http://java.sun.com/products/javabeans/jaf/index.jsp">Java Activation Framework</a>, required by JavaMail</li>
+  <li>slf4j-api.jar - required for logging via <a href="http://www.slf4j.org/">Simple Logging Facade for Java</a></li>
+</ul>
+<br>
 Implementation is efficent with no polling wait loops etc compared to http://dumbster.sourceforge.net which only supports SMTP testing, and so with a messy API.
 
 <h2>Source Code</h2>

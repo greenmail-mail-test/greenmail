@@ -5,13 +5,22 @@
 */
 package com.icegreen.greenmail.util;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.mail.*;
-import javax.mail.internet.*;
 import java.io.*;
 import java.util.Properties;
 import java.util.Random;
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.mail.Address;
+import javax.mail.BodyPart;
+import javax.mail.MessagingException;
+import javax.mail.Part;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 /**
  * @author Wael Chatila
@@ -212,7 +221,7 @@ public class GreenMailUtil {
         return ret.toString();
     }
 
-    private static void sendTextEmail(String to, String from, String subject, String msg, final ServerSetup setup) {
+    public static void sendTextEmail(String to, String from, String subject, String msg, final ServerSetup setup) {
         try {
             Session session = getSession(setup);
 

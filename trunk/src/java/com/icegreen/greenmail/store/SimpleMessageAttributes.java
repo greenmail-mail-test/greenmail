@@ -7,14 +7,27 @@
 package com.icegreen.greenmail.store;
 
 
-import com.icegreen.greenmail.mail.MailAddress;
-import com.icegreen.greenmail.util.GreenMailUtil;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
-import javax.mail.internet.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MailDateFormat;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimePart;
+
+import com.icegreen.greenmail.mail.MailAddress;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Attributes of a Message in IMAP4rev1 style. Message
@@ -31,7 +44,8 @@ import java.util.*;
  */
 public class SimpleMessageAttributes
         implements MailMessageAttributes {
-
+    // Logging.
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     private final static String SP = " ";
     private final static String NIL = "NIL";
     private final static String Q = "\"";
@@ -251,7 +265,7 @@ public class SimpleMessageAttributes
                 //e.printStackTrace();
                 //}
             } else {
-                System.out.println("Unknown subtype of message encountered.");
+                log.warn("Unknown subtype of message encountered.");
             }
         }
     }
