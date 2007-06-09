@@ -172,7 +172,7 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
         if (null == mGreenMail) {
             mServerSetups = createServerSetup();
             mGreenMail = new GreenMail(mServerSetups.toArray(SERVER_SETUP_ARRAY));
-            if (log.isDebugEnabled()) {
+            if (log.isInfoEnabled()) {
                 StringBuffer msg = new StringBuffer("Starting greenmail service ( ");
                 if (isSmtpProtocoll()) {
                     msg.append("SMTP:").append(mGreenMail.getSmtp().getPort()).append(' ');
@@ -181,7 +181,7 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
                     msg.append("POP3:").append(mGreenMail.getPop3().getPort()).append(' ');
                 }
                 msg.append(" )");
-                log.debug(msg.toString());
+                log.info(msg.toString());
             }
             if (null != mUsers) {
                 for (String user : mUsers) {
