@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <!--
+      Test mail server.
+  -->
+  <bean id="greenMailBean" class="com.icegreen.greenmail.spring.GreenMailBean">
+    <property name="autostart" value="true"/>
+    <property name="smtpProtocoll" value="true"/>
+    <property name="pop3Protocoll" value="true"/>
+    <property name="portOffset" value="3000"/>
+    <property name="hostname" value="127.0.0.1"/>
+    <property name="users">
+      <list>
+        <value>to:password@localhost</value>
+        <value>from:password@localhost</value>
+      </list>
+    </property>
+  </bean>
+</beans>
