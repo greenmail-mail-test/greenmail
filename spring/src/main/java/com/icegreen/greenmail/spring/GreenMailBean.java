@@ -6,24 +6,28 @@ import java.util.List;
 import javax.mail.internet.MimeMessage;
 
 import com.icegreen.greenmail.util.GreenMail;
-import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.GreenMailUtil;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.icegreen.greenmail.util.ServerSetup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Spring bean for GreenMail server.
  * <p/>
- * By default, <ul> <li>SMTP, POP3 services are activated</li> <li>autostart is enabled</li>
- * <li>port offset is 3000</li> </ul>
+ * By default,
+ * <ul>
+ *  <li>SMTP, POP3 services are activated</li>
+ *  <li>autostart is enabled</li>
+ *  <li>port offset is 3000</li>
+ * </ul>
  *
  * @author Marcel May (mm)
  */
 public class GreenMailBean implements InitializingBean, DisposableBean {
     /** New logger. */
-    protected final Log log = LogFactory.getLog(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     /** The mail server. */
     private GreenMail mGreenMail;
@@ -98,7 +102,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
         }
         if (mSmtpsProtocoll) {
             mSmtpsServerSetup = createTestServerSetup(ServerSetup.SMTPS);
-            setups.add( mSmtpsServerSetup );
+            setups.add(mSmtpsServerSetup);
         }
         if (mPop3Protocoll) {
             setups.add(createTestServerSetup(ServerSetup.POP3));
@@ -371,21 +375,21 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
 
     /**
      * Sends a mail message to the GreenMail server.
-     *
+     * <p/>
      * Note: SMTP or SMTPS must be configured.
      *
-     * @param theTo the <em>TO</em> field.
-     * @param theFrom the <em>FROM</em>field.
+     * @param theTo      the <em>TO</em> field.
+     * @param theFrom    the <em>FROM</em>field.
      * @param theSubject the subject.
      * @param theContent the message content.
      */
     public void sendEmail(final String theTo, final String theFrom, final String theSubject,
                           final String theContent) {
         ServerSetup serverSetup = mSmtpServerSetup;
-        if(null==serverSetup) {
+        if (null == serverSetup) {
             serverSetup = mSmtpsServerSetup;
         }
-        if(null==serverSetup) {
+        if (null == serverSetup) {
             throw new IllegalStateException("Can not send mail, no SMTP or SMTPS setup found");
         }
         GreenMailUtil.sendTextEmail(theTo, theFrom, theSubject, theContent, serverSetup);
