@@ -65,4 +65,8 @@ public abstract class AbstractServer extends Service {
     public ServerSetup getServerSetup() {
         return setup;
     }
+
+    public String toString() {
+        return null!=setup? setup.getProtocol()+':'+setup.getPort() : super.toString();
+    }
 }
