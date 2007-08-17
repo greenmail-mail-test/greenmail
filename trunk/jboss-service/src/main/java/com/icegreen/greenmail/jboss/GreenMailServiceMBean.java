@@ -18,11 +18,11 @@ public interface GreenMailServiceMBean extends ServiceMBean {
     void setUsers(final String[] theUsers);
 
     /**
-     * Gets the configured users.
+     * Get the list of configured users.
      *
-     * @return the users.
+     * @return Value for property 'users'.
      */
-    String[] getUsers();
+    public String[] getUsers();
 
     /**
      * Sets the hostname for the mail server.
@@ -45,42 +45,84 @@ public interface GreenMailServiceMBean extends ServiceMBean {
      *
      * @param theSmtpFlag true, if SMTP should be activated.
      */
-    void setSmtpProtocoll(final boolean theSmtpFlag);
+    void setSmtpProtocol(final boolean theSmtpFlag);
 
     /**
      * Gets the SMTP status.
      *
      * @return true, if enabled.
      */
-    boolean isSmtpProtocoll();
+    boolean isSmtpProtocol();
+
+    /**
+     * Toggles SMTPS.
+     *
+     * @param theSmtpsFlag true, if SMTPS should be activated.
+     */
+    void setSmtpsProtocol(final boolean theSmtpsFlag);
+
+    /**
+     * Gets the SMTPS status.
+     *
+     * @return true, if enabled.
+     */
+    boolean isSmtpsProtocol();
 
     /**
      * Toggles POP3.
      *
      * @param thePop3Flag true, if POP3 should be activated.
      */
-    void setPop3Protocoll(final boolean thePop3Flag);
+    void setPop3Protocol(final boolean thePop3Flag);
 
     /**
      * Gets the POP3 status.
      *
      * @return true, if enabled.
      */
-    boolean isPop3Protocoll();
+    boolean isPop3Protocol();
+
+    /**
+     * Toggles POP3S.
+     *
+     * @param thePop3sFlag true, if POP3S should be activated.
+     */
+    void setPop3sProtocol(final boolean thePop3sFlag);
+
+    /**
+     * Gets the POP3S status.
+     *
+     * @return true, if enabled.
+     */
+    boolean isPop3sProtocol();
 
     /**
      * Toggles IMAP.
      *
      * @param theImapFlag true, if enabling.
      */
-    void setImap(final boolean theImapFlag);
+    void setImapProtocol(final boolean theImapFlag);
 
     /**
      * Gets the IMAP status.
      *
      * @return true, if enabled.
      */
-    boolean isImap();
+    boolean isImapProtocol();
+
+    /**
+     * Toggles IMAPS.
+     *
+     * @param theImapsFlag true, if enabling.
+     */
+    void setImapsProtocol(final boolean theImapsFlag);
+
+    /**
+     * Gets the IMAPS status.
+     *
+     * @return true, if enabled.
+     */
+    boolean isImapsProtocol();
 
     /**
      * Sets the port offset.
@@ -88,6 +130,20 @@ public interface GreenMailServiceMBean extends ServiceMBean {
      * @param thePortOffset the port offset, defaults to {@link com.icegreen.greenmail.jboss.GreenMailService#DEFAULT_PORT_OFFSET}.
      */
     void setPortOffset(int thePortOffset);
+
+    /**
+     * Gets the port offset.
+     *
+     * @return the offset.
+     */
+    int getPortOffset();
+
+    /**
+     * Lists the configured users as HTML fragment.
+     *
+     * @return the users.
+     */
+    String listUsersHTML();
 
     /**
      * Sends a mail.

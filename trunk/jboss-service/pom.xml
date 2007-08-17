@@ -46,7 +46,7 @@
     <dependency>
       <groupId>com.icegreen</groupId>
       <artifactId>greenmail</artifactId>
-      <version>1.2</version>
+      <version>1.2rc3</version>
     </dependency>
     <!-- JBoss
       Note: this is a wicked version mix ... but these are the best available JBoss artifacts
