@@ -1,6 +1,10 @@
 package com.icegreen.greenmail.jboss;
 
 import com.icegreen.greenmail.Managers;
+import com.icegreen.greenmail.mail.MailException;
+import com.icegreen.greenmail.store.FolderException;
+import com.icegreen.greenmail.store.MailFolder;
+import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.imap.ImapServer;
 import com.icegreen.greenmail.pop3.Pop3Server;
 import com.icegreen.greenmail.smtp.SmtpServer;
@@ -15,9 +19,12 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.io.IOException;
 import javax.mail.Address;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -120,7 +127,8 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
 
     /** {@inheritDoc} */
     public String listUsersHTML() {
-        StringBuilder buf = new StringBuilder("<ul>");
+        StringBuilder buf = new StringBuilder();
+        buf.append("Format: username:pwd@dns-resolvable-domain<br/><ul>");
         for (String mUser : mUsers) {
             buf.append("<li>").append(mUser).append("</li>");
         }
@@ -128,6 +136,39 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
         return buf.toString();
     }
 
+    /** {@inheritDoc} */
+    public String listMailsForUserHTML(String pEmail) {
+        GreenMailUser user = managers.getUserManager().getUserByEmail(pEmail);
+        if (null==user) {
+            return " No such user for email "+pEmail;
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append("<table>");
+        try {
+            MailFolder mailFolder = managers.getUserManager().getImapHostManager().getInbox(user);
+            builder.append("<caption>").append(mailFolder.getMessageCount())
+                    .append(" Mails for ").append(pEmail).append("</caption>");
+            builder.append(
+                    "<tr><th>From</th><th>Subject</th><th>Received date</th><th>Content</th></tr>");
+            for(StoredMessage msg: (List<StoredMessage>)mailFolder.getMessages()) {
+                MimeMessage mimeMessage = msg.getMimeMessage();
+                builder.append("<tr>");
+                builder.append("<td>").append(mimeMessage.getFrom()).append("</td>");
+                builder.append("<td>").append(mimeMessage.getSubject()).append("</td>");
+                builder.append("<td>").append(mimeMessage.getReceivedDate()).append("</td>");
+                builder.append("<td>").append(mimeMessage.getContent()).append("</td>");
+                builder.append("</tr>");
+            }
+        } catch(IOException e) {
+            throw new IllegalStateException(e);
+        } catch(MessagingException e) {
+            throw new IllegalStateException(e);
+        } catch (FolderException e) {
+            throw new IllegalStateException(e);
+        }
+        builder.append("</table>");
+        return builder.toString();
+    }
     // ****** JBoss Service methods
 
     @Override
