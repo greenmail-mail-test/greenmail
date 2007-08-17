@@ -27,6 +27,7 @@ import javax.mail.Transport;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 /**
  * Implements the GreenMailServiceMBean.
@@ -155,8 +156,20 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
                 builder.append("<tr>");
                 builder.append("<td>").append(mimeMessage.getFrom()).append("</td>");
                 builder.append("<td>").append(mimeMessage.getSubject()).append("</td>");
-                builder.append("<td>").append(mimeMessage.getReceivedDate()).append("</td>");
-                builder.append("<td>").append(mimeMessage.getContent()).append("</td>");
+                builder.append("<td>")
+                        .append(null==mimeMessage.getReceivedDate()
+                                ? msg.getInternalDate()
+                                : mimeMessage.getReceivedDate())
+                        .append("</td>");
+
+                Object content = mimeMessage.getContent();
+                if(content instanceof MimeMultipart) {
+                    MimeMultipart multipart = (MimeMultipart) content;
+                    builder.append("<td>").append(multipart.getBodyPart(0).getContent()).append("</td>");
+                }
+                else {
+                    builder.append("<td>").append(mimeMessage.getContent()).append("</td>");
+                }
                 builder.append("</tr>");
             }
         } catch(IOException e) {
