@@ -1,21 +1,25 @@
 package com.icegreen.greenmail.jboss;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.icegreen.greenmail.Managers;
+import com.icegreen.greenmail.imap.ImapServer;
+import com.icegreen.greenmail.pop3.Pop3Server;
+import com.icegreen.greenmail.smtp.SmtpServer;
+import com.icegreen.greenmail.user.GreenMailUser;
+import com.icegreen.greenmail.user.UserException;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetup;
+import com.icegreen.greenmail.util.Service;
+import org.jboss.system.ServiceMBeanSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.mail.Address;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
-import com.icegreen.greenmail.util.GreenMail;
-import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.ServerSetup;
-import org.jboss.system.ServiceMBeanSupport;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 
 /**
  * Implements the GreenMailServiceMBean.
@@ -26,65 +30,33 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
     /** New logger. */
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
+    private Managers managers;
+    Map<ServiceProtocol, Service> services = new HashMap<ServiceProtocol, Service>();
+
     /** Default port offset is {@value #DEFAULT_PORT_OFFSET}. */
     public static final int DEFAULT_PORT_OFFSET = 3000;
-    /** The mail server. */
-    private GreenMail mGreenMail;
 
     /** SMTP server */
-    private boolean mSmtpProtocoll = true;
+    private boolean mSmtpProtocol = true;  // activated by default
     /** SMTPS server */
-    private boolean mSmtpsProtocoll;
+    private boolean mSmtpsProtocol;
     /** POP3 server */
-    private boolean mPop3Protocoll = true;
+    private boolean mPop3Protocol = true;  // activated by default
     /** POP3S server */
-    private boolean mPop3sProtocoll;
+    private boolean mPop3sProtocol;
     /** IMAP server. */
-    private boolean mImapProtocoll;
+    private boolean mImapProtocol = true; // activated by default
     /** IMAPS server. */
-    private boolean mImapsProtocoll;
+    private boolean mImapsProtocol;
     /** Users. */
     private String[] mUsers;
     /** Port offset (default is {@value #DEFAULT_PORT_OFFSET}) */
     private int mPortOffset = DEFAULT_PORT_OFFSET;
-    /** Hostname. Default is null (= localhost). */
-    private String mHostname = "localhost";
-    /** Helper array. */
-    private static final ServerSetup[] SERVER_SETUP_ARRAY = new ServerSetup[0];
-    /** All server setups configured. */
-    private List<ServerSetup> mServerSetups;
+    /** Hostname (defaults to {@value}). */
+    private String mHostname = "127.0.0.1";
 
     // ****** GreenMail service methods
 
-    /** {@inheritDoc} */
-    public void setSmtpProtocoll(final boolean theSmtpProtocoll) {
-        mSmtpProtocoll = theSmtpProtocoll;
-    }
-
-    /** {@inheritDoc} */
-    public boolean isSmtpProtocoll() {
-        return mSmtpProtocoll;
-    }
-
-    /** {@inheritDoc} */
-    public void setPop3Protocoll(final boolean thePop3Protocoll) {
-        mPop3Protocoll = thePop3Protocoll;
-    }
-
-    /** {@inheritDoc} */
-    public boolean isPop3Protocoll() {
-        return mPop3Protocoll;
-    }
-
-    /** {@inheritDoc} */
-    public void setImap(final boolean theImapFlag) {
-        mImapProtocoll = theImapFlag;
-    }
-
-    /** {@inheritDoc} */
-    public boolean isImap() {
-        return mImapProtocoll;
-    }
 
     /** {@inheritDoc} */
     public void setHostname(final String pHostname) {
@@ -98,12 +70,21 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
 
     /** {@inheritDoc} */
     public void setUsers(final String[] theUsers) {
-        if (log.isDebugEnabled()) {
-            log.debug("Configuring mail users " + Arrays.asList(theUsers));
-        }
         mUsers = theUsers;
+        // Cleanup new line and ws
+        for (int i = 0; i < theUsers.length; i++) {
+            mUsers[i] = mUsers[i].trim();
+        }
     }
 
+    /**
+     * Getter for property 'users'.
+     *
+     * @return Value for property 'users'.
+     */
+    public String[] getUsers() {
+        return mUsers;
+    }
 
     /** {@inheritDoc} */
     public void sendMail(final String theTo,
@@ -112,11 +93,17 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
                          final String theBody) {
         if (log.isDebugEnabled()) {
             log.debug("Sending mail, TO: <" + theTo + ">, FROM: <" + theFrom +
-                    ">, SUBJECT: <" + theSubject + ">, CONTENT: <" + theBody+'>');
+                    ">, SUBJECT: <" + theSubject + ">, CONTENT: <" + theBody + '>');
         }
 
         try {
-            Session session = GreenMailUtil.getSession(getSmtpServerSetup());
+            SmtpServer smtpOrSmtpsService = (SmtpServer) (services.containsKey(ServiceProtocol.SMTP) ?
+                    services.get(ServiceProtocol.SMTP) : services.get(ServiceProtocol.SMTPS));
+            if (null == smtpOrSmtpsService) {
+                throw new IllegalStateException("No required smtp or smtps service configured!");
+            }
+
+            Session session = GreenMailUtil.getSession(smtpOrSmtpsService.getServerSetup());
 
             Address[] tos = new InternetAddress[]{new InternetAddress(theTo)};
             Address from = new InternetAddress(theFrom);
@@ -131,19 +118,14 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
         }
     }
 
-    private ServerSetup getSmtpServerSetup() {
-        // TODO: allow the user to choose
-        for (ServerSetup setup : mServerSetups) {
-            if (setup.getProtocol().toUpperCase().startsWith("SMTP")) {
-                return setup;
-            }
-        }
-        throw new IllegalStateException("No SMTP(S) server setup found");
-    }
-
     /** {@inheritDoc} */
-    public String[] getUsers() {
-        return mUsers;
+    public String listUsersHTML() {
+        StringBuilder buf = new StringBuilder("<ul>");
+        for (String mUser : mUsers) {
+            buf.append("<li>").append(mUser).append("</li>");
+        }
+        buf.append("</ul>");
+        return buf.toString();
     }
 
     // ****** JBoss Service methods
@@ -151,139 +133,182 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
     @Override
     public void startService() throws Exception {
         super.start();
-        createGreenMail();
+
+        if (null == managers) {
+            managers = new Managers();
+        }
+
+        // Add users
+        for (String user : mUsers) {
+            addMailUser(user);
+        }
+
+        stopGreenMailServices();
+
+        // Configure services
+        if (mSmtpProtocol) {
+            startGreenMailService(ServiceProtocol.SMTP,
+                                  new SmtpServer(createTestServerSetup(ServerSetup.SMTP), managers));
+        }
+        if (mSmtpsProtocol) {
+            startGreenMailService(ServiceProtocol.SMTPS,
+                                  new SmtpServer(createTestServerSetup(ServerSetup.SMTPS), managers));
+        }
+        if (mPop3Protocol) {
+            startGreenMailService(ServiceProtocol.POP3,
+                                  new Pop3Server(createTestServerSetup(ServerSetup.POP3), managers));
+        }
+        if (mPop3sProtocol) {
+            startGreenMailService(ServiceProtocol.POP3S,
+                                  new Pop3Server(createTestServerSetup(ServerSetup.POP3S), managers));
+        }
+        if (mImapProtocol) {
+            startGreenMailService(ServiceProtocol.IMAP,
+                                  new ImapServer(createTestServerSetup(ServerSetup.IMAP), managers));
+        }
+        if (mImapsProtocol) {
+            startGreenMailService(ServiceProtocol.IMAPS,
+                                  new ImapServer(createTestServerSetup(ServerSetup.IMAPS), managers));
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Configured servers " + services.values());
+        }
+    }
+
+    private void startGreenMailService(ServiceProtocol pProtocol, Service pNewService) {
+        services.put(pProtocol, pNewService);
+        if (log.isDebugEnabled()) {
+            log.debug("Starting " + pNewService);
+        }
+        pNewService.startService(null);
+    }
+
+    private void stopGreenMailServices() {
+        if (!services.isEmpty()) {
+            for (Service service : services.values()) {
+                service.stopService(null);
+                if (log.isDebugEnabled()) {
+                    log.debug("Stopped " + service);
+                }
+            }
+        }
     }
 
     @Override
     public void stopService() {
-        if (null != mGreenMail) {
-            mGreenMail.stop();
-            if (log.isDebugEnabled()) {
-                log.debug("GreenMailService stopped.");
-            }
-        } else {
-            log.info("Already stopped, ignoring.");
-        }
+        stopGreenMailServices();
         super.stop();
     }
 
-    // ****** Helper
-    private void createGreenMail() throws Exception {
-        if (null == mGreenMail) {
-            mServerSetups = createServerSetup();
-            mGreenMail = new GreenMail(mServerSetups.toArray(SERVER_SETUP_ARRAY));
-            if (log.isInfoEnabled()) {
-                StringBuffer msg = new StringBuffer("Starting greenmail service ( ");
-                if (isSmtpProtocoll()) {
-                    msg.append("SMTP:").append(mGreenMail.getSmtp().getPort()).append(' ');
-                }
-                if (isPop3Protocoll()) {
-                    msg.append("POP3:").append(mGreenMail.getPop3().getPort()).append(' ');
-                }
-                msg.append(" )");
-                log.info(msg.toString());
-            }
-            if (null != mUsers) {
-                for (String user : mUsers) {
-                    addMailUser(user);
-                }
-            }
-            mGreenMail.start();
-        } else {
-            log.info("Already started, ignoring.");
-        }
-    }
-
     private void addMailUser(final String user) {
+        // Parse ...
         int posColon = user.indexOf(':');
         int posAt = user.indexOf('@');
         String login = user.substring(0, posColon);
         String pwd = user.substring(posColon + 1, posAt);
         String domain = user.substring(posAt + 1);
+        String email = login + '@' + domain;
         if (log.isDebugEnabled()) {
             // This is a test system, so we do not care about pwd in the log file.
             log.debug("Adding user " + login + ':' + pwd + '@' + domain);
         }
-        mGreenMail.setUser(login + '@' + domain, login, pwd);
-    }
 
-    /**
-     * Creates the server setup, depending on the protocoll flags.
-     *
-     * @return the configured server setups.
-     */
-    private List<ServerSetup> createServerSetup() {
-        List<ServerSetup> setups = new ArrayList<ServerSetup>();
-        if (mSmtpProtocoll) {
-            setups.add(createTestServerSetup(ServerSetup.SMTP));
+
+        GreenMailUser greenMailUser = managers.getUserManager().getUser(email);
+        if (null == greenMailUser) {
+            try {
+                greenMailUser = managers.getUserManager().createUser(email, login, pwd);
+                greenMailUser.setPassword(pwd);
+            } catch (UserException e) {
+                throw new RuntimeException(e);
+            }
         }
-        if (mSmtpsProtocoll) {
-            setups.add(createTestServerSetup(ServerSetup.SMTPS));
-        }
-        if (mPop3Protocoll) {
-            setups.add(createTestServerSetup(ServerSetup.POP3));
-        }
-        if (mPop3sProtocoll) {
-            setups.add(createTestServerSetup(ServerSetup.POP3S));
-        }
-        if (mImapProtocoll) {
-            setups.add(createTestServerSetup(ServerSetup.IMAP));
-        }
-        if (mImapsProtocoll) {
-            setups.add(createTestServerSetup(ServerSetup.IMAPS));
-        }
-        return setups;
     }
 
     /**
      * Creates a test server setup with configured offset.
      *
-     * @param theSetup the server setup.
+     * @param pServerSetup the server setup.
      * @return the test server setup.
      */
-    private ServerSetup createTestServerSetup(final ServerSetup theSetup) {
-        return new ServerSetup(mPortOffset + theSetup.getPort(),
+    private ServerSetup createTestServerSetup(final ServerSetup pServerSetup) {
+        return new ServerSetup(mPortOffset + pServerSetup.getPort(),
                                mHostname,
-                               theSetup.getProtocol());
+                               pServerSetup.getProtocol());
     }
 
     /**
-     * Setter for property 'smtpsProtocoll'.
+     * Setter for property 'smtpsProtocol'.
      *
-     * @param theSmtpsProtocoll Value to set for property 'smtpsProtocoll'.
+     * @param theSmtpsProtocol Value to set for property 'smtpsProtocol'.
      */
-    public void setSmtpsProtocoll(final boolean theSmtpsProtocoll) {
-        mSmtpsProtocoll = theSmtpsProtocoll;
+    public void setSmtpsProtocol(final boolean theSmtpsProtocol) {
+        mSmtpsProtocol = theSmtpsProtocol;
     }
 
-
-    /**
-     * Setter for property 'pop3sProtocoll'.
-     *
-     * @param thePop3sProtocoll Value to set for property 'pop3sProtocoll'.
-     */
-    public void setPop3sProtocoll(final boolean thePop3sProtocoll) {
-        mPop3sProtocoll = thePop3sProtocoll;
+    /** {@inheritDoc} */
+    public boolean isSmtpsProtocol() {
+        return mSmtpsProtocol;
     }
 
-    /**
-     * Setter for property 'imapProtocoll'.
-     *
-     * @param theImapProtocoll Value to set for property 'imapProtocoll'.
-     */
-    public void setImapProtocoll(final boolean theImapProtocoll) {
-        mImapProtocoll = theImapProtocoll;
+    /** {@inheritDoc} */
+    public void setSmtpProtocol(final boolean theSmtpProtocol) {
+        mSmtpProtocol = theSmtpProtocol;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isSmtpProtocol() {
+        return mSmtpProtocol;
     }
 
     /**
-     * Setter for property 'imapsProtocoll'.
+     * Setter for property 'pop3sProtocol'.
      *
-     * @param theImapsProtocoll Value to set for property 'imapsProtocoll'.
+     * @param thePop3sProtocol Value to set for property 'pop3sProtocol'.
      */
-    public void setImapsProtocoll(final boolean theImapsProtocoll) {
-        mImapsProtocoll = theImapsProtocoll;
+    public void setPop3sProtocol(final boolean thePop3sProtocol) {
+        mPop3sProtocol = thePop3sProtocol;
     }
 
+    /** {@inheritDoc} */
+    public boolean isPop3sProtocol() {
+        return mPop3sProtocol;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isImapsProtocol() {
+        return mImapsProtocol;
+    }
+
+    /**
+     * Setter for property 'imapsProtocol'.
+     *
+     * @param theImapsProtocol Value to set for property 'imapsProtocol'.
+     */
+    public void setImapsProtocol(final boolean theImapsProtocol) {
+        mImapsProtocol = theImapsProtocol;
+    }
+
+    /** {@inheritDoc} */
+    public void setPop3Protocol(final boolean thePop3Protocol) {
+        mPop3Protocol = thePop3Protocol;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isPop3Protocol() {
+        return mPop3Protocol;
+    }
+
+    /** {@inheritDoc} */
+    public void setImapProtocol(final boolean theImapFlag) {
+        mImapProtocol = theImapFlag;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isImapProtocol() {
+        return mImapProtocol;
+    }
 
     /**
      * Setter for property 'portOffset'.
@@ -294,6 +319,9 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
         mPortOffset = thePortOffset;
     }
 
-
+    /** {@inheritDoc} */
+    public int getPortOffset() {
+        return mPortOffset;
+    }
 }
 
