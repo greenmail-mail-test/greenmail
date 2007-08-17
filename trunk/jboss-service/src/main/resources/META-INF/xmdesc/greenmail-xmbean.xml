@@ -84,6 +84,16 @@
     <name>listUsersHTML</name>
     <return-type>java.lang.String</return-type>
   </operation>
+  <operation>
+    <description>Lists all mails for an email (HTML list formatted)</description>
+    <name>listMailsForUserHTML</name>
+    <parameter>
+      <description>A valid email</description>
+      <name>email</name>
+      <type>java.lang.String</type>
+    </parameter>
+    <return-type>java.lang.String</return-type>
+  </operation>
 
   &defaultOperations;
 </mbean>

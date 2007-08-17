@@ -159,6 +159,13 @@ public interface GreenMailServiceMBean extends ServiceMBean {
                          final String theContent);
 
     /**
+     * Lists all mails for the user HTML formated.
+     *
+     * @return the mails.
+     */
+    String listMailsForUserHTML(String pEmail);
+
+    /**
      * Starts the service.
      * <p/>
      * Starting and stopping reconfigures the service.
