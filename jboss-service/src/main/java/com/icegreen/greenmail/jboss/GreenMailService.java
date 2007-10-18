@@ -1,13 +1,26 @@
 package com.icegreen.greenmail.jboss;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.mail.Address;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
 import com.icegreen.greenmail.Managers;
-import com.icegreen.greenmail.mail.MailException;
-import com.icegreen.greenmail.store.FolderException;
-import com.icegreen.greenmail.store.MailFolder;
-import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.imap.ImapServer;
 import com.icegreen.greenmail.pop3.Pop3Server;
 import com.icegreen.greenmail.smtp.SmtpServer;
+import com.icegreen.greenmail.store.FolderException;
+import com.icegreen.greenmail.store.MailFolder;
+import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.util.GreenMailUtil;
@@ -16,18 +29,6 @@ import com.icegreen.greenmail.util.Service;
 import org.jboss.system.ServiceMBeanSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-import java.io.IOException;
-import javax.mail.Address;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 
 /**
  * Implements the GreenMailServiceMBean.
@@ -154,7 +155,8 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
             for(StoredMessage msg: (List<StoredMessage>)mailFolder.getMessages()) {
                 MimeMessage mimeMessage = msg.getMimeMessage();
                 builder.append("<tr>");
-                builder.append("<td>").append(mimeMessage.getFrom()).append("</td>");
+                builder.append("<td>").append(
+                        Arrays.toString(mimeMessage.getFrom())).append("</td>");
                 builder.append("<td>").append(mimeMessage.getSubject()).append("</td>");
                 builder.append("<td>")
                         .append(null==mimeMessage.getReceivedDate()
