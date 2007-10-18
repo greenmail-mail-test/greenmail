@@ -27,12 +27,14 @@
 <h2>GreenMail JBoss Service</h2>
 GreenMail provides a JBoss Service for easy JBoss integration. The usage szenario is a
 development or test environment where a real mail server is too much overhead.
-With the GreenMail mail service each developer has its own local mail server.
+With the GreenMail mail service each developer has its own local mail server sandbox -
+so there's no danger for accidentally leaking test mails into the Internet.
 <ul>
     <li><a href="#deploy">Deploy the service</a></li>
     <li><a href="#configure">Configurable user accounts</a></li>
     <li><a href="#inject_via_client">Send a mail message using your mail client</a></li>
     <li><a href="#inject_via_jmx">Send a mail message via JMX</a></li>
+    <li><a href="#list_mail_for_user">List mails for a user via JMX</a></li>
 </ul>
 
 <h3><a name="deploy">Deploy the service</a></h3>
@@ -73,12 +75,14 @@ Starting JBoss will now automatically also start the GreenMail JBoss Service. Yo
      [exec] 01:03:10,153 INFO  [Log4jService$URLWatchTimerTask] Configuring from URL: resource:log4j.xml
      [exec] 01:03:11,572 INFO  <b>[GreenMailService] Starting greenmail service ( SMTP:3025 POP3:3110  )</b>
 </pre>
-<p>
-  Opening the JBoss Console, you can see the GreenMail Service JMX Bean:<br/><br/>
-  <img src="pics/greenmail-jboss-console.gif" alt="JBoss Console with GreenMail Service JMX Bean"/>
-  <br/><br/>
-  The first entry is the GreenMail JMX bean, the second entry contains the registered custom class loader.
-</p>
+
+Opening the JBoss Console, you can see the GreenMail Service JMX Bean:
+<p><img src="pics/greenmail-jboss-console.gif" alt="JBoss Console 4.2.0 GA with GreenMail Service JMX Bean"/></p>
+You find two entries, of which the second one holds our interest:
+<ul>
+  <li>A loader for isolated class loading inside the JBoss service (as to prevent the greenmail JavaMail to conflict with the application server version).</li>
+  <li>The <em>GreenMail</em> service bean for managing GreenMail</li>
+</ul>
 
 <h3><a name="configure">Configuring the service</a></h3>
 The GreenMail service is configured by the file META-INF/jboss-service.xml in the exploded service directory.
@@ -90,12 +94,12 @@ The GreenMail service is configured by the file META-INF/jboss-service.xml in th
 &lt;server&gt;
   &lt;!-- Prevent JBoss classloader issues by configuring an extra classloader --&gt;
   &lt;loader-repository&gt;
-    com.icegreen.greenmail.jboss-service:loader=greenmail-jboss-service
+    com.icegreen.greenmail:loader=greenmail-jboss-service
   &lt;/loader-repository&gt;
 
   &lt;!-- The GreenMail service configration --&gt;
   &lt;mbean code="com.icegreen.greenmail.jboss.GreenMailService"
-         name="com.icegreen:type=service,name=GreenMail"&gt;
+         name="com.icegreen.greenmail:type=service,name=GreenMail"&gt;
 
     &lt;!-- Some mail users - format is USER:PWD@HOST --&gt;
     &lt;attribute name="Users"&gt;
@@ -117,9 +121,10 @@ The GreenMail service is configured by the file META-INF/jboss-service.xml in th
   <li>Open the JBoss JMX Console in your browser (see the <a href="#deploy">deployment picture</a>).</li>
   <li>Select the JMX bean of name <em>GreenMail</em> and type <em>service</em></li>
   <li>Invoke the <em>sendMail</em> operation:
-      <p><img src="pics/greenmail-bean-sendmail.gif" alt="sendmail JMX bean operation"/></p>
+      <p><img src="pics/greenmail-invoke-sendmail.gif" alt="sendmail JMX bean operation"/></p>
   </li>
 </ol>
+The mail should now be visible by <a href="#list_mail_for_user">listing the user mails</a>, if there is no automatic polling of the mail box.
 
 <h3><a name="inject_via_client">Send a message with your mail client</a></h3>
 You can use your favorite mail client if you configure it for GreenMail by setting the outgoing mail to the GreenMail SMTP port.
@@ -127,6 +132,20 @@ By default this is <em>localhost:3025</em>. Of course you can also read created 
 your mail client to use GreenMail POP3 (<em>localhost:3110</em>) or IMAP (<em>localhost:3143</em>).
 You will probably have to adjust these settings for your specific configuration.
 
+<h3><a name="list_mail_for_user">List emails for a user via JMX</a></h3>
+Instead of using your favourite mail client, you can use the JMX GreenMail service for listing all current mails in of a user in the GreenMail server sandbox.
+<ol>
+  <li>Open your browser with the JMX Console and choose the GreenMail service (see <a href="#inject_via_jmx">sending mail paragraph</a>)</li>
+  <li>Enter the user email for the <em>listMailsForUserHTML</em> operation</em>:
+      <p><img src="pics/greenmail-invoke-list-mail-for-user.gif" alt="invoke list mail for user JMX bean operation"/></p>
+  </li>
+  <li>Click the invoke button. The browser now shows all emails for the specified user:
+      <p><img src="pics/greenmail-bean-list-mail-for-user.gif" alt="result for list mail for user JMX bean operation"/></p>
+  </li>
+</ol>
+Note that displaying mails does not modify the user mail box.
+
+<br/><br/>
 <br/><br/>
 Have fun! We welcome any <a href="feedback.html">feedback</a>.
 </td>
