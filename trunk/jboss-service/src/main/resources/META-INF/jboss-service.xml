@@ -5,12 +5,12 @@
 <server>
   <!-- Prevent JBoss classloader issues -->
   <loader-repository>
-    com.icegreen.greenmail.jboss-service:loader=greenmail-jboss-service
+    com.icegreen.greenmail:loader=greenmail-jboss-service
   </loader-repository>
 
   <!-- The GreenMail service configration -->
   <mbean code="com.icegreen.greenmail.jboss.GreenMailService"
-         name="com.icegreen:type=service,name=GreenMail"
+         name="com.icegreen.greenmail:type=service,name=GreenMail"
          xmbean-dd="META-INF/xmdesc/greenmail-xmbean.xml">
 
     <!-- Some mail users - format is USER:PWD@HOST -->
