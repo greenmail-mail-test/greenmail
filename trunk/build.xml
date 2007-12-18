@@ -8,7 +8,7 @@
 
   <property name="Name" value="GreenMail"/>
 
-  <property name="version" value="1.2"/>
+  <property name="version" value="1.3"/>
   <!-- Set the properties for intermediate directory -->
   <property name="build.dir" value="build"/>
   <property name="build.lib" value="${build.dir}/lib"/>
@@ -95,8 +95,9 @@
 
             <include name="*.html"/>
             <include name="stylesheet.css"/>
-            <include name="pics/greenmail.gif"/>
-            <include name="pics/footer.gif"/>
+            <include name="pics/*.gif"/>
+            <include name="pics/*.jpg"/>
+			<include name="pics/*.jpeg"/>            
 
             <include name="lgpl.txt"/>
         </zipfileset>
