@@ -1,0 +1,296 @@
+<?xml version='1.0'?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <name>== GreenMail ==</name>
+  <description>GreenMail - Email Test Servers</description>
+  <url>http://www.icegreen.com/greenmail/</url>
+  <inceptionYear>2006</inceptionYear>
+  
+  <groupId>com.icegreen</groupId>
+  <artifactId>greenmail</artifactId>
+  <packaging>jar</packaging>
+  <!-- This version should get inherited to all subprojects. -->
+  <version>1.3</version>
+  
+  <licenses>
+    <license>
+      <name>Apache 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>
+      scm:svn:http://greenmail.svn.sourceforge.net/svnroot/greenmail/trunk
+    </connection>
+    <developerConnection>
+      scm:svn:https://greenmail.svn.sourceforge.net/svnroot/greenmail/trunk
+    </developerConnection>
+    <url>
+      http://greenmail.svn.sourceforge.net/svnroot/greenmail/trunk
+    </url>
+  </scm>
+  
+  <issueManagement>
+    <url>http://sourceforge.net/tracker/?group_id=159695</url>
+  </issueManagement>
+  
+  <!-- details about the organization that 'owns' the project -->
+  <organization>
+    <name>Icegreen Technologies</name>
+    <url>http://www.icegreen.com</url>
+  </organization>
+  
+  
+  <dependencies>
+    <!-- Compile scope (=default) -->
+    <dependency>
+      <groupId>javax.mail</groupId>
+      <artifactId>mail</artifactId>
+      <version>1.4</version>
+    </dependency>
+
+    <dependency> <!-- SLF4J Core -->
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.3.1</version>
+    </dependency>
+
+    <!-- Test scope -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>1.3.1</version>
+        <scope>test</scope>
+    </dependency>
+  </dependencies>
+  
+  <!-- who the developers are for the project -->
+  <developers>
+    <developer>
+      <name>Wael Chatila</name>
+      <id>waelc</id>
+      <email>see my blog</email>
+      <url>http://waelchatila.com</url>
+      <organization>IceGreen Technologies</organization>
+      <organizationUrl>http://www.icegreen.com</organizationUrl>
+      <roles>
+        <role>Lead Developer</role>
+      </roles>
+    </developer>
+  </developers>
+  <contributors>
+    <contributor>
+      <name>Stephen Fenech</name>
+      <properties>
+        <id>zegon</id>
+      </properties>
+      <email></email>
+      <url></url>
+    </contributor>
+    <contributor>
+      <name>Marcel May</name>
+      <properties>
+        <id>marcel_may</id>
+      </properties>
+      <email>marcel.may@metacube.net</email>
+      <url>http://www.metacube.net</url>
+    </contributor>
+  </contributors>
+  
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>2.0-beta-5</version>
+        <configuration>
+          <skin>
+            <groupId>org.apache.maven.skins</groupId>
+            <artifactId>maven-site-skin</artifactId>
+            <version>1.0</version>
+          </skin>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>taglist-maven-plugin</artifactId>
+        <version>2.0-beta-1</version>
+        
+        <configuration>
+          <tags>TODO, @todo, FIXME, @deprecated</tags>
+        </configuration>
+        
+      </plugin>
+      
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>surefire-report-maven-plugin</artifactId>
+        <version>2.0-beta-1</version>
+      </plugin>
+      
+      <plugin>
+        <!-- javadoc report -->
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
+          <aggregate>true</aggregate>
+          <links>
+            <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+            <link>http://java.sun.com/products/javamail/javadocs/</link>
+            <link>http://www.junit.org/junit/javadoc/</link>
+          </links>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <!--  This report includes a cross-reference of the project's sources. Each source entry is also linked with its corresponding Javadoc (if Javadoc was generated). -->
+        <artifactId>maven-jxr-plugin</artifactId>
+        <configuration>
+          <linkJavadoc>true</linkJavadoc>
+          <aggregate>true</aggregate>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jdepend-maven-plugin</artifactId>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>2.0</version>
+        
+        <configuration>
+          <format>html</format>
+          <linkXref>true</linkXref>
+          <!--
+                    <xrefLocation>xref</xrefLocation>
+                    -->
+          <sourceEncoding>utf-8</sourceEncoding>
+          <minimumTokens>100</minimumTokens>
+          <targetJdk>1.5</targetJdk>
+        </configuration>
+      </plugin>
+      
+      
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <configuration>
+          <threshold>Normal</threshold>
+        </configuration>
+      </plugin>
+      
+      <!--This plugin with version 2.0-beta-4-SNAPSHOT is needed to resolve
+          problem described in
+          http://www.mail-archive.com/users@maven.apache.org/msg32743.html -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>dependencies</report>
+              <report>dependency-convergence</report>
+              <report>scm</report>
+              <report>mailing-list</report>
+              <report>cim</report>
+              <report>issue-tracking</report>
+              <report>license</report>
+              <report>project-team</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+    
+  </reporting>
+  
+  <!-- distribution -->
+  <!-- TODO
+  <distributionManagement>
+    <repository>
+      <id>repository-sf-greenmail</id>
+      <url>scp://HOSTNAME/PATH</url>
+    </repository>
+    <snapshotRepository>
+      <id>snapshot-repository-sf-greenmail</id>
+      <url>scp://HOSTNAME/PATH</url>
+    </snapshotRepository>
+    <site>
+      <id>site-sf-greenmail</id>
+      <url>scp://HOSTNAME/PATH/TO/HTDOCS</url>
+    </site>
+  </distributionManagement>
+  -->
+  
+  <build>
+    
+    <!-- Plugin defaults for all inherited POMs. -->
+    <plugins>
+      <plugin>
+        <!-- http://maven.apache.org/plugins/maven-compile-plugin/plugin-info.html -->
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.4</source>
+          <target>1.4</target>
+          <debug>true</debug>
+        </configuration>
+      </plugin>
+      <plugin>
+        <!-- http://maven.apache.org/plugins/maven-surefire-plugin/plugin-info.html -->
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- once | pertest -->
+          <forkMode>once</forkMode>
+          <!-- cli -->
+          <argLine>-Xmx512m -enableassertions</argLine>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.1</version>
+        <configuration>
+          <archive>
+            <addMavenDescriptor>false</addMavenDescriptor>
+          </archive>
+        </configuration>
+      </plugin>
+      <!-- IDE plugins -->
+      <plugin>
+        <!-- http://maven.apache.org/plugins/maven-idea-plugin/plugin-info.html -->
+        <artifactId>maven-idea-plugin</artifactId>
+        <configuration>
+          <downloadSources>true</downloadSources>
+          <linkModules>true</linkModules>
+          <jdkLevel>1.4</jdkLevel>
+        </configuration>
+      </plugin>
+      <plugin>
+        <!-- http://maven.apache.org/plugins/maven-eclipse-plugin/plugin-info.html -->
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <downloadSources>true</downloadSources>
+        </configuration>
+      </plugin>
+      
+    </plugins>
+    
+    <sourceDirectory>src/java</sourceDirectory>
+    <testSourceDirectory>src/test</testSourceDirectory>
+  </build>
+  
+</project>
