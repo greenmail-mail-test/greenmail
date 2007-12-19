@@ -110,6 +110,7 @@
             <include name="lib/greenmail*.jar"/>
             <include name="lib/activation*.jar"/>
             <include name="lib/javamail*.jar"/>
+            <include name="lib/slf4j*.jar"/>
         </zipfileset>
         <zipfileset dir=".">
             <include name="*.html"/>
