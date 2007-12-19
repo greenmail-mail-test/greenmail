@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.icegreen</groupId>
   <artifactId>greenmail-jboss-service</artifactId>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.3</version>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
   <description>JBoss Service MBean for GreenMail</description>
@@ -46,10 +46,10 @@
     <dependency>
       <groupId>com.icegreen</groupId>
       <artifactId>greenmail</artifactId>
-      <version>1.2rc3</version>
+      <version>1.3</version>
     </dependency>
     <!-- JBoss
-      Note: this is a wicked version mix ... but these are the best available JBoss artifacts
+      Note: this is a wicked version mix ... but these are the best available JBoss artifacts I could find
     -->
     <dependency>
       <groupId>jboss</groupId>
