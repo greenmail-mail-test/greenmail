@@ -115,8 +115,9 @@
         <zipfileset dir=".">
             <include name="*.html"/>
             <include name="stylesheet.css"/>
-            <include name="pics/greenmail.gif"/>
-            <include name="pics/footer.gif"/>
+            <include name="pics/*.gif"/>
+            <include name="pics/*.jpg"/>
+			<include name="pics/*.jpeg"/>            
 
             <include name="lgpl.txt"/>
         </zipfileset>
