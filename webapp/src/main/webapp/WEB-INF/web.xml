@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+         version="2.4">
+  <context-param>
+    <param-name>greenmail.portOffset</param-name>
+    <param-value>10000</param-value>
+  </context-param>
+  <context-param>
+    <param-name>greenmail.smtp</param-name>
+    <param-value></param-value>
+  </context-param>
+  <context-param>
+    <param-name>greenmail.pop3</param-name>
+    <param-value></param-value>
+  </context-param>
+  <context-param>
+    <param-name>greenmail.imap</param-name>
+    <param-value></param-value>
+  </context-param>
+  <context-param>
+    <param-name>greenmail.users</param-name>
+    <param-value>
+      user1:password@localhost
+      user2:password2@localhost
+    </param-value>
+  </context-param>
+
+  <listener>
+    <description>GreenMail Server Startup Listener</description>
+    <listener-class>com.icegreen.greenmail.webapp.GreenMailListener</listener-class>
+  </listener>
+</web-app>
