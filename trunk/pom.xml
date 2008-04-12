@@ -48,6 +48,7 @@
   <modules>
     <module>greenmail-core</module>
     <module>greenmail-webapp</module>
+    <module>greenmail-jboss-service</module>
   </modules>
 
   <!-- who the developers are for the project -->
@@ -244,7 +245,7 @@
           <version>2.1</version>
           <configuration>
             <archive>
-              <addMavenDescriptor>false</addMavenDescriptor>
+              <addMavenDescriptor>true</addMavenDescriptor>
             </archive>
           </configuration>
         </plugin>
@@ -263,6 +264,7 @@
           <artifactId>maven-eclipse-plugin</artifactId>
           <configuration>
             <downloadSources>true</downloadSources>
+            <downloadJavadoc>true</downloadJavadoc>
           </configuration>
         </plugin>
         
@@ -295,6 +297,23 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
         <version>1.4.1</version>
+      </dependency>
+
+      <dependency> <!-- Log SLF4J via JCL API -->
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-jcl</artifactId>
+        <version>1.4.1</version>
+      </dependency>
+      <dependency> <!-- JBoss uses Log4j -->
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>1.4.1</version>
+        <exclusions>
+          <exclusion> <!-- Use JBoss log4j -->
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <!-- Test scope -->
