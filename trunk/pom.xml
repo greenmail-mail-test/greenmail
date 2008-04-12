@@ -10,10 +10,10 @@
   <inceptionYear>2006</inceptionYear>
   
   <groupId>com.icegreen</groupId>
-  <artifactId>greenmail</artifactId>
-  <packaging>jar</packaging>
+  <artifactId>greenmail-parent</artifactId>
+  <packaging>pom</packaging>
   <!-- This version should get inherited to all subprojects. -->
-  <version>1.3</version>
+  <version>1.4-SNAPSHOT</version>
   
   <licenses>
     <license>
@@ -45,36 +45,10 @@
     <url>http://www.icegreen.com</url>
   </organization>
   
-  
-  <dependencies>
-    <!-- Compile scope (=default) -->
-    <dependency>
-      <groupId>javax.mail</groupId>
-      <artifactId>mail</artifactId>
-      <version>1.4</version>
-    </dependency>
+  <modules>
+    <module>greenmail-core</module>
+  </modules>
 
-    <dependency> <!-- SLF4J Core -->
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>1.3.1</version>
-    </dependency>
-
-    <!-- Test scope -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-simple</artifactId>
-        <version>1.3.1</version>
-        <scope>test</scope>
-    </dependency>
-  </dependencies>
-  
   <!-- who the developers are for the project -->
   <developers>
     <developer>
@@ -88,6 +62,15 @@
         <role>Lead Developer</role>
       </roles>
     </developer>
+    <developer>
+      <name>Marcel May</name>
+      <id>mm</id>
+      <properties>
+        <id>marcel_may</id>
+      </properties>
+      <email>marcel.may@metacube.net</email>
+      <url>http://www.metacube.net</url>
+    </developer>
   </developers>
   <contributors>
     <contributor>
@@ -98,14 +81,6 @@
       <email></email>
       <url></url>
     </contributor>
-    <contributor>
-      <name>Marcel May</name>
-      <properties>
-        <id>marcel_may</id>
-      </properties>
-      <email>marcel.may@metacube.net</email>
-      <url>http://www.metacube.net</url>
-    </contributor>
   </contributors>
   
   <reporting>
@@ -113,12 +88,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>2.0-beta-5</version>
+        <version>2.0-beta-6</version>
         <configuration>
           <skin>
             <groupId>org.apache.maven.skins</groupId>
-            <artifactId>maven-site-skin</artifactId>
-            <version>1.0</version>
+            <artifactId>maven-stylus-skin</artifactId>
+            <version>1.0.1</version>
           </skin>
         </configuration>
       </plugin>
@@ -135,17 +110,17 @@
       </plugin>
       
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
         <artifactId>surefire-report-maven-plugin</artifactId>
-        <version>2.0-beta-1</version>
+        <version>2.4.2</version>
       </plugin>
       
       <plugin>
         <!-- javadoc report -->
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.2</version>
+        <version>2.4</version>
         <configuration>
           <aggregate>true</aggregate>
+          <linksource>true</linksource>
           <links>
             <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
             <link>http://java.sun.com/products/javamail/javadocs/</link>
@@ -155,8 +130,8 @@
       </plugin>
       
       <plugin>
-        <!--  This report includes a cross-reference of the project's sources. Each source entry is also linked with its corresponding Javadoc (if Javadoc was generated). -->
         <artifactId>maven-jxr-plugin</artifactId>
+         <version>2.1</version>
         <configuration>
           <linkJavadoc>true</linkJavadoc>
           <aggregate>true</aggregate>
@@ -166,22 +141,19 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jdepend-maven-plugin</artifactId>
+        <version>2.0-beta-1</version>
       </plugin>
       
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>2.0</version>
-        
+        <version>2.3</version>
         <configuration>
           <format>html</format>
           <linkXref>true</linkXref>
-          <!--
-                    <xrefLocation>xref</xrefLocation>
-                    -->
           <sourceEncoding>utf-8</sourceEncoding>
           <minimumTokens>100</minimumTokens>
-          <targetJdk>1.5</targetJdk>
+          <targetJdk>1.4</targetJdk>
         </configuration>
       </plugin>
       
@@ -189,6 +161,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
+        <version>1.2</version>
         <configuration>
           <threshold>Normal</threshold>
         </configuration>
@@ -200,6 +173,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.0.1</version>
         <reportSets>
           <reportSet>
             <reports>
@@ -240,57 +214,89 @@
   <build>
     
     <!-- Plugin defaults for all inherited POMs. -->
-    <plugins>
-      <plugin>
-        <!-- http://maven.apache.org/plugins/maven-compile-plugin/plugin-info.html -->
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.4</source>
-          <target>1.4</target>
-          <debug>true</debug>
-        </configuration>
-      </plugin>
-      <plugin>
-        <!-- http://maven.apache.org/plugins/maven-surefire-plugin/plugin-info.html -->
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <!-- once | pertest -->
-          <forkMode>once</forkMode>
-          <!-- cli -->
-          <argLine>-Xmx512m -enableassertions</argLine>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.1</version>
-        <configuration>
-          <archive>
-            <addMavenDescriptor>false</addMavenDescriptor>
-          </archive>
-        </configuration>
-      </plugin>
-      <!-- IDE plugins -->
-      <plugin>
-        <!-- http://maven.apache.org/plugins/maven-idea-plugin/plugin-info.html -->
-        <artifactId>maven-idea-plugin</artifactId>
-        <configuration>
-          <downloadSources>true</downloadSources>
-          <linkModules>true</linkModules>
-          <jdkLevel>1.4</jdkLevel>
-        </configuration>
-      </plugin>
-      <plugin>
-        <!-- http://maven.apache.org/plugins/maven-eclipse-plugin/plugin-info.html -->
-        <artifactId>maven-eclipse-plugin</artifactId>
-        <configuration>
-          <downloadSources>true</downloadSources>
-        </configuration>
-      </plugin>
-      
-    </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <!-- http://maven.apache.org/plugins/maven-compile-plugin/plugin-info.html -->
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.0.2</version>
+          <configuration>
+            <source>1.4</source>
+            <target>1.4</target>
+            <debug>true</debug>
+          </configuration>
+        </plugin>
+        <plugin>
+          <!-- http://maven.apache.org/plugins/maven-surefire-plugin/plugin-info.html -->
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.4.2</version>
+          <configuration>
+            <!-- once | pertest -->
+            <forkMode>always</forkMode>
+            <!-- cli -->
+            <argLine>-Xmx512m -enableassertions</argLine>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.1</version>
+          <configuration>
+            <archive>
+              <addMavenDescriptor>false</addMavenDescriptor>
+            </archive>
+          </configuration>
+        </plugin>
+        <!-- IDE plugins -->
+        <plugin>
+          <!-- http://maven.apache.org/plugins/maven-idea-plugin/plugin-info.html -->
+          <artifactId>maven-idea-plugin</artifactId>
+          <configuration>
+            <downloadSources>true</downloadSources>
+            <linkModules>true</linkModules>
+            <jdkLevel>1.4</jdkLevel>
+          </configuration>
+        </plugin>
+        <plugin>
+          <!-- http://maven.apache.org/plugins/maven-eclipse-plugin/plugin-info.html -->
+          <artifactId>maven-eclipse-plugin</artifactId>
+          <configuration>
+            <downloadSources>true</downloadSources>
+          </configuration>
+        </plugin>
+        
+      </plugins>
+    </pluginManagement>
     
-    <sourceDirectory>src/java</sourceDirectory>
-    <testSourceDirectory>src/test</testSourceDirectory>
   </build>
+  
+  <dependencyManagement>
+    <dependencies>
+      <!-- Compile scope (=default) -->
+      <dependency>
+        <groupId>javax.mail</groupId>
+        <artifactId>mail</artifactId>
+        <version>1.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.4.1</version>
+      </dependency>
+
+      <!-- Test scope -->
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>3.8.2</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>1.4.1</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   
 </project>
