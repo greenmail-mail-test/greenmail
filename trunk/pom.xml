@@ -47,6 +47,7 @@
   
   <modules>
     <module>greenmail-core</module>
+    <module>greenmail-webapp</module>
   </modules>
 
   <!-- who the developers are for the project -->
@@ -235,6 +236,7 @@
             <forkMode>always</forkMode>
             <!-- cli -->
             <argLine>-Xmx512m -enableassertions</argLine>
+            <workingDirectory>target</workingDirectory>
           </configuration>
         </plugin>
         <plugin>
@@ -271,6 +273,18 @@
   
   <dependencyManagement>
     <dependencies>
+      <!-- Greenmail modules -->
+      <dependency>
+        <groupId>com.icegreen</groupId>
+        <artifactId>greenmail-core</artifactId>
+        <version>1.4-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.icegreen</groupId>
+        <artifactId>greenmail-webapp</artifactId>
+        <version>1.4-SNAPSHOT</version>
+      </dependency>
+
       <!-- Compile scope (=default) -->
       <dependency>
         <groupId>javax.mail</groupId>
