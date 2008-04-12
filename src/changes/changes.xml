@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+ See the documentation at http://maven.apache.org/plugins/maven-changes-plugin/usage.html
+
+ Possible action types: add, fix, remove, update
+
+ -->
+<document>
+  <properties>
+    <title>Changes</title>
+  </properties>
+  <body>
+  <release version="1.4" date="in SVN" description="Changes for 1.4 release">
+    <action type="update">
+      Updated slf4j from 1.3.1 to 1.4.1
+    </action>
+    <action type="update">
+      Updated JUnit from 3.8.1 to 3.8.2
+    </action>
+  </release>
+  </body>
+</document>
