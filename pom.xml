@@ -49,6 +49,7 @@
     <module>greenmail-core</module>
     <module>greenmail-webapp</module>
     <module>greenmail-jboss-service</module>
+    <module>greenmail-spring</module>
   </modules>
 
   <!-- who the developers are for the project -->
