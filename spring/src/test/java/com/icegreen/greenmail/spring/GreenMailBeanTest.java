@@ -3,6 +3,7 @@ package com.icegreen.greenmail.spring;
 import com.icegreen.greenmail.util.GreenMail;
 import org.testng.annotations.Test;
 import org.testng.spring.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.beans.factory.annotation.Required;
 
 /**
  * Tests GreenMailBean.
@@ -39,6 +40,7 @@ public class GreenMailBeanTest extends AbstractDependencyInjectionSpringContextT
      *
      * @param pGreenMailBean Value to set for property 'greenMailBean'.
      */
+    @Required
     public void setGreenMailBean(final GreenMailBean pGreenMailBean) {
         mGreenMailBean = pGreenMailBean;
     }

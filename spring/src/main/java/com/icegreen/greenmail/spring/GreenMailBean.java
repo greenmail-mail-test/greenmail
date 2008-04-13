@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.BeanNameAware;
 
 /**
  * Spring bean for GreenMail server.
@@ -25,38 +26,41 @@ import org.springframework.beans.factory.InitializingBean;
  *
  * @author Marcel May (mm)
  */
-public class GreenMailBean implements InitializingBean, DisposableBean {
+public class GreenMailBean implements InitializingBean, DisposableBean, BeanNameAware {
     /** New logger. */
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
+    /** Spring bean name. */
+    private String name;
+
     /** The mail server. */
-    private GreenMail mGreenMail;
+    private GreenMail greenMail;
     /** Automatically start the servers. */
-    private boolean mAutostart = true;
+    private boolean autostart = true;
     /** SMTP server */
-    private boolean mSmtpProtocoll = true;
+    private boolean smtpProtocoll = true;
     /** SMTPS server */
-    private boolean mSmtpsProtocoll = false;
+    private boolean smtpsProtocoll = false;
     /** POP3 server */
-    private boolean mPop3Protocoll = true;
+    private boolean pop3Protocoll = true;
     /** POP3S server */
-    private boolean mPop3sProtocoll = false;
+    private boolean pop3sProtocoll = false;
     /** IMAP server. */
-    private boolean mImapProtocoll = false;
+    private boolean imapProtocoll = false;
     /** IMAPS server. */
-    private boolean mImapsProtocoll = false;
+    private boolean imapsProtocoll = false;
     /** Users. */
-    private List mUsers;
+    private List users;
     /** Port offset (default is 3000) */
-    private int mPortOffset = 3000;
+    private int portOffset = 3000;
     /** Hostname. Default is null (= localhost). */
-    private String mHostname;
+    private String hostname;
     /** If the server is started. */
-    private boolean mStarted;
+    private boolean started;
     /** Outoing mail server setup. */
-    private ServerSetup mSmtpServerSetup;
+    private ServerSetup smtpServerSetup;
     /** Outoing secure mail server setup. */
-    private ServerSetup mSmtpsServerSetup;
+    private ServerSetup smtpsServerSetup;
 
     /**
      * Invoked by a BeanFactory after it has set all bean properties supplied (and satisfied
@@ -68,10 +72,10 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      *                   property) or if initialization fails.
      */
     public void afterPropertiesSet() throws Exception {
-        mGreenMail = new GreenMail(createServerSetup());
-        if (null != mUsers) {
-            for (int i = 0; i < mUsers.size(); i++) {
-                String user = (String) mUsers.get(i);
+        greenMail = new GreenMail(createServerSetup());
+        if (null != users) {
+            for (int i = 0; i < users.size(); i++) {
+                String user = (String) users.get(i);
                 int posColon = user.indexOf(':');
                 int posAt = user.indexOf('@');
                 String login = user.substring(0, posColon);
@@ -80,12 +84,12 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
                 if (log.isDebugEnabled()) {
                     log.debug("Adding user " + login + ':' + pwd + '@' + domain);
                 }
-                mGreenMail.setUser(login + '@' + domain, login, pwd);
+                greenMail.setUser(login + '@' + domain, login, pwd);
             }
         }
-        if (mAutostart) {
-            mGreenMail.start();
-            mStarted = true;
+        if (autostart) {
+            greenMail.start();
+            started = true;
         }
     }
 
@@ -96,24 +100,24 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      */
     private ServerSetup[] createServerSetup() {
         List setups = new ArrayList();
-        if (mSmtpProtocoll) {
-            mSmtpServerSetup = createTestServerSetup(ServerSetup.SMTP);
-            setups.add(mSmtpServerSetup);
+        if (smtpProtocoll) {
+            smtpServerSetup = createTestServerSetup(ServerSetup.SMTP);
+            setups.add(smtpServerSetup);
         }
-        if (mSmtpsProtocoll) {
-            mSmtpsServerSetup = createTestServerSetup(ServerSetup.SMTPS);
-            setups.add(mSmtpsServerSetup);
+        if (smtpsProtocoll) {
+            smtpsServerSetup = createTestServerSetup(ServerSetup.SMTPS);
+            setups.add(smtpsServerSetup);
         }
-        if (mPop3Protocoll) {
+        if (pop3Protocoll) {
             setups.add(createTestServerSetup(ServerSetup.POP3));
         }
-        if (mPop3sProtocoll) {
+        if (pop3sProtocoll) {
             setups.add(createTestServerSetup(ServerSetup.POP3S));
         }
-        if (mImapProtocoll) {
+        if (imapProtocoll) {
             setups.add(createTestServerSetup(ServerSetup.IMAP));
         }
-        if (mImapsProtocoll) {
+        if (imapsProtocoll) {
             setups.add(createTestServerSetup(ServerSetup.IMAPS));
         }
         return (ServerSetup[]) setups.toArray(new ServerSetup[0]);
@@ -121,22 +125,22 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
 
     /** Starts the server. */
     public void start() {
-        synchronized (mGreenMail) {
-            if (mStarted) {
+        synchronized (greenMail) {
+            if (started) {
                 log.warn("Can not start server (already started)");
             } else {
-                mGreenMail.start();
-                mStarted = true;
+                greenMail.start();
+                started = true;
             }
         }
     }
 
     /** Stops the server. */
     public void stop() {
-        synchronized (mGreenMail) {
-            if (mStarted) {
-                mGreenMail.stop();
-                mStarted = true;
+        synchronized (greenMail) {
+            if (started) {
+                greenMail.stop();
+                started = true;
             } else {
                 log.warn("Can not stop server (not started).");
             }
@@ -150,8 +154,8 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @return the test server setup.
      */
     private ServerSetup createTestServerSetup(final ServerSetup theSetup) {
-        return new ServerSetup(mPortOffset + theSetup.getPort(),
-                               mHostname,
+        return new ServerSetup(portOffset + theSetup.getPort(),
+                               hostname,
                                theSetup.getProtocol());
     }
 
@@ -161,7 +165,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @return the available messages.
      */
     public MimeMessage[] getReceivedMessages() {
-        return mGreenMail.getReceivedMessages();
+        return greenMail.getReceivedMessages();
     }
 
     /**
@@ -171,7 +175,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      *                   allow other beans to release their resources too.
      */
     public void destroy() throws Exception {
-        mGreenMail.stop();
+        greenMail.stop();
     }
 
 
@@ -181,7 +185,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @param theAutostart the flag.
      */
     public void setAutostart(final boolean theAutostart) {
-        mAutostart = theAutostart;
+        autostart = theAutostart;
     }
 
     /**
@@ -190,7 +194,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @return Value for property 'autostart'.
      */
     public boolean isAutostart() {
-        return mAutostart;
+        return autostart;
     }
 
     /**
@@ -199,7 +203,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @param theSmtpProtocoll Value to set for property 'smtpProtocoll'.
      */
     public void setSmtpProtocoll(final boolean theSmtpProtocoll) {
-        mSmtpProtocoll = theSmtpProtocoll;
+        smtpProtocoll = theSmtpProtocoll;
     }
 
     /**
@@ -208,7 +212,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @return Value for property 'smtpProtocoll'.
      */
     public boolean isSmtpProtocoll() {
-        return mSmtpProtocoll;
+        return smtpProtocoll;
     }
 
     /**
@@ -217,7 +221,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @param theSmtpsProtocoll Value to set for property 'smtpsProtocoll'.
      */
     public void setSmtpsProtocoll(final boolean theSmtpsProtocoll) {
-        mSmtpsProtocoll = theSmtpsProtocoll;
+        smtpsProtocoll = theSmtpsProtocoll;
     }
 
     /**
@@ -226,7 +230,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @return Value for property 'smtpsProtocoll'.
      */
     public boolean isSmtpsProtocoll() {
-        return mSmtpsProtocoll;
+        return smtpsProtocoll;
     }
 
     /**
@@ -235,7 +239,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @param thePop3Protocoll Value to set for property 'pop3Protocoll'.
      */
     public void setPop3Protocoll(final boolean thePop3Protocoll) {
-        mPop3Protocoll = thePop3Protocoll;
+        pop3Protocoll = thePop3Protocoll;
     }
 
     /**
@@ -244,7 +248,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @return Value for property 'pop3Protocoll'.
      */
     public boolean isPop3Protocoll() {
-        return mPop3Protocoll;
+        return pop3Protocoll;
     }
 
     /**
@@ -253,7 +257,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @param thePop3sProtocoll Value to set for property 'pop3sProtocoll'.
      */
     public void setPop3sProtocoll(final boolean thePop3sProtocoll) {
-        mPop3sProtocoll = thePop3sProtocoll;
+        pop3sProtocoll = thePop3sProtocoll;
     }
 
     /**
@@ -262,7 +266,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @return Value for property 'pop3sProtocoll'.
      */
     public boolean isPop3sProtocoll() {
-        return mPop3sProtocoll;
+        return pop3sProtocoll;
     }
 
     /**
@@ -271,7 +275,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @param theImapProtocoll Value to set for property 'imapProtocoll'.
      */
     public void setImapProtocoll(final boolean theImapProtocoll) {
-        mImapProtocoll = theImapProtocoll;
+        imapProtocoll = theImapProtocoll;
     }
 
     /**
@@ -280,7 +284,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @return Value for property 'imapProtocoll'.
      */
     public boolean isImapProtocoll() {
-        return mImapProtocoll;
+        return imapProtocoll;
     }
 
     /**
@@ -289,7 +293,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @param theImapsProtocoll Value to set for property 'imapsProtocoll'.
      */
     public void setImapsProtocoll(final boolean theImapsProtocoll) {
-        mImapsProtocoll = theImapsProtocoll;
+        imapsProtocoll = theImapsProtocoll;
     }
 
     /**
@@ -298,7 +302,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @return Value for property 'imapsProtocoll'.
      */
     public boolean isImapsProtocoll() {
-        return mImapsProtocoll;
+        return imapsProtocoll;
     }
 
     /**
@@ -307,7 +311,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @param pHostname Value to set for property 'hostname'.
      */
     public void setHostname(final String pHostname) {
-        mHostname = pHostname;
+        hostname = pHostname;
     }
 
     /**
@@ -316,7 +320,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @return Value for property 'hostname'.
      */
     public String getHostname() {
-        return mHostname;
+        return hostname;
     }
 
     /**
@@ -325,7 +329,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @param pPortOffset Value to set for property 'portOffset'.
      */
     public void setPortOffset(final int pPortOffset) {
-        mPortOffset = pPortOffset;
+        portOffset = pPortOffset;
     }
 
     /**
@@ -334,7 +338,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @return Value for property 'portOffset'.
      */
     public int getPortOffset() {
-        return mPortOffset;
+        return portOffset;
     }
 
     /**
@@ -343,7 +347,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @param theUsers Value to set for property 'users'.
      */
     public void setUsers(final List theUsers) {
-        mUsers = theUsers;
+        users = theUsers;
     }
 
     /**
@@ -352,7 +356,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @return Value for property 'users'.
      */
     public List getUsers() {
-        return mUsers;
+        return users;
     }
 
     /**
@@ -361,7 +365,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @return Value for property 'started'.
      */
     public boolean isStarted() {
-        return mStarted;
+        return started;
     }
 
     /**
@@ -370,7 +374,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      * @return Value for property 'greenMail'.
      */
     public GreenMail getGreenMail() {
-        return mGreenMail;
+        return greenMail;
     }
 
     /**
@@ -385,13 +389,17 @@ public class GreenMailBean implements InitializingBean, DisposableBean {
      */
     public void sendEmail(final String theTo, final String theFrom, final String theSubject,
                           final String theContent) {
-        ServerSetup serverSetup = mSmtpServerSetup;
+        ServerSetup serverSetup = smtpServerSetup;
         if (null == serverSetup) {
-            serverSetup = mSmtpsServerSetup;
+            serverSetup = smtpsServerSetup;
         }
         if (null == serverSetup) {
             throw new IllegalStateException("Can not send mail, no SMTP or SMTPS setup found");
         }
         GreenMailUtil.sendTextEmail(theTo, theFrom, theSubject, theContent, serverSetup);
+    }
+
+    public void setBeanName(final String pName) {
+        name = pName;
     }
 }

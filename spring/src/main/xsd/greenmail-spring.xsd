@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns="http://www.icegreen.com/greenmail/greenmail-spring"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:beans="http://www.springframework.org/schema/beans"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified"
+           targetNamespace="http://www.icegreen.com/greenmail/greenmail-spring">
+
+  <xs:annotation>
+    <xs:documentation><![CDATA[
+    Defines the greenmail element containing the GreenMail server definition.
+    ]]></xs:documentation>
+  </xs:annotation>
+
+  <xs:import namespace="http://www.springframework.org/schema/beans"/>
+
+  <xs:element name="greenmail">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="users"/>
+        <xs:element ref="hostname"/>
+        <xs:element ref="portOffset"/>
+        <xs:element ref="imap"/>
+        <xs:element ref="imaps"/>
+        <xs:element ref="smtp"/>
+        <xs:element ref="pop3"/>
+        <xs:element ref="pop3s"/>
+      </xs:sequence>
+      <xs:attribute name="id" use="optional" type="xs:ID"/>
+      <xs:attribute name="name" use="optional" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="users">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="user"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="user" type="xs:anyURI"/>
+
+  <xs:element name="hostname" type="xs:anyURI"/>
+
+  <xs:element name="portOffset" type="xs:integer"/>
+
+  <xs:complexType name="service" abstract="true">
+      <xs:attribute name="port" type="xs:integer" use="optional"/>
+      <xs:attribute name="hostname" type="xs:string" use="optional" default="127.0.0.1"/>
+  </xs:complexType>
+
+  <xs:element name="imap">
+    <xs:complexType>
+      <xs:complexContent><xs:extension base="service"/></xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="imaps">
+    <xs:complexType>
+      <xs:complexContent><xs:extension base="service"/></xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="smtp">
+    <xs:complexType>
+      <xs:complexContent><xs:extension base="service"/></xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="pop3">
+    <xs:complexType>
+      <xs:complexContent><xs:extension base="service"/></xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="pop3s">
+    <xs:complexType>
+      <xs:complexContent><xs:extension base="service"/></xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
