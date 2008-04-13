@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:greenmail="http://www.icegreen.com/greenmail/greenmail-spring"
+       xsi:schemaLocation="
+          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://www.icegreen.com/greenmail/greenmail-spring greenmail-spring.xsd">
+
+  <greenmail:greenmail id="test">
+    <greenmail:users>
+      <greenmail:user>u:p@a.com</greenmail:user>
+      <greenmail:user>u:p@a.com</greenmail:user>
+    </greenmail:users>
+    <greenmail:hostname>127.0.0.1</greenmail:hostname>
+    <greenmail:portOffset>5000</greenmail:portOffset>
+    <greenmail:imap port="4143" hostname="localhost"/>
+    <greenmail:imaps/>
+    <greenmail:smtp/>
+    <greenmail:pop3/>
+    <greenmail:pop3s/>
+  </greenmail:greenmail>
+
+</beans>
