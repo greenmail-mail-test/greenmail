@@ -69,35 +69,6 @@
 
   <build>
     <defaultGoal>install</defaultGoal>
-    <plugins>
-      <plugin>
-        <!-- http://maven.apache.org/plugins/maven-compile-plugin/plugin-info.html -->
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
-
-      <!-- IDE plugins -->
-      <plugin>
-        <!-- http://maven.apache.org/plugins/maven-idea-plugin/plugin-info.html -->
-        <artifactId>maven-idea-plugin</artifactId>
-        <configuration>
-          <downloadSources>true</downloadSources>
-          <linkModules>true</linkModules>
-          <jdkLevel>1.5</jdkLevel>
-        </configuration>
-      </plugin>
-      <plugin>
-        <!-- http://maven.apache.org/plugins/maven-eclipse-plugin/plugin-info.html -->
-        <artifactId>maven-eclipse-plugin</artifactId>
-        <configuration>
-          <downloadSources>true</downloadSources>
-          <downloadJavadoc>false</downloadJavadoc>
-        </configuration>
-      </plugin>
-    </plugins>
 
     <resources>
       <resource>
