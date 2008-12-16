@@ -53,8 +53,11 @@ class SmtpHandler extends Thread {
             _conn.println("421 Service shutting down and closing transmission channel");
 
         } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
-            _state.clearMessage();
+            if (null != _state) {
+                _state.clearMessage();
+            }
         }
     }
 
