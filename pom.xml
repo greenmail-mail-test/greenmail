@@ -13,7 +13,7 @@
   <artifactId>greenmail</artifactId>
   <packaging>jar</packaging>
   <!-- This version should get inherited to all subprojects. -->
-  <version>1.3</version>
+  <version>1.3.1b</version>
   
   <licenses>
     <license>

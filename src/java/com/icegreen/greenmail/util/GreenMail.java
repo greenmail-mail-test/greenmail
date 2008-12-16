@@ -74,6 +74,24 @@ public class GreenMail {
             Service service = (Service) it.next();
             service.startService(null);
         }
+        //quick hack for now, will change eventually
+        boolean allup = false;
+        for (int i=0;i<200 && !allup;i++) {
+            allup = true;
+            for (Iterator it = services.values().iterator(); it.hasNext();) {
+                Service service = (Service) it.next();                        
+                allup = allup && service.isRunning();
+            }
+            if (!allup) {
+                try {
+                    Thread.sleep(5);
+                } catch (InterruptedException e) {
+                }
+            }
+        }
+        if (!allup) {
+            throw new RuntimeException("Coulnt start at least one of the mail services.");
+        }
     }
 
     public synchronized void stop() {

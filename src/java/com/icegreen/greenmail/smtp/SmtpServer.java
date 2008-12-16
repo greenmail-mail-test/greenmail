@@ -46,6 +46,10 @@ public class SmtpServer extends AbstractServer {
         try {
             try {
                 serverSocket = openServerSocket();
+                setRunning(true);
+                synchronized (this) {
+                    this.notifyAll();
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
