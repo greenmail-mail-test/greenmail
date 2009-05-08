@@ -59,14 +59,14 @@ Starting JBoss will now automatically also start the GreenMail JBoss Service. Yo
    ...
      [exec] 01:03:08,387 INFO  [Server] Starting JBoss (MX MicroKernel)...
      [exec] 01:03:08,388 INFO  [Server] Release ID: JBoss [Zion] 4.0.5.GA (build: CVSTag=Branch_4_0 date=200610162339)
-     [exec] 01:03:08,394 INFO  [Server] Home Dir: /Users/mm/devel/projects/cmas/target/jboss
-     [exec] 01:03:08,394 INFO  [Server] Home URL: file:/Users/mm/devel/projects/cmas/target/jboss/
+     [exec] 01:03:08,394 INFO  [Server] Home Dir: /Users/mm/devel/example-project/target/jboss
+     [exec] 01:03:08,394 INFO  [Server] Home URL: file:/Users/mm/devel/example-project/target/jboss/
      [exec] 01:03:08,395 INFO  [Server] Patch URL: null
-     [exec] 01:03:08,395 INFO  [Server] Server Name: cmas
-     [exec] 01:03:08,395 INFO  [Server] Server Home Dir: /Users/mm/devel/projects/cmas/target/jboss/server/cmas
-     [exec] 01:03:08,395 INFO  [Server] Server Home URL: file:/Users/mm/devel/projects/cmas/target/jboss/server/cmas/
-     [exec] 01:03:08,395 INFO  [Server] Server Log Dir: /Users/mm/devel/projects/cmas/target/jboss/server/cmas/log
-     [exec] 01:03:08,395 INFO  [Server] Server Temp Dir: /Users/mm/devel/projects/cmas/target/jboss/server/cmas/tmp
+     [exec] 01:03:08,395 INFO  [Server] Server Name: example-project
+     [exec] 01:03:08,395 INFO  [Server] Server Home Dir: /Users/mm/devel/example-project/target/jboss/server/example-project
+     [exec] 01:03:08,395 INFO  [Server] Server Home URL: file:/Users/mm/devel/example-project/target/jboss/server/example-project/
+     [exec] 01:03:08,395 INFO  [Server] Server Log Dir: /Users/mm/devel/example-project/target/jboss/server/example-project/log
+     [exec] 01:03:08,395 INFO  [Server] Server Temp Dir: /Users/mm/devel/example-project/target/jboss/server/example-project/tmp
      [exec] 01:03:08,396 INFO  [Server] Root Deployment Filename: jboss-service.xml
      [exec] 01:03:08,618 INFO  [ServerInfo] Java version: 1.5.0_07,Apple Computer, Inc.
      [exec] 01:03:08,618 INFO  [ServerInfo] Java VM: Java HotSpot(TM) Client VM 1.5.0_07-87,"Apple Computer, Inc."
@@ -74,7 +74,7 @@ Starting JBoss will now automatically also start the GreenMail JBoss Service. Yo
      [exec] 01:03:08,908 INFO  [Server] Core system initialized
      [exec] 01:03:10,136 INFO  [WebService] Using RMI server codebase: http://noname:8083/
      [exec] 01:03:10,153 INFO  [Log4jService$URLWatchTimerTask] Configuring from URL: resource:log4j.xml
-     [exec] 01:03:11,572 INFO  <b>[GreenMailService] Starting greenmail service ( SMTP:3025 POP3:3110  )</b>
+     [exec] 01:03:11,572 INFO  <b>[GreenMailService] Starting greenmail service ( smtp:3025 pop3:3110 imap:3143 )</b>
 </pre>
 
 Opening the JBoss Console, you can see the GreenMail Service JMX Bean:
