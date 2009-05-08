@@ -2,9 +2,8 @@ package com.icegreen.greenmail.jboss;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.mail.Address;
 import javax.mail.MessagingException;
@@ -40,9 +39,10 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     private Managers managers;
-    Map<ServiceProtocol, Service> services = new HashMap<ServiceProtocol, Service>();
+    private EnumMap<ServiceProtocol, Service> services =
+            new EnumMap<ServiceProtocol, Service>(ServiceProtocol.class);
 
-    /** Default port offset is {@value #DEFAULT_PORT_OFFSET}. */
+    /** Default port offset is {@value}. */
     public static final int DEFAULT_PORT_OFFSET = 3000;
 
     /** SMTP server */
@@ -141,42 +141,40 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
     /** {@inheritDoc} */
     public String listMailsForUserHTML(String pEmail) {
         GreenMailUser user = managers.getUserManager().getUserByEmail(pEmail);
-        if (null==user) {
-            return " No such user for email "+pEmail;
+        if (null == user) {
+            return " No such user for email " + pEmail;
         }
-        StringBuilder builder = new StringBuilder();
-        builder.append("<table>");
+        StringBuilder builder = new StringBuilder("<table>");
         try {
             MailFolder mailFolder = managers.getUserManager().getImapHostManager().getInbox(user);
             builder.append("<caption>").append(mailFolder.getMessageCount())
                     .append(" Mails for ").append(pEmail).append("</caption>");
             builder.append(
                     "<tr><th>From</th><th>Subject</th><th>Received date</th><th>Content</th></tr>");
-            for(StoredMessage msg: (List<StoredMessage>)mailFolder.getMessages()) {
+            for (StoredMessage msg : (List<StoredMessage>) mailFolder.getMessages()) {
                 MimeMessage mimeMessage = msg.getMimeMessage();
                 builder.append("<tr>");
                 builder.append("<td>").append(
                         Arrays.toString(mimeMessage.getFrom())).append("</td>");
                 builder.append("<td>").append(mimeMessage.getSubject()).append("</td>");
                 builder.append("<td>")
-                        .append(null==mimeMessage.getReceivedDate()
+                        .append(null == mimeMessage.getReceivedDate()
                                 ? msg.getInternalDate()
                                 : mimeMessage.getReceivedDate())
                         .append("</td>");
 
                 Object content = mimeMessage.getContent();
-                if(content instanceof MimeMultipart) {
+                if (content instanceof MimeMultipart) {
                     MimeMultipart multipart = (MimeMultipart) content;
                     builder.append("<td>").append(multipart.getBodyPart(0).getContent()).append("</td>");
-                }
-                else {
+                } else {
                     builder.append("<td>").append(mimeMessage.getContent()).append("</td>");
                 }
                 builder.append("</tr>");
             }
-        } catch(IOException e) {
+        } catch (IOException e) {
             throw new IllegalStateException(e);
-        } catch(MessagingException e) {
+        } catch (MessagingException e) {
             throw new IllegalStateException(e);
         } catch (FolderException e) {
             throw new IllegalStateException(e);
@@ -189,7 +187,10 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
     @Override
     public void startService() throws Exception {
         super.start();
+        startGreenMailService();
+    }
 
+    public void startGreenMailService() {
         if (null == managers) {
             managers = new Managers();
         }
@@ -199,37 +200,47 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
             addMailUser(user);
         }
 
+        // For start - start cycle
         stopGreenMailServices();
 
+        StringBuilder buf = new StringBuilder("Starting GreenMail service ( host=")
+                .append(getHostname()).append(", ");
         // Configure services
         if (mSmtpProtocol) {
-            startGreenMailService(ServiceProtocol.SMTP,
-                                  new SmtpServer(createTestServerSetup(ServerSetup.SMTP), managers));
+            ServerSetup serverSetup = createTestServerSetup(ServerSetup.SMTP);
+            startGreenMailService(ServiceProtocol.SMTP, new SmtpServer(serverSetup, managers));
+            buf.append(serverSetup.getProtocol()).append(':').append(serverSetup.getPort()).append(' ');
         }
         if (mSmtpsProtocol) {
-            startGreenMailService(ServiceProtocol.SMTPS,
-                                  new SmtpServer(createTestServerSetup(ServerSetup.SMTPS), managers));
+            ServerSetup serverSetup = createTestServerSetup(ServerSetup.SMTPS);
+            startGreenMailService(ServiceProtocol.SMTPS, new SmtpServer(serverSetup, managers));
+            buf.append(serverSetup.getProtocol()).append(':').append(serverSetup.getPort());
         }
         if (mPop3Protocol) {
-            startGreenMailService(ServiceProtocol.POP3,
-                                  new Pop3Server(createTestServerSetup(ServerSetup.POP3), managers));
+            ServerSetup serverSetup = createTestServerSetup(ServerSetup.POP3);
+            startGreenMailService(ServiceProtocol.POP3, new Pop3Server(serverSetup, managers));
+            buf.append(serverSetup.getProtocol()).append(':').append(serverSetup.getPort()).append(' ');
         }
         if (mPop3sProtocol) {
+            ServerSetup serverSetup = createTestServerSetup(ServerSetup.POP3S);
             startGreenMailService(ServiceProtocol.POP3S,
-                                  new Pop3Server(createTestServerSetup(ServerSetup.POP3S), managers));
+                                  new Pop3Server(serverSetup, managers));
+            buf.append(serverSetup.getProtocol()).append(':').append(serverSetup.getPort()).append(' ');
         }
         if (mImapProtocol) {
+            ServerSetup serverSetup = createTestServerSetup(ServerSetup.IMAP);
             startGreenMailService(ServiceProtocol.IMAP,
-                                  new ImapServer(createTestServerSetup(ServerSetup.IMAP), managers));
+                                  new ImapServer(serverSetup, managers));
+            buf.append(serverSetup.getProtocol()).append(':').append(serverSetup.getPort()).append(' ');
         }
         if (mImapsProtocol) {
+            ServerSetup serverSetup = createTestServerSetup(ServerSetup.IMAPS);
             startGreenMailService(ServiceProtocol.IMAPS,
-                                  new ImapServer(createTestServerSetup(ServerSetup.IMAPS), managers));
+                                  new ImapServer(serverSetup, managers));
+            buf.append(serverSetup.getProtocol()).append(':').append(serverSetup.getPort()).append(' ');
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Configured servers " + services.values());
-        }
+        log.info(buf.append(')').toString());
     }
 
     private void startGreenMailService(ServiceProtocol pProtocol, Service pNewService) {
@@ -240,12 +251,14 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
         pNewService.startService(null);
     }
 
-    private void stopGreenMailServices() {
+    void stopGreenMailServices() {
         if (!services.isEmpty()) {
             for (Service service : services.values()) {
-                service.stopService(null);
-                if (log.isDebugEnabled()) {
-                    log.debug("Stopped " + service);
+                if (service.isRunning()) {
+                    service.stopService(null);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Stopped " + service);
+                    }
                 }
             }
         }
