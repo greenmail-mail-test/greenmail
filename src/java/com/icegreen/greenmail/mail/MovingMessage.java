@@ -38,6 +38,10 @@ public class MovingMessage {
     MimeMessage message;
     int _references = 0;
 
+    public List getToAddresses() {
+        return toAddresses;
+    }
+
     public MovingMessage(Workspace workspace) {
         _workspace = workspace;
     }
