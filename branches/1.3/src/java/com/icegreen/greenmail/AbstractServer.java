@@ -23,7 +23,7 @@ import javax.net.ssl.SSLServerSocket;
  * @since Feb 2, 2006
  */
 public abstract class AbstractServer extends Service {
-    protected InetAddress bindTo;
+    protected final InetAddress bindTo;
     protected ServerSocket serverSocket = null;
     protected Vector handlers = null;
     protected Managers managers;
@@ -32,7 +32,7 @@ public abstract class AbstractServer extends Service {
     protected AbstractServer(ServerSetup setup, Managers managers) {
         try {
             this.setup = setup;
-            bindTo = InetAddress.getByName(setup.getBindAddress());
+            bindTo = (setup.getBindAddress() == null) ? InetAddress.getByName("0.0.0.0") : InetAddress.getByName(setup.getBindAddress());
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }

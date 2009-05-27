@@ -13,6 +13,8 @@ import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.user.UserManager;
 import com.icegreen.greenmail.imap.ImapHostManager;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
 import java.util.*;
 
 
@@ -72,12 +74,12 @@ public class SmtpManager {
     /**
      * This Object is used by a thread to wait until a number of emails have arrived.
      * (for example Server's waitForIncomingEmail method)
-     * 
+     *
      * Every time an email has arrived, the method emailReceived() must be called.
-     * 
+     *
      * The notify() or notifyALL() methods should not be called on this object unless
      * you want to notify waiting threads even if not all the required emails have arrived.
-     * 
+     *
      */
     public static class WaitObject {
         private boolean arrived = false;
@@ -98,7 +100,7 @@ public class SmtpManager {
         private void setArrived() {
             arrived = true;
         }
-        
+
         public void emailReceived()
         {
             emailCount--;
@@ -115,9 +117,22 @@ public class SmtpManager {
 
         public void enqueue(MovingMessage msg) {
             Iterator iterator = msg.getRecipientIterator();
+            String tos = "";
             while (iterator.hasNext()) {
                 MailAddress username = (MailAddress) iterator.next();
-
+                if (tos.length()>0) {
+                    tos+=",";
+                }
+                tos+=username;
+            }
+            try {
+                msg.getMessage().addRecipients(Message.RecipientType.TO,tos);
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }
+            iterator = msg.getRecipientIterator();
+            while (iterator.hasNext()) {
+                MailAddress username = (MailAddress) iterator.next();
                 handle(msg, username);
             }
 
