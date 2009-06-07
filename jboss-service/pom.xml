@@ -8,12 +8,21 @@
   <packaging>jboss-sar</packaging>
   <name>${project.artifactId}</name>
   <description>JBoss Service MBean for GreenMail</description>
+  <url>http://www.icegreen.com/greenmail/jboss-service.html</url>
 
   <scm>
-    <connection>scm:svn:${scm.url}</connection>
-    <developerConnection>scm:svn:${scm.url}</developerConnection>
-    <url>https://greenmail.svn.sourceforge.net/svnroot/greenmail/trunk/jboss-service</url>
+    <connection>scm:svn:http://greenmail.svn.sourceforge.net/svnroot/greenmail/branches/1.3/jboss-service</connection>
+    <developerConnection>scm:svn:http://greenmail.svn.sourceforge.net/svnroot/greenmail/branches/1.3/jboss-service</developerConnection>
+    <url>http://greenmail.svn.sourceforge.net/svnroot/greenmail/branches/1.3/jboss-service</url>
   </scm>
+
+  <licenses>
+    <license>
+      <name>Apache 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
   <developers>
     <developer>
