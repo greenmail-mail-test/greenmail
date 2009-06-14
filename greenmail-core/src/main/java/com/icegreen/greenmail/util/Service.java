@@ -18,6 +18,7 @@ abstract public class Service extends Thread {
     public abstract void quit();
 
     private volatile boolean keepRunning = false;
+    private volatile boolean running = false;
 
     //---------
     public void init(Object obj) {
@@ -40,6 +41,18 @@ abstract public class Service extends Thread {
         }
     }
 
+    public boolean isRunning() {
+        return running;
+    }
+
+    protected void setRunning(boolean r) {
+        this.running = r;
+    }
+
+    public void wait_for_running(long t) throws InterruptedException {
+        this.wait(t);
+    }
+
     /**
      * Stops the service. If a timeout is given and the service has still not
      * gracefully been stopped after timeout ms the service is stopped by force.
@@ -49,6 +62,7 @@ abstract public class Service extends Thread {
      */
     public synchronized final void stopService(Object obj, Long millis) {
         boolean doDestroy = keepRunning;
+        running = false;
         try {
             if (keepRunning) {
                 keepRunning = false;

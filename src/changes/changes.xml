@@ -13,6 +13,9 @@
   <body>
   <release version="1.4" date="in SVN" description="Changes for 1.4 release">
     <action type="update">
+      Merged 1.3.1b changes.
+    </action>
+    <action type="update">
       GreenMail requires Java 5 now.
     </action>
     <action type="update">
