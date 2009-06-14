@@ -49,6 +49,10 @@ public final class ImapServer extends AbstractServer {
 
             try {
                 serverSocket = openServerSocket();
+                setRunning(true);
+                synchronized (this) {
+                    this.notifyAll();
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

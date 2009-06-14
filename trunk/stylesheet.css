@@ -159,7 +159,10 @@ div.codeSample {
   margin-right: 32px;
   padding: 16px;
   overflow: auto;
-  white-space: pre;
+}
+.pre {
+margin:30px;
+padding:300px;
 }
 a:link, a:visited, a:active {
   color: #4169AA;

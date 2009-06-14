@@ -15,10 +15,8 @@ import com.icegreen.greenmail.imap.ImapServer;
 import com.icegreen.greenmail.store.SimpleStoredMessage;
 
 import javax.mail.internet.MimeMessage;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
+import javax.mail.MessagingException;
+import java.util.*;
 
 /**
  * @author Wael Chatila
@@ -73,6 +71,24 @@ public class GreenMail {
         for (Iterator it = services.values().iterator(); it.hasNext();) {
             Service service = (Service) it.next();
             service.startService(null);
+        }
+        //quick hack for now, will change eventually
+        boolean allup = false;
+        for (int i=0;i<200 && !allup;i++) {
+            allup = true;
+            for (Iterator it = services.values().iterator(); it.hasNext();) {
+                Service service = (Service) it.next();
+                allup = allup && service.isRunning();
+            }
+            if (!allup) {
+                try {
+                    Thread.sleep(5);
+                } catch (InterruptedException e) {
+                }
+            }
+        }
+        if (!allup) {
+            throw new RuntimeException("Couldnt start at least one of the mail services.");
         }
     }
 
@@ -168,6 +184,26 @@ public class GreenMail {
         return ret;
     }
 
+    /**
+     * This method can be used as an easy 'catch-all' mechanism.
+     * @param domain returns all receved messages arrived to domain.
+     */
+    public MimeMessage[] getReceviedMessagesForDomain(String domain) {
+        List msgs = managers.getImapHostManager().getAllMessages();
+        List ret = new ArrayList();
+        try {
+            for (int i = 0; i < msgs.size(); i++) {
+                SimpleStoredMessage simpleStoredMessage = (SimpleStoredMessage) msgs.get(i);
+                String tos = GreenMailUtil.getAddressList(simpleStoredMessage.getMimeMessage().getAllRecipients());
+                if (tos.toLowerCase().indexOf(domain) >= 0) {
+                    ret.add(simpleStoredMessage.getMimeMessage());
+                }
+            }
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+        return (MimeMessage[]) ret.toArray(new MimeMessage[ret.size()]);
+    }
     /**
      * Sets the password for the account linked to email. If no account exits, one is automatically created when an email is received
      * The automatically created account has the account login and password equal to the email address.

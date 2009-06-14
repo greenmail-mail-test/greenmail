@@ -5,9 +5,10 @@
   <groupId>com.icegreen</groupId>
   <artifactId>greenmail-jboss-service</artifactId>
   <version>1.4-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <packaging>jboss-sar</packaging>
   <name>== GreenMail JBoss Service ==</name>
   <description>JBoss Service MBean for GreenMail</description>
+  <url>http://www.icegreen.com/greenmail/jboss-service.html</url>
 
   <parent>
     <groupId>com.icegreen</groupId>
@@ -15,6 +16,41 @@
     <version>1.4-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
+
+  <licenses>
+    <license>
+      <name>Apache 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Wael Chatila</name>
+      <id>waelc</id>
+      <email>see my blog</email>
+      <url>http://waelchatila.com</url>
+      <organization>IceGreen Technologies</organization>
+      <organizationUrl>http://www.icegreen.com</organizationUrl>
+      <roles>
+        <role>Lead Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Marcel May</name>
+      <properties>
+        <id>marcel_may</id>
+      </properties>
+      <email>marcel.may@metacube.net</email>
+      <url>http://www.metacube.net</url>
+      <organization>ConSol Software GmbH</organization>
+      <organizationUrl>http://www.consol.de</organizationUrl>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+  </developers>
 
   <dependencies>
     <dependency>
@@ -27,18 +63,21 @@
     <dependency>
       <groupId>jboss</groupId>
       <artifactId>jboss-system</artifactId>
+      <!-- Old version, but available from central repo -->
       <version>4.0.2</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>jboss</groupId>
       <artifactId>jboss-jmx</artifactId>
+      <!-- Old version, but available from central repo -->
       <version>4.0.2</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>jboss</groupId>
       <artifactId>jboss</artifactId>
+      <!-- Old version, but available from central repo -->
       <version>3.2.3</version>
       <scope>provided</scope>
     </dependency>
@@ -58,8 +97,6 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
     </dependency>
-
-
   </dependencies>
 
   <build>
@@ -67,9 +104,16 @@
     <plugins>
 
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jboss-packaging-maven-plugin</artifactId>
+        <version>2.0-beta-1</version>
+        <extensions>true</extensions>
+      </plugin>
+
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.0-alpha-4</version>
+        <version>2.1</version>
         <executions>
           <execution>
             <id>copy</id>
@@ -104,8 +148,6 @@
           </execution>
         </executions>
       </plugin>
-
     </plugins>
   </build>
-
 </project>

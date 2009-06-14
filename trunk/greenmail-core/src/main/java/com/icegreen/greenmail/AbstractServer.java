@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;
+import java.net.BindException;
 import java.util.Vector;
 import javax.net.ssl.SSLServerSocket;
 
@@ -22,7 +23,7 @@ import javax.net.ssl.SSLServerSocket;
  * @since Feb 2, 2006
  */
 public abstract class AbstractServer extends Service {
-    protected InetAddress bindTo;
+    protected final InetAddress bindTo;
     protected ServerSocket serverSocket = null;
     protected Vector handlers = null;
     protected Managers managers;
@@ -31,7 +32,7 @@ public abstract class AbstractServer extends Service {
     protected AbstractServer(ServerSetup setup, Managers managers) {
         try {
             this.setup = setup;
-            bindTo = InetAddress.getByName(setup.getBindAddress());
+            bindTo = (setup.getBindAddress() == null) ? InetAddress.getByName("0.0.0.0") : InetAddress.getByName(setup.getBindAddress());
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
@@ -40,12 +41,24 @@ public abstract class AbstractServer extends Service {
     }
 
     protected synchronized ServerSocket openServerSocket() throws IOException {
-        ServerSocket ret;
-        if (setup.isSecure()) {
-            ret = (SSLServerSocket) DummySSLServerSocketFactory.getDefault().createServerSocket(
-                    setup.getPort(), 0, bindTo);
-        } else {
-            ret = new ServerSocket(setup.getPort(), 0, bindTo);
+        ServerSocket ret = null;
+        IOException retEx = null;
+        for (int i=0;i<25 && (null == ret);i++) {
+            try {
+                if (setup.isSecure()) {
+                    ret = DummySSLServerSocketFactory.getDefault().createServerSocket(setup.getPort(), 0, bindTo);
+                } else {
+                    ret = new ServerSocket(setup.getPort(), 0, bindTo);
+                }
+            } catch (BindException e) {
+                try {
+                    retEx = e;
+                    Thread.sleep(10);
+                } catch (InterruptedException ignored) {}
+            }
+        }
+        if (null == ret && null != retEx) {
+            throw retEx;
         }
         return ret;
     }
