@@ -15,7 +15,6 @@ Latest Release GreenMail v1.3.1b - May 27th, 2009
 <span class="page"><a href="readme.html">About</a></span>
 | <span class="page"><a href="examples.html">Examples</a></span>
 | <span class="page"><a href="jboss-service.html">JBoss</a></span>
-| <span class="page"><a href="webapp.html">Webapp</a></span>
 | <span class="page"><a href="faq.html">FAQ</a></span>
 | <span class="page"><a href="javadocs/index.html">Javadocs</a></span>
 | <span class="page"><a href="http://www.icegreen.com/articles">Blog</a></span>
@@ -26,38 +25,31 @@ Latest Release GreenMail v1.3.1b - May 27th, 2009
 <br>
 
 <table width="100%">
-<tr><td valign="top">
-<h2 class="faq">Is any mail delivered?</h2>
-No. Further, GreenMail stores all recieved messages in memory.
-
-<h2 class="faq">Which versions of JDK does GreenMail run under?</h2>
-JDK 1.4 and above
-
-<h2 class="faq">How do I create User Accounts?</h2>
-<div class="codeSample"><pre>
-   Servers server ...;
-   User user = server.setUser("email@address.com", "login", "password");
-</pre>   
-</div>
-<h2 class="faq">How come I don't have to create any accounts to send/retrieve?</h2>
-By default GreenMail accepts all incoming emails. If there is no corresponding existing email account, one is automatically created with login and password being the same as the to-address.
+<tr><td>
 
 
-<h2 class="faq">What other library dependencies are there?</h2>
-<div class="codeSample"><pre>   
-	javamail.jar
-	activation.jar
-	slf4j-api.jar
-</pre>   	
-</div>
-These libraries ship with the distribution.
+<h2>Download</h2>
+<ul>
+  <li>1.3.1b - latest and recommended
+    <ul>
+      <li>GreenMail <a href="http://sourceforge.net/project/downloading.php?group_id=159695&filename=greenmail-1.3.1b.zip&a=50844754">JAR</a> | <a href="http://sourceforge.net/project/downloading.php?group_id=159695&filename=greenmail-1.3.1b-src.zip&a=93707577">Source ZIP</a></li>
+      <li>GreenMail JBoss Service <a href="http://sourceforge.net/project/downloading.php?group_id=159695&filename=greenmail-jboss-service-1.3.sar&a=11056506">SAR</a> | <a href="https://sourceforge.net/project/downloading.php?group_id=159695&filename=greenmail-jboss-service-1.3.1b-sources.jar&a=38372735">Source JAR</a></li>
+    </ul>
+  </li>
+  <li>1.3
+    <ul>
+      <li>GreenMail <a href="http://sourceforge.net/project/downloading.php?group_id=159695&filename=greenmail-1.3.jar&a=49944772">JAR</a> | <a href="http://sourceforge.net/project/downloading.php?group_id=159695&filename=greenmail-1.3-src.zip&a=89259796">Source ZIP</a></li>
+      <li>GreenMail JBoss Service <a href="http://sourceforge.net/project/downloading.php?group_id=159695&filename=greenmail-jboss-service-1.3.sar&a=11056506">SAR</a></li>
+    </ul>
+  </li>
+</ul>
+For an older version, have a look at the <a href="http://sourceforge.net/project/showfiles.php?group_id=159695&package_id=179329">SourceForge Download</a> section.
 
-<h2 class="faq">How come I don't need to install any SSL/TLS related certificates?</h2>
-GreenMail is designed to be used out of the box with no need to generate, sign or install any cerificates into your keystore.
-GreenMail ships with a builtin keystore with a self signed RSA key. Refer to the source code of <a href="javadocs/com/icegreen/greenmail/util/DummySSLServerSocketFactory.html">DummySSLServerSocketFactory</a> for details.
+<h2>Using Maven</h2>
+Check out the <a href="maven.html">Maven Quickstart</a> for using GreenMail in a Maven project.
 
 </td>
-<td class="gads" >
+<td class="gads"> 
 <script type="text/javascript"><!--
 google_ad_client = "pub-2104788530662674";
 google_ad_width = 160;
