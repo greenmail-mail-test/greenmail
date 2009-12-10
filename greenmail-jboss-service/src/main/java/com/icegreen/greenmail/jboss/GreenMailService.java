@@ -203,44 +203,46 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
         // For start - start cycle
         stopGreenMailServices();
 
-        StringBuilder buf = new StringBuilder("Starting GreenMail service ( host=")
+        log.info("Starting "+getServiceName());
+        StringBuilder buf = new StringBuilder("GreenMail configuration: ")
+                .append(" hostname=")
                 .append(getHostname()).append(", ");
         // Configure services
         if (mSmtpProtocol) {
             ServerSetup serverSetup = createTestServerSetup(ServerSetup.SMTP);
             startGreenMailService(ServiceProtocol.SMTP, new SmtpServer(serverSetup, managers));
-            buf.append(serverSetup.getProtocol()).append(':').append(serverSetup.getPort()).append(' ');
+            buf.append(", ").append(serverSetup.getProtocol()).append('=').append(serverSetup.getPort()).append(' ');
         }
         if (mSmtpsProtocol) {
             ServerSetup serverSetup = createTestServerSetup(ServerSetup.SMTPS);
             startGreenMailService(ServiceProtocol.SMTPS, new SmtpServer(serverSetup, managers));
-            buf.append(serverSetup.getProtocol()).append(':').append(serverSetup.getPort());
+            buf.append(serverSetup.getProtocol()).append('=').append(serverSetup.getPort());
         }
         if (mPop3Protocol) {
             ServerSetup serverSetup = createTestServerSetup(ServerSetup.POP3);
             startGreenMailService(ServiceProtocol.POP3, new Pop3Server(serverSetup, managers));
-            buf.append(serverSetup.getProtocol()).append(':').append(serverSetup.getPort()).append(' ');
+            buf.append(serverSetup.getProtocol()).append('=').append(serverSetup.getPort()).append(' ');
         }
         if (mPop3sProtocol) {
             ServerSetup serverSetup = createTestServerSetup(ServerSetup.POP3S);
             startGreenMailService(ServiceProtocol.POP3S,
                                   new Pop3Server(serverSetup, managers));
-            buf.append(serverSetup.getProtocol()).append(':').append(serverSetup.getPort()).append(' ');
+            buf.append(serverSetup.getProtocol()).append('=').append(serverSetup.getPort()).append(' ');
         }
         if (mImapProtocol) {
             ServerSetup serverSetup = createTestServerSetup(ServerSetup.IMAP);
             startGreenMailService(ServiceProtocol.IMAP,
                                   new ImapServer(serverSetup, managers));
-            buf.append(serverSetup.getProtocol()).append(':').append(serverSetup.getPort()).append(' ');
+            buf.append(serverSetup.getProtocol()).append('=').append(serverSetup.getPort()).append(' ');
         }
         if (mImapsProtocol) {
             ServerSetup serverSetup = createTestServerSetup(ServerSetup.IMAPS);
             startGreenMailService(ServiceProtocol.IMAPS,
                                   new ImapServer(serverSetup, managers));
-            buf.append(serverSetup.getProtocol()).append(':').append(serverSetup.getPort()).append(' ');
+            buf.append(serverSetup.getProtocol()).append('=').append(serverSetup.getPort()).append(' ');
         }
 
-        log.info(buf.append(')').toString());
+        log.info(buf.toString());
     }
 
     private void startGreenMailService(ServiceProtocol pProtocol, Service pNewService) {
