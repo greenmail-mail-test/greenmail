@@ -9,6 +9,8 @@ package com.icegreen.greenmail.imap;
 import com.icegreen.greenmail.imap.commands.CommandParser;
 import com.icegreen.greenmail.imap.commands.ImapCommand;
 import com.icegreen.greenmail.imap.commands.ImapCommandFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,6 +20,7 @@ import java.io.OutputStream;
  * @version $Revision: 109034 $
  */
 public final class ImapRequestHandler {
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     private ImapCommandFactory imapCommands = new ImapCommandFactory();
     private CommandParser parser = new CommandParser();
     private static final String REQUEST_SYNTAX = "Protocol Error: Was expecting <tag SPACE command [arguments]>";
@@ -66,9 +69,8 @@ public final class ImapRequestHandler {
             response.badResponse(REQUEST_SYNTAX);
             return;
         }
-
-//        System.out.println( "Got <tag>: " + tag );
         response.setTag(tag);
+
         try {
             commandName = parser.atom(request);
         } catch (ProtocolException e) {
@@ -76,14 +78,19 @@ public final class ImapRequestHandler {
             return;
         }
 
-//        System.out.println( "Got <command>: " + commandName );
+        if (log.isDebugEnabled()) {
+            log.debug("C: tag="+tag+", command="+commandName);
+        }
+
         ImapCommand command = imapCommands.getCommand(commandName);
         if (command == null) {
+            log.error("Command '"+commandName+"' not valid");
             response.commandError("Invalid command.");
             return;
         }
 
         if (!command.validForState(session.getState())) {
+            log.error("Command '"+commandName+"' not valid in this state "+session.getState());
             response.commandFailed(command, "Command not valid in this state");
             return;
         }

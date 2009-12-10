@@ -8,13 +8,13 @@
   <description>GreenMail - Email Test Servers</description>
   <url>http://www.icegreen.com/greenmail/</url>
   <inceptionYear>2006</inceptionYear>
-  
+
   <groupId>com.icegreen</groupId>
   <artifactId>greenmail-parent</artifactId>
   <packaging>pom</packaging>
   <!-- This version should get inherited to all subprojects. -->
   <version>1.4-SNAPSHOT</version>
-  
+
   <licenses>
     <license>
       <name>Apache 2.0</name>
@@ -34,17 +34,17 @@
       http://greenmail.svn.sourceforge.net/svnroot/greenmail/trunk
     </url>
   </scm>
-  
+
   <issueManagement>
     <url>http://sourceforge.net/tracker/?group_id=159695</url>
   </issueManagement>
-  
+
   <!-- details about the organization that 'owns' the project -->
   <organization>
     <name>Icegreen Technologies</name>
     <url>http://www.icegreen.com</url>
   </organization>
-  
+
   <modules>
     <module>greenmail-core</module>
     <module>greenmail-webapp</module>
@@ -85,13 +85,13 @@
       <url></url>
     </contributor>
   </contributors>
-  
+
   <reporting>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>2.0</version>
+        <version>2.0.1</version>
         <configuration>
           <skin>
             <groupId>org.apache.maven.skins</groupId>
@@ -100,25 +100,16 @@
           </skin>
         </configuration>
       </plugin>
-      
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>taglist-maven-plugin</artifactId>
-        <version>2.2</version>
-        <configuration>
-          <tags>TODO, @todo, FIXME, @deprecated</tags>
-        </configuration>
-      </plugin>
-      
+
       <plugin>
         <artifactId>maven-surefire-report-plugin</artifactId>
         <version>2.4.3</version>
       </plugin>
-      
+
       <plugin>
         <!-- javadoc report -->
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.5</version>
+        <version>2.6.1</version>
         <configuration>
           <aggregate>true</aggregate>
           <linksource>true</linksource>
@@ -129,7 +120,7 @@
           </links>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <artifactId>maven-jxr-plugin</artifactId>
          <version>2.1</version>
@@ -138,43 +129,40 @@
           <aggregate>true</aggregate>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jdepend-maven-plugin</artifactId>
         <version>2.0-beta-2</version>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
         <version>2.4</version>
         <configuration>
           <format>html</format>
-          <linkXref>true</linkXref>
+          <linkXRef>true</linkXRef>
           <sourceEncoding>utf-8</sourceEncoding>
           <minimumTokens>100</minimumTokens>
-          <targetJdk>1.4</targetJdk>
+          <targetJdk>1.5</targetJdk>
         </configuration>
       </plugin>
-      
-      
+
+
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
-        <version>2.0</version>
+        <version>2.3</version>
         <configuration>
           <threshold>Normal</threshold>
         </configuration>
       </plugin>
-      
-      <!--This plugin with version 2.0-beta-4-SNAPSHOT is needed to resolve
-          problem described in
-          http://www.mail-archive.com/users@maven.apache.org/msg32743.html -->
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.1.1</version>
+        <version>2.1.2</version>
         <reportSets>
           <reportSet>
             <reports>
@@ -191,9 +179,9 @@
         </reportSets>
       </plugin>
     </plugins>
-    
+
   </reporting>
-  
+
   <!-- distribution -->
   <!-- TODO
   <distributionManagement>
@@ -211,9 +199,9 @@
     </site>
   </distributionManagement>
   -->
-  
+
   <build>
-    
+
     <!-- Plugin defaults for all inherited POMs. -->
     <pluginManagement>
       <plugins>
@@ -268,17 +256,17 @@
           <artifactId>maven-eclipse-plugin</artifactId>
           <configuration>
             <downloadSources>true</downloadSources>
-            <downloadJavadoc>true</downloadJavadoc>
+            <downloadJavadocs>true</downloadJavadocs>
           </configuration>
         </plugin>
-        
+
       </plugins>
     </pluginManagement>
-    
+
   </build>
-  
+
   <properties>
-    <slf4j.version>1.5.8</slf4j.version>
+    <slf4j.version>1.5.10</slf4j.version>
   </properties>
 
   <dependencyManagement>
@@ -299,7 +287,7 @@
       <dependency>
         <groupId>javax.mail</groupId>
         <artifactId>mail</artifactId>
-        <version>1.4.2</version>
+        <version>1.4.3</version>
       </dependency>
       <dependency>
         <groupId>javax.activation</groupId>
@@ -347,7 +335,57 @@
         <version>${slf4j.version}</version>
         <scope>test</scope>
       </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>${slf4j.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.15</version>
+        <scope>test</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.jms</groupId>
+            <artifactId>jms</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.sun.jdmk</groupId>
+            <artifactId>jmxtools</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.sun.jmx</groupId>
+            <artifactId>jmxri</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
     </dependencies>
   </dependencyManagement>
-  
+
+  <profiles>
+    <profile>
+      <!-- Profile containing all settings specific to consol  -->
+      <id>repository-dev-java-net</id>
+      <repositories>
+        <!-- central -->
+        <repository>
+          <id>java.net-m2-repository</id>
+          <url>http://download.java.net/maven/2</url>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+        </repository>
+      </repositories>
+      <activation>
+        <file>
+          <missing>always.missing</missing>
+        </file>
+      </activation>
+    </profile>
+  </profiles>
 </project>

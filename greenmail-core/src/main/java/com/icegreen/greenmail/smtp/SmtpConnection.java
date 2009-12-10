@@ -6,6 +6,8 @@
 package com.icegreen.greenmail.smtp;
 
 import com.icegreen.greenmail.util.InternetPrintWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -14,6 +16,8 @@ import java.net.UnknownHostException;
 
 
 public class SmtpConnection {
+        // Logger.
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     // TODO: clean up getting localhost name
     private static final int TIMEOUT_MILLIS = 1000 * 30;
@@ -55,21 +59,23 @@ public class SmtpConnection {
     }
 
     public void println(String line) {
-
-        // System.err.println("S: " + line);
+        if (log.isDebugEnabled()) {
+            log.debug("S: " + line);
+        }
         out.println(line);
     }
 
     public BufferedReader getReader() {
-
         return in;
     }
 
     public String readLine()
             throws IOException {
         String line = in.readLine();
+        if (log.isDebugEnabled()) {
+            log.debug("C: " + line);
+        }
 
-        // System.err.println("C: " + line);
         return line;
     }
 
