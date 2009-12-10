@@ -13,6 +13,9 @@
   <body>
   <release version="1.4" date="in SVN" description="Changes for 1.4 release">
     <action type="update">
+      GreenMail JBoss Service is a bit more verbose when starting.
+    </action>
+    <action type="update">
       Updated slf4j from 1.5.8 to 1.5.10
     </action>
     <action type="update">
