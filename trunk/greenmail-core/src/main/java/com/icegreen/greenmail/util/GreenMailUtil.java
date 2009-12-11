@@ -108,14 +108,22 @@ public class GreenMailUtil {
      */
     public static int getLineCount(String str) {
         BufferedReader reader = new BufferedReader(new StringReader(str));
-        int ret = 0;
         try {
-            while (reader.readLine() != null) {
-                ret++;
+            int ret = 0;
+            try {
+                while (reader.readLine() != null) {
+                    ret++;
+                }
+                return ret;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-            return ret;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        }finally {
+            try {
+                reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -183,7 +191,7 @@ public class GreenMailUtil {
 
     public static String random(int nbrOfLetters) {
         Random r = new Random();
-        StringBuffer ret = new StringBuffer();
+        StringBuilder ret = new StringBuilder();
         for (/* empty */; nbrOfLetters > 0; nbrOfLetters--) {
             int pos = (r.nextInt(generateSetSize) + (++generateCount)) % generateSetSize;
             ret.append(generateSet.charAt(pos));
@@ -211,7 +219,7 @@ public class GreenMailUtil {
         if (null == addresses) {
             return null;
         }
-        StringBuffer ret = new StringBuffer();
+        StringBuilder ret = new StringBuilder();
         for (int i = 0; i < addresses.length; i++) {
             if (i>0) {
                 ret.append(", ");

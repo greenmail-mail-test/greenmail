@@ -86,12 +86,12 @@ public class ImapHandler extends Thread implements ImapConstants {
             ImapResponse response = new ImapResponse(outs);
 
             // Write welcome message
-            StringBuffer responseBuffer =
-                    new StringBuffer(256)
-                    .append(VERSION)
-                    .append(" Server ")
-                    .append("GreenMail")
-                    .append(" ready");
+            StringBuilder responseBuffer =
+                    new StringBuilder(256)
+                            .append(VERSION)
+                            .append(" Server ")
+                            .append("GreenMail")
+                            .append(" ready");
             response.okResponse(null, responseBuffer.toString());
 
             session = new ImapSessionImpl(imapHost,

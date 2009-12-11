@@ -50,7 +50,7 @@ abstract class CommandTemplate
             response.commandFailed(this, msg);
         } catch (ProtocolException e) {
             String msg = e.getMessage() + " Command should be '" +
-                    getExpectedMessage() + "'";
+                    getExpectedMessage() + '\'';
             response.commandError(msg);
         }
     }
@@ -76,12 +76,12 @@ abstract class CommandTemplate
      * @return A message describing the command protocol format.
      */
     protected String getExpectedMessage() {
-        StringBuffer syntax = new StringBuffer("<tag> ");
+        StringBuilder syntax = new StringBuilder("<tag> ");
         syntax.append(getName());
 
         String args = getArgSyntax();
         if (args != null && args.length() > 0) {
-            syntax.append(" ");
+            syntax.append(' ');
             syntax.append(args);
         }
 

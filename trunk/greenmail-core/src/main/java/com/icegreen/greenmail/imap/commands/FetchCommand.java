@@ -98,8 +98,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             response.append(" INTERNALDATE \"");
             // TODO format properly
             response.append(message.getAttributes().getInternalDateAsString());
-            response.append("\"");
-
+            response.append('\"');
         }
 
         // RFC822.SIZE response
@@ -225,7 +224,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             byte[] newBytes = new byte[len];
             System.arraycopy(bytes, start, newBytes, 0, len);
             bytes = newBytes;
-            response.append("<");
+            response.append('<');
             response.append(start);
             response.append("> ");
         }
@@ -327,7 +326,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         private void addNextElement(ImapRequestLineReader command, FetchRequest fetch)
                 throws ProtocolException {
             char next = nextCharInLine(command);
-            StringBuffer element = new StringBuffer();
+            StringBuilder element = new StringBuilder();
             while (next != ' ' && next != '[' && next != ')') {
                 element.append(next);
                 command.consume();
@@ -377,7 +376,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             } else {
                 consumeChar(command, '[');
 
-                StringBuffer sectionIdentifier = new StringBuffer();
+                StringBuilder sectionIdentifier = new StringBuilder();
                 next = nextCharInLine(command);
                 while (next != ']') {
                     sectionIdentifier.append(next);
@@ -404,9 +403,9 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
                 }
 
                 if ("BODY".equalsIgnoreCase(name)) {
-                    fetch.add(new BodyFetchElement("BODY[" + parameter + "]", parameter, partial), false);
+                    fetch.add(new BodyFetchElement("BODY[" + parameter + ']', parameter, partial), false);
                 } else if ("BODY.PEEK".equalsIgnoreCase(name)) {
-                    fetch.add(new BodyFetchElement("BODY[" + parameter + "]", parameter, partial), true);
+                    fetch.add(new BodyFetchElement("BODY[" + parameter + ']', parameter, partial), true);
                 } else {
                     throw new ProtocolException("Invalid fetch attibute: " + name + "[]");
                 }

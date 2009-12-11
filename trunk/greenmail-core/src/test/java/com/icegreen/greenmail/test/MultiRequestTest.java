@@ -61,7 +61,7 @@ public class MultiRequestTest extends TestCase {
 
         public void run() {
             try {
-                count = r.getMessages(to).length;
+                count = r.getMessages(to,to).length;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
