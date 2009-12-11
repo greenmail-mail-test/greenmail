@@ -13,7 +13,7 @@ import java.io.Writer;
 public class StreamUtils {
     public static String toString(Reader in)
             throws IOException {
-        StringBuffer sbuf = new StringBuffer();
+        StringBuilder sbuf = new StringBuilder();
         char[] buffer = new char[1024];
         int len;
         while ((len = in.read(buffer)) != -1) {
@@ -67,54 +67,54 @@ public class StreamUtils {
 
         public int read()
                 throws IOException {
-            if (oneFinished) {
+            while (true) {
+                if (oneFinished) {
+                    return _two.read();
+                } else {
+                    int value = _one.read();
+                    if (value == -1) {
+                        oneFinished = true;
+                    } else
+                    {
+                        return value;
+                    }
 
-                return _two.read();
-            } else {
-                int value = _one.read();
-                if (value == -1) {
-                    oneFinished = true;
-
-                    return read();
-                } else
-
-                    return value;
-
+                }
             }
         }
 
         public int read(char[] buf, int start, int len)
                 throws IOException {
-            if (oneFinished) {
+            while (true) {
+                if (oneFinished) {
+                    return _two.read(buf, start, len);
+                } else {
+                    int value = _one.read(buf, start, len);
+                    if (value == -1) {
+                        oneFinished = true;
+                    } else
+                    {
+                        return value;
+                    }
 
-                return _two.read(buf, start, len);
-            } else {
-                int value = _one.read(buf, start, len);
-                if (value == -1) {
-                    oneFinished = true;
-
-                    return read(buf, start, len);
-                } else
-
-                    return value;
-
+                }
             }
         }
 
         public int read(char[] buf)
                 throws IOException {
-            if (oneFinished) {
-
-                return _two.read(buf);
-            } else {
-                int value = _one.read(buf);
-                if (value == -1) {
-                    oneFinished = true;
-
-                    return read(buf);
-                } else
-
-                    return value;
+            while (true) {
+                if (oneFinished) {
+                    return _two.read(buf);
+                } else {
+                    int value = _one.read(buf);
+                    if (value == -1) {
+                        oneFinished = true;
+                    } else
+                    {
+                        return value;
+                    }
+                }
             }
         }
     }

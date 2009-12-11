@@ -71,7 +71,7 @@ public final class ImapSessionImpl implements ImapSession {
                         (ImapSessionFolder.FlagUpdate) iter.next();
                 int msn = entry.getMsn();
                 Flags updatedFlags = entry.getFlags();
-                StringBuffer out = new StringBuffer("FLAGS ");
+                StringBuilder out = new StringBuilder("FLAGS ");
                 out.append(MessageFlags.format(updatedFlags));
                 if (entry.getUid() != null) {
                     out.append(" UID ");

@@ -282,7 +282,7 @@ public class SimpleMessageAttributes
         //1. Date ---------------
         response.add(LB + Q + interalDateEnvelopeString + Q + SP);
         //2. Subject ---------------
-        if (subject != null && (!subject.equals(""))) {
+        if (subject != null && (subject.length() != 0)) {
             response.add(Q + subject + Q + SP);
         } else {
             response.add(NIL + SP);
@@ -302,7 +302,7 @@ public class SimpleMessageAttributes
         if (sender != null && sender.length > 0) {
 //            if (DEBUG) getLogger().debug("parsingEnvelope - sender[0] is: " + sender[0]);
             //Check for Netscape feature - sender is local part only
-            if (sender[0].indexOf("@") == -1) {
+            if (sender[0].indexOf('@') == -1) {
                 response.add(LB + (String) response.get(3) + RB); //first From address
             } else {
                 response.add(LB);
@@ -320,7 +320,7 @@ public class SimpleMessageAttributes
         }
         response.add(SP);
         if (replyTo != null && replyTo.length > 0) {
-            if (replyTo[0].indexOf("@") == -1) {
+            if (replyTo[0].indexOf('@') == -1) {
                 response.add(LB + (String) response.get(3) + RB); //first From address
             } else {
                 response.add(LB);
@@ -380,7 +380,7 @@ public class SimpleMessageAttributes
         }
         response.add(RB);
 
-        StringBuffer buf = new StringBuffer(16 * response.size());
+        StringBuilder buf = new StringBuilder(16 * response.size());
         for (int j = 0; j < response.size(); j++) {
             buf.append((String) response.get(j));
         }
@@ -392,8 +392,8 @@ public class SimpleMessageAttributes
      * Parses a String email address to an IMAP address string.
      */
     String parseAddress(String address) {
-        int comma = address.indexOf(",");
-        StringBuffer buf = new StringBuffer();
+        int comma = address.indexOf(',');
+        StringBuilder buf = new StringBuilder();
         if (comma == -1) { //single address
             buf.append(LB);
             InternetAddress netAddr = null;
@@ -403,8 +403,8 @@ public class SimpleMessageAttributes
                 return null;
             }
             String personal = netAddr.getPersonal();
-            if (personal != null && (!personal.equals(""))) {
-                buf.append(Q + personal + Q);
+            if (personal != null && (personal.length() != 0)) {
+                buf.append(Q).append(personal).append(Q);
             } else {
                 buf.append(NIL);
             }
@@ -413,9 +413,9 @@ public class SimpleMessageAttributes
             buf.append(SP);
             try {
                 MailAddress mailAddr = new MailAddress(netAddr.getAddress());
-                buf.append(Q + mailAddr.getUser() + Q);
+                buf.append(Q).append(mailAddr.getUser()).append(Q);
                 buf.append(SP);
-                buf.append(Q + mailAddr.getHost() + Q);
+                buf.append(Q).append(mailAddr.getHost()).append(Q);
             } catch (Exception pe) {
                 buf.append(NIL + SP + NIL);
             }
@@ -432,14 +432,14 @@ public class SimpleMessageAttributes
      * Decode a content Type header line into types and parameters pairs
      */
     void decodeContentType(String rawLine) {
-        int slash = rawLine.indexOf("/");
+        int slash = rawLine.indexOf('/');
         if (slash == -1) {
 //            if (DEBUG) getLogger().debug("decoding ... no slash found");
             return;
         } else {
             primaryType = rawLine.substring(0, slash).trim();
         }
-        int semicolon = rawLine.indexOf(";");
+        int semicolon = rawLine.indexOf(';');
         if (semicolon == -1) {
 //            if (DEBUG) getLogger().debug("decoding ... no semicolon found");
             secondaryType = rawLine.substring(slash + 1).trim();
@@ -458,19 +458,19 @@ public class SimpleMessageAttributes
         if (contentID == null) {
             buf.append(NIL);
         } else {
-            buf.append(Q + contentID + Q);
+            buf.append(Q).append(contentID).append(Q);
         }
         buf.append(SP);
         if (contentDesc == null) {
             buf.append(NIL);
         } else {
-            buf.append(Q + contentDesc + Q);
+            buf.append(Q).append(contentDesc).append(Q);
         }
         buf.append(SP);
         if (contentEncoding == null) {
             buf.append(NIL);
         } else {
-            buf.append(Q + contentEncoding + Q);
+            buf.append(Q).append(contentEncoding).append(Q);
         }
         buf.append(SP);
         buf.append(size);
@@ -504,7 +504,7 @@ public class SimpleMessageAttributes
                 buf.append(secondaryType.toUpperCase());
                 buf.append("\" ");
                 buf.append(fields);
-                buf.append(" ");
+                buf.append(' ');
                 buf.append(lineCount);
 
                 // is:    * 1 FETCH (BODYSTRUCTURE ("Text" "plain" NIL NIL NIL NIL    4  -1))
@@ -513,52 +513,52 @@ public class SimpleMessageAttributes
 
             } else if (primaryType.equalsIgnoreCase(MESSAGE) && secondaryType.equalsIgnoreCase("rfc822")) {
                 buf.append("\"MESSAGE\" \"RFC822\" ");
-                buf.append(fields + SP);
+                buf.append(fields).append(SP);
 //                setupLogger(parts[0]); // reset transient logger
-                buf.append(parts[0].getEnvelope() + SP);
-                buf.append(parts[0].getBodyStructure(false) + SP);
+                buf.append(parts[0].getEnvelope()).append(SP);
+                buf.append(parts[0].getBodyStructure(false)).append(SP);
                 buf.append(lineCount);
             } else if (primaryType.equalsIgnoreCase(MULTIPART)) {
                 for (int i = 0; i < parts.length; i++) {
 //                    setupLogger(parts[i]); // reset transient getLogger()
                     buf.append(parts[i].getBodyStructure(includeExtension));
                 }
-                buf.append(SP + Q + secondaryType + Q);
+                buf.append(SP + Q).append(secondaryType).append(Q);
             } else {
                 //1. primary type -------
-                buf.append("\"");
+                buf.append('\"');
                 buf.append(primaryType.toUpperCase());
-                buf.append("\"");
+                buf.append('\"');
                 //2. sec type -------
                 buf.append(" \"");
                 buf.append(secondaryType.toUpperCase());
-                buf.append("\"");
+                buf.append('\"');
                 //3. params -------
-                buf.append(" ");
+                buf.append(' ');
                 getParameters(buf);
                 //4. body id -------
-                buf.append(" ");
+                buf.append(' ');
                 buf.append(NIL);
                 //5. content desc -------
-                buf.append(" ");
+                buf.append(' ');
                 if (null != contentDesc) {
-                    buf.append("\"");
+                    buf.append('\"');
                     buf.append(contentDesc);
-                    buf.append("\"");
+                    buf.append('\"');
                 } else {
                     buf.append(NIL);
                 }
                 //6. encoding -------
-                buf.append(" ");
+                buf.append(' ');
                 if (null != contentEncoding) {
-                    buf.append("\"");
+                    buf.append('\"');
                     buf.append(contentEncoding);
-                    buf.append("\"");
+                    buf.append('\"');
                 } else {
                     buf.append(NIL);
                 }
                 //7. size -------
-                buf.append(" ");
+                buf.append(' ');
                 buf.append(size);
             }
 
@@ -566,31 +566,31 @@ public class SimpleMessageAttributes
                 //extension is different for multipart and single parts
                 if (primaryType.equalsIgnoreCase(MULTIPART)) {
                     //8. ext1 params -------
-                    buf.append(" ");
+                    buf.append(' ');
                     getParameters(buf);
                     //9. ext2 disposition -------
-                    buf.append(" ");
+                    buf.append(' ');
                     if (null != contentDisposition) {
                         buf.append(contentDisposition);
                     } else {
                         buf.append(NIL);
                     }
                     //10. ext3 language -------
-                    buf.append(" ");
+                    buf.append(' ');
                     buf.append(NIL);
                 } else {
                     // ext1 md5 -------
-                    buf.append(" ");
+                    buf.append(' ');
                     buf.append(NIL);
                     // ext2 disposition -------
-                    buf.append(" ");
+                    buf.append(' ');
                     if (null != contentDisposition) {
                         buf.append(contentDisposition);
                     } else {
                         buf.append(NIL);
                     }
                     //ext3 language -------
-                    buf.append(" ");
+                    buf.append(' ');
                     buf.append(NIL);
                 }
             }
@@ -691,7 +691,7 @@ public class SimpleMessageAttributes
                 params = new HashSet();
                 for (int i = 1; i < strs.length; i++) {
                     String p = strs[i].trim();
-                    int e = p.indexOf("=");
+                    int e = p.indexOf('=');
                     String key = p.substring(0, e);
                     String value = p.substring(e + 1, p.length());
                     p = Q + strip(key) + Q + SP + Q + strip(value) + Q;
@@ -709,12 +709,12 @@ public class SimpleMessageAttributes
         }
 
         public String toString() {
-            StringBuffer ret = new StringBuffer();
+            StringBuilder ret = new StringBuilder();
             if (null == params) {
-                ret.append(Q + value + Q);
+                ret.append(Q).append(value).append(Q);
             } else {
                 ret.append(LB);
-                ret.append(Q + value + Q + SP);
+                ret.append(Q).append(value).append(Q + SP);
                 ret.append(LB);
                 int i = 0;
                 for (Iterator iterator = params.iterator(); iterator.hasNext();) {

@@ -44,9 +44,9 @@ class StatusCommand extends AuthenticatedStateCommand {
 
         MailFolder folder = getMailbox(mailboxName, session, true);
 
-        StringBuffer buffer = new StringBuffer(mailboxName);
+        StringBuilder buffer = new StringBuilder(mailboxName);
         buffer.append(SP);
-        buffer.append("(");
+        buffer.append('(');
 
         if (statusDataItems.messages) {
             buffer.append(MESSAGES);
@@ -140,7 +140,7 @@ class StatusCommand extends AuthenticatedStateCommand {
             } else if (nextWord.equals(UNSEEN)) {
                 items.unseen = true;
             } else {
-                throw new ProtocolException("Unknown status item: '" + nextWord + "'");
+                throw new ProtocolException("Unknown status item: '" + nextWord + '\'');
             }
         }
     }

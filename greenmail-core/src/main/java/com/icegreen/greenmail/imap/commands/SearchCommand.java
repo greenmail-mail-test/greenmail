@@ -49,7 +49,7 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
         MailFolder folder = session.getSelected();
         long[] uids = folder.search(searchTerm);
-        StringBuffer idList = new StringBuffer();
+        StringBuilder idList = new StringBuilder();
         for (int i = 0; i < uids.length; i++) {
             if (i > 0) {
                 idList.append(SP);

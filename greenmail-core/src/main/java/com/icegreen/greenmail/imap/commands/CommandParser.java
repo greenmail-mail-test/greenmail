@@ -23,8 +23,6 @@ import java.util.Date;
  * @version $Revision: 109034 $
  */
 public class CommandParser {
-    private static final char[] EMPTY_CHAR_ARRAY = new char[0];
-
     /**
      * Reads an argument of type "atom" from the request.
      */
@@ -144,7 +142,7 @@ public class CommandParser {
     protected String consumeWord(ImapRequestLineReader request,
                                  CharacterValidator validator)
             throws ProtocolException {
-        StringBuffer atom = new StringBuffer();
+        StringBuilder atom = new StringBuilder();
 
         char next = request.nextWordChar();
         while (!isWhitespace(next)) {
@@ -152,7 +150,7 @@ public class CommandParser {
                 atom.append(next);
                 request.consume();
             } else {
-                throw new ProtocolException("Invalid character: '" + next + "'");
+                throw new ProtocolException("Invalid character: '" + next + '\'');
             }
             next = request.nextChar();
         }
@@ -174,7 +172,7 @@ public class CommandParser {
         // The 1st character must be '{'
         consumeChar(request, '{');
 
-        StringBuffer digits = new StringBuffer();
+        StringBuilder digits = new StringBuilder();
         char next = request.nextChar();
         while (next != '}' && next != '+') {
             digits.append(next);
@@ -230,7 +228,7 @@ public class CommandParser {
             throws ProtocolException {
         char consumed = request.consume();
         if (consumed != expected) {
-            throw new ProtocolException("Expected:'" + expected + "' found:'" + consumed + "'");
+            throw new ProtocolException("Expected:'" + expected + "' found:'" + consumed + '\'');
         }
     }
 
@@ -242,7 +240,7 @@ public class CommandParser {
         // The 1st character must be '"'
         consumeChar(request, '"');
 
-        StringBuffer quoted = new StringBuffer();
+        StringBuilder quoted = new StringBuilder();
         char next = request.nextChar();
         while (next != '"') {
             if (next == '\\') {
@@ -250,7 +248,7 @@ public class CommandParser {
                 next = request.nextChar();
                 if (!isQuotedSpecial(next)) {
                     throw new ProtocolException("Invalid escaped character in quote: '" +
-                            next + "'");
+                            next + '\'');
                 }
             }
             quoted.append(next);
@@ -450,8 +448,7 @@ public class CommandParser {
 
     private class TagCharValidator extends ATOM_CHARValidator {
         public boolean isValid(char chr) {
-            if (chr == '+') return false;
-            return super.isValid(chr);
+            return chr != '+' && super.isValid(chr);
         }
     }
 

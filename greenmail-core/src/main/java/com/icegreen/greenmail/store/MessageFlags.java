@@ -40,8 +40,8 @@ public class MessageFlags {
      * Returns IMAP formatted String of MessageFlags for named user
      */
     public static String format(Flags flags) {
-        StringBuffer buf = new StringBuffer();
-        buf.append("(");
+        StringBuilder buf = new StringBuilder();
+        buf.append('(');
         if (flags.contains(Flags.Flag.ANSWERED)) {
             buf.append("\\Answered ");
         }
@@ -64,7 +64,7 @@ public class MessageFlags {
         if (buf.length() > 1) {
             buf.setLength(buf.length() - 1);
         }
-        buf.append(")");
+        buf.append(')');
         return buf.toString();
     }
 }

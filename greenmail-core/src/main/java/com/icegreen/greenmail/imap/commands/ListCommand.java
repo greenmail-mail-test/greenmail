@@ -100,7 +100,7 @@ class ListCommand extends AuthenticatedStateCommand {
         Iterator iterator = mailboxes.iterator();
         while (iterator.hasNext()) {
             MailFolder folder = (MailFolder) iterator.next();
-            StringBuffer message = new StringBuffer("(");
+            StringBuilder message = new StringBuilder("(");
             if (!folder.isSelectable()) {
                 message.append("\\Noselect");
             }
@@ -136,9 +136,9 @@ class ListCommand extends AuthenticatedStateCommand {
     }
 
     private String combineSearchTerms(String referenceName, String mailboxMatch) {
-        
+
         // Otherwise, combine the referenceName and mailbox name.
-        StringBuffer buffer = new StringBuffer(mailboxMatch);
+        StringBuilder buffer = new StringBuilder(mailboxMatch);
 
         // Make sure the 2 strings are joined by only one HIERARCHY_DELIMITER_CHAR
         if (referenceName.endsWith(HIERARCHY_DELIMITER)) {
@@ -193,10 +193,7 @@ class ListCommand extends AuthenticatedStateCommand {
 
         private class ListCharValidator extends ATOM_CHARValidator {
             public boolean isValid(char chr) {
-                if (isListWildcard(chr)) {
-                    return true;
-                }
-                return super.isValid(chr);
+                return isListWildcard(chr) || super.isValid(chr);
             }
         }
     }
