@@ -13,6 +13,9 @@
   <body>
   <release version="1.4" date="in SVN" description="Changes for 1.4 release">
     <action type="update">
+      Minor Java 5 optimizations.
+    </action>
+    <action type="update">
       GreenMail JBoss Service is a bit more verbose when starting.
     </action>
     <action type="update">
