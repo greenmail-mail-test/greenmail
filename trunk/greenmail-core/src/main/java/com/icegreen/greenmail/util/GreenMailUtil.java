@@ -51,7 +51,7 @@ public class GreenMailUtil {
      */
     public static void copyStream(final InputStream src, OutputStream dest) throws IOException {
         byte[] buffer = new byte[1024];
-        int read = 0;
+        int read;
         while ((read = src.read(buffer)) > -1) {
             dest.write(buffer, 0, read);
         }
@@ -233,8 +233,7 @@ public class GreenMailUtil {
         try {
             Session session = getSession(setup);
 
-            Address[] tos = new javax.mail.Address[0];
-            tos = new InternetAddress[]{new InternetAddress(to)};
+            Address[] tos = new InternetAddress[]{new InternetAddress(to)};
             Address[] froms = new InternetAddress[]{new InternetAddress(from)};
             MimeMessage mimeMessage = new MimeMessage(session);
             mimeMessage.setSubject(subject);

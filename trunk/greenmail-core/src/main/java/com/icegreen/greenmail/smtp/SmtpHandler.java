@@ -63,7 +63,7 @@ class SmtpHandler extends Thread {
 
     protected void sendGreetings() {
         _conn.println("220 " + _conn.getServerGreetingsName() +
-                " GreenMail SMTP Service Ready");
+                " GreenMail SMTP Service Ready at port "+_conn.sock.getLocalPort());
     }
 
     protected void handleCommand()
@@ -126,6 +126,6 @@ class SmtpHandler extends Thread {
             }
         } catch(IOException ignored) {
             //empty
-        } 
+        }
     }
 }

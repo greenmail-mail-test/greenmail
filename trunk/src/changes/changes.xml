@@ -12,6 +12,13 @@
   </properties>
   <body>
   <release version="1.4" date="in SVN" description="Changes for 1.4 release">
+    <action type="add">
+      Default keystore can be customized by adding a 'greenmail.jks' to classpath before the GreenMail JAR.
+      See 'DummySSLServerSocketFactory.java' for details.
+    </action>
+    <action type="fix">
+      Updated default keystore certificate, which expired in 2006 (solves problem with IBM JDK as reported by Dirk Olmes).
+    </action>
     <action type="update">
       Minor Java 5 optimizations.
     </action>

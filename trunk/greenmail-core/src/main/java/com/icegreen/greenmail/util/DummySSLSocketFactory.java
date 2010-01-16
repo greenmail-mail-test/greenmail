@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 
-
 /**
  * DummySSLSocketFactory - NOT SECURE
  */
@@ -27,7 +26,7 @@ public class DummySSLSocketFactory extends SSLSocketFactory {
             sslcontext.init(null,
                     new TrustManager[]{new DummyTrustManager()},
                     null);
-            factory = (SSLSocketFactory) sslcontext.getSocketFactory();
+            factory = sslcontext.getSocketFactory();
         } catch (Exception ex) {
             ex.printStackTrace();
             System.exit(-1);
