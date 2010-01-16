@@ -247,16 +247,37 @@ public class GreenMailUtil {
     }
 
     public static Session getSession(final ServerSetup setup) {
+        return getSession(setup, null);
+    }
+
+    /**
+     * Gets a JavaMail Session for given server type such as IMAP and additional props for JavaMail.
+     *
+     * @param setup the setup type, such as <code>ServerSetup.IMAP</code>
+     * @param mailProps
+     * @return
+     */
+    public static Session getSession(final ServerSetup setup, Properties mailProps) {
         Properties props = new Properties();
         props.put("mail.smtps.starttls.enable", Boolean.TRUE);
         if (setup.isSecure()) {
             props.setProperty("mail.smtp.socketFactory.class", DummySSLSocketFactory.class.getName());
         }
+
         props.setProperty("mail.transport.protocol", setup.getProtocol());
-        props.setProperty("mail.smtp.port", String.valueOf(setup.getPort()));
+
+        // Should these two props be taken from the setup info?
         props.setProperty("mail.smtps.port", String.valueOf(setup.getPort()));
-        Session session = Session.getInstance(props, null);
-        return session;
+        props.setProperty("mail.smtp.port", String.valueOf(setup.getPort()));
+
+        props.setProperty("mail."+setup.getProtocol()+".port", String.valueOf(setup.getPort()));
+        if(null!=mailProps && !mailProps.isEmpty()) {
+            for(Object k: mailProps.keySet()) {
+                String ks = (String) k;
+                props.setProperty(ks, mailProps.getProperty(ks));
+            }
+        }
+        return Session.getInstance(props, null);
     }
 
     public static void sendAttachmentEmail(String to, String from, String subject, String msg, final byte[] attachment, final String contentType, final String filename, final String description, final ServerSetup setup) throws MessagingException, IOException {

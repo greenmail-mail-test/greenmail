@@ -168,7 +168,7 @@ public class GreenMail {
      * @throws InterruptedException
      */
     public boolean waitForIncomingEmail(int emailCount) throws InterruptedException {
-        return waitForIncomingEmail(5000,emailCount);
+        return waitForIncomingEmail(5000l,emailCount);
     }
     /**
      * @return Returns all messags in all folders for all users

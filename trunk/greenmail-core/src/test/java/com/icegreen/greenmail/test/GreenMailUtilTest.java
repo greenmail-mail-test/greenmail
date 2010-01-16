@@ -6,12 +6,22 @@
  */
 package com.icegreen.greenmail.test;
 
+import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetup;
+import com.icegreen.greenmail.util.ServerSetupTest;
 import junit.framework.TestCase;
 
+import javax.mail.Address;
+import javax.mail.Folder;
+import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Store;
+import javax.mail.URLName;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
+import java.util.Properties;
 
 /**
  * @author Wael Chatila
@@ -20,17 +30,49 @@ import java.io.IOException;
  */
 public class GreenMailUtilTest extends TestCase {
     public void testMimeMessageLoading() throws MessagingException {
-        MimeMessage message = GreenMailUtil.newMimeMessage(sampleEmail);
+        MimeMessage message = GreenMailUtil.newMimeMessage(SAMPLE_EMAIL);
         assertEquals("wassup", message.getSubject());
     }
 
     public void testGetBody() throws MessagingException, IOException {
-        MimeMessage message = GreenMailUtil.newMimeMessage(sampleEmail);
+        MimeMessage message = GreenMailUtil.newMimeMessage(SAMPLE_EMAIL);
         String body = GreenMailUtil.getBody(message);
         assertEquals("Yo wassup Bertil", body.trim());
     }
 
-    final String sampleEmail = "From - Thu Jan 19 00:30:34 2006\r\n" +
+    public void testSendTextEmailTest() throws Exception {
+        GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
+        greenMail.setUser("foo@localhost","pwd");
+        greenMail.start();
+        try {
+            GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost","Test subject","Test message", ServerSetupTest.SMTP);
+            greenMail.waitForIncomingEmail(1);
+
+            Properties p = new Properties();
+//            p.setProperty("mail.host","localhost");
+            p.setProperty("mail.debug","true");
+            Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
+            Store store = session.getStore("imap");
+            store.connect("foo@localhost","pwd");
+            Folder folder = store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+            Message[] msgs = folder.getMessages();
+            assertTrue(null!=msgs && msgs.length == 1);
+            Message m = msgs[0];
+            assertEquals("Test subject", m.getSubject());
+            Address a[] = m.getRecipients(Message.RecipientType.TO);
+            assertTrue(null!=a && a.length==1 && a[0].toString().equals("foo@localhost"));
+            a = m.getFrom();
+            assertTrue(null!=a && a.length==1 && a[0].toString().equals("bar@localhost"));
+            assertTrue(m.getContentType().toLowerCase().startsWith("text/plain"));
+            assertEquals("Test message", m.getContent());
+        }
+        finally {
+            greenMail.stop();
+        }
+    }
+
+    final static String SAMPLE_EMAIL = "From - Thu Jan 19 00:30:34 2006\r\n" +
             "X-Account-Key: account245\r\n" +
             "X-UIDL: 11332317636080.2607.mail5,S=833\r\n" +
             "X-Mozilla-Status: 0001\r\n" +
