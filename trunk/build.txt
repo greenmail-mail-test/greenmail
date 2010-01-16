@@ -1,4 +1,4 @@
-Building Greenmail
+Building GreenMail
 ==================
 
 1) Install the maven build tool (see http://maven.apache.org)
@@ -10,3 +10,11 @@ Building Greenmail
    In case of test failures, add the option "-Dmaven.test.failure.ignore" or
    disable the tests with "-Dtest".
 
+
+Releasing GreenMail
+===================
+
+1) Build using release profile:
+   > mvn clean install -Prelease 
+
+   The release profile activates additional building of source jars etc.
