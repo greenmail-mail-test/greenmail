@@ -16,8 +16,6 @@ import java.net.UnknownHostException;
 
 
 public class SmtpConnection {
-        // Logger.
-    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     // TODO: clean up getting localhost name
     private static final int TIMEOUT_MILLIS = 1000 * 30;
@@ -30,6 +28,8 @@ public class SmtpConnection {
         } catch (UnknownHostException uhe) {
         }
     }
+    // Logger.
+    protected final static Logger log = LoggerFactory.getLogger(SmtpConnection.class);
 
     // networking/io stuff
     Socket sock;

@@ -10,6 +10,8 @@ import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.icegreen.greenmail.util.Retriever;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import java.util.Iterator;
  * @since Jan 11, 2007
  */
 public class MultiRequestTest extends TestCase {
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     GreenMail greenMail;
 
     protected void tearDown() throws Exception {
@@ -36,6 +39,13 @@ public class MultiRequestTest extends TestCase {
     private static class SenderThread extends Thread {
         String to;
         int count;
+        boolean finished = false;
+
+        SenderThread(String to,int count, ThreadGroup threadGroup) {
+            super(threadGroup, SenderThread.class.getName()+':'+to);
+            this.to = to;
+            this.count = count;
+        }
 
         SenderThread(String to,int count) {
             this.to = to;
@@ -46,6 +56,7 @@ public class MultiRequestTest extends TestCase {
             for (int i=0;i<count;i++) {
                 GreenMailUtil.sendTextEmailTest(to, "from@localhost.com", "subject", "body");
             }
+            finished = true;
         }
     }
     private static class RetrieverThread extends Thread {
@@ -145,8 +156,14 @@ public class MultiRequestTest extends TestCase {
         greenMail.start();
 
         final int num = 40;
+        ThreadGroup senders = new ThreadGroup("SenderThreads") {
+            @Override
+            public void uncaughtException(final Thread t, final Throwable e) {
+                log.error("Exception in thread \""+ t.getName(),e);
+            }
+        };
         for (int i=1;i<=num;i++) {
-            SenderThread s = new SenderThread("to"+i,i);
+            SenderThread s = new SenderThread("to"+i,i, senders);
             s.start();
         }
 
