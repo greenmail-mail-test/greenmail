@@ -40,5 +40,19 @@
       Updated JUnit from 3.8.1 to 3.8.2
     </action>
   </release>
+  <release version="1.3.1b" date="2009-06-14" description="Changes for 1.3.1b release">
+    <action type="add">
+      Better "Bind Address Exception" handling. GreenMail now will try opening the server port multiple times with time delays.
+    </action>
+    <action type="add">
+      GreenMail now open server ports on "0.0.0.0" if bind address is specified as null
+    </action>
+    <action type="add">
+      GreenMail now have a "catch-all" retriever helper. See GreenMail.getReceviedMessagesForDomain(String domain) 
+    </action>
+    <action type="add">
+      For the jboss-service: More verbose startup info message including mail server hostname, protocols and ports
+    </action>
+  </release>
   </body>
 </document>
