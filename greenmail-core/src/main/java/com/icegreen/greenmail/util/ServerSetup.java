@@ -54,7 +54,12 @@ public class ServerSetup {
 
     public ServerSetup(int port, String bindAddress, String protocol) {
         this.port = port;
-        this.bindAddress = bindAddress;
+        if(null == bindAddress || bindAddress.length()==0) {
+            this.bindAddress = "127.0.0.1";
+        }
+        else {
+            this.bindAddress = bindAddress;
+        }
         this.protocol = protocol;
     }
 
