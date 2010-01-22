@@ -22,12 +22,16 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author Wael Chatila
  * @version $Id: $
  * @since Jan 29, 2006
  */
 public class GreenMailUtil {
+    private final static Logger log = LoggerFactory.getLogger(GreenMailUtil.class);
     /**
      * used internally for {@link #random()}
      */
@@ -269,13 +273,18 @@ public class GreenMailUtil {
         // Should these two props be taken from the setup info?
         props.setProperty("mail.smtps.port", String.valueOf(setup.getPort()));
         props.setProperty("mail.smtp.port", String.valueOf(setup.getPort()));
+//        props.setProperty("mail.debug", "true");
 
         props.setProperty("mail."+setup.getProtocol()+".port", String.valueOf(setup.getPort()));
+        props.setProperty("mail."+setup.getProtocol()+".host", String.valueOf(setup.getBindAddress()));
         if(null!=mailProps && !mailProps.isEmpty()) {
             for(Object k: mailProps.keySet()) {
                 String ks = (String) k;
                 props.setProperty(ks, mailProps.getProperty(ks));
             }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Mail session properties are "+props);
         }
         return Session.getInstance(props, null);
     }
