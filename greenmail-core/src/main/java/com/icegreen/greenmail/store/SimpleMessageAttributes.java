@@ -485,6 +485,8 @@ public class SimpleMessageAttributes
             Iterator it = parameters.iterator();
             while (it.hasNext()) {
                 buf.append((String) it.next());
+                // Space separated
+                if (it.hasNext()) buf.append(SP);
             }
             buf.append(RB);
         }

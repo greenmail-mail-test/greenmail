@@ -50,7 +50,7 @@ public class GreenMailUtilTest extends TestCase {
 
             Properties p = new Properties();
 //            p.setProperty("mail.host","localhost");
-            p.setProperty("mail.debug","true");
+//            p.setProperty("mail.debug","true");
             Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
             Store store = session.getStore("imap");
             store.connect("foo@localhost","pwd");
