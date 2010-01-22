@@ -12,6 +12,9 @@
   </properties>
   <body>
   <release version="1.4" date="in SVN" description="Changes for 1.4 release">
+    <action type="fix">
+      Fixed bug in unparseable message attributes (many thx to Torsten Buchert for reporting and providing a patch).
+    </action>
     <action type="add">
       Default keystore can be customized by adding a 'greenmail.jks' to classpath before the GreenMail JAR.
       See 'DummySSLServerSocketFactory.java' for details.
