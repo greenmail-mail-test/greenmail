@@ -1,10 +1,13 @@
 /* -------------------------------------------------------------------
- * Copyright (c) 2006 Wael Chatila / Icegreen Technologies. All Rights Reserved.
- * This software is released under the LGPL which is available at http://www.gnu.org/copyleft/lesser.html
- * This file has been modified by the copyright holder. Original file can be found at http://james.apache.org
- * -------------------------------------------------------------------
- */
+* Copyright (c) 2006 Wael Chatila / Icegreen Technologies. All Rights Reserved.
+* This software is released under the LGPL which is available at http://www.gnu.org/copyleft/lesser.html
+* This file has been modified by the copyright holder. Original file can be found at http://james.apache.org
+* -------------------------------------------------------------------
+*/
 package com.icegreen.greenmail.imap.commands;
+
+import javax.mail.search.AndTerm;
+import javax.mail.search.SearchTerm;
 
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ImapResponse;
@@ -12,9 +15,8 @@ import com.icegreen.greenmail.imap.ImapSession;
 import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
-
-import javax.mail.Message;
-import javax.mail.search.SearchTerm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles processeing for the SEARCH imap command.
@@ -23,14 +25,13 @@ import javax.mail.search.SearchTerm;
  * @version $Revision: 109034 $
  */
 class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     public static final String NAME = "SEARCH";
     public static final String ARGS = "<search term>";
 
     private SearchCommandParser parser = new SearchCommandParser();
 
-    /**
-     * @see CommandTemplate#doProcess
-     */
+    /** @see CommandTemplate#doProcess */
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session)
@@ -70,45 +71,56 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
         response.commandComplete(this);
     }
 
-    /**
-     * @see ImapCommand#getName
-     */
+    /** @see ImapCommand#getName */
     public String getName() {
         return NAME;
     }
 
-    /**
-     * @see CommandTemplate#getArgSyntax
-     */
+    /** @see CommandTemplate#getArgSyntax */
     public String getArgSyntax() {
         return ARGS;
     }
 
     private class SearchCommandParser extends CommandParser {
         /**
-         * Parses the request argument into a valid search term.
-         * Not yet implemented - all searches will return everything for now.
-         * TODO implement search
+         * Parses the request argument into a valid search term. Not yet fully implemented - only flags supported.
+         *
+         * Other searches will return
+         * everything for now. TODO implement search!
          */
         public SearchTerm searchTerm(ImapRequestLineReader request)
                 throws ProtocolException {
+            SearchTerm resultTerm = null;
             // Dummy implementation
             // Consume to the end of the line.
             char next = request.nextChar();
+            StringBuilder sb = new StringBuilder();
             while (next != '\n') {
+                if (next != 32 /* space */ && next != 13 /* cr */) {
+                    sb.append(next);
+                }
                 request.consume();
                 next = request.nextChar();
+                if (next == 32 || next == '\n') {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Search request is '"+sb.toString()+'\'');
+                    }
+                    // Examples:
+                    // HEADER Message-ID <747621499.0.1264172476711.JavaMail.tbuchert@dev16.int.consol.de> ALL
+                    // FLAG SEEN ALL
+                    SearchTerm searchTerm = SearchKey.valueOf(sb.toString()).getSearchTerm();
+                    resultTerm = resultTerm == null ? searchTerm : new AndTerm(resultTerm, searchTerm);
+                    sb = new StringBuilder();
+                    next = request.nextChar();
+                }
             }
 
             // Return a search term that matches everything.
-            return new SearchTerm() {
-                public boolean match(Message message) {
-                    return true;
-                }
-            };
+            return resultTerm;
         }
 
     }
+
 }
 
 /*
