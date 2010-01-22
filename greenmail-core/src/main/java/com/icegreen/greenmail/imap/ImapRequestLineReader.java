@@ -141,7 +141,7 @@ public class ImapRequestLineReader {
                 int count = 0;
                 count = input.read(holder, readTotal, holder.length - readTotal);
                 if (count == -1) {
-                    throw new ProtocolException("Unexpectd end of stream.");
+                    throw new ProtocolException("Unexpected end of stream.");
                 }
                 readTotal += count;
             }
