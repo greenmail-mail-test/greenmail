@@ -13,6 +13,9 @@
   <body>
   <release version="1.4" date="in SVN" description="Changes for 1.4 release">
     <action type="add">
+      Extended search by HEADER criteria.
+    </action>
+    <action type="add">
       Basic imap search supporting flag criterias.
       Many thx to Torsten Buchert for providing a patch.
     </action>

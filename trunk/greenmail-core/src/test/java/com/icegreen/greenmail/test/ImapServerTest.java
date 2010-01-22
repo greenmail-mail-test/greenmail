@@ -3,13 +3,29 @@
  */
 package com.icegreen.greenmail.test;
 
+import com.icegreen.greenmail.store.MailFolder;
+import com.icegreen.greenmail.store.SimpleStoredMessage;
+import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.*;
 import junit.framework.TestCase;
 
+import javax.mail.Address;
 import javax.mail.BodyPart;
+import javax.mail.Flags;
+import javax.mail.Folder;
 import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.Store;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.search.FlagTerm;
+import javax.mail.search.HeaderTerm;
+import javax.mail.search.SearchTerm;
+
 import java.io.ByteArrayOutputStream;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * @author Wael Chatila
@@ -29,14 +45,84 @@ public class ImapServerTest extends TestCase {
         super.tearDown();
     }
 
+    public void testSearch() throws Exception {
+        greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
+        GreenMailUser user = greenMail.setUser("test@localhost","pwd");
+        assertNotNull(greenMail.getImap());
+        greenMail.start();
+
+
+        Properties p = new Properties();
+//            p.setProperty("mail.host","localhost");
+//            p.setProperty("mail.debug","true");
+        Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
+        MailFolder folder = greenMail.getManagers().getImapHostManager().getFolder(user, "INBOX");
+
+        MimeMessage message1 = new MimeMessage(session);
+        message1.setSubject("testSearch");
+        message1.setText("content");
+        message1.setRecipients(Message.RecipientType.TO, new Address[]{
+                new InternetAddress("test@localhost")
+        });
+        message1.setFlag(Flags.Flag.ANSWERED, true);
+        folder.store(message1);
+
+        MimeMessage message2 = new MimeMessage(session);
+        message2.setSubject("testSearch");
+        message2.setText("content");
+        message2.setRecipients(Message.RecipientType.TO, new Address[]{
+                new InternetAddress("test@localhost")
+        });
+        message2.setFlag(Flags.Flag.ANSWERED,false);
+        folder.store(message2);
+
+        List<SimpleStoredMessage> gMsgs = folder.getMessages();
+        for (SimpleStoredMessage gMsg : gMsgs) {
+            MimeMessage mm = gMsg.getMimeMessage();
+            for (Flags.Flag f : mm.getFlags().getSystemFlags()) {
+                gMsg.getFlags().add(f);
+            }
+            mm.saveChanges();
+        }
+
+        greenMail.waitForIncomingEmail(2);
+
+        Store store = session.getStore("imap");
+        store.connect("test@localhost", "pwd");
+        Folder imapFolder = store.getFolder("INBOX");
+        imapFolder.open(Folder.READ_WRITE);
+
+        Message[] imapMessages = imapFolder.getMessages();
+        assertTrue(null != imapMessages && imapMessages.length == 2);
+        Message m0 = imapMessages[0];
+        Message m1 = imapMessages[1];
+        assertTrue(m0.getFlags().contains(Flags.Flag.ANSWERED));
+
+        // Search flags
+        imapMessages = imapFolder.search(new FlagTerm(new Flags(Flags.Flag.ANSWERED),true));
+        assertTrue(imapMessages.length == 1);
+        assertTrue(imapMessages[0] == m0);
+
+        // Search header ids
+        String id = m0.getHeader("Message-ID")[0];
+        imapMessages = imapFolder.search(new HeaderTerm("Message-ID",id));
+        assertTrue(imapMessages.length == 1);
+        assertTrue(imapMessages[0] == m0);
+
+        id = m1.getHeader("Message-ID")[0];
+        imapMessages = imapFolder.search(new HeaderTerm("Message-ID",id));
+        assertTrue(imapMessages.length == 1);
+        assertTrue(imapMessages[0] == m1);
+    }
+
     public void testRetreiveSimple() throws Exception {
         greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
         assertNotNull(greenMail.getImap());
         greenMail.start();
         final String subject = GreenMailUtil.random();
         final String body = GreenMailUtil.random() + "\r\n" + GreenMailUtil.random() + "\r\n" + GreenMailUtil.random();
-        final String to = "test@localhost.com";
-        GreenMailUtil.sendTextEmailTest(to, "from@localhost.com", subject, body);
+        final String to = "test@localhost";
+        GreenMailUtil.sendTextEmailTest(to, "from@localhost", subject, body);
         greenMail.waitForIncomingEmail(5000, 1);
 
         Retriever retriever = new Retriever(greenMail.getImap());
@@ -53,8 +139,8 @@ public class ImapServerTest extends TestCase {
         greenMail.start();
         final String subject = GreenMailUtil.random();
         final String body = GreenMailUtil.random();
-        String to = "test@localhost.com";
-        GreenMailUtil.sendTextEmailSecureTest(to, "from@localhost.com", subject, body);
+        String to = "test@localhost";
+        GreenMailUtil.sendTextEmailSecureTest(to, "from@localhost", subject, body);
         greenMail.waitForIncomingEmail(5000, 1);
 
         Retriever retriever = new Retriever(greenMail.getImaps());
@@ -73,7 +159,7 @@ public class ImapServerTest extends TestCase {
         greenMail.start();
         final String subject = GreenMailUtil.random();
         final String body = GreenMailUtil.random();
-        GreenMailUtil.sendTextEmailTest(to, "from@localhost.com", subject, body);
+        GreenMailUtil.sendTextEmailTest(to, "from@localhost", subject, body);
         greenMail.waitForIncomingEmail(5000, 1);
 
         Retriever retriever = new Retriever(greenMail.getImap());
@@ -98,8 +184,8 @@ public class ImapServerTest extends TestCase {
 
         String subject = GreenMailUtil.random();
         String body = GreenMailUtil.random();
-        String to = "test@localhost.com";
-        GreenMailUtil.sendAttachmentEmail(to, "from@localhost.com", subject, body, new byte[]{0, 1, 2}, "image/gif", "testimage_filename", "testimage_description", ServerSetupTest.SMTP);
+        String to = "test@localhost";
+        GreenMailUtil.sendAttachmentEmail(to, "from@localhost", subject, body, new byte[]{0, 1, 2}, "image/gif", "testimage_filename", "testimage_description", ServerSetupTest.SMTP);
         greenMail.waitForIncomingEmail(5000, 1);
 
         Retriever retriever = new Retriever(greenMail.getImap());

@@ -84,13 +84,13 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
     private class SearchCommandParser extends CommandParser {
         /**
          * Parses the request argument into a valid search term. Not yet fully implemented - only flags supported.
-         *
-         * Other searches will return
-         * everything for now. TODO implement search!
+         * <p/>
+         * Other searches will return everything for now. TODO implement search!
          */
         public SearchTerm searchTerm(ImapRequestLineReader request)
                 throws ProtocolException {
             SearchTerm resultTerm = null;
+            SearchTermBuilder b = null;
             // Dummy implementation
             // Consume to the end of the line.
             char next = request.nextChar();
@@ -103,13 +103,22 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
                 next = request.nextChar();
                 if (next == 32 || next == '\n') {
                     if (log.isDebugEnabled()) {
-                        log.debug("Search request is '"+sb.toString()+'\'');
+                        log.debug("Search request is '" + sb.toString() + '\'');
                     }
                     // Examples:
                     // HEADER Message-ID <747621499.0.1264172476711.JavaMail.tbuchert@dev16.int.consol.de> ALL
                     // FLAG SEEN ALL
-                    SearchTerm searchTerm = SearchKey.valueOf(sb.toString()).getSearchTerm();
-                    resultTerm = resultTerm == null ? searchTerm : new AndTerm(resultTerm, searchTerm);
+                    if (null == b) {
+                        b = SearchTermBuilder.create(sb.toString());
+                    } else if (b.expectsParameter()) {
+                        b = b.addParameter(sb.toString());
+                    }
+
+                    if (!b.expectsParameter()) {
+                        SearchTerm searchTerm = b.build();
+                        b = null;
+                        resultTerm = (resultTerm == null ? searchTerm : new AndTerm(resultTerm, searchTerm));
+                    }
                     sb = new StringBuilder();
                     next = request.nextChar();
                 }

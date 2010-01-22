@@ -1,0 +1,176 @@
+package com.icegreen.greenmail.imap.commands;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.mail.Message;
+import javax.mail.search.AndTerm;
+import javax.mail.search.FlagTerm;
+import javax.mail.search.HeaderTerm;
+import javax.mail.search.SearchTerm;
+
+/**
+ * Builder for search terms.
+ *
+ * @author mm
+ */
+public abstract class SearchTermBuilder {
+    private SearchKey key;
+    private List<String> parameters = Collections.<String>emptyList();
+
+    public static SearchTermBuilder create(final String pTerm) {
+        SearchKey key = SearchKey.valueOf(pTerm);
+        SearchTermBuilder builder;
+        switch (key) {
+            // Non flags first
+            case HEADER:
+                builder = createHeaderTermBuilder();
+                break;
+            // Flags
+            case ALL:
+                builder = createSearchTermBuilder(
+                        new SearchTerm() {
+                            @Override
+                            public boolean match(Message msg) {
+                                return true;
+                            }
+                        });
+                break;
+            case ANSWERED:
+                builder = createFlagSearchTermBuilder("ANSWERED", true);
+            break;
+            case DELETED:
+                builder = createFlagSearchTermBuilder("DELETED", true);
+                break;
+            case DRAFT:
+                builder = createFlagSearchTermBuilder("DRAFT", true);
+                break;
+            case FLAGGED:
+                builder = createFlagSearchTermBuilder("FLAGGED", true);
+                break;
+            case NEW:
+                builder = createSearchTermBuilder(
+                        new AndTerm(createFlagSearchTerm("RECENT", true), createFlagSearchTerm("SEEN", false))
+                );
+                break;
+            case OLD:
+                builder = createSearchTermBuilder(createFlagSearchTerm("RECENT", false));
+                break;
+            case RECENT:
+                builder = createSearchTermBuilder(createFlagSearchTerm("RECENT", true));
+                break;
+            case SEEN:
+                builder = createSearchTermBuilder(createFlagSearchTerm("SEEN", true));
+                break;
+            case UNANSWERED:
+                builder = createSearchTermBuilder(createFlagSearchTerm("ANSWERED", false));
+                break;
+            case UNDELETED:
+                builder = createSearchTermBuilder(createFlagSearchTerm("DELETED", false));
+                break;
+            case UNDRAFT:
+                builder = createSearchTermBuilder(createFlagSearchTerm("DRAFT", false));
+                break;
+            case UNFLAGGED:
+                builder = createSearchTermBuilder(createFlagSearchTerm("FLAGGED", false));
+                break;
+            case UNSEEN:
+                builder = createSearchTermBuilder(createFlagSearchTerm("SEEN", false));
+                break;
+            default:
+                throw new IllegalStateException("Unsupported search term '" + pTerm + '\'');
+        }
+        builder.setSearchKey(key);
+        return builder;
+    }
+
+    private void setSearchKey(final SearchKey pKey) {
+        key = pKey;
+    }
+
+    private static SearchTermBuilder createHeaderTermBuilder() {
+        return new SearchTermBuilder() {
+            @Override
+            public SearchTerm build() {
+                return new HeaderTerm(getParameters().get(0), getParameters().get(1));
+            }
+        };
+    }
+
+    SearchTermBuilder addParameter(final String pParameter) {
+        if (Collections.<String>emptyList() == parameters) {
+            parameters = new ArrayList<String>();
+        }
+        parameters.add(pParameter);
+        return this;
+    }
+
+    public List<String> getParameters() {
+        return parameters;
+    }
+
+    public boolean expectsParameter() {
+        return parameters.size() < key.getNumberOfParameters();
+    }
+
+    public abstract SearchTerm build();
+
+    private static SearchTermBuilder createSearchTermBuilder(final SearchTerm pSearchTerm) {
+        return new SearchTermBuilder() {
+            @Override
+            public SearchTerm build() {
+                return pSearchTerm;
+            }
+        };
+    }
+
+
+    private static SearchTermBuilder createFlagSearchTermBuilder(final String pFlagName, final boolean pValue) {
+        return new SearchTermBuilder() {
+            @Override
+            public SearchTerm build() {
+                return createFlagSearchTerm(pFlagName, pValue);
+            }
+        };
+    }
+
+    private static SearchTerm createFlagSearchTerm(String pFlagName, boolean pValue) {
+        javax.mail.Flags.Flag flag = toFlag(pFlagName);
+        return new FlagTerm(new javax.mail.Flags(flag), pValue);
+    }
+
+    private static javax.mail.Flags.Flag toFlag(String pFlag) {
+        if (pFlag == null || pFlag.trim().length() < 1) {
+            return null;
+        }
+        pFlag = pFlag.trim().toUpperCase();
+        if (pFlag.equals("ANSWERED")) {
+            return javax.mail.Flags.Flag.ANSWERED;
+        }
+        if (pFlag.equals("DELETED")) {
+            return javax.mail.Flags.Flag.DELETED;
+        }
+        if (pFlag.equals("DRAFT")) {
+            return javax.mail.Flags.Flag.DRAFT;
+        }
+        if (pFlag.equals("FLAGGED")) {
+            return javax.mail.Flags.Flag.FLAGGED;
+        }
+        if (pFlag.equals("RECENT")) {
+            return javax.mail.Flags.Flag.RECENT;
+        }
+        if (pFlag.equals("SEEN")) {
+            return javax.mail.Flags.Flag.SEEN;
+        }
+        throw new IllegalArgumentException("Unknown flag "+pFlag);
+    }
+
+    @Override
+    public String toString() {
+        return "SearchTermBuilder{" +
+                "key=" + key +
+                ", parameters=" + parameters +
+                '}';
+    }
+}
