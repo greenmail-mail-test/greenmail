@@ -374,7 +374,7 @@ public class InMemoryStore
 
             Long uidNotification = null;
             if (addUid) {
-                uidNotification = new Long(uid);
+                uidNotification = Long.valueOf(uid);
             }
             notifyFlagUpdate(msn, message.getFlags(), uidNotification, silentListener);
         }
@@ -387,7 +387,7 @@ public class InMemoryStore
 
             Long uidNotification = null;
             if (addUid) {
-                uidNotification = new Long(uid);
+                uidNotification = Long.valueOf(uid);
             }
             notifyFlagUpdate(msn, message.getFlags(), uidNotification, silentListener);
         }
