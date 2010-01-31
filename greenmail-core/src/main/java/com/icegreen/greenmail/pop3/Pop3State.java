@@ -9,7 +9,6 @@ import com.icegreen.greenmail.user.NoSuchUserException;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.user.UserManager;
-import com.icegreen.greenmail.store.Store;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.imap.ImapHostManager;
@@ -18,7 +17,6 @@ import com.icegreen.greenmail.imap.ImapHostManager;
 public class Pop3State {
     UserManager _manager;
     GreenMailUser _user;
-    Store store;
     MailFolder _inbox;
     private ImapHostManager imapHostManager;
 

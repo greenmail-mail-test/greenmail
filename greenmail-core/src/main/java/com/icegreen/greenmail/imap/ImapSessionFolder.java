@@ -101,7 +101,7 @@ public class ImapSessionFolder implements MailFolder, FolderListener {
 
     public void expunged(int msn) {
         synchronized (_expungedMsns) {
-            _expungedMsns.add(new Integer(msn));
+            _expungedMsns.add(Integer.valueOf(msn));
         }
     }
 
@@ -111,7 +111,7 @@ public class ImapSessionFolder implements MailFolder, FolderListener {
 
     public void flagsUpdated(int msn, Flags flags, Long uid) {
         // This will overwrite any earlier changes
-        _modifiedFlags.put(new Integer(msn), new FlagUpdate(msn, uid, flags));
+        _modifiedFlags.put(Integer.valueOf(msn), new FlagUpdate(msn, uid, flags));
     }
 
     public void mailboxDeleted() {

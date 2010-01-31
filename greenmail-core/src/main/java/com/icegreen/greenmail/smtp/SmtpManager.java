@@ -38,6 +38,7 @@ public class SmtpManager {
     }
 
     public String checkRecipient(SmtpState state, MailAddress rcpt) {
+        // todo?
         MailAddress sender = state.getMessage().getReturnPath();
         return null;
     }
@@ -112,21 +113,18 @@ public class SmtpManager {
     }
 
     private class Incoming {
-        boolean _stopping;
-
-
         public void enqueue(MovingMessage msg) {
             Iterator iterator = msg.getRecipientIterator();
-            String tos = "";
+            StringBuilder tos = new StringBuilder();
             while (iterator.hasNext()) {
                 MailAddress username = (MailAddress) iterator.next();
                 if (tos.length()>0) {
-                    tos+=",";
+                    tos.append(',');
                 }
-                tos+=username;
+                tos.append(username);
             }
             try {
-                msg.getMessage().addRecipients(Message.RecipientType.TO,tos);
+                msg.getMessage().addRecipients(Message.RecipientType.TO,tos.toString());
             } catch (MessagingException e) {
                 throw new RuntimeException(e);
             }
