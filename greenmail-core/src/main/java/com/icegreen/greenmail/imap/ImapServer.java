@@ -12,7 +12,6 @@ import com.icegreen.greenmail.util.ServerSetup;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Iterator;
 
 public final class ImapServer extends AbstractServer {
 
