@@ -11,7 +11,6 @@ import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.pop3.commands.Pop3CommandRegistry;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.net.Socket;
 
 public class Pop3Server extends AbstractServer {

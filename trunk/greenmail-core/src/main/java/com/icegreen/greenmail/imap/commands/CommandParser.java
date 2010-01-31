@@ -331,10 +331,6 @@ public class CommandParser {
         return (chr >= 0x01 && chr <= 0x7f);
     }
 
-    private boolean isCHAR8(char chr) {
-        return (chr >= 0x01 && chr <= 0xff);
-    }
-
     protected boolean isListWildcard(char chr) {
         return (chr == '*' || chr == '%');
     }
