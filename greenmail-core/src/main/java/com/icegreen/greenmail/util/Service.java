@@ -88,7 +88,7 @@ abstract public class Service extends Thread {
     }
 
     public final void stopService(Object obj, long millis) {
-        stopService(obj, new Long(millis));
+        stopService(obj, Long.valueOf(millis));
     }
 }
 
