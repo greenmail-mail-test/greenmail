@@ -11,7 +11,6 @@ import com.icegreen.greenmail.pop3.commands.Pop3CommandRegistry;
 import com.icegreen.greenmail.user.UserManager;
 
 import java.io.IOException;
-import java.net.ProtocolException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.StringTokenizer;
@@ -102,6 +101,6 @@ public class Pop3Handler extends Thread {
             }
         } catch(IOException ignored) {
             //empty
-        } 
+        }
     }
 }

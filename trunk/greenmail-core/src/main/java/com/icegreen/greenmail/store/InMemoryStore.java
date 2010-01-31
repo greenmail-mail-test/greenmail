@@ -12,7 +12,6 @@ import com.icegreen.greenmail.imap.ImapConstants;
 
 import javax.mail.Flags;
 import javax.mail.MessagingException;
-import javax.mail.Message;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
 import java.util.*;
@@ -185,7 +184,7 @@ public class InMemoryStore
         private long nextUid = 1;
         private long uidValidity;
 
-        private List _mailboxListeners = Collections.synchronizedList(new LinkedList());
+        private final List _mailboxListeners = Collections.synchronizedList(new LinkedList());
 
         public HierarchicalFolder(HierarchicalFolder parent,
                                   String name) {
@@ -466,7 +465,7 @@ public class InMemoryStore
         public void copyMessage(long uid, MailFolder toFolder)
                 throws FolderException {
             SimpleStoredMessage originalMessage = getMessage(uid);
-            MimeMessage newMime = null;
+            MimeMessage newMime;
             try {
                 newMime = new MimeMessage(originalMessage.getMimeMessage());
             } catch (MessagingException e) {
