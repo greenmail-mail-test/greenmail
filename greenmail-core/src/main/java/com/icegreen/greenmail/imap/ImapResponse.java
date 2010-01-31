@@ -165,7 +165,7 @@ public class ImapResponse implements ImapConstants {
         untagged();
         message(msn);
         message("FETCH");
-        message("(" + msgData + ")");
+        message('(' + msgData + ')');
         end();
     }
 

@@ -7,12 +7,10 @@ package com.icegreen.greenmail.pop3;
 
 import com.icegreen.greenmail.AbstractServer;
 import com.icegreen.greenmail.Managers;
-import com.icegreen.greenmail.imap.ImapHandler;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.pop3.commands.Pop3CommandRegistry;
 
 import java.io.IOException;
-import java.util.Vector;
 import java.util.Iterator;
 import java.net.Socket;
 
@@ -25,8 +23,8 @@ public class Pop3Server extends AbstractServer {
     public synchronized void quit() {
 
         try {
-            for (Iterator iterator = handlers.iterator(); iterator.hasNext();) {
-                Pop3Handler pop3Handler = (Pop3Handler) iterator.next();
+            for (Object handler : handlers) {
+                Pop3Handler pop3Handler = (Pop3Handler) handler;
                 pop3Handler.quit();
             }
         } catch (Exception e) {

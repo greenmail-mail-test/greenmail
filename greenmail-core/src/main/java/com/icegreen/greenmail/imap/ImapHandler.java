@@ -8,6 +8,8 @@ package com.icegreen.greenmail.imap;
 
 import com.icegreen.greenmail.user.UserManager;
 import com.icegreen.greenmail.util.InternetPrintWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.Socket;
@@ -21,7 +23,7 @@ import java.net.Socket;
  * @author Peter M. Goldstein <farsight@alum.mit.edu>
  */
 public class ImapHandler extends Thread implements ImapConstants {
-
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     private ImapRequestHandler requestHandler = new ImapRequestHandler();
     private ImapSession session;
 
@@ -67,15 +69,9 @@ public class ImapHandler extends Thread implements ImapConstants {
     }
 
     public void run() {
-
-        String remoteHost = "";
-        String remoteIP = "";
-
         try {
             ins = socket.getInputStream();
             in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "ASCII"), 512);
-            remoteIP = socket.getInetAddress().getHostAddress();
-            remoteHost = socket.getInetAddress().getHostName();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -86,13 +82,8 @@ public class ImapHandler extends Thread implements ImapConstants {
             ImapResponse response = new ImapResponse(outs);
 
             // Write welcome message
-            StringBuilder responseBuffer =
-                    new StringBuilder(256)
-                            .append(VERSION)
-                            .append(" Server ")
-                            .append("GreenMail")
-                            .append(" ready");
-            response.okResponse(null, responseBuffer.toString());
+            String responseBuffer = VERSION +" Server GreenMail ready";
+            response.okResponse(null, responseBuffer);
 
             session = new ImapSessionImpl(imapHost,
                     userManager,
@@ -104,7 +95,7 @@ public class ImapHandler extends Thread implements ImapConstants {
             }
 
         } catch (Exception e) {
-//            e.printStackTrace();
+            log.error("Can not handle IMAP connection", e);
         } finally {
             resetHandler();
         }

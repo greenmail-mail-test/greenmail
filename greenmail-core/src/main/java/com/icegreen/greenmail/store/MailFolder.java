@@ -10,7 +10,6 @@ import com.icegreen.greenmail.mail.MovingMessage;
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 
 import javax.mail.Flags;
-import javax.mail.Message;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
 import java.util.Date;

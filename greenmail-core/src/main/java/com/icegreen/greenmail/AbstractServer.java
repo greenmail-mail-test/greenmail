@@ -15,7 +15,6 @@ import java.net.ServerSocket;
 import java.net.UnknownHostException;
 import java.net.BindException;
 import java.util.Vector;
-import javax.net.ssl.SSLServerSocket;
 
 /**
  * @author Wael Chatila

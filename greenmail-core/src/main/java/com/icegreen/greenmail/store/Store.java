@@ -19,7 +19,7 @@ public interface Store {
     /**
      * Retrieves a mailbox based on a fully qualified name.
      *
-     * @param qualifiedMailboxName
+     * @param qualifiedMailboxName the fully qualified name.
      * @return The mailbox if present, or <code>null</code> if not.
      */
     MailFolder getMailbox(String qualifiedMailboxName);
@@ -97,6 +97,6 @@ public interface Store {
      * @return A read-only collection of mailboxes which match this pattern
      * @throws FolderException If the list operation failed
      */
-    Collection listMailboxes(String searchPattern) throws FolderException;
+    Collection<MailFolder> listMailboxes(String searchPattern) throws FolderException;
 
 }

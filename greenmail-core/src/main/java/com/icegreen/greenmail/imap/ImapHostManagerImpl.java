@@ -44,11 +44,11 @@ public class ImapHostManagerImpl
         List ret = new ArrayList();
         try {
             Collection boxes = store.listMailboxes("*");
-            for (Iterator iterator = boxes.iterator(); iterator.hasNext();) {
-                MailFolder folder = (MailFolder) iterator.next();
+            for (Object boxe : boxes) {
+                MailFolder folder = (MailFolder) boxe;
                 List messages = folder.getMessages();
-                for (int i = 0; i < messages.size(); i++) {
-                    ret.add(messages.get(i));
+                for (Object message : messages) {
+                    ret.add(message);
                 }
             }
         } catch (FolderException e) {
@@ -179,8 +179,7 @@ public class ImapHostManagerImpl
             MailFolder inbox = existingFolder;
             MailFolder newBox = createMailbox(user, newMailboxName);
             long[] uids = inbox.getMessageUids();
-            for (int i = 0; i < uids.length; i++) {
-                long uid = uids[i];
+            for (long uid : uids) {
                 inbox.copyMessage(uid, newBox);
             }
             inbox.deleteAllMessages();
@@ -225,10 +224,7 @@ public class ImapHostManagerImpl
         ArrayList mailboxes = new ArrayList();
         String qualifiedPattern = getQualifiedMailboxName(user, mailboxPattern);
 
-        Iterator iter = store.listMailboxes(qualifiedPattern).iterator();
-        while (iter.hasNext()) {
-            MailFolder folder = (MailFolder) iter.next();
-
+        for (MailFolder folder : store.listMailboxes(qualifiedPattern)) {
             // TODO check subscriptions.
             if (subscribedOnly) {
                 if (!subscriptions.isSubscribed(user, folder)) {
