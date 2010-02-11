@@ -161,6 +161,17 @@ public class CommandParser {
         return (next == ' ' || next == '\n' || next == '\r' || next == '\t');
     }
 
+    public long consumeLong(ImapRequestLineReader request) throws ProtocolException {
+        StringBuilder atom = new StringBuilder();
+        char next = request.nextWordChar();
+        while (Character.isDigit(next)) {
+            atom.append(next);
+            request.consume();
+            next = request.nextChar();
+        }
+        return Long.parseLong(atom.toString());
+    }
+
     /**
      * Reads an argument of type "literal" from the request, in the format:
      * "{" charCount "}" CRLF *CHAR8

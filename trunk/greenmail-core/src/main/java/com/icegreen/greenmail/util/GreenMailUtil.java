@@ -11,17 +11,15 @@ import java.util.Random;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.mail.Address;
-import javax.mail.BodyPart;
-import javax.mail.MessagingException;
-import javax.mail.Part;
-import javax.mail.Session;
-import javax.mail.Transport;
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import com.icegreen.greenmail.user.GreenMailUser;
+import com.sun.mail.imap.IMAPFolder;
+import com.sun.mail.imap.IMAPStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -273,7 +271,7 @@ public class GreenMailUtil {
         // Should these two props be taken from the setup info?
         props.setProperty("mail.smtps.port", String.valueOf(setup.getPort()));
         props.setProperty("mail.smtp.port", String.valueOf(setup.getPort()));
-//        props.setProperty("mail.debug", "true");
+        props.setProperty("mail.debug", "true");
 
         props.setProperty("mail."+setup.getProtocol()+".port", String.valueOf(setup.getPort()));
         props.setProperty("mail."+setup.getProtocol()+".host", String.valueOf(setup.getBindAddress()));
@@ -332,5 +330,42 @@ public class GreenMailUtil {
 
         mimeMessage.setContent(multiPart);
         Transport.send(mimeMessage, tos);
+    }
+
+    /**
+     * Sets a quota for a users.
+     * 
+     * @param user the user.
+     * @param quota the quota.
+     */
+    public static void setQuota(final GreenMailUser user, final Quota quota) {
+        Properties p = new Properties();
+        Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
+        try {
+            IMAPStore store = (IMAPStore) session.getStore("imap");
+            store.connect(user.getEmail(), user.getPassword());
+            store.setQuota(quota);
+        } catch(Exception ex) {
+            throw new IllegalStateException("Can not set quota "+quota+" for user "+user);
+        }
+    }
+
+    /**
+     * Gets the quotas for the user.
+     *
+     * @param user the user.
+     * @param quotaRoot the quota root, eg 'INBOX.
+     * @return array of current quotas.
+     */
+    public static Quota[] getQuota(final GreenMailUser user, final String quotaRoot) {
+        Properties p = new Properties();
+        Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
+        try {
+            IMAPStore store = (IMAPStore) session.getStore("imap");
+            store.connect(user.getEmail(), user.getPassword());
+            return store.getQuota(quotaRoot);
+        } catch(Exception ex) {
+            throw new IllegalStateException("Can not get quota for quota root "+quotaRoot+" for user "+user);
+        }
     }
 }

@@ -3,29 +3,28 @@
  */
 package com.icegreen.greenmail.test;
 
-import com.icegreen.greenmail.store.MailFolder;
-import com.icegreen.greenmail.store.SimpleStoredMessage;
-import com.icegreen.greenmail.user.GreenMailUser;
-import com.icegreen.greenmail.util.*;
-import junit.framework.TestCase;
+import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 
-import javax.mail.Address;
-import javax.mail.BodyPart;
-import javax.mail.Flags;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.Store;
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.search.FlagTerm;
 import javax.mail.search.HeaderTerm;
-import javax.mail.search.SearchTerm;
 
-import java.io.ByteArrayOutputStream;
-import java.util.List;
-import java.util.Properties;
+import com.icegreen.greenmail.store.MailFolder;
+import com.icegreen.greenmail.store.StoredMessage;
+import com.icegreen.greenmail.user.GreenMailUser;
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.Retriever;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import com.sun.mail.imap.IMAPFolder;
+import com.sun.mail.imap.IMAPStore;
+import junit.framework.TestCase;
 
 /**
  * @author Wael Chatila
@@ -47,7 +46,7 @@ public class ImapServerTest extends TestCase {
 
     public void testSearch() throws Exception {
         greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
-        GreenMailUser user = greenMail.setUser("test@localhost","pwd");
+        GreenMailUser user = greenMail.setUser("test@localhost", "pwd");
         assertNotNull(greenMail.getImap());
         greenMail.start();
 
@@ -73,11 +72,11 @@ public class ImapServerTest extends TestCase {
         message2.setRecipients(Message.RecipientType.TO, new Address[]{
                 new InternetAddress("test@localhost")
         });
-        message2.setFlag(Flags.Flag.ANSWERED,false);
+        message2.setFlag(Flags.Flag.ANSWERED, false);
         folder.store(message2);
 
-        List<SimpleStoredMessage> gMsgs = folder.getMessages();
-        for (SimpleStoredMessage gMsg : gMsgs) {
+        List<StoredMessage> gMsgs = folder.getMessages();
+        for (StoredMessage gMsg : gMsgs) {
             MimeMessage mm = gMsg.getMimeMessage();
             for (Flags.Flag f : mm.getFlags().getSystemFlags()) {
                 gMsg.getFlags().add(f);
@@ -99,18 +98,18 @@ public class ImapServerTest extends TestCase {
         assertTrue(m0.getFlags().contains(Flags.Flag.ANSWERED));
 
         // Search flags
-        imapMessages = imapFolder.search(new FlagTerm(new Flags(Flags.Flag.ANSWERED),true));
+        imapMessages = imapFolder.search(new FlagTerm(new Flags(Flags.Flag.ANSWERED), true));
         assertTrue(imapMessages.length == 1);
         assertTrue(imapMessages[0] == m0);
 
         // Search header ids
         String id = m0.getHeader("Message-ID")[0];
-        imapMessages = imapFolder.search(new HeaderTerm("Message-ID",id));
+        imapMessages = imapFolder.search(new HeaderTerm("Message-ID", id));
         assertTrue(imapMessages.length == 1);
         assertTrue(imapMessages[0] == m0);
 
         id = m1.getHeader("Message-ID")[0];
-        imapMessages = imapFolder.search(new HeaderTerm("Message-ID",id));
+        imapMessages = imapFolder.search(new HeaderTerm("Message-ID", id));
         assertTrue(imapMessages.length == 1);
         assertTrue(imapMessages[0] == m1);
     }
@@ -209,5 +208,53 @@ public class ImapServerTest extends TestCase {
             assertEquals(i, gif[i]);
         }
         retriever.logout();
+    }
+
+    public void testQuota() throws Exception {
+        GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
+        greenMail.setUser("foo@localhost", "pwd");
+        greenMail.start();
+        try {
+            GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject", "Test message", ServerSetupTest.SMTP);
+            greenMail.waitForIncomingEmail(1);
+
+            Properties p = new Properties();
+//            p.setProperty("mail.host","localhost");
+//            p.setProperty("mail.debug","true");
+            Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
+            IMAPStore store = (IMAPStore) session.getStore("imap");
+            store.connect("foo@localhost", "pwd");
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+            Message[] msgs = folder.getMessages();
+            assertTrue(null != msgs && msgs.length == 1);
+            Message m = msgs[0];
+
+            Quota testQuota = new Quota("INBOX");
+            testQuota.setResourceLimit("STORAGE", 1024L * 42L);
+            testQuota.setResourceLimit("MESSAGES", 5L);
+            store.setQuota(testQuota);
+
+            Quota[] quotas = store.getQuota("INBOX");
+            System.out.println(Arrays.asList(quotas));
+            assertNotNull(quotas);
+            assertTrue(quotas.length == 1);
+            assertNotNull(quotas[0].resources);
+            assertTrue(quotas[0].resources.length == 2);
+            assertEquals(testQuota.quotaRoot, quotas[0].quotaRoot);
+            assertEquals(quotas[0].resources[0].limit, testQuota.resources[0].limit);
+            assertEquals(quotas[0].resources[1].limit, testQuota.resources[1].limit);
+            assertEquals(quotas[0].resources[1].usage, 1);
+//            assertEquals(quotas[0].resources[0].usage, m.getSize());
+
+            quotas = store.getQuota("");
+            System.out.println(Arrays.asList(quotas));
+            assertNotNull(quotas);
+            assertTrue(quotas.length == 0);
+            // TODO: Quota on ""
+        }
+        finally {
+            greenMail.stop();
+        }
     }
 }

@@ -22,7 +22,7 @@ class CapabilityCommand extends CommandTemplate {
     public static final String NAME = "CAPABILITY";
     public static final String ARGS = null;
 
-    public static final String CAPABILITY_RESPONSE = NAME + SP + VERSION + SP + CAPABILITIES;
+    public static final String CAPABILITY_RESPONSE = NAME + SP + VERSION + SP + CAPABILITIES + SP + "QUOTA";
 
     /**
      * @see CommandTemplate#doProcess

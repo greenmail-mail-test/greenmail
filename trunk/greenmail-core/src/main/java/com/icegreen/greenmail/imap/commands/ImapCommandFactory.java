@@ -68,6 +68,11 @@ public class ImapCommandFactory {
         _imapCommands.put(FetchCommand.NAME, FetchCommand.class);
         _imapCommands.put(StoreCommand.NAME, StoreCommand.class);
         _imapCommands.put(UidCommand.NAME, UidCommand.class);
+
+        // Quota support
+        _imapCommands.put(SetQuotaCommand.NAME, SetQuotaCommand.class);
+        _imapCommands.put(QuotaCommand.NAME, QuotaCommand.class);
+        _imapCommands.put(QuotaRootCommand.NAME, QuotaRootCommand.class);
     }
 
     public ImapCommand getCommand(String commandName) {
