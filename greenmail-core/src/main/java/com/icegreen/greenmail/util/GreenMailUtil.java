@@ -271,7 +271,7 @@ public class GreenMailUtil {
         // Should these two props be taken from the setup info?
         props.setProperty("mail.smtps.port", String.valueOf(setup.getPort()));
         props.setProperty("mail.smtp.port", String.valueOf(setup.getPort()));
-        props.setProperty("mail.debug", "true");
+//        props.setProperty("mail.debug", "true");
 
         props.setProperty("mail."+setup.getProtocol()+".port", String.valueOf(setup.getPort()));
         props.setProperty("mail."+setup.getProtocol()+".host", String.valueOf(setup.getBindAddress()));
@@ -334,7 +334,7 @@ public class GreenMailUtil {
 
     /**
      * Sets a quota for a users.
-     * 
+     *
      * @param user the user.
      * @param quota the quota.
      */
