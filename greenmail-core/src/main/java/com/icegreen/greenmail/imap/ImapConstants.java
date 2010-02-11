@@ -26,4 +26,6 @@ public interface ImapConstants {
     String NAMESPACE_PREFIX = String.valueOf(NAMESPACE_PREFIX_CHAR);
 
     String INBOX_NAME = "INBOX";
+    String STORAGE = "STORAGE";
+    String MESSAGES = "MESSAGES";
 }

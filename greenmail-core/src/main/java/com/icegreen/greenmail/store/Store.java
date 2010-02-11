@@ -8,6 +8,10 @@ package com.icegreen.greenmail.store;
 
 import java.util.Collection;
 
+import javax.mail.Quota;
+
+import com.icegreen.greenmail.user.GreenMailUser;
+
 /**
  * Represents the complete mail store for an IMAP server, providing access to
  * and manipulation of all {@link com.icegreen.greenmail.store.MailFolder Mailboxes} stored on this server.
@@ -99,4 +103,24 @@ public interface Store {
      */
     Collection<MailFolder> listMailboxes(String searchPattern) throws FolderException;
 
+    /**
+     * Gets the quotas.
+     *
+     * @link http://www.ietf.org/rfc/rfc2087.txt
+     * @see com.sun.mail.imap.IMAPStore#getQuota(String)
+     * @param root the quota root
+     * @param qualifiedRootPrefix the user specific prefix
+     * @return the quotas, or an empty array.
+     */
+    Quota[] getQuota(String root, String qualifiedRootPrefix);
+
+    /**
+     * Sets the quota.
+     *
+     * @link http://www.ietf.org/rfc/rfc2087.txt
+     * @see com.sun.mail.imap.IMAPStore#setQuota(javax.mail.Quota)
+     * @param quota the quota.
+     * @param qualifiedRootPrefix the user specific prefix
+     */
+    void setQuota(Quota quota, String qualifiedRootPrefix);
 }

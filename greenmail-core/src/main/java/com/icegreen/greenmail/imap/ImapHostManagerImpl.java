@@ -348,5 +348,8 @@ public class ImapHostManagerImpl
         }
     }
 
-
+    @Override
+    public Store getStore() {
+        return store;
+    }
 }

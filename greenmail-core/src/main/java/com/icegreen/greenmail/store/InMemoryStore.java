@@ -12,6 +12,7 @@ import com.icegreen.greenmail.imap.ImapConstants;
 
 import javax.mail.Flags;
 import javax.mail.MessagingException;
+import javax.mail.Quota;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
 import java.util.*;
@@ -35,6 +36,9 @@ public class InMemoryStore
         PERMANENT_FLAGS.add(Flags.Flag.FLAGGED);
         PERMANENT_FLAGS.add(Flags.Flag.SEEN);
     }
+
+    private Map<String,Set<Quota>> quotaMap = new HashMap<String, Set<Quota>>();
+    private static final Quota[] EMPTY_QUOTAS = new Quota[0];
 
     public MailFolder getMailbox(String absoluteMailboxName) {
         StringTokenizer tokens = new StringTokenizer(absoluteMailboxName, HIERARCHY_DELIMITER);
@@ -151,6 +155,82 @@ public class InMemoryStore
         }
 
         return mailboxes;
+    }
+
+    public Quota[] getQuota(final String root, final String qualifiedRootPrefix) {
+        Set<String> rootPaths = new HashSet();
+        if(root.indexOf(ImapConstants.HIERARCHY_DELIMITER)<0) {
+            rootPaths.add(qualifiedRootPrefix+root);
+        }
+        else {
+            for(String r: root.split(ImapConstants.HIERARCHY_DELIMITER)) {
+                rootPaths.add(qualifiedRootPrefix+r);
+            }
+        }
+        rootPaths.add(qualifiedRootPrefix); // Add default root
+
+        Set<Quota> collectedQuotas = new HashSet<Quota>();
+        for(String p: rootPaths) {
+            Set<Quota> quotas = quotaMap.get(p);
+            if(null!=quotas) {
+                collectedQuotas.addAll(quotas);
+            }
+        }
+        updateQuotas(root, collectedQuotas, qualifiedRootPrefix);
+        return collectedQuotas.toArray(EMPTY_QUOTAS);
+    }
+
+    private void updateQuotas(final String pRoot, final Set<Quota> pQuotas,
+                              final String qualifiedRootPrefix) {
+        for(Quota q: pQuotas) {
+            updateQuota(q, qualifiedRootPrefix);
+        }
+    }
+
+    private void updateQuota(final Quota quota, final String pQualifiedRootPrefix) {
+        MailFolder folder = getMailbox(
+                ImapConstants.USER_NAMESPACE+ImapConstants.HIERARCHY_DELIMITER+
+                        pQualifiedRootPrefix+ImapConstants.HIERARCHY_DELIMITER+
+                        quota.quotaRoot);
+        try {
+            for (Quota.Resource r : quota.resources) {
+                if (STORAGE.equals(r.name)) {
+                    long size = 0;
+                    for (StoredMessage m : folder.getMessages()) {
+                        size += m.getMimeMessage().getSize();
+                    }
+                    r.usage = size;
+                }
+                else if(MESSAGES.equals(r.name)) {
+                    r.usage = folder.getMessageCount();
+                }
+                else {
+                    throw new IllegalStateException("Quota " + r.name + " not supported");
+                }
+            }
+        } catch (MessagingException ex) {
+            throw new IllegalStateException("Can not update/verify quota " + quota, ex);
+        }
+    }
+
+    public void setQuota(final Quota quota, String qualifiedRootPrefix) {
+        // Validate
+        for(Quota.Resource r: quota.resources) {
+            if(!STORAGE.equals(r.name) && !MESSAGES.equals(r.name)) {
+                throw new IllegalStateException("Quota "+r.name+" not supported");
+            }
+        }
+
+        // Save quota
+        Set<Quota> quotas = quotaMap.get(qualifiedRootPrefix+quota.quotaRoot);
+        if(null == quotas) {
+            quotas = new HashSet<Quota>();
+            quotaMap.put(qualifiedRootPrefix+quota.quotaRoot, quotas);
+        }
+        else {
+            quotas.clear(); // " Any previous resource limits for the named quota root are discarded"
+        }
+        quotas.add(quota);
     }
 
     private void addAllChildren(HierarchicalFolder mailbox, Collection mailboxes) {
@@ -512,4 +592,5 @@ public class InMemoryStore
             }
         }
     }
+
 }

@@ -6,6 +6,7 @@
  */
 package com.icegreen.greenmail.imap;
 
+import com.icegreen.greenmail.store.Store;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
@@ -253,5 +254,11 @@ public interface ImapHostManager {
     void unsubscribe(GreenMailUser user, String mailbox)
             throws FolderException;
 
+    /**
+     * Gets the store underneath.
+     *
+     * @return the store.
+     */
+    Store getStore();
 }
 
