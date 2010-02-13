@@ -18,7 +18,6 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import com.icegreen.greenmail.user.GreenMailUser;
-import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.imap.IMAPStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -339,8 +338,7 @@ public class GreenMailUtil {
      * @param quota the quota.
      */
     public static void setQuota(final GreenMailUser user, final Quota quota) {
-        Properties p = new Properties();
-        Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
+        Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP);
         try {
             IMAPStore store = (IMAPStore) session.getStore("imap");
             store.connect(user.getEmail(), user.getPassword());
@@ -358,8 +356,7 @@ public class GreenMailUtil {
      * @return array of current quotas.
      */
     public static Quota[] getQuota(final GreenMailUser user, final String quotaRoot) {
-        Properties p = new Properties();
-        Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
+        Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP);
         try {
             IMAPStore store = (IMAPStore) session.getStore("imap");
             store.connect(user.getEmail(), user.getPassword());

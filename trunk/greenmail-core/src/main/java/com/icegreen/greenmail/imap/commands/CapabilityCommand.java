@@ -22,7 +22,7 @@ class CapabilityCommand extends CommandTemplate {
     public static final String NAME = "CAPABILITY";
     public static final String ARGS = null;
 
-    public static final String CAPABILITY_RESPONSE = NAME + SP + VERSION + SP + CAPABILITIES + SP + "QUOTA";
+    public static final String CAPABILITY_RESPONSE = NAME + SP + VERSION + SP + CAPABILITIES;
 
     /**
      * @see CommandTemplate#doProcess
@@ -32,7 +32,13 @@ class CapabilityCommand extends CommandTemplate {
                              ImapSession session)
             throws ProtocolException, FolderException {
         parser.endLine(request);
-        response.untaggedResponse(CAPABILITY_RESPONSE);
+
+        if( session.getHost().getStore().isQuotaSupported()) {
+            response.untaggedResponse(CAPABILITY_RESPONSE + SP + "QUOTA");
+        }
+        else {
+            response.untaggedResponse(CAPABILITY_RESPONSE);
+        }
         session.unsolicitedResponses(response);
         response.commandComplete(this);
     }

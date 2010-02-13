@@ -230,6 +230,17 @@ public class GreenMail {
     }
 
     /**
+     * Toggles the IMAP quota support.
+     *
+     * Quotas are enabled by default.
+     *
+     * @param isEnabled true, if quotas should be supported.
+     */
+    public void setQuotaSupported(boolean isEnabled) {
+        managers.getImapHostManager().getStore().setQuotaSupported(isEnabled);
+    }
+
+    /**
      * Sets up accounts with password based on a properties map where the key is the email and the value the password
      *
      * @param users

@@ -13,7 +13,7 @@
   <body>
   <release version="1.4" date="in SVN" description="Changes for 1.4 release">
     <action type="add">
-      Added IMAP quota support.
+      Added IMAP quota support. Can be toggled on and off.
     </action>
     <action type="add">
       Extended search by HEADER criteria.

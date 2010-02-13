@@ -22,6 +22,10 @@ public class QuotaCommand extends AuthenticatedStateCommand {
     @Override
     protected void doProcess(final ImapRequestLineReader request, final ImapResponse response,
                              final ImapSession session) throws ProtocolException, FolderException, AuthorizationException {
+        if(!session.getHost().getStore().isQuotaSupported()) {
+            response.commandFailed(this,"Quota is not supported. Activate quota capability first");
+        }
+
         String root = parser.mailbox(request);
         // NAME root (name usage limit)
         StringBuilder buf = new StringBuilder();

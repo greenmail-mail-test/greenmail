@@ -123,4 +123,18 @@ public interface Store {
      * @param qualifiedRootPrefix the user specific prefix
      */
     void setQuota(Quota quota, String qualifiedRootPrefix);
+
+    /**
+     * Checks if quota capability is activated.
+     * 
+     * @return true, if quota is supported.
+     */
+    boolean isQuotaSupported();
+
+    /**
+     * Toggles quota capability.
+     *
+     * @param pQuotaSupported true, if supported.
+     */
+    void setQuotaSupported(boolean pQuotaSupported);
 }

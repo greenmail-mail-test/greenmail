@@ -23,6 +23,10 @@ public class QuotaRootCommand extends QuotaCommand {
     @Override
     protected void doProcess(final ImapRequestLineReader request, final ImapResponse response,
                              final ImapSession session) throws ProtocolException, FolderException, AuthorizationException {
+        if(!session.getHost().getStore().isQuotaSupported()) {
+            response.commandFailed(this,"Quota is not supported. Activate quota capability first");
+        }
+
         String root = parser.mailbox(request);
         // QUOTAROOT mailbox
         Quota[] quota = session.getHost().getStore().getQuota(
