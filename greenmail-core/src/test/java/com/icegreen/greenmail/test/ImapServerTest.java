@@ -16,6 +16,7 @@ import javax.mail.search.FlagTerm;
 import javax.mail.search.HeaderTerm;
 
 import com.icegreen.greenmail.store.MailFolder;
+import com.icegreen.greenmail.store.SimpleStoredMessage;
 import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMail;
@@ -75,7 +76,7 @@ public class ImapServerTest extends TestCase {
         message2.setFlag(Flags.Flag.ANSWERED, false);
         folder.store(message2);
 
-        List<StoredMessage> gMsgs = folder.getMessages();
+        List<SimpleStoredMessage> gMsgs = folder.getMessages();
         for (StoredMessage gMsg : gMsgs) {
             MimeMessage mm = gMsg.getMimeMessage();
             for (Flags.Flag f : mm.getFlags().getSystemFlags()) {
@@ -256,5 +257,9 @@ public class ImapServerTest extends TestCase {
         finally {
             greenMail.stop();
         }
+    }
+
+    public void testQuotaCapability() {
+        
     }
 }

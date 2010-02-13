@@ -28,6 +28,7 @@ public class InMemoryStore
         implements Store, ImapConstants {
     private RootFolder rootMailbox = new RootFolder();
     private static final Flags PERMANENT_FLAGS = new Flags();
+    boolean quotaSupported = true;
 
     static {
         PERMANENT_FLAGS.add(Flags.Flag.ANSWERED);
@@ -593,4 +594,11 @@ public class InMemoryStore
         }
     }
 
+    public boolean isQuotaSupported() {
+        return quotaSupported;
+    }
+
+    public void setQuotaSupported(final boolean pQuotaSupported) {
+        quotaSupported = pQuotaSupported;
+    }
 }

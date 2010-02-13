@@ -77,6 +77,6 @@ public interface MailFolder {
     void signalDeletion();
 
     List getMessages(MsgRangeFilter msgRangeFilter);
-    List<StoredMessage> getMessages();
+    List<SimpleStoredMessage> getMessages();
     List getNonDeletedMessages();
 }
