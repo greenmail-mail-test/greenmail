@@ -4,7 +4,6 @@
 package com.icegreen.greenmail.test;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -220,7 +219,6 @@ public class ImapServerTest extends TestCase {
             greenMail.waitForIncomingEmail(1);
 
             Properties p = new Properties();
-//            p.setProperty("mail.host","localhost");
 //            p.setProperty("mail.debug","true");
             Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
             IMAPStore store = (IMAPStore) session.getStore("imap");
@@ -229,7 +227,6 @@ public class ImapServerTest extends TestCase {
             folder.open(Folder.READ_ONLY);
             Message[] msgs = folder.getMessages();
             assertTrue(null != msgs && msgs.length == 1);
-            Message m = msgs[0];
 
             Quota testQuota = new Quota("INBOX");
             testQuota.setResourceLimit("STORAGE", 1024L * 42L);
@@ -237,7 +234,6 @@ public class ImapServerTest extends TestCase {
             store.setQuota(testQuota);
 
             Quota[] quotas = store.getQuota("INBOX");
-            System.out.println(Arrays.asList(quotas));
             assertNotNull(quotas);
             assertTrue(quotas.length == 1);
             assertNotNull(quotas[0].resources);
@@ -249,7 +245,6 @@ public class ImapServerTest extends TestCase {
 //            assertEquals(quotas[0].resources[0].usage, m.getSize());
 
             quotas = store.getQuota("");
-            System.out.println(Arrays.asList(quotas));
             assertNotNull(quotas);
             assertTrue(quotas.length == 0);
             // TODO: Quota on ""
@@ -259,7 +254,84 @@ public class ImapServerTest extends TestCase {
         }
     }
 
-    public void testQuotaCapability() {
-        
+    public void testQuotaCapability() throws MessagingException {
+        GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
+        greenMail.setUser("foo@localhost", "pwd");
+        greenMail.start();
+        greenMail.setQuotaSupported(false);
+        try {
+            Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP);
+            IMAPStore store = (IMAPStore) session.getStore("imap");
+            store.connect("foo@localhost", "pwd");
+
+            Quota testQuota = new Quota("INBOX");
+            testQuota.setResourceLimit("STORAGE", 1024L * 42L);
+            testQuota.setResourceLimit("MESSAGES", 5L);
+            store.setQuota(testQuota);
+            fail("Excepted MessageException since quota capability is turned of");
+        } catch (MessagingException ex) {
+            assertEquals(ex.getMessage(), "QUOTA not supported");
+        }
+        finally {
+            greenMail.stop();
+        }
+    }
+
+    public void testSetGetFlags() throws MessagingException, InterruptedException {
+        GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
+        greenMail.setUser("foo@localhost", "pwd");
+        greenMail.start();
+        try {
+            GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject", "Test message", ServerSetupTest.SMTP);
+            greenMail.waitForIncomingEmail(1);
+
+            Properties p = new Properties();
+//            p.setProperty("mail.debug","true");
+            Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
+            IMAPStore store = (IMAPStore) session.getStore("imap");
+            store.connect("foo@localhost", "pwd");
+
+            // Set some flags
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+            try {
+                Message[] msgs = folder.getMessages();
+                assertTrue(null != msgs && msgs.length == 1);
+
+                Message m = msgs[0];
+
+                Flags f = m.getFlags();
+                assertFalse(f.contains(Flags.Flag.DRAFT));
+                assertFalse(f.contains("foobar"));
+                f.add(Flags.Flag.DRAFT);
+                f.add("foobar");
+                m.setFlags(f,true);
+                assertTrue(m.getFlags().contains(Flags.Flag.DRAFT));
+                assertTrue(m.getFlags().contains("foobar"));
+            }
+            finally {
+                folder.close(true);
+            }
+
+
+            // Re-read and validate
+            folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+            try {
+                Message[] msgs = folder.getMessages();
+                assertTrue(null != msgs && msgs.length == 1);
+                Message m = msgs[0];
+                Flags f = m.getFlags();
+                assertTrue(f.contains(Flags.Flag.DRAFT));
+                assertTrue(f.contains("foobar"));
+            }
+            finally {
+                folder.close(true);
+            }
+
+        }
+        finally {
+            greenMail.stop();
+        }
     }
 }

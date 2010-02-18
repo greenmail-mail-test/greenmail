@@ -35,6 +35,7 @@ public class MessageFlags {
     public static final String DRAFT = "\\DRAFT";
     public static final String FLAGGED = "\\FLAGGED";
     public static final String SEEN = "\\SEEN";
+    public static final String RECENT = "\\RECENT" ;
 
     /**
      * Returns IMAP formatted String of MessageFlags for named user
@@ -59,6 +60,12 @@ public class MessageFlags {
         }
         if (flags.contains(Flags.Flag.SEEN)) {
             buf.append("\\Seen ");
+        }
+        String[] userFlags = flags.getUserFlags();
+        if(null!=userFlags) {
+            for(String uf: userFlags) {
+                buf.append(uf).append(' ');
+            }
         }
         // Remove the trailing space, if necessary.
         if (buf.length() > 1) {
