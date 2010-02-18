@@ -13,7 +13,11 @@
   <body>
   <release version="1.4" date="in SVN" description="Changes for 1.4 release">
     <action type="add">
-      Added IMAP quota support. Can be toggled on and off.
+      Support IMAP user flags and RECENT.
+      Many thx to Alvin Antony for reporting this missing feature.
+    </action>
+    <action type="add">
+      Added IMAP quota support. Can be toggled on and off in order to test capabilities.
     </action>
     <action type="add">
       Extended search by HEADER criteria.
