@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.mail.Flags;
 import javax.mail.Message;
 import javax.mail.search.AndTerm;
 import javax.mail.search.FlagTerm;
@@ -78,6 +79,10 @@ public abstract class SearchTermBuilder {
             case UNSEEN:
                 builder = createSearchTermBuilder(createFlagSearchTerm("SEEN", false));
                 break;
+            case KEYWORD:
+            case UNKEYWORD:
+                builder = createKeywordSearchTermBuilder(key);
+                break;
             default:
                 throw new IllegalStateException("Unsupported search term '" + pTerm + '\'');
         }
@@ -110,6 +115,10 @@ public abstract class SearchTermBuilder {
         return parameters;
     }
 
+    public String getParameter(final int pIdx) {
+        return getParameters().get(0);
+    }
+
     public boolean expectsParameter() {
         return parameters.size() < key.getNumberOfParameters();
     }
@@ -125,7 +134,6 @@ public abstract class SearchTermBuilder {
         };
     }
 
-
     private static SearchTermBuilder createFlagSearchTermBuilder(final String pFlagName, final boolean pValue) {
         return new SearchTermBuilder() {
             @Override
@@ -135,14 +143,30 @@ public abstract class SearchTermBuilder {
         };
     }
 
+    private static SearchTermBuilder createKeywordSearchTermBuilder(final SearchKey pKey) {
+       return new SearchTermBuilder() {
+            @Override
+            public SearchTerm build() {
+                return createFlagSearchTerm(getParameter(0), pKey == SearchKey.KEYWORD);
+            }
+        };
+    }
+
     private static SearchTerm createFlagSearchTerm(String pFlagName, boolean pValue) {
         javax.mail.Flags.Flag flag = toFlag(pFlagName);
-        return new FlagTerm(new javax.mail.Flags(flag), pValue);
+        Flags flags = new javax.mail.Flags();
+        if(null==flag) { // user flags
+            flags.add(pFlagName);
+        }
+        else {
+            flags.add(flag);
+        }
+        return new FlagTerm(flags, pValue);
     }
 
     private static javax.mail.Flags.Flag toFlag(String pFlag) {
         if (pFlag == null || pFlag.trim().length() < 1) {
-            return null;
+            throw new IllegalArgumentException("Can not convert empty string to mail flag");
         }
         pFlag = pFlag.trim().toUpperCase();
         if (pFlag.equals("ANSWERED")) {
@@ -163,7 +187,7 @@ public abstract class SearchTermBuilder {
         if (pFlag.equals("SEEN")) {
             return javax.mail.Flags.Flag.SEEN;
         }
-        throw new IllegalArgumentException("Unknown flag "+pFlag);
+        return null;
     }
 
     @Override

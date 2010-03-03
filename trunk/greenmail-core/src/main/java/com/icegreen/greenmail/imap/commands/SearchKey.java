@@ -55,8 +55,7 @@ public enum SearchKey {
     DRAFT(),
     FLAGGED(),
     HEADER(2),
-    // todo: check what KEYWORD means
-    //KEYWORD(null, false),
+    KEYWORD(1),
     NEW(),
     OLD(),
     RECENT(),
@@ -65,7 +64,7 @@ public enum SearchKey {
     UNDELETED(),
     UNDRAFT(),
     UNFLAGGED(),
-    //UNKEYWORD(null, false),
+    UNKEYWORD(1),
     UNSEEN();
 
     private int minArgs; // expected additional arguments
