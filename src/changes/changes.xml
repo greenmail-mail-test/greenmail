@@ -12,6 +12,9 @@
   </properties>
   <body>
   <release version="1.4" date="in SVN" description="Changes for 1.4 release">
+    <action type="add">
+      Added IMAP support for user flags .
+    </action>
     <action type="fix">
       Fixed date(time) parse bug, occuring if system locale is not English.
       Many thx to Torsten Buchert for reporting and providing a fix.

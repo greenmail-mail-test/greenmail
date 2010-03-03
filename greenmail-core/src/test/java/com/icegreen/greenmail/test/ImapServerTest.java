@@ -63,6 +63,9 @@ public class ImapServerTest extends TestCase {
                 new InternetAddress("test@localhost")
         });
         message1.setFlag(Flags.Flag.ANSWERED, true);
+        Flags fooFlags = new Flags();
+        fooFlags.add("foo");
+        message1.setFlags(fooFlags,true);
         folder.store(message1);
 
         MimeMessage message2 = new MimeMessage(session);
@@ -79,6 +82,9 @@ public class ImapServerTest extends TestCase {
             MimeMessage mm = gMsg.getMimeMessage();
             for (Flags.Flag f : mm.getFlags().getSystemFlags()) {
                 gMsg.getFlags().add(f);
+            }
+            for (String uf : mm.getFlags().getUserFlags()) {
+                gMsg.getFlags().add(uf);
             }
             mm.saveChanges();
         }
@@ -101,6 +107,14 @@ public class ImapServerTest extends TestCase {
         assertTrue(imapMessages.length == 1);
         assertTrue(imapMessages[0] == m0);
 
+        imapMessages = imapFolder.search(new FlagTerm(fooFlags, true));
+        assertTrue(imapMessages.length == 1);
+        assertTrue(imapMessages[0].getFlags().contains("foo"));
+
+        imapMessages = imapFolder.search(new FlagTerm(fooFlags, false));
+        assertTrue(imapMessages.length == 1);
+        assertTrue(!imapMessages[0].getFlags().contains(fooFlags));
+
         // Search header ids
         String id = m0.getHeader("Message-ID")[0];
         imapMessages = imapFolder.search(new HeaderTerm("Message-ID", id));
@@ -111,6 +125,7 @@ public class ImapServerTest extends TestCase {
         imapMessages = imapFolder.search(new HeaderTerm("Message-ID", id));
         assertTrue(imapMessages.length == 1);
         assertTrue(imapMessages[0] == m1);
+
     }
 
     public void testRetreiveSimple() throws Exception {
