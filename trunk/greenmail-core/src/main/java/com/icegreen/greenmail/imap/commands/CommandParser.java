@@ -17,6 +17,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * @author Darrell DeBoer <darrell@apache.org>
@@ -105,7 +106,7 @@ public class CommandParser {
             throw new ProtocolException("DateTime values must be quoted.");
         }
 
-        DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss zzzz");
+        DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss zzzz", Locale.US);
         try {
             return dateFormat.parse(dateString);
         } catch (ParseException e) {
@@ -126,7 +127,7 @@ public class CommandParser {
             dateString = atom(request);
         }
 
-        DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+        DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
         try {
             return dateFormat.parse(dateString);
         } catch (ParseException e) {

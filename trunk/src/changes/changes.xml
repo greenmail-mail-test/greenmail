@@ -12,6 +12,10 @@
   </properties>
   <body>
   <release version="1.4" date="in SVN" description="Changes for 1.4 release">
+    <action type="fix">
+      Fixed date(time) parse bug, occuring if system locale is not English.
+      Many thx to Torsten Buchert for reporting and providing a fix.
+    </action>
     <action type="add">
       Support IMAP user flags and RECENT.
       Many thx to Alvin Antony for reporting this missing feature.
