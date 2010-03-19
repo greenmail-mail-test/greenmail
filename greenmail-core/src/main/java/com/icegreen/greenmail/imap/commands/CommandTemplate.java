@@ -9,6 +9,8 @@ package com.icegreen.greenmail.imap.commands;
 import com.icegreen.greenmail.imap.*;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base class for all command implementations. This class provides common
@@ -19,6 +21,7 @@ import com.icegreen.greenmail.store.MailFolder;
  */
 abstract class CommandTemplate
         implements ImapCommand, ImapConstants {
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     protected CommandParser parser = new CommandParser();
 
     /**
