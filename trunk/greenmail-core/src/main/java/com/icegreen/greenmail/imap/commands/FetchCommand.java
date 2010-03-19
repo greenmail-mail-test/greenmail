@@ -12,7 +12,9 @@ import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MessageFlags;
 import com.icegreen.greenmail.store.SimpleStoredMessage;
 
+import javax.mail.BodyPart;
 import javax.mail.Flags;
+import javax.mail.Multipart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
@@ -201,9 +203,23 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             bytes = doPartial(partial, bytes, response);
             addLiteral(bytes, response);
         } else {
-            int partNumber = Integer.parseInt(sectionSpecifier) - 1;
+            if(log.isDebugEnabled()) {
+                log.debug("Fetching body part for section specifier "+sectionSpecifier);
+            }
             MimeMultipart mp = (MimeMultipart) mimeMessage.getContent();
-            byte[] bytes = GreenMailUtil.getBodyAsBytes(mp.getBodyPart(partNumber));
+            BodyPart part = null;
+            String[] nestedIdx = sectionSpecifier.split("\\.");
+            for(String idx: nestedIdx) {
+                int partNumber = Integer.parseInt(idx) - 1;
+                if(null==part) {
+                    part = mp.getBodyPart(partNumber);
+                }
+                else {
+                    // Content must be multipart
+                    part = ((Multipart)part.getContent()).getBodyPart(partNumber);
+                }
+            }
+            byte[] bytes = GreenMailUtil.getBodyAsBytes(part);
             bytes = doPartial(partial, bytes, response);
             addLiteral(bytes, response);
         }
