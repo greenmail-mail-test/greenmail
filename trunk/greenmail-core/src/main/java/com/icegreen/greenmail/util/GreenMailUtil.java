@@ -6,6 +6,7 @@
 package com.icegreen.greenmail.util;
 
 import java.io.*;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 
@@ -274,10 +275,9 @@ public class GreenMailUtil {
 
         props.setProperty("mail."+setup.getProtocol()+".port", String.valueOf(setup.getPort()));
         props.setProperty("mail."+setup.getProtocol()+".host", String.valueOf(setup.getBindAddress()));
-        if(null!=mailProps && !mailProps.isEmpty()) {
-            for(Object k: mailProps.keySet()) {
-                String ks = (String) k;
-                props.setProperty(ks, mailProps.getProperty(ks));
+        if (null != mailProps && !mailProps.isEmpty()) {
+            for(Map.Entry e: mailProps.entrySet()) {
+                props.setProperty(e.getKey().toString(), e.getValue().toString());
             }
         }
         if (log.isDebugEnabled()) {
@@ -361,8 +361,9 @@ public class GreenMailUtil {
             IMAPStore store = (IMAPStore) session.getStore("imap");
             store.connect(user.getEmail(), user.getPassword());
             return store.getQuota(quotaRoot);
-        } catch(Exception ex) {
-            throw new IllegalStateException("Can not get quota for quota root "+quotaRoot+" for user "+user);
+        } catch (Exception ex) {
+            throw new IllegalStateException("Can not get quota for quota root " +
+                    quotaRoot + " for user " + user);
         }
     }
 }
