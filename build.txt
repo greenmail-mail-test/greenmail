@@ -18,3 +18,10 @@ Releasing GreenMail
    > mvn clean install -Prelease 
 
    The release profile activates additional building of source jars etc.
+
+
+Building the Maven site
+=======================
+
+Includes reports etc. This is not the real site!
+> mvn site -Psite
