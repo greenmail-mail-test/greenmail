@@ -348,4 +348,62 @@ public class ImapServerTest extends TestCase {
             greenMail.stop();
         }
     }
+
+    public void testNestedFolders() throws MessagingException, InterruptedException {
+        GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
+        greenMail.setUser("foo@localhost", "pwd");
+        greenMail.start();
+        try {
+            Properties p = new Properties();
+            p.setProperty("mail.debug","true");
+            Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
+            IMAPStore store = (IMAPStore) session.getStore("imap");
+            store.connect("foo@localhost", "pwd");
+
+            // Create some folders
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            IMAPFolder newFolder = (IMAPFolder) folder.getFolder("foo-folder");
+            assertTrue(!newFolder.exists());
+
+            assertTrue(newFolder.create(Folder.HOLDS_FOLDERS|Folder.HOLDS_MESSAGES));
+
+            // Re-read and validate
+            folder = (IMAPFolder) store.getFolder("INBOX");
+            newFolder = (IMAPFolder) folder.getFolder("foo-folder");
+            System.out.println("blaaaa");
+            assertTrue(newFolder.exists());
+        }
+        finally {
+            greenMail.stop();
+        }
+    }
+
+    public void testRenameFolder() throws MessagingException, InterruptedException {
+        GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
+        greenMail.setUser("foo@localhost", "pwd");
+        greenMail.start();
+        try {
+            Properties p = new Properties();
+            p.setProperty("mail.debug","true");
+            Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
+            IMAPStore store = (IMAPStore) session.getStore("imap");
+            store.connect("foo@localhost", "pwd");
+
+            // Create some folders
+            IMAPFolder inboxFolder = (IMAPFolder) store.getFolder("INBOX");
+            IMAPFolder newFolder = (IMAPFolder) inboxFolder.getFolder("foo-folder");
+            assertTrue(newFolder.create(Folder.HOLDS_FOLDERS|Folder.HOLDS_MESSAGES));
+            assertTrue(newFolder.exists());
+
+            IMAPFolder renamedFolder = (IMAPFolder) inboxFolder.getFolder("foo-folder-renamed");
+            assertTrue(!renamedFolder.exists());
+
+            // Rename
+            assertTrue(newFolder.renameTo(renamedFolder));
+            assertTrue(!renamedFolder.exists());
+        }
+        finally {
+            greenMail.stop();
+        }
+    }
 }
