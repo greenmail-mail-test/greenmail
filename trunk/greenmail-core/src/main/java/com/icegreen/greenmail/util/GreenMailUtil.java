@@ -124,7 +124,8 @@ public class GreenMailUtil {
             try {
                 reader.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                // Ignore but warn
+                log.warn("Can not close reader",e);
             }
         }
     }
@@ -344,7 +345,7 @@ public class GreenMailUtil {
             store.connect(user.getEmail(), user.getPassword());
             store.setQuota(quota);
         } catch(Exception ex) {
-            throw new IllegalStateException("Can not set quota "+quota+" for user "+user);
+            throw new IllegalStateException("Can not set quota "+quota+" for user "+user, ex);
         }
     }
 
@@ -363,7 +364,7 @@ public class GreenMailUtil {
             return store.getQuota(quotaRoot);
         } catch (Exception ex) {
             throw new IllegalStateException("Can not get quota for quota root " +
-                    quotaRoot + " for user " + user);
+                    quotaRoot + " for user " + user, ex);
         }
     }
 }

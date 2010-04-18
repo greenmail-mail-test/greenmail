@@ -167,7 +167,7 @@ class ListCommand extends AuthenticatedStateCommand {
         return ARGS;
     }
 
-    private class ListCommandParser extends CommandParser {
+    private static class ListCommandParser extends CommandParser {
         private final char[] WILDCARD_CHARS = new char[]{'*', '%'};
 
         /**

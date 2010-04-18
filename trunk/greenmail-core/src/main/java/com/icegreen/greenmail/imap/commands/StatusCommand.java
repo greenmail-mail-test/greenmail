@@ -145,7 +145,7 @@ class StatusCommand extends AuthenticatedStateCommand {
         }
     }
 
-    private class StatusDataItems {
+    private static class StatusDataItems {
         boolean messages;
         boolean recent;
         boolean uidNext;

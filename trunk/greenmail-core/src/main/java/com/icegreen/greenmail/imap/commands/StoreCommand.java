@@ -68,7 +68,7 @@ class StoreCommand extends SelectedStateCommand implements UidEnabledCommand {
         if (directive.isSilent()) {
             silentListener = mailbox;
         }
-        
+
         // TODO do this in one hit.
         long[] uids = mailbox.getMessageUids();
         for (int i = 0; i < uids.length; i++) {
@@ -146,7 +146,7 @@ class StoreCommand extends SelectedStateCommand implements UidEnabledCommand {
         }
     }
 
-    private class StoreDirective {
+    private static class StoreDirective {
         private int sign;
         private boolean silent;
 

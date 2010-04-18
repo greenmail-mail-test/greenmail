@@ -44,7 +44,6 @@ public class SmtpManager {
     }
 
     public String checkData(SmtpState state) {
-
         return null;
     }
 

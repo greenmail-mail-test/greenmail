@@ -68,8 +68,8 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
             factory = sslcontext.getServerSocketFactory();
 //            factory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
         } catch (Exception e) {
-            log.error("Can not initialize", e);
-            System.exit(-1);
+            log.error("Can not create and initialize SSL", e);
+            throw new IllegalStateException("Can not create and initialize SSL", e);
         }
     }
 
