@@ -135,9 +135,8 @@ public class InMemoryStore
             // If the parent from the search pattern doesn't exist,
             // return empty.
             if (parent != null) {
-                Iterator children = parent.getChildren().iterator();
-                while (children.hasNext()) {
-                    HierarchicalFolder child = (HierarchicalFolder) children.next();
+                for (final Object o : parent.getChildren()) {
+                    HierarchicalFolder child = (HierarchicalFolder) o;
                     if (child.getName().startsWith(matchPattern)) {
                         mailboxes.add(child);
 
@@ -591,6 +590,15 @@ public class InMemoryStore
             synchronized (_mailboxListeners) {
                 _mailboxListeners.remove(listener);
             }
+        }
+
+        @Override
+        public String toString() {
+            return "HierarchicalFolder{" +
+                    "name='" + name + '\'' +
+                    ", parent=" + parent +
+                    ", isSelectable=" + isSelectable +
+                    '}';
         }
     }
 

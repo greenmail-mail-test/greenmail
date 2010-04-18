@@ -15,7 +15,6 @@ import com.icegreen.greenmail.store.MailFolder;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * Handles processeing for the LIST imap command.
@@ -97,9 +96,8 @@ class ListCommand extends AuthenticatedStateCommand {
                 session.getUser().getQualifiedMailboxName();
         int prefixLength = personalNamespace.length();
 
-        Iterator iterator = mailboxes.iterator();
-        while (iterator.hasNext()) {
-            MailFolder folder = (MailFolder) iterator.next();
+        for (final Object mailboxe : mailboxes) {
+            MailFolder folder = (MailFolder) mailboxe;
             StringBuilder message = new StringBuilder("(");
             if (!folder.isSelectable()) {
                 message.append("\\Noselect");
