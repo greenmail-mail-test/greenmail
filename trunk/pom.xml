@@ -113,7 +113,7 @@
         <plugin>
           <!-- http://maven.apache.org/plugins/maven-compile-plugin/plugin-info.html -->
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.1</version>
+          <version>2.3</version>
           <configuration>
             <source>1.5</source>
             <target>1.5</target>
@@ -171,6 +171,7 @@
 
   <properties>
     <slf4j.version>1.5.11</slf4j.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <dependencyManagement>
@@ -331,7 +332,6 @@
       <!-- Profile containing all settings specific to consol  -->
       <id>repository-dev-java-net</id>
       <repositories>
-        <!-- central -->
         <repository>
           <id>java.net-m2-repository</id>
           <url>http://download.java.net/maven/2</url>
@@ -369,7 +369,7 @@
       </build>
     </profile>
     <profile>
-      <id>site></id>
+      <id>site</id>
       <reporting>
         <plugins>
           <plugin>
