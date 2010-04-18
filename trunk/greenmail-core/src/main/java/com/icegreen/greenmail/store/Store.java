@@ -10,8 +10,6 @@ import java.util.Collection;
 
 import javax.mail.Quota;
 
-import com.icegreen.greenmail.user.GreenMailUser;
-
 /**
  * Represents the complete mail store for an IMAP server, providing access to
  * and manipulation of all {@link com.icegreen.greenmail.store.MailFolder Mailboxes} stored on this server.
@@ -126,7 +124,7 @@ public interface Store {
 
     /**
      * Checks if quota capability is activated.
-     * 
+     *
      * @return true, if quota is supported.
      */
     boolean isQuotaSupported();

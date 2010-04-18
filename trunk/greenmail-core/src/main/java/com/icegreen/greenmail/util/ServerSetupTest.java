@@ -22,7 +22,7 @@ package com.icegreen.greenmail.util;
  * @author Wael Chatila
  * @version $Id: $
  * @since Jan 28, 2006
- * @see {@link ServerSetup}
+ * {@link ServerSetup}
  */
 public class ServerSetupTest {
     public static int portOffset = 3000;

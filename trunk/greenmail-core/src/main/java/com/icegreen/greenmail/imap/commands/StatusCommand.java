@@ -106,7 +106,7 @@ class StatusCommand extends AuthenticatedStateCommand {
         return ARGS;
     }
 
-    private class StatusCommandParser extends CommandParser {
+    private static class StatusCommandParser extends CommandParser {
         StatusDataItems statusDataItems(ImapRequestLineReader request)
                 throws ProtocolException {
             StatusDataItems items = new StatusDataItems();

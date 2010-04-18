@@ -355,7 +355,7 @@ public class ImapServerTest extends TestCase {
         greenMail.start();
         try {
             Properties p = new Properties();
-            p.setProperty("mail.debug","true");
+//            p.setProperty("mail.debug","true");
             Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
             IMAPStore store = (IMAPStore) session.getStore("imap");
             store.connect("foo@localhost", "pwd");
@@ -384,7 +384,7 @@ public class ImapServerTest extends TestCase {
         greenMail.start();
         try {
             Properties p = new Properties();
-            p.setProperty("mail.debug","true");
+//            p.setProperty("mail.debug","true");
             Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
             IMAPStore store = (IMAPStore) session.getStore("imap");
             store.connect("foo@localhost", "pwd");

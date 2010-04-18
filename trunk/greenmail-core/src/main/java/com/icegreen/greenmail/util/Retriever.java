@@ -6,7 +6,6 @@
 package com.icegreen.greenmail.util;
 
 import com.icegreen.greenmail.AbstractServer;
-import com.icegreen.greenmail.util.DummySSLSocketFactory;
 
 import javax.mail.*;
 import java.util.ArrayList;
