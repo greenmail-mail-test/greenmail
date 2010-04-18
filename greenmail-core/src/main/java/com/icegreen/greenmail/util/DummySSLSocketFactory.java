@@ -14,10 +14,14 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * DummySSLSocketFactory - NOT SECURE
  */
 public class DummySSLSocketFactory extends SSLSocketFactory {
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     private SSLSocketFactory factory;
 
     public DummySSLSocketFactory() {
@@ -28,8 +32,8 @@ public class DummySSLSocketFactory extends SSLSocketFactory {
                     null);
             factory = sslcontext.getSocketFactory();
         } catch (Exception ex) {
-            ex.printStackTrace();
-            System.exit(-1);
+            log.error("Can not create and initialize SSL", ex);
+            throw new IllegalStateException("Can not create and initialize SSL", ex);
         }
     }
 

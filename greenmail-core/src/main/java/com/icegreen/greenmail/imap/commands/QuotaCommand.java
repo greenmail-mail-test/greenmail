@@ -28,12 +28,11 @@ public class QuotaCommand extends AuthenticatedStateCommand {
 
         String root = parser.mailbox(request);
         // NAME root (name usage limit)
-        StringBuilder buf = new StringBuilder();
 
         Quota[] quota = session.getHost().getStore().getQuota(
                 root, session.getUser().getQualifiedMailboxName());
         for(Quota q: quota) {
-            buf = new StringBuilder();
+            StringBuilder buf = new StringBuilder();
             appendQuota(q, buf);
             response.untaggedResponse(buf.toString());
         }

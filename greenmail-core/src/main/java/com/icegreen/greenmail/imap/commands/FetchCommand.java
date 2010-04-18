@@ -478,7 +478,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         }
     }
 
-    private class BodyFetchElement {
+    private static class BodyFetchElement {
         private String name;
         private String sectionIdentifier;
         private String partial;

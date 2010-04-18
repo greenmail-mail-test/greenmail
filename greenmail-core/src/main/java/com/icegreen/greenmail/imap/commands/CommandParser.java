@@ -429,7 +429,7 @@ public class CommandParser {
         boolean isValid(char chr);
     }
 
-    protected class NoopCharValidator implements CharacterValidator {
+    protected static class NoopCharValidator implements CharacterValidator {
         public boolean isValid(char chr) {
             return true;
         }
@@ -450,7 +450,7 @@ public class CommandParser {
         }
     }
 
-    protected class DigitCharValidator implements CharacterValidator {
+    protected static class DigitCharValidator implements CharacterValidator {
         public boolean isValid(char chr) {
             return ((chr >= '0' && chr <= '9') ||
                     chr == '*');
@@ -463,7 +463,7 @@ public class CommandParser {
         }
     }
 
-    private class MessageSetCharValidator implements CharacterValidator {
+    private static class MessageSetCharValidator implements CharacterValidator {
         public boolean isValid(char chr) {
             return (isDigit(chr) ||
                     chr == ':' ||

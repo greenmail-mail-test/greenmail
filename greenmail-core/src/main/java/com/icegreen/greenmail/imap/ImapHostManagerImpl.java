@@ -176,13 +176,12 @@ public class ImapHostManagerImpl
         //            and leave INBOX (with children) intact.
         String userInboxName = getQualifiedMailboxName(user, INBOX_NAME);
         if (userInboxName.equals(existingFolder.getFullName())) {
-            MailFolder inbox = existingFolder;
             MailFolder newBox = createMailbox(user, newMailboxName);
-            long[] uids = inbox.getMessageUids();
+            long[] uids = existingFolder.getMessageUids();
             for (long uid : uids) {
-                inbox.copyMessage(uid, newBox);
+                existingFolder.copyMessage(uid, newBox);
             }
-            inbox.deleteAllMessages();
+            existingFolder.deleteAllMessages();
             return;
         }
 
@@ -298,7 +297,7 @@ public class ImapHostManagerImpl
      * TODO make this a proper class
      * TODO persist
      */
-    private class MailboxSubscriptions {
+    private static class MailboxSubscriptions {
         private Map userSubs = new HashMap();
 
         /**
@@ -348,7 +347,6 @@ public class ImapHostManagerImpl
         }
     }
 
-    @Override
     public Store getStore() {
         return store;
     }
