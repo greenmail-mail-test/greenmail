@@ -86,102 +86,6 @@
     </contributor>
   </contributors>
 
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>2.1</version>
-        <configuration>
-          <skin>
-            <groupId>org.apache.maven.skins</groupId>
-            <artifactId>maven-stylus-skin</artifactId>
-            <version>1.0.1</version>
-          </skin>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-surefire-report-plugin</artifactId>
-        <version>2.5</version>
-      </plugin>
-
-      <plugin>
-        <!-- javadoc report -->
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.6.1</version>
-        <configuration>
-          <aggregate>true</aggregate>
-          <linksource>true</linksource>
-          <links>
-            <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
-            <link>http://java.sun.com/products/javamail/javadocs/</link>
-            <link>http://www.junit.org/junit/javadoc/</link>
-          </links>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-jxr-plugin</artifactId>
-         <version>2.1</version>
-        <configuration>
-          <linkJavadoc>true</linkJavadoc>
-          <aggregate>true</aggregate>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jdepend-maven-plugin</artifactId>
-        <version>2.0-beta-2</version>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <version>2.4</version>
-        <configuration>
-          <format>html</format>
-          <linkXRef>true</linkXRef>
-          <sourceEncoding>utf-8</sourceEncoding>
-          <minimumTokens>100</minimumTokens>
-          <targetJdk>1.5</targetJdk>
-        </configuration>
-      </plugin>
-
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
-        <version>2.3</version>
-        <configuration>
-          <threshold>Normal</threshold>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.1.2</version>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>dependencies</report>
-              <report>dependency-convergence</report>
-              <report>scm</report>
-              <report>mailing-list</report>
-              <report>cim</report>
-              <report>issue-tracking</report>
-              <report>license</report>
-              <report>project-team</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-    </plugins>
-
-  </reporting>
-
   <!-- distribution -->
   <!-- TODO
   <distributionManagement>
@@ -201,6 +105,7 @@
   -->
 
   <build>
+    <defaultGoal>install</defaultGoal>
 
     <!-- Plugin defaults for all inherited POMs. -->
     <pluginManagement>
@@ -237,20 +142,15 @@
           </configuration>
         </plugin>
         <plugin>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>2.1-beta-1</version>
+        </plugin>
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
           <version>2.1</version>
         </plugin>
         <!-- IDE plugins -->
-        <plugin>
-          <!-- http://maven.apache.org/plugins/maven-idea-plugin/plugin-info.html -->
-          <artifactId>maven-idea-plugin</artifactId>
-          <configuration>
-            <downloadSources>true</downloadSources>
-            <linkModules>true</linkModules>
-            <jdkLevel>1.5</jdkLevel>
-          </configuration>
-        </plugin>
         <plugin>
           <!-- http://maven.apache.org/plugins/maven-eclipse-plugin/plugin-info.html -->
           <artifactId>maven-eclipse-plugin</artifactId>
@@ -259,7 +159,11 @@
             <downloadJavadocs>true</downloadJavadocs>
           </configuration>
         </plugin>
-
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>jboss-packaging-maven-plugin</artifactId>
+          <version>2.1.1</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -302,7 +206,7 @@
 
       <dependency> <!-- Log SLF4J via JCL API -->
         <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-jcl</artifactId>
+        <artifactId>jcl-over-slf4j</artifactId>
         <version>${slf4j.version}</version>
       </dependency>
       <dependency> <!-- JBoss uses Log4j -->
@@ -320,6 +224,45 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
         <version>${slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>2.4</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>2.5.6</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-test</artifactId>
+        <version>2.5.6</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+          <version>2.5.6</version>
+          <exclusions>
+            <exclusion>
+              <groupId>commons-logging</groupId>
+              <artifactId>commons-logging</artifactId>
+            </exclusion>
+          </exclusions>
       </dependency>
 
       <!-- Test scope -->
@@ -361,6 +304,25 @@
           </exclusion>
         </exclusions>
       </dependency>
+      <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>5.11</version>
+        <classifier>jdk15</classifier>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.easymock</groupId>
+        <artifactId>easymock</artifactId>
+        <version>2.5.2</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.easymock</groupId>
+        <artifactId>easymockclassextension</artifactId>
+        <version>2.5.2</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -395,16 +357,120 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
             <executions>
-                <execution>
-                    <id>attach-sources</id>
-                    <goals>
-                        <goal>jar</goal>
-                    </goals>
-                 </execution>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+               </execution>
              </executions>
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>site></id>
+      <reporting>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-site-plugin</artifactId>
+            <version>2.1</version>
+            <configuration>
+              <skin>
+                <groupId>org.apache.maven.skins</groupId>
+                <artifactId>maven-stylus-skin</artifactId>
+                <version>1.1</version>
+              </skin>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <artifactId>maven-surefire-report-plugin</artifactId>
+            <version>2.5</version>
+          </plugin>
+
+          <plugin>
+            <!-- javadoc report -->
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.6.1</version>
+            <configuration>
+              <aggregate>true</aggregate>
+              <linksource>true</linksource>
+              <links>
+                <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+                <link>http://java.sun.com/products/javamail/javadocs/</link>
+                <link>http://www.junit.org/junit/javadoc/</link>
+              </links>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <artifactId>maven-jxr-plugin</artifactId>
+             <version>2.1</version>
+            <configuration>
+              <linkJavadoc>true</linkJavadoc>
+              <aggregate>true</aggregate>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>jdepend-maven-plugin</artifactId>
+            <version>2.0-beta-2</version>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-pmd-plugin</artifactId>
+            <version>2.4</version>
+            <configuration>
+              <format>html</format>
+              <linkXRef>true</linkXRef>
+              <sourceEncoding>utf-8</sourceEncoding>
+              <minimumTokens>100</minimumTokens>
+              <targetJdk>1.5</targetJdk>
+            </configuration>
+          </plugin>
+
+
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>findbugs-maven-plugin</artifactId>
+            <version>2.3.1</version>
+            <configuration>
+              <threshold>Normal</threshold>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-project-info-reports-plugin</artifactId>
+            <version>2.1.2</version>
+            <reportSets>
+              <reportSet>
+                <reports>
+                  <report>index</report>
+                  <report>summary</report>
+                  <report>dependencies</report>
+                  <report>dependency-convergence</report>
+                  <report>dependency-management</report>
+                  <report>scm</report>
+                  <report>mailing-list</report>
+                  <report>cim</report>
+                  <report>issue-tracking</report>
+                  <report>license</report>
+                  <report>project-team</report>
+                  <report>plugin-management</report>
+                  <report>plugins</report>
+                </reports>
+              </reportSet>
+            </reportSets>
+          </plugin>
+        </plugins>
+
+      </reporting>
+
     </profile>
   </profiles>
 </project>
