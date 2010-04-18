@@ -318,8 +318,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         return ARGS;
     }
 
-    private class FetchCommandParser extends CommandParser {
-
+    private static class FetchCommandParser extends CommandParser {
 
         public FetchRequest fetchRequest(ImapRequestLineReader request)
                 throws ProtocolException {

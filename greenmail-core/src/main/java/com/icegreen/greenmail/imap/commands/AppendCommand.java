@@ -52,7 +52,7 @@ class AppendCommand extends AuthenticatedStateCommand {
         MimeMessage message = parser.mimeMessage(request);
         parser.endLine(request);
 
-        MailFolder folder = null;
+        MailFolder folder;
         try {
             folder = getMailbox(mailboxName, session, true);
         } catch (FolderException e) {
@@ -80,7 +80,7 @@ class AppendCommand extends AuthenticatedStateCommand {
         return ARGS;
     }
 
-    private class AppendCommandParser extends CommandParser {
+    private static class AppendCommandParser extends CommandParser {
         /**
          * If the next character in the request is a '(', tries to read
          * a "flag_list" argument from the request. If not, returns a
@@ -141,7 +141,7 @@ class AppendCommand extends AuthenticatedStateCommand {
      * will act as thought the end of stream has been reached, even if more bytes are
      * present in the underlying input stream.
      */
-    class FixedLengthInputStream extends FilterInputStream {
+    static class FixedLengthInputStream extends FilterInputStream {
         private long pos = 0;
         private long length;
 
@@ -180,10 +180,6 @@ class AppendCommand extends AuthenticatedStateCommand {
         public long skip(long n) throws IOException {
             throw new IOException("Not implemented");
 //            return super.skip( n );
-        }
-
-        public int available() throws IOException {
-            return super.available();
         }
 
         public void close() throws IOException {
