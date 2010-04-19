@@ -370,7 +370,6 @@ public class ImapServerTest extends TestCase {
             // Re-read and validate
             folder = (IMAPFolder) store.getFolder("INBOX");
             newFolder = (IMAPFolder) folder.getFolder("foo-folder");
-            System.out.println("blaaaa");
             assertTrue(newFolder.exists());
         }
         finally {
@@ -390,17 +389,29 @@ public class ImapServerTest extends TestCase {
             store.connect("foo@localhost", "pwd");
 
             // Create some folders
-            IMAPFolder inboxFolder = (IMAPFolder) store.getFolder("INBOX");
-            IMAPFolder newFolder = (IMAPFolder) inboxFolder.getFolder("foo-folder");
+            Folder inboxFolder = store.getFolder("INBOX");
+            Folder newFolder = inboxFolder.getFolder("foo-folder");
             assertTrue(newFolder.create(Folder.HOLDS_FOLDERS|Folder.HOLDS_MESSAGES));
             assertTrue(newFolder.exists());
 
-            IMAPFolder renamedFolder = (IMAPFolder) inboxFolder.getFolder("foo-folder-renamed");
+            Folder renamedFolder = inboxFolder.getFolder("foo-folder-renamed");
             assertTrue(!renamedFolder.exists());
 
             // Rename
             assertTrue(newFolder.renameTo(renamedFolder));
+            assertTrue(!newFolder.exists());
+            assertTrue(renamedFolder.exists());
+
+            // Rename with sub folder
+            Folder subFolder = renamedFolder.getFolder("bar");
+            assertTrue(subFolder.create(Folder.HOLDS_FOLDERS|Folder.HOLDS_MESSAGES));
+            assertTrue(subFolder.exists());
+
+            Folder renamedFolder2 = inboxFolder.getFolder("foo-folder-renamed-again");
+            assertTrue(renamedFolder.renameTo(renamedFolder2));
             assertTrue(!renamedFolder.exists());
+            assertTrue(renamedFolder2.exists());
+            assertTrue(renamedFolder2.getFolder("bar").exists()); // check that sub folder still exists
         }
         finally {
             greenMail.stop();

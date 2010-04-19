@@ -12,6 +12,10 @@
   </properties>
   <body>
   <release version="1.4" date="in SVN" description="Changes for 1.4 release">
+    <action type="fix">
+      Fixed nested folder creation using IMAP.
+      Many thx to Jan Zahalka for the patch.
+    </action>
     <action type="add">
       Added IMAP Fetch support for nested body parts .
     </action>
