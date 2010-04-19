@@ -93,6 +93,13 @@ public class InMemoryStore
 
     public void renameMailbox(MailFolder existingFolder, String newName) throws FolderException {
         HierarchicalFolder toRename = (HierarchicalFolder) existingFolder;
+        // Remove prefixed parent from new name
+        String parentName = toRename.getParent().getName();
+        int idx = newName.lastIndexOf(parentName);
+        if(idx>=0) {
+            newName = newName.substring(idx+parentName.length()+1);
+        }
+        // Update to new name
         toRename.setName(newName);
     }
 
