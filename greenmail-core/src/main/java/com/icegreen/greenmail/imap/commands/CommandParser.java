@@ -181,6 +181,12 @@ public class CommandParser {
      */
     protected String consumeLiteral(ImapRequestLineReader request)
             throws ProtocolException {
+
+        return new String(consumeLiteralAsBytes(request));
+    }
+
+    protected byte[] consumeLiteralAsBytes(ImapRequestLineReader request)
+            throws ProtocolException {
         // The 1st character must be '{'
         consumeChar(request, '{');
 
@@ -213,7 +219,7 @@ public class CommandParser {
         byte[] buffer = new byte[size];
         request.read(buffer);
 
-        return new String(buffer);
+        return buffer;
     }
 
     /**
