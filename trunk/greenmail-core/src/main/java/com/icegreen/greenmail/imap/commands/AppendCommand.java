@@ -16,6 +16,8 @@ import com.icegreen.greenmail.store.MailFolder;
 
 import javax.mail.Flags;
 import javax.mail.internet.MimeMessage;
+
+import java.io.ByteArrayInputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -121,10 +123,10 @@ class AppendCommand extends AuthenticatedStateCommand {
         public MimeMessage mimeMessage(ImapRequestLineReader request)
                 throws ProtocolException {
             request.nextWordChar();
-            String mailString = consumeLiteral(request);
+            byte[] mail = consumeLiteralAsBytes(request);
 
             try {
-                return GreenMailUtil.newMimeMessage(mailString);
+                return GreenMailUtil.newMimeMessage(new ByteArrayInputStream(mail));
             } catch (Exception e) {
                 throw new ProtocolException("UnexpectedException: " + e.getMessage());
             }
