@@ -93,16 +93,44 @@ public class InMemoryStore
 
     public void renameMailbox(MailFolder existingFolder, String newName) throws FolderException {
         HierarchicalFolder toRename = (HierarchicalFolder) existingFolder;
-        // Remove prefixed parent from new name
-        String parentName = toRename.getParent().getName();
-        int idx = newName.lastIndexOf(parentName);
-        if(idx>=0) {
-            newName = newName.substring(idx+parentName.length()+1);
+        HierarchicalFolder parent = toRename.getParent();
+
+        int idx = newName.lastIndexOf(ImapConstants.HIERARCHY_DELIMITER_CHAR);
+        String newFolderName;
+        String newFolderPathWithoutName;
+        if(idx>0) {
+            newFolderName = newName.substring(idx+1);
+            newFolderPathWithoutName = newName.substring(0,idx);
         }
-        // Update to new name
-        toRename.setName(newName);
+        else {
+            newFolderName = newName;
+            newFolderPathWithoutName = "";
+        }
+
+        if(parent.getName().equals(newFolderPathWithoutName)) {
+            // Simple rename
+            toRename.setName(newFolderName);
+        }
+        else {
+            // Hierarchy change
+            parent.getChildren().remove(toRename);
+            HierarchicalFolder userFolder = findParentByName(toRename, ImapConstants.INBOX_NAME).getParent();
+            String[] path = newName.split('\\'+ImapConstants.HIERARCHY_DELIMITER);
+            HierarchicalFolder newParent = userFolder;
+            for(int i=0;i<path.length-1;i++) {
+                newParent = newParent.getChild(path[i]);
+            }
+            toRename.moveToNewParent(newParent);
+            toRename.setName(newFolderName);
+        }
     }
 
+    private HierarchicalFolder findParentByName(HierarchicalFolder folder, String parentName) {
+        while(null!=folder && !parentName.equals(folder.getName())) {
+            folder = folder.getParent();
+        }
+        return folder;
+    }
     public Collection getChildren(MailFolder parent) {
         Collection children = ((HierarchicalFolder) parent).getChildren();
         return Collections.unmodifiableCollection(children);
@@ -287,6 +315,13 @@ public class InMemoryStore
 
         public HierarchicalFolder getParent() {
             return parent;
+        }
+
+        public void moveToNewParent(HierarchicalFolder newParent) {
+            if(!newParent.getChildren().contains(this)) {
+                parent = newParent;
+                parent.getChildren().add(this);
+            }
         }
 
         public HierarchicalFolder getChild(String name) {
