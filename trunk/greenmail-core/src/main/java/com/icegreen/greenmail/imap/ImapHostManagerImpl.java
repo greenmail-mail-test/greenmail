@@ -184,7 +184,7 @@ public class ImapHostManagerImpl
             existingFolder.deleteAllMessages();
             return;
         }
-
+        
         store.renameMailbox(existingFolder, newMailboxName);
     }
 

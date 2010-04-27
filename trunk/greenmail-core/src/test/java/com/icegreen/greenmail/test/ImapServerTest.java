@@ -412,6 +412,18 @@ public class ImapServerTest extends TestCase {
             assertTrue(!renamedFolder.exists());
             assertTrue(renamedFolder2.exists());
             assertTrue(renamedFolder2.getFolder("bar").exists()); // check that sub folder still exists
+
+            // Rename to a different parent folder
+            // INBOX.foo-folder-renamed-again -> INBOX.foo2.foo3
+            Folder foo2Folder = inboxFolder.getFolder("foo2");
+            assertTrue(foo2Folder.create(Folder.HOLDS_FOLDERS|Folder.HOLDS_MESSAGES));
+            assertTrue(foo2Folder.exists());
+            Folder foo3Folder = foo2Folder.getFolder("foo3");
+            assertTrue(!foo3Folder.exists());
+
+            renamedFolder2.renameTo(foo3Folder);
+            assertTrue(inboxFolder.getFolder("foo2.foo3").exists());
+            assertTrue(!inboxFolder.getFolder("foo-folder-renamed-again").exists());
         }
         finally {
             greenMail.stop();
