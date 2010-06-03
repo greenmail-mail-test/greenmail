@@ -39,7 +39,7 @@ public class SmtpManager {
 
     public String checkRecipient(SmtpState state, MailAddress rcpt) {
         // todo?
-        MailAddress sender = state.getMessage().getReturnPath();
+//        MailAddress sender = state.getMessage().getReturnPath();
         return null;
     }
 
@@ -101,8 +101,7 @@ public class SmtpManager {
             arrived = true;
         }
 
-        public void emailReceived()
-        {
+        public void emailReceived() {
             emailCount--;
             if (emailCount<=0) {
                 setArrived();

@@ -168,8 +168,6 @@ class ListCommand extends AuthenticatedStateCommand {
     }
 
     private static class ListCommandParser extends CommandParser {
-        private final char[] WILDCARD_CHARS = new char[]{'*', '%'};
-
         /**
          * Reads an argument of type "list_mailbox" from the request, which is
          * the second argument for a LIST or LSUB command. Valid values are a "string"
