@@ -71,8 +71,7 @@ class StoreCommand extends SelectedStateCommand implements UidEnabledCommand {
 
         // TODO do this in one hit.
         long[] uids = mailbox.getMessageUids();
-        for (int i = 0; i < uids.length; i++) {
-            long uid = uids[i];
+        for (long uid : uids) {
             int msn = mailbox.getMsn(uid);
 
             if ((useUids && includes(idSet, uid)) ||
@@ -118,7 +117,7 @@ class StoreCommand extends SelectedStateCommand implements UidEnabledCommand {
         return ARGS;
     }
 
-    private class StoreCommandParser extends CommandParser {
+    private static class StoreCommandParser extends CommandParser {
         StoreDirective storeDirective(ImapRequestLineReader request) throws ProtocolException {
             int sign = 0;
             boolean silent = false;
@@ -140,7 +139,7 @@ class StoreCommand extends SelectedStateCommand implements UidEnabledCommand {
             } else if ("FLAGS.SILENT".equalsIgnoreCase(directive)) {
                 silent = true;
             } else {
-                throw new ProtocolException("Invalid Store Directive: '" + directive + "'");
+                throw new ProtocolException("Invalid Store Directive: '" + directive + '\'');
             }
             return new StoreDirective(sign, silent);
         }
