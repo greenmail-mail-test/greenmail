@@ -31,7 +31,9 @@ public abstract class AbstractServer extends Service {
     protected AbstractServer(ServerSetup setup, Managers managers) {
         try {
             this.setup = setup;
-            bindTo = (setup.getBindAddress() == null) ? InetAddress.getByName("0.0.0.0") : InetAddress.getByName(setup.getBindAddress());
+            bindTo = (setup.getBindAddress() == null)
+                    ? InetAddress.getByName("0.0.0.0")
+                    : InetAddress.getByName(setup.getBindAddress());
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
@@ -52,7 +54,7 @@ public abstract class AbstractServer extends Service {
             } catch (BindException e) {
                 try {
                     retEx = e;
-                    Thread.sleep(10);
+                    Thread.sleep(10L);
                 } catch (InterruptedException ignored) {}
             }
         }

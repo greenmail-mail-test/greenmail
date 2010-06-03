@@ -184,7 +184,7 @@ public class ImapHostManagerImpl
             existingFolder.deleteAllMessages();
             return;
         }
-        
+
         store.renameMailbox(existingFolder, newMailboxName);
     }
 
@@ -225,11 +225,9 @@ public class ImapHostManagerImpl
 
         for (MailFolder folder : store.listMailboxes(qualifiedPattern)) {
             // TODO check subscriptions.
-            if (subscribedOnly) {
-                if (!subscriptions.isSubscribed(user, folder)) {
-                    // if not subscribed
-                    folder = null;
-                }
+            if (subscribedOnly && !subscriptions.isSubscribed(user, folder)) {
+                // if not subscribed
+                folder = null;
             }
 
             // Sets the store to null if it's not viewable.

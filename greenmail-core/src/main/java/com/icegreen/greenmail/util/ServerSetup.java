@@ -5,6 +5,9 @@
  */
 package com.icegreen.greenmail.util;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 /**
  * Defines the default ports
  * <table>
@@ -55,12 +58,21 @@ public class ServerSetup {
     public ServerSetup(int port, String bindAddress, String protocol) {
         this.port = port;
         if(null == bindAddress || bindAddress.length()==0) {
-            this.bindAddress = "127.0.0.1";
+            this.bindAddress = getLocalHostAddress();
         }
         else {
             this.bindAddress = bindAddress;
         }
         this.protocol = protocol;
+    }
+
+    public static String getLocalHostAddress() {
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            return "127.0.0.1"; // Guess
+        }
+
     }
 
     public boolean isSecure() {
