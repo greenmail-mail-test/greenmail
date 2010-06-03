@@ -96,7 +96,7 @@ public class UserImpl implements GreenMailUser, Serializable {
     }
 
     public boolean equals(Object o) {
-        if (!(o instanceof UserImpl) || (null == o)) {
+        if ((null == o) || !(o instanceof UserImpl)) {
             return false;
         }
         UserImpl that = (UserImpl) o;
