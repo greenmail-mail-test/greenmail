@@ -279,7 +279,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         String sub = value.substring(startPos);
         strings.add(sub);
 
-        return (String[]) strings.toArray(new String[0]);
+        return (String[]) strings.toArray(new String[strings.size()]);
     }
 
     private void addHeaders(Enumeration inum, StringBuffer response) {
@@ -402,14 +402,14 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
                 String parameter = sectionIdentifier.toString();
 
-                String partial = null;
+                StringBuilder partial = null;
                 next = nextCharInLine(command);
                 if ('<' == next) {
-                    partial = "";
+                    partial = new StringBuilder();
                     consumeChar(command, '<');
                     next = nextCharInLine(command);
                     while (next != '>') {
-                        partial += next;
+                        partial.append(next);
                         command.consume();
                         next = nextCharInLine(command);
                     }
@@ -418,9 +418,11 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
                 }
 
                 if ("BODY".equalsIgnoreCase(name)) {
-                    fetch.add(new BodyFetchElement("BODY[" + parameter + ']', parameter, partial), false);
+                    fetch.add(new BodyFetchElement("BODY[" + parameter + ']', parameter,
+                                                   null==partial?null:partial.toString()), false);
                 } else if ("BODY.PEEK".equalsIgnoreCase(name)) {
-                    fetch.add(new BodyFetchElement("BODY[" + parameter + ']', parameter, partial), true);
+                    fetch.add(new BodyFetchElement("BODY[" + parameter + ']', parameter,
+                                                   null==partial?null:partial.toString()), true);
                 } else {
                     throw new ProtocolException("Invalid fetch attibute: " + name + "[]");
                 }
