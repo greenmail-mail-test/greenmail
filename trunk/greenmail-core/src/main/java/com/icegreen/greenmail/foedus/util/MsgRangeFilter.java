@@ -24,7 +24,7 @@ public class MsgRangeFilter {
         } else {
             Matcher mat = TWO_PART.matcher(rng);
             mat.matches();
-            assert(mat.groupCount() == 2);
+            assert mat.groupCount() == 2;
             String bot = mat.group(1);
             String top = mat.group(2);
             if (bot.equals("*"))

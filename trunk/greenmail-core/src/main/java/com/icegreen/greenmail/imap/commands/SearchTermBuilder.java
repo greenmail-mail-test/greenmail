@@ -153,7 +153,7 @@ public abstract class SearchTermBuilder {
     }
 
     private static SearchTerm createFlagSearchTerm(String pFlagName, boolean pValue) {
-        javax.mail.Flags.Flag flag = toFlag(pFlagName);
+        Flags.Flag flag = toFlag(pFlagName);
         Flags flags = new javax.mail.Flags();
         if(null==flag) { // user flags
             flags.add(pFlagName);

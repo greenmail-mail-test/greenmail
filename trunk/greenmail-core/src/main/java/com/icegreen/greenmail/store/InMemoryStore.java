@@ -211,13 +211,13 @@ public class InMemoryStore
                 collectedQuotas.addAll(quotas);
             }
         }
-        updateQuotas(root, collectedQuotas, qualifiedRootPrefix);
+        updateQuotas(collectedQuotas, qualifiedRootPrefix);
         return collectedQuotas.toArray(EMPTY_QUOTAS);
     }
 
-    private void updateQuotas(final String pRoot, final Set<Quota> pQuotas,
+    private void updateQuotas(final Set<Quota> quotas,
                               final String qualifiedRootPrefix) {
-        for(Quota q: pQuotas) {
+        for(Quota q: quotas) {
             updateQuota(q, qualifiedRootPrefix);
         }
     }
