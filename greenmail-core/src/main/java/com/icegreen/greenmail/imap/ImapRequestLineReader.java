@@ -68,7 +68,7 @@ public class ImapRequestLineReader {
                 next = input.read();
             } catch (IOException e) {
 //                e.printStackTrace();
-                throw new ProtocolException("Error reading from stream.");
+                throw new ProtocolException("Error reading from stream.", e);
             }
             if (next == -1) {
                 throw new ProtocolException("Unexpected end of stream.");

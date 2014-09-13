@@ -14,4 +14,7 @@ public class ProtocolException extends Exception {
     public ProtocolException(String s) {
         super(s);
     }
+    public ProtocolException(String s, Throwable cause) {
+        super(s,cause);
+    }
 }
