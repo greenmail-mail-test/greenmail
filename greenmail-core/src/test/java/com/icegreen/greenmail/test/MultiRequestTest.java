@@ -71,8 +71,21 @@ public class MultiRequestTest extends TestCase {
         }
 
         public void run() {
+            // Try several times, as message might not have been sent yet
+            for(int i=200;count <1 || i<2000;i+=200) {
+                try {
+                    count = r.getMessages(to, to).length;
+                } catch (Exception e) {
+                    // Ignore
+                }
+                try {
+                    sleep(i);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             try {
-                count = r.getMessages(to,to).length;
+                count = r.getMessages(to, to).length;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
