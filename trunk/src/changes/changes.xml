@@ -58,13 +58,13 @@
       GreenMail JBoss Service is a bit more verbose when starting.
     </action>
     <action type="update">
-      Updated slf4j from 1.3.1 to 1.5.11
+      Updated slf4j from 1.3.1 to 1.7.7                    
     </action>
     <action type="update">
       IMAP,POP3 and SMTP now support debug level logging of commands.
     </action>
     <action type="update">
-      Updated JavaMail from 1.4.0 to 1.4.3 (see <![CDATA[<a href="http://java.sun.com/products/javamail/CHANGES.txt"> JavaMail changes</a>]]>), and Java Activation Framework from 1.1 to 1.1.1 (see <![CDATA[<a href="http://java.sun.com/javase/technologies/desktop/javabeans/glasgow/jaf-changes.txt">JAF changes</a>]]>)
+      Updated JavaMail from 1.4.0 to 1.4.7 (see <![CDATA[<a href="https://java.net/projects/javamail/sources/website-repository/content/docs/CHANGES.txt"> JavaMail changes</a>]]>), and Java Activation Framework from 1.1 to 1.1.1 (see <![CDATA[<a href="http://www.oracle.com/technetwork/java/javase/downloads/jaf-changes-150237.txt">JAF changes</a>]]>)
     </action>
     <action type="update">
       Merged 1.3.1b changes.
