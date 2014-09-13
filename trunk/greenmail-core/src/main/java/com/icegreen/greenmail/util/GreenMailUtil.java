@@ -276,6 +276,11 @@ public class GreenMailUtil {
 
         props.setProperty("mail."+setup.getProtocol()+".port", String.valueOf(setup.getPort()));
         props.setProperty("mail."+setup.getProtocol()+".host", String.valueOf(setup.getBindAddress()));
+        // On Mac, somehow we need to set the smtp host for smtps.
+        // Otherwise, JavaMail uses a default host 'localhost'
+        if (setup.isSecure() && "smtps".equals(setup.getProtocol())) {
+            props.setProperty("mail.smtp.host", String.valueOf(setup.getBindAddress()));
+        }
         if (null != mailProps && !mailProps.isEmpty()) {
             for(Map.Entry e: mailProps.entrySet()) {
                 props.setProperty(e.getKey().toString(), e.getValue().toString());
