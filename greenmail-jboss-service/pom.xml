@@ -84,6 +84,13 @@
     <dependency> <!-- JBoss uses Log4j -->
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
+      <exclusions>
+        <exclusion> <!-- Use JBoss log4j -->
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+        </exclusion>
+      </exclusions>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 
