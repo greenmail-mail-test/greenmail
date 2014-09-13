@@ -82,7 +82,7 @@ public class GreenMail {
             }
             if (!allup) {
                 try {
-                    Thread.sleep(5);
+                    wait(5);
                 } catch (InterruptedException e) {
                 }
             }
