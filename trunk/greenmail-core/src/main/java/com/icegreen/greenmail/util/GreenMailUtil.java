@@ -109,18 +109,13 @@ public class GreenMailUtil {
      * @return Returns the number of lines in any string
      */
     public static int getLineCount(String str) {
-        BufferedReader reader = new BufferedReader(new StringReader(str));
+        LineNumberReader reader = new LineNumberReader(new StringReader(str));
         try {
-            int ret = 0;
-            try {
-                while (reader.readLine() != null) {
-                    ret++;
-                }
-                return ret;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }finally {
+            reader.skip(Long.MAX_VALUE);
+            return reader.getLineNumber();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
             try {
                 reader.close();
             } catch (IOException e) {
@@ -184,7 +179,7 @@ public class GreenMailUtil {
      * that could potentially display the characters <i>1,l,I,0,O,Q</i> in a way
      * that a human could easily mix them up.
      *
-     * @return
+     * @return the random string.
      */
     public static String random() {
         Random r = new Random();
@@ -257,8 +252,8 @@ public class GreenMailUtil {
      * Gets a JavaMail Session for given server type such as IMAP and additional props for JavaMail.
      *
      * @param setup the setup type, such as <code>ServerSetup.IMAP</code>
-     * @param mailProps
-     * @return
+     * @param mailProps additional mail properties.
+     * @return the JavaMail session.
      */
     public static Session getSession(final ServerSetup setup, Properties mailProps) {
         Properties props = new Properties();
@@ -282,9 +277,7 @@ public class GreenMailUtil {
             props.setProperty("mail.smtp.host", String.valueOf(setup.getBindAddress()));
         }
         if (null != mailProps && !mailProps.isEmpty()) {
-            for(Map.Entry e: mailProps.entrySet()) {
-                props.setProperty(e.getKey().toString(), e.getValue().toString());
-            }
+            props.putAll(mailProps);
         }
         if (log.isDebugEnabled()) {
             log.debug("Mail session properties are "+props);
