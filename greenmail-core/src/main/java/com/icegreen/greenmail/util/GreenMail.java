@@ -163,8 +163,9 @@ public class GreenMail {
     }
     /**
      * Does the same thing as {@link #wait(long, int)} but with a timeout of 5000ms
-     * @param emailCount
-     * @return
+     *
+     * @param emailCount waits for these many emails to arrive before returning
+     * @return Returns false if timeout period was reached, otherwise true.
      * @throws InterruptedException
      */
     public boolean waitForIncomingEmail(int emailCount) throws InterruptedException {
