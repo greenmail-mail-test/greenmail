@@ -123,6 +123,9 @@
             <source>1.5</source>
             <target>1.5</target>
             <debug>true</debug>
+            <compilerArgs>
+              <arg>-Xlint</arg>
+            </compilerArgs>
           </configuration>
         </plugin>
         <plugin>
