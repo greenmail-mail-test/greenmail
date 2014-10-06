@@ -75,15 +75,17 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         response.commandComplete(this);
     }
 
+    final static Flags FLAGS_SEEN = new Flags(Flags.Flag.SEEN);
+
     private String outputMessage(FetchRequest fetch, SimpleStoredMessage message,
                                  ImapSessionFolder folder, boolean useUids)
             throws FolderException, ProtocolException {
         // Check if this fetch will cause the "SEEN" flag to be set on this message
         // If so, update the flags, and ensure that a flags response is included in the response.
         boolean ensureFlagsResponse = false;
-        if (fetch.isSetSeen() && !message.getFlags().contains(Flags.Flag.SEEN)) {
-            folder.setFlags(new Flags(Flags.Flag.SEEN), true, message.getUid(), folder, useUids);
-            message.getFlags().add(Flags.Flag.SEEN);
+        if (fetch.isSetSeen() && !message.isSet(Flags.Flag.SEEN)) {
+            folder.setFlags(FLAGS_SEEN, true, message.getUid(), folder, useUids);
+            message.setFlags(FLAGS_SEEN, true);
             ensureFlagsResponse = true;
         }
 

@@ -46,7 +46,7 @@ public class RetrCommand
             conn.print(new StringReader(email));
             conn.println();
             conn.println(".");
-            msg.getFlags().add(Flags.Flag.SEEN);
+            msg.setFlag(Flags.Flag.SEEN, true);
         } catch (Exception e) {
             conn.println("-ERR " + e);
         }

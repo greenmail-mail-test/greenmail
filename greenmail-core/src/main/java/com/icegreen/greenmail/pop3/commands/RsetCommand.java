@@ -47,10 +47,9 @@ public class RsetCommand extends Pop3Command {
             int count = 0;
             for(int i=0;i<msgList.size();i++) {
                 SimpleStoredMessage msg = (SimpleStoredMessage) msgList.get(i);
-                Flags flags = msg.getFlags();
-                if (flags.contains(Flags.Flag.DELETED)) {
+                if (msg.isSet(Flags.Flag.DELETED)) {
                     count++;
-                    flags.remove(Flags.Flag.DELETED);
+                    msg.setFlag(Flags.Flag.DELETED, false);
                 }
             }
 

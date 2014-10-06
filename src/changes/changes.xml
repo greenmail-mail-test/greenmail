@@ -11,7 +11,10 @@
     <title>Changes</title>
   </properties>
   <body>
-  <release version="1.4" date="in SVN" description="Changes for 1.4 release">
+  <release version="1.4" date="?" description="Changes for 1.4 release">
+    <action type="fix" issue="6">
+      InMemoryStore expunge() doesn't clean up all mail.
+    </action>
     <action type="fix">
       Fixed nested folder creation using IMAP.
       Many thx to Jan Zahalka for the patch.

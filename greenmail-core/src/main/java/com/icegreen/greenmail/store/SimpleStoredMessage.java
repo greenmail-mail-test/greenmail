@@ -22,20 +22,13 @@ import java.util.Date;
 public class SimpleStoredMessage
         implements StoredMessage {
     private MimeMessage mimeMessage;
-    private Flags flags;
     private Date internalDate;
     private long uid;
     private SimpleMessageAttributes attributes;
 
-    public SimpleStoredMessage(MimeMessage mimeMessage, Date internalDate, long uid)
-            throws MessagingException {
-        this(mimeMessage, mimeMessage.getFlags(), internalDate, uid);
-    }
-
-    SimpleStoredMessage(MimeMessage mimeMessage, Flags flags,
+    SimpleStoredMessage(MimeMessage mimeMessage,
                         Date internalDate, long uid) {
         this.mimeMessage = mimeMessage;
-        this.flags = flags;
         this.internalDate = internalDate;
         this.uid = uid;
     }
@@ -45,7 +38,35 @@ public class SimpleStoredMessage
     }
 
     public Flags getFlags() {
-        return flags;
+        try {
+            return getMimeMessage().getFlags();
+        } catch (MessagingException e) {
+            throw new IllegalStateException("Can not access flags", e);
+        }
+    }
+
+    public boolean isSet(Flags.Flag flag) {
+        try {
+            return getMimeMessage().isSet(flag);
+        } catch (MessagingException e) {
+            throw new IllegalStateException("Can not access flag " + flag, e);
+        }
+    }
+
+    public void setFlag(Flags.Flag flag, boolean value) {
+        try {
+            getMimeMessage().setFlag(flag, value);
+        } catch (MessagingException e) {
+            throw new IllegalStateException("Can not set flag " + flag + " to " + value, e);
+        }
+    }
+
+    public void setFlags(Flags flags, boolean value) {
+        try {
+            getMimeMessage().setFlags(flags, value);
+        } catch (MessagingException e) {
+            throw new IllegalStateException("Can not set flags " + flags + " to " + value, e);
+        }
     }
 
     public Date getInternalDate() {

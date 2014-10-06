@@ -14,6 +14,7 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.search.FlagTerm;
 import javax.mail.search.HeaderTerm;
 
+import static javax.mail.Flags.Flag.DELETED;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.user.GreenMailUser;
@@ -317,9 +318,9 @@ public class ImapServerTest extends TestCase {
                 Flags f = m.getFlags();
                 assertFalse(f.contains(Flags.Flag.DRAFT));
                 assertFalse(f.contains("foobar"));
-                f.add(Flags.Flag.DRAFT);
-                f.add("foobar");
-                m.setFlags(f,true);
+                m.setFlag(Flags.Flag.DRAFT, true);
+                final Flags foobar = new Flags("foobar");
+                m.setFlags(foobar, true);
                 assertTrue(m.getFlags().contains(Flags.Flag.DRAFT));
                 assertTrue(m.getFlags().contains("foobar"));
             }
@@ -426,6 +427,49 @@ public class ImapServerTest extends TestCase {
             assertTrue(!inboxFolder.getFolder("foo-folder-renamed-again").exists());
         }
         finally {
+            greenMail.stop();
+        }
+    }
+
+    public void testExpunge() throws MessagingException {
+        GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
+                greenMail.setUser("foo@localhost", "pwd");
+                greenMail.start();
+        try {
+            for(int i=0;i<6;i++) {
+                GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject #"+i,
+                        "Test message", ServerSetupTest.SMTP);
+            }
+            final Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP);
+            final IMAPStore store = (IMAPStore) session.getStore("imap");
+            store.connect("foo@localhost", "pwd");
+            Folder inboxFolder = store.getFolder("INBOX");
+            inboxFolder.open(Folder.READ_WRITE);
+
+            Message[] messages = inboxFolder.getMessages();
+            assertEquals(6, messages.length);
+            inboxFolder.setFlags(new int[]{2, 3}, new Flags(DELETED), true); // 1 and 2, offset is not zero-based
+//            for(int i=0;i<messages.length;i++) {
+//                System.out.println(messages[i].getSubject() + " : "+messages[i].isSet(DELETED));
+//            }
+
+            assertEquals(false, inboxFolder.getMessage(1).isSet(DELETED));
+            assertEquals(true, inboxFolder.getMessage(2).isSet(DELETED));
+            assertEquals(true, inboxFolder.getMessage(3).isSet(DELETED));
+            assertEquals(false, inboxFolder.getMessage(4).isSet(DELETED));
+            assertEquals(false, inboxFolder.getMessage(5).isSet(DELETED));
+            assertEquals(false, inboxFolder.getMessage(6).isSet(DELETED));
+            assertEquals(2, inboxFolder.getDeletedMessageCount());
+            Message[] expunged = inboxFolder.expunge();
+            assertEquals(2, expunged.length);
+
+            messages = inboxFolder.getMessages();
+            assertEquals(4, messages.length);
+            assertEquals("Test subject #0", messages[0].getSubject());
+            assertEquals("Test subject #3", messages[1].getSubject());
+            assertEquals("Test subject #4", messages[2].getSubject());
+            assertEquals("Test subject #5", messages[3].getSubject());
+        }  finally {
             greenMail.stop();
         }
     }

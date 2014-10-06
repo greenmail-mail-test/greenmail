@@ -47,6 +47,25 @@ public class FolderException extends Exception {
     }
 
     /**
+     * Constructor wrapping original exception.
+     *
+     * @param ex The cause.
+     */
+    public FolderException(Exception ex) {
+        super(ex);
+    }
+
+    /**
+     * Constructor wrapping original exception.
+     *
+     * @param message The detail message for this exception (mandatory).
+     * @param ex The cause.
+     */
+    public FolderException(String message, Exception ex) {
+        super(message, ex);
+    }
+
+    /**
      * Construct a new <code>MailBoxException</code> instance.
      *
      * @param message The detail message for this exception (mandatory).

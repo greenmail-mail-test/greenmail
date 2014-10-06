@@ -92,14 +92,13 @@ class StoreCommand extends SelectedStateCommand implements UidEnabledCommand {
     }
 
     private void storeFlags(SimpleStoredMessage storedMessage, StoreDirective directive, Flags newFlags) {
-        Flags messageFlags = storedMessage.getFlags();
         if (directive.getSign() == 0) {
-            messageFlags.remove(MessageFlags.ALL_FLAGS);
-            messageFlags.add(newFlags);
+            storedMessage.setFlags(MessageFlags.ALL_FLAGS, false);
+            storedMessage.setFlags(newFlags, true);
         } else if (directive.getSign() < 0) {
-            messageFlags.remove(newFlags);
+            storedMessage.setFlags(newFlags, false);
         } else if (directive.getSign() > 0) {
-            messageFlags.add(newFlags);
+            storedMessage.setFlags(newFlags, true);
         }
     }
 

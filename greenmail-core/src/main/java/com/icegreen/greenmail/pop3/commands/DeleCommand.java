@@ -39,15 +39,12 @@ public class DeleCommand
             }
 
             SimpleStoredMessage msg = (SimpleStoredMessage) msgList.get(0);
-            Flags flags = msg.getFlags();
-
-            if (flags.contains(Flags.Flag.DELETED)) {
+            if (msg.isSet(Flags.Flag.DELETED)) {
                 conn.println("-ERR message already deleted");
-
                 return;
             }
 
-            flags.add(Flags.Flag.DELETED);
+            msg.setFlag(Flags.Flag.DELETED, true);
 
             conn.println("+OK message scheduled for deletion");
         } catch (Exception e) {

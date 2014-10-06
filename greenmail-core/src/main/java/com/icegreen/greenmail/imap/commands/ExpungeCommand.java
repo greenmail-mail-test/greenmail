@@ -27,7 +27,7 @@ class ExpungeCommand extends SelectedStateCommand {
      * @see CommandTemplate#doProcess
      */
     protected void doProcess(ImapRequestLineReader request,
-                             ImapResponse response,
+                             final ImapResponse response,
                              ImapSession session)
             throws ProtocolException, FolderException {
         parser.endLine(request);
@@ -59,6 +59,7 @@ class ExpungeCommand extends SelectedStateCommand {
 }
 
 /*
+http://tools.ietf.org/html/rfc3501#page-49 :
 6.4.3.  EXPUNGE Command
 
    Arguments:  none

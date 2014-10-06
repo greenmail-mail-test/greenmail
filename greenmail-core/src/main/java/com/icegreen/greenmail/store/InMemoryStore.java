@@ -299,7 +299,7 @@ public class InMemoryStore
         private long nextUid = 1;
         private long uidValidity;
 
-        private final List _mailboxListeners = Collections.synchronizedList(new LinkedList());
+        private final List<FolderListener> _mailboxListeners = Collections.synchronizedList(new LinkedList<FolderListener>());
 
         public HierarchicalFolder(HierarchicalFolder parent,
                                   String name) {
@@ -367,7 +367,7 @@ public class InMemoryStore
             int count = 0;
             for (int i = 0; i < mailMessages.size(); i++) {
                 SimpleStoredMessage message = (SimpleStoredMessage) mailMessages.get(i);
-                if (!message.getFlags().contains(Flags.Flag.SEEN)) {
+                if (!message.isSet(Flags.Flag.SEEN)) {
                     count++;
                 }
             }
@@ -382,7 +382,7 @@ public class InMemoryStore
         public int getFirstUnseen() {
             for (int i = 0; i < mailMessages.size(); i++) {
                 SimpleStoredMessage message = (SimpleStoredMessage) mailMessages.get(i);
-                if (!message.getFlags().contains(Flags.Flag.SEEN)) {
+                if (!message.isSet(Flags.Flag.SEEN)) {
                     return i + 1;
                 }
             }
@@ -393,10 +393,10 @@ public class InMemoryStore
             int count = 0;
             for (int i = 0; i < mailMessages.size(); i++) {
                 SimpleStoredMessage message = (SimpleStoredMessage) mailMessages.get(i);
-                if (message.getFlags().contains(Flags.Flag.RECENT)) {
+                if (message.isSet(Flags.Flag.RECENT)) {
                     count++;
                     if (reset) {
-                        message.getFlags().remove(Flags.Flag.RECENT);
+                        message.setFlag(Flags.Flag.RECENT, false);
                     }
                 }
             }
@@ -443,7 +443,7 @@ public class InMemoryStore
             List ret = new ArrayList();
             for (int i = 0; i < mailMessages.size(); i++) {
                 SimpleStoredMessage message = (SimpleStoredMessage) mailMessages.get(i);
-                if (!message.getFlags().contains(Flags.Flag.DELETED)) {
+                if (!message.isSet(Flags.Flag.DELETED)) {
                     ret.add(message);
                 }
             }
@@ -464,10 +464,14 @@ public class InMemoryStore
             long uid = nextUid;
             nextUid++;
 
-//            flags.setRecent(true);
-            SimpleStoredMessage storedMessage = new SimpleStoredMessage(message, flags,
+            try {
+                message.setFlags(flags, true);
+                message.setFlag(Flags.Flag.RECENT, true);
+            } catch (MessagingException e) {
+                throw new IllegalStateException("Can not set flags", e);
+            }
+            SimpleStoredMessage storedMessage = new SimpleStoredMessage(message,
                     internalDate, uid);
-            storedMessage.getFlags().add(Flags.Flag.RECENT);
 
             mailMessages.add(storedMessage);
             int newMsn = mailMessages.size();
@@ -487,11 +491,7 @@ public class InMemoryStore
             int msn = getMsn(uid);
             SimpleStoredMessage message = (SimpleStoredMessage) mailMessages.get(msn - 1);
 
-            if (value) {
-                message.getFlags().add(flags);
-            } else {
-                message.getFlags().remove(flags);
-            }
+            message.setFlags(flags, value);
 
             Long uidNotification = null;
             if (addUid) {
@@ -503,8 +503,8 @@ public class InMemoryStore
         public void replaceFlags(Flags flags, long uid, FolderListener silentListener, boolean addUid) throws FolderException {
             int msn = getMsn(uid);
             SimpleStoredMessage message = (SimpleStoredMessage) mailMessages.get(msn - 1);
-            message.getFlags().remove(MessageFlags.ALL_FLAGS);
-            message.getFlags().add(flags);
+            message.setFlags(MessageFlags.ALL_FLAGS, false);
+            message.setFlags(flags, true);
 
             Long uidNotification = null;
             if (addUid) {
@@ -591,21 +591,18 @@ public class InMemoryStore
             try {
                 newMime = new MimeMessage(originalMessage.getMimeMessage());
             } catch (MessagingException e) {
-                // TODO chain.
-                throw new FolderException("Messaging exception: " + e.getMessage());
+                throw new FolderException("Can not copy message "+uid+" to folder " + toFolder, e);
             }
-            Flags newFlags = new Flags();
-            newFlags.add(originalMessage.getFlags());
             Date newDate = originalMessage.getInternalDate();
 
-            toFolder.appendMessage(newMime, newFlags, newDate);
+            toFolder.appendMessage(newMime, originalMessage.getFlags(), newDate);
         }
 
         public void expunge() throws FolderException {
-            for (int i = 0; i < mailMessages.size(); i++) {
+            for (int i = mailMessages.size()-1; i >= 0; i--) {
                 SimpleStoredMessage message = (SimpleStoredMessage) mailMessages.get(i);
-                if (message.getFlags().contains(Flags.Flag.DELETED)) {
-                    expungeMessage(i + 1);
+                if (message.isSet(Flags.Flag.DELETED)) {
+                    expungeMessage(i+1); // MSNs start counting at 1
                 }
             }
         }
@@ -614,12 +611,10 @@ public class InMemoryStore
             // Notify all the listeners of the pending delete
             synchronized (_mailboxListeners) {
                 deleteMessage(msn);
-                for (int j = 0; j < _mailboxListeners.size(); j++) {
-                    FolderListener expungeListener = (FolderListener) _mailboxListeners.get(j);
+                for (FolderListener expungeListener : _mailboxListeners) {
                     expungeListener.expunged(msn);
                 }
             }
-
         }
 
         public void addListener(FolderListener listener) {
