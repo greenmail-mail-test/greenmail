@@ -130,7 +130,7 @@ public class MultiRequestTest extends TestCase {
         final int num2 = 20;
         assertTrue(num>num2);
         ThreadGroup group = new ThreadGroup(RetrieverThread.class.getName());
-        List retriverThreads = new ArrayList();
+        List<RetrieverThread> retriverThreads = new ArrayList<RetrieverThread>();
         for (int i=(num-num2+1);i<=num;i++) {
             RetrieverThread r = new RetrieverThread("to"+i,new Retriever(greenMail.getPop3()),group);
             retriverThreads.add(r);

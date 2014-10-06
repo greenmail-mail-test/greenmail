@@ -405,9 +405,9 @@
               <aggregate>true</aggregate>
               <linksource>true</linksource>
               <links>
-                <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
-                <link>http://java.sun.com/products/javamail/javadocs/</link>
-                <link>http://www.junit.org/junit/javadoc/</link>
+                <link>http://docs.oracle.com/javase/1.5.0/docs/api/</link>
+                <link>https://javamail.java.net/nonav/docs/api/</link>
+                <link>http://junit.org/apidocs/</link>
               </links>
             </configuration>
           </plugin>
