@@ -29,18 +29,19 @@
 
   <scm>
     <connection>
-      scm:svn:http://greenmail.svn.sourceforge.net/svnroot/greenmail/trunk
+      scm:git:https://github.com/greenmail-mail-test/greenmail.git
     </connection>
     <developerConnection>
-      scm:svn:https://greenmail.svn.sourceforge.net/svnroot/greenmail/trunk
+      scm:git:git@github.com:greenmail-mail-test/greenmail.git
     </developerConnection>
     <url>
-      http://greenmail.svn.sourceforge.net/svnroot/greenmail/trunk
+      https://github.com/greenmail-mail-test/greenmail
     </url>
   </scm>
 
   <issueManagement>
-    <url>http://sourceforge.net/tracker/?group_id=159695</url>
+    <system>github</system>
+    <url>https://github.com/greenmail-mail-test/greenmail/issues/</url>
   </issueManagement>
 
   <!-- details about the organization that 'owns' the project -->
@@ -75,8 +76,8 @@
       <properties>
         <id>marcel_may</id>
       </properties>
-      <email>marcel.may@metacube.net</email>
-      <url>http://www.metacube.net</url>
+      <email>marcel (dot) may (dot) de (at) gmail.com</email>
+      <url>https://github.com/marcelmay</url>
     </developer>
   </developers>
   <contributors>
