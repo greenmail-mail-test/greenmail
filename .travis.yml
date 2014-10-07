@@ -2,4 +2,4 @@ language: java
 jdk:
   - openjdk7
   - oraclejdk7
-script: mvn clean install site -Psite
+script: mvn clean install site -Psite | egrep -v 'Download.*'
