@@ -13,7 +13,9 @@ Go to the [project site][greenmail_project_site] for details:
 * [Download][greenmail_download]
 * [Maven coordinates][maven_repository_com]: com.icegreen:greenmail:1.3.1b
 
-Note: GreenMail recently moved to Github and was previously hosted on [SF][greenmail_sf_site].
+The GreenMail project welcomes any contribution, so go ahead and fork/open a pull request!
+
+***Note***: GreenMail recently moved to Github and was previously hosted on [SF][greenmail_sf_site].
 
 Development
 -----------
