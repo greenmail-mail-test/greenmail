@@ -17,33 +17,6 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <developers>
-    <developer>
-      <name>Wael Chatila</name>
-      <id>waelc</id>
-      <email>see my blog</email>
-      <url>http://waelchatila.com</url>
-      <organization>IceGreen Technologies</organization>
-      <organizationUrl>http://www.icegreen.com</organizationUrl>
-      <roles>
-        <role>Lead Developer</role>
-      </roles>
-    </developer>
-    <developer>
-      <name>Marcel May</name>
-      <properties>
-        <id>marcel_may</id>
-      </properties>
-      <email>marcel.may@metacube.net</email>
-      <url>http://www.metacube.net</url>
-      <organization>ConSol Software GmbH</organization>
-      <organizationUrl>http://www.consol.de</organizationUrl>
-      <roles>
-        <role>Developer</role>
-      </roles>
-    </developer>
-  </developers>
-
   <dependencies>
     <dependency>
       <groupId>com.icegreen</groupId>

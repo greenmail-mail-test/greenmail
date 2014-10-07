@@ -79,6 +79,15 @@
       <email>marcel (dot) may (dot) de (at) gmail.com</email>
       <url>https://github.com/marcelmay</url>
     </developer>
+    <developer>
+      <name>Christian Amann</name>
+      <id>camann9</id>
+      <properties>
+        <id>camann9</id>
+      </properties>
+      <email>camann9 (at) gmail.com</email>
+      <url>https://github.com/camann9</url>
+    </developer>
   </developers>
   <contributors>
     <contributor>
