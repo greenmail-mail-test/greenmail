@@ -129,8 +129,8 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.1</version>
           <configuration>
-            <source>1.5</source>
-            <target>1.5</target>
+            <source>1.6</source>
+            <target>1.6</target>
             <debug>true</debug>
             <compilerArgs>
               <arg>-Xlint</arg>
@@ -399,7 +399,7 @@
               <aggregate>true</aggregate>
               <linksource>true</linksource>
               <links>
-                <link>http://docs.oracle.com/javase/1.5.0/docs/api/</link>
+                <link>http://docs.oracle.com/javase/1.6.0/docs/api/</link>
                 <link>https://javamail.java.net/nonav/docs/api/</link>
                 <link>http://junit.org/apidocs/</link>
               </links>
@@ -430,7 +430,7 @@
               <linkXRef>true</linkXRef>
               <sourceEncoding>utf-8</sourceEncoding>
               <minimumTokens>100</minimumTokens>
-              <targetJdk>1.5</targetJdk>
+              <targetJdk>1.6</targetJdk>
             </configuration>
           </plugin>
 

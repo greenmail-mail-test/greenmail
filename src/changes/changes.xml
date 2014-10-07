@@ -13,6 +13,9 @@
   <body>
   <release version="1.4" date="?" description="Changes for 1.4 release">
     <action type="update">
+      Minimum required JDK is 1.6 for runtime and for language level.
+    </action>
+    <action type="update">
       Update easymock to 3.2, testng to 3.8.8, spring to 4.1.1
     </action>
     <action type="update">
