@@ -18,7 +18,7 @@
     <action type="update">
       Add travis ci configuration for continuous integration build
     </action>
-    <action type="fix" issue="6">
+    <action type="fix" issue="1">
       InMemoryStore expunge() doesn't clean up all mail.
     </action>
     <action type="fix">
