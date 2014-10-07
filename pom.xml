@@ -44,6 +44,12 @@
     <url>https://github.com/greenmail-mail-test/greenmail/issues/</url>
   </issueManagement>
 
+  <ciManagement>
+    <system>Travis</system>
+    <url>https://travis-ci.org/greenmail-mail-test/greenmail/</url>
+    <notifiers />
+  </ciManagement>
+
   <!-- details about the organization that 'owns' the project -->
   <organization>
     <name>Icegreen Technologies</name>
