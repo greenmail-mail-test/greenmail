@@ -1,15 +1,14 @@
 package com.icegreen.greenmail.webapp;
 
+import org.easymock.EasyMock;
+import org.testng.annotations.Test;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-
-import org.easymock.classextension.EasyMock;
-import org.testng.annotations.Test;
 
 /**
  * Test for GreenMailListener.
@@ -32,7 +31,7 @@ public class GreenMailListenerTest {
         ServletContext servletContext = EasyMock.createMock(ServletContext.class);
         EasyMock.expect(servletContext.getInitParameterNames()).andReturn(params);
         for (Map.Entry<String, String> entry : paramValues.entrySet()) {
-            EasyMock.expect(servletContext.getInitParameter(entry.getKey().toString()))
+            EasyMock.expect(servletContext.getInitParameter(entry.getKey()))
                     .andReturn(entry.getValue());
         }
 
