@@ -12,6 +12,12 @@
   </properties>
   <body>
   <release version="1.4" date="?" description="Changes for 1.4 release">
+    <action type="update">
+      Update easymock to 3.2, testng to 3.8.8, spring to 4.1.1
+    </action>
+    <action type="update">
+      Add travis ci configuration for continuous integration build
+    </action>
     <action type="fix" issue="6">
       InMemoryStore expunge() doesn't clean up all mail.
     </action>
