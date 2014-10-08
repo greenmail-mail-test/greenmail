@@ -5,17 +5,20 @@
 */
 package com.icegreen.greenmail.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sun.security.ssl.SSLSocketImpl;
+
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.Socket;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Random;
 
 /**
  * DummySSLSocketFactory - NOT SECURE
@@ -44,12 +47,12 @@ public class DummySSLSocketFactory extends SSLSocketFactory {
     private Socket addAnonCipher(Socket socket) {
         SSLSocket ssl = (SSLSocket) socket;
         final String[] ciphers = ssl.getEnabledCipherSuites();
-        final String[] anonCiphers = { "SSL_DH_anon_WITH_RC4_128_MD5"
-                                       , "SSL_DH_anon_WITH_RC4_128_MD5"
-                                       , "SSL_DH_anon_WITH_3DES_EDE_CBC_SHA"
-                                       , "SSL_DH_anon_WITH_DES_CBC_SHA"
-                                       , "SSL_DH_anon_EXPORT_WITH_RC4_40_MD5"
-                                       , "SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA" };
+        final String[] anonCiphers = {"SSL_DH_anon_WITH_RC4_128_MD5"
+                , "SSL_DH_anon_WITH_RC4_128_MD5"
+                , "SSL_DH_anon_WITH_3DES_EDE_CBC_SHA"
+                , "SSL_DH_anon_WITH_DES_CBC_SHA"
+                , "SSL_DH_anon_EXPORT_WITH_RC4_40_MD5"
+                , "SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA"};
         final String[] newCiphers = new String[ciphers.length + anonCiphers.length];
         System.arraycopy(ciphers, 0, newCiphers, 0, ciphers.length);
         System.arraycopy(anonCiphers, 0, newCiphers, ciphers.length, anonCiphers.length);
@@ -59,7 +62,20 @@ public class DummySSLSocketFactory extends SSLSocketFactory {
 
     public Socket createSocket()
             throws IOException {
-        return addAnonCipher(factory.createSocket());
+        final Socket socket = factory.createSocket();
+        if (socket instanceof SSLSocketImpl) {
+            SSLSocketImpl sslSocket = (SSLSocketImpl) socket;
+            // We set the host name of the remote machine because otherwise the SSL implementation is going to try
+            // to try to do a reverse lookup to find out the host name for the host which is really slow.
+            // Of course we don't know the host name of the remote machine so we just set a fake host name that is unique.
+
+            // This forces the SSL stack to do key negociation every time we connect to a host but is still much faster
+            // than doing the reverse hostname lookup. The negociation is caused by the fact that the SSL stack remembers
+            // a trust relationship with a host. If we connect to the same host twice this relationship is reused. Since
+            // we set the host name to a random value this reuse never happens.
+            sslSocket.setHost("greenmailHost" + new BigInteger(130, new Random()).toString(32));
+        }
+        return addAnonCipher(socket);
     }
 
     public Socket createSocket(Socket socket, String s, int i, boolean flag)

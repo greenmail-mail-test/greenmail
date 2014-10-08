@@ -17,19 +17,19 @@ import java.net.UnknownHostException;
 
 public class SmtpConnection {
 
-    // TODO: clean up getting localhost name
     private static final int TIMEOUT_MILLIS = 1000 * 30;
     private InetAddress serverAddress;
-
+    // Logger.
+    protected final static Logger log = LoggerFactory.getLogger(SmtpConnection.class);
 
     {
         try {
             serverAddress = InetAddress.getLocalHost();
         } catch (UnknownHostException uhe) {
+            log.error("Could not get address of localhost", uhe);
         }
     }
-    // Logger.
-    protected final static Logger log = LoggerFactory.getLogger(SmtpConnection.class);
+
 
     // networking/io stuff
     Socket sock;
@@ -50,12 +50,6 @@ public class SmtpConnection {
         in = new BufferedReader(new InputStreamReader(i));
 
         this.handler = handler;
-    }
-
-    /**
-     * For testing only
-     */
-    SmtpConnection() {
     }
 
     public void println(String line) {
@@ -81,7 +75,7 @@ public class SmtpConnection {
 
     public String getClientAddress() {
 
-        return clientAddress.getHostName();
+        return clientAddress.getHostAddress();
     }
 
     public InetAddress getServerAddress() {

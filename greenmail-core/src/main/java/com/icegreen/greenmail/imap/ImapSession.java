@@ -6,10 +6,10 @@
  */
 package com.icegreen.greenmail.imap;
 
-import com.icegreen.greenmail.user.GreenMailUser;
-import com.icegreen.greenmail.user.UserManager;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
+import com.icegreen.greenmail.user.GreenMailUser;
+import com.icegreen.greenmail.user.UserManager;
 
 /**
  * Encapsulates all state held for an ongoing Imap session,
@@ -50,11 +50,6 @@ public interface ImapSession {
      * @return The UserManager for this session.
      */
     UserManager getUserManager();
-
-    /**
-     * @return The hostname of the connected client.
-     */
-    String getClientHostname();
 
     /**
      * @return The IP address of the connected client.

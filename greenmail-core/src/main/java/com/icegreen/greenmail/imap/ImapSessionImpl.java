@@ -6,14 +6,13 @@
  */
 package com.icegreen.greenmail.imap;
 
-import com.icegreen.greenmail.user.GreenMailUser;
-import com.icegreen.greenmail.user.UserManager;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.MessageFlags;
+import com.icegreen.greenmail.user.GreenMailUser;
+import com.icegreen.greenmail.user.UserManager;
 
 import javax.mail.Flags;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -25,7 +24,6 @@ public final class ImapSessionImpl implements ImapSession {
     private GreenMailUser user = null;
     private ImapSessionFolder selectedMailbox = null;
 
-    private String clientHostName;
     private String clientAddress;
 
     // TODO these shouldn't be in here - they can be provided directly to command components.
@@ -36,12 +34,10 @@ public final class ImapSessionImpl implements ImapSession {
     public ImapSessionImpl(ImapHostManager imapHost,
                            UserManager users,
                            ImapHandler handler,
-                           String clientHostName,
                            String clientAddress) {
         this.imapHost = imapHost;
         this.users = users;
         this.handler = handler;
-        this.clientHostName = clientHostName;
         this.clientAddress = clientAddress;
     }
 
@@ -64,28 +60,23 @@ public final class ImapSessionImpl implements ImapSession {
             }
 
             // Message updates
-            List flagUpdates = selected.getFlagUpdates();
-            Iterator iter = flagUpdates.iterator();
-            while (iter.hasNext()) {
-                ImapSessionFolder.FlagUpdate entry =
-                        (ImapSessionFolder.FlagUpdate) iter.next();
-                int msn = entry.getMsn();
-                Flags updatedFlags = entry.getFlags();
+            final List<ImapSessionFolder.FlagUpdate> flagUpdates = selected.getFlagUpdates();
+            for (ImapSessionFolder.FlagUpdate update : flagUpdates) {
+                int msn = update.getMsn();
+                Flags updatedFlags = update.getFlags();
                 StringBuilder out = new StringBuilder("FLAGS ");
                 out.append(MessageFlags.format(updatedFlags));
-                if (entry.getUid() != null) {
+                if (update.getUid() != null) {
                     out.append(" UID ");
-                    out.append(entry.getUid());
+                    out.append(update.getUid());
                 }
                 response.fetchResponse(msn, out.toString());
-
             }
 
             // Expunged messages
             if (!omitExpunged) {
                 int[] expunged = selected.getExpunged();
-                for (int i = 0; i < expunged.length; i++) {
-                    int msn = expunged[i];
+                for (int msn : expunged) {
                     response.expungeResponse(msn);
                 }
             }
@@ -102,10 +93,6 @@ public final class ImapSessionImpl implements ImapSession {
 
     public UserManager getUserManager() {
         return users;
-    }
-
-    public String getClientHostname() {
-        return clientHostName;
     }
 
     public String getClientIP() {

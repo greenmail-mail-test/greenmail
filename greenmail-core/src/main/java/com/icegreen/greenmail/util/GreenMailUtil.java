@@ -5,10 +5,10 @@
 */
 package com.icegreen.greenmail.util;
 
-import java.io.*;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Random;
+import com.icegreen.greenmail.user.GreenMailUser;
+import com.sun.mail.imap.IMAPStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -17,11 +17,9 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-
-import com.icegreen.greenmail.user.GreenMailUser;
-import com.sun.mail.imap.IMAPStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.*;
+import java.util.Properties;
+import java.util.Random;
 
 /**
  * @author Wael Chatila
@@ -38,6 +36,7 @@ public class GreenMailUtil {
     private static final int generateSetSize = generateSet.length();
 
     private static GreenMailUtil instance = new GreenMailUtil();
+
     private GreenMailUtil() {
         //empty
     }
@@ -63,7 +62,7 @@ public class GreenMailUtil {
     /**
      * Convenience method which creates a new {@link MimeMessage} from an input stream
      */
-    public static  MimeMessage newMimeMessage(InputStream inputStream)  {
+    public static MimeMessage newMimeMessage(InputStream inputStream) {
         try {
             return new MimeMessage(Session.getDefaultInstance(new Properties()), inputStream);
         } catch (MessagingException e) {
@@ -90,7 +89,7 @@ public class GreenMailUtil {
             Object content = m.getContent();
             if (content instanceof MimeMultipart) {
                 MimeMultipart mm = (MimeMultipart) content;
-                for (int i=0;i<mm.getCount();i++) {
+                for (int i = 0; i < mm.getCount(); i++) {
                     BodyPart p = mm.getBodyPart(i);
                     if (hasNonTextAttachments(p)) {
                         return true;
@@ -120,7 +119,7 @@ public class GreenMailUtil {
                 reader.close();
             } catch (IOException e) {
                 // Ignore but warn
-                log.warn("Can not close reader",e);
+                log.warn("Can not close reader", e);
             }
         }
     }
@@ -160,7 +159,7 @@ public class GreenMailUtil {
         return getBody(msg).getBytes();
     }
 
-    public static  byte[] getHeaderAsBytes(Part part) {
+    public static byte[] getHeaderAsBytes(Part part) {
         return getHeaders(part).getBytes();
     }
 
@@ -205,7 +204,7 @@ public class GreenMailUtil {
         }
     }
 
-    public static  void sendTextEmailSecureTest(String to, String from, String subject, String msg) {
+    public static void sendTextEmailSecureTest(String to, String from, String subject, String msg) {
         try {
             sendTextEmail(to, from, subject, msg, ServerSetupTest.SMTPS);
         } catch (Exception e) {
@@ -219,7 +218,7 @@ public class GreenMailUtil {
         }
         StringBuilder ret = new StringBuilder();
         for (int i = 0; i < addresses.length; i++) {
-            if (i>0) {
+            if (i > 0) {
                 ret.append(", ");
             }
             ret.append(addresses[i].toString());
@@ -251,7 +250,7 @@ public class GreenMailUtil {
     /**
      * Gets a JavaMail Session for given server type such as IMAP and additional props for JavaMail.
      *
-     * @param setup the setup type, such as <code>ServerSetup.IMAP</code>
+     * @param setup     the setup type, such as <code>ServerSetup.IMAP</code>
      * @param mailProps additional mail properties.
      * @return the JavaMail session.
      */
@@ -269,8 +268,12 @@ public class GreenMailUtil {
         props.setProperty("mail.smtp.port", String.valueOf(setup.getPort()));
 //        props.setProperty("mail.debug", "true");
 
-        props.setProperty("mail."+setup.getProtocol()+".port", String.valueOf(setup.getPort()));
-        props.setProperty("mail."+setup.getProtocol()+".host", String.valueOf(setup.getBindAddress()));
+        // Set local host address (makes tests much faster. If this is not set java mail always looks for the address)
+        props.setProperty("mail.smtp.localaddress", String.valueOf(ServerSetup.getLocalHostAddress()));
+        props.setProperty("mail.smtps.localaddress", String.valueOf(ServerSetup.getLocalHostAddress()));
+
+        props.setProperty("mail." + setup.getProtocol() + ".port", String.valueOf(setup.getPort()));
+        props.setProperty("mail." + setup.getProtocol() + ".host", String.valueOf(setup.getBindAddress()));
         // On Mac, somehow we need to set the smtp host for smtps.
         // Otherwise, JavaMail uses a default host 'localhost'
         if (setup.isSecure() && "smtps".equals(setup.getProtocol())) {
@@ -280,7 +283,7 @@ public class GreenMailUtil {
             props.putAll(mailProps);
         }
         if (log.isDebugEnabled()) {
-            log.debug("Mail session properties are "+props);
+            log.debug("Mail session properties are " + props);
         }
         return Session.getInstance(props, null);
     }
@@ -333,7 +336,7 @@ public class GreenMailUtil {
     /**
      * Sets a quota for a users.
      *
-     * @param user the user.
+     * @param user  the user.
      * @param quota the quota.
      */
     public static void setQuota(final GreenMailUser user, final Quota quota) {
@@ -342,15 +345,15 @@ public class GreenMailUtil {
             IMAPStore store = (IMAPStore) session.getStore("imap");
             store.connect(user.getEmail(), user.getPassword());
             store.setQuota(quota);
-        } catch(Exception ex) {
-            throw new IllegalStateException("Can not set quota "+quota+" for user "+user, ex);
+        } catch (Exception ex) {
+            throw new IllegalStateException("Can not set quota " + quota + " for user " + user, ex);
         }
     }
 
     /**
      * Gets the quotas for the user.
      *
-     * @param user the user.
+     * @param user      the user.
      * @param quotaRoot the quota root, eg 'INBOX.
      * @return array of current quotas.
      */
