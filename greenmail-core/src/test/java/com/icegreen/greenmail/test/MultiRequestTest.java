@@ -5,17 +5,16 @@
 */
 package com.icegreen.greenmail.test;
 
-import junit.framework.TestCase;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.ServerSetupTest;
 import com.icegreen.greenmail.util.Retriever;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Wael Chatila
@@ -97,11 +96,11 @@ public class MultiRequestTest extends TestCase {
     }
     //~ END INNER CLASSES -----------------------------------------------
 
-    public void test40Senders() throws InterruptedException {
+    public void test20Senders() throws InterruptedException {
         greenMail = new GreenMail(ServerSetupTest.SMTP);
         greenMail.start();
 
-        final int num = 40;
+        final int num = 20;
         for (int i=1;i<=num;i++) {
             SenderThread s = new SenderThread("to"+i,i);
             s.start();
@@ -114,11 +113,11 @@ public class MultiRequestTest extends TestCase {
         assertFalse(greenMail.waitForIncomingEmail(15000,tot+1));
     }
 
-    public void test40Senders20x4Retrievers() throws InterruptedException {
+    public void test20Senders10x4Retrievers() throws InterruptedException {
         greenMail = new GreenMail();
         greenMail.start();
 
-        final int num = 40;
+        final int num = 20;
         for (int i=1;i<=num;i++) {
             SenderThread s = new SenderThread("to"+i,i);
             s.start();
@@ -127,7 +126,7 @@ public class MultiRequestTest extends TestCase {
         final int tot = (num*(num+1)/2);
         assertTrue(greenMail.waitForIncomingEmail(15000,tot));
 
-        final int num2 = 20;
+        final int num2 = 10;
         assertTrue(num>num2);
         ThreadGroup group = new ThreadGroup(RetrieverThread.class.getName());
         List<RetrieverThread> retriverThreads = new ArrayList<RetrieverThread>();
@@ -156,19 +155,18 @@ public class MultiRequestTest extends TestCase {
             Thread.sleep(1000);
         }
         int sum = 0;
-        for (Iterator iterator = retriverThreads.iterator(); iterator.hasNext();) {
-            RetrieverThread retrieverThread = (RetrieverThread) iterator.next();
-            sum += retrieverThread.getCount();
+        for (RetrieverThread retriverThread : retriverThreads) {
+            sum += retriverThread.getCount();
         }
         assertEquals((num*(num+1)/2-num2*(num2+1)/2)*4, sum);
 
     }
 
-    public void test40Senders20x4RetrieversAtTheSameTime() throws InterruptedException {
+    public void test20Senders10x4RetrieversAtTheSameTime() throws InterruptedException {
         greenMail = new GreenMail();
         greenMail.start();
 
-        final int num = 40;
+        final int num = 20;
         ThreadGroup senders = new ThreadGroup("SenderThreads") {
             @Override
             public void uncaughtException(final Thread t, final Throwable e) {
@@ -180,7 +178,7 @@ public class MultiRequestTest extends TestCase {
             s.start();
         }
 
-        final int num2 = 20;
+        final int num2 = 10;
         assertTrue(num>num2);
         ThreadGroup group = new ThreadGroup(RetrieverThread.class.getName());
         for (int i=(num-num2+1);i<=num;i++) {
