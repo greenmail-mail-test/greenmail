@@ -6,11 +6,8 @@
  */
 package com.icegreen.greenmail.imap;
 
+import com.icegreen.greenmail.store.*;
 import com.icegreen.greenmail.user.GreenMailUser;
-import com.icegreen.greenmail.store.FolderException;
-import com.icegreen.greenmail.store.MailFolder;
-import com.icegreen.greenmail.store.Store;
-import com.icegreen.greenmail.store.InMemoryStore;
 
 import java.util.*;
 
@@ -40,16 +37,13 @@ public class ImapHostManagerImpl
         subscriptions = new MailboxSubscriptions();
     }
 
-    public List getAllMessages() {
-        List ret = new ArrayList();
+    public List<StoredMessage> getAllMessages() {
+        List<StoredMessage> ret = new ArrayList<StoredMessage>();
         try {
             Collection boxes = store.listMailboxes("*");
             for (Object boxe : boxes) {
                 MailFolder folder = (MailFolder) boxe;
-                List messages = folder.getMessages();
-                for (Object message : messages) {
-                    ret.add(message);
-                }
+                ret.addAll(folder.getMessages());
             }
         } catch (FolderException e) {
             throw new RuntimeException(e);
@@ -220,7 +214,7 @@ public class ImapHostManagerImpl
 //        System.out.println( "Listing for user: '" + user.getUserName() + "'" +
 //                            " pattern:'" + mailboxPattern + "'" );
 
-        ArrayList mailboxes = new ArrayList();
+        ArrayList<MailFolder> mailboxes = new ArrayList<MailFolder>();
         String qualifiedPattern = getQualifiedMailboxName(user, mailboxPattern);
 
         for (MailFolder folder : store.listMailboxes(qualifiedPattern)) {
@@ -296,7 +290,7 @@ public class ImapHostManagerImpl
      * TODO persist
      */
     private static class MailboxSubscriptions {
-        private Map userSubs = new HashMap();
+        private Map<String, List<String>> userSubs = new HashMap<String, List<String>>();
 
         /**
          * Subscribes the user to the store.
@@ -335,10 +329,10 @@ public class ImapHostManagerImpl
             return getUserSubs(user).contains(folder.getFullName());
         }
 
-        private Collection getUserSubs(GreenMailUser user) {
-            Collection subs = (Collection) userSubs.get(user.getLogin());
+        private List<String> getUserSubs(GreenMailUser user) {
+            List<String> subs = userSubs.get(user.getLogin());
             if (subs == null) {
-                subs = new ArrayList();
+                subs = new ArrayList<String>();
                 userSubs.put(user.getLogin(), subs);
             }
             return subs;

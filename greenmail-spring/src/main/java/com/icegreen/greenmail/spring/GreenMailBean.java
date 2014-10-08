@@ -49,7 +49,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
     /** IMAPS server. */
     private boolean imapsProtocol = false;
     /** Users. */
-    private List users;
+    private List<String> users;
     /** Port offset (default is 3000) */
     private int portOffset = 3000;
     /** Hostname. Default is null (= localhost). */
@@ -73,8 +73,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
     public void afterPropertiesSet() throws Exception {
         greenMail = new GreenMail(createServerSetup());
         if (null != users) {
-            for (int i = 0; i < users.size(); i++) {
-                String user = (String) users.get(i);
+            for (String user : users) {
                 int posColon = user.indexOf(':');
                 int posAt = user.indexOf('@');
                 String login = user.substring(0, posColon);
@@ -98,7 +97,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
      * @return the configured server setups.
      */
     private ServerSetup[] createServerSetup() {
-        List setups = new ArrayList();
+        List<ServerSetup> setups = new ArrayList<ServerSetup>();
         if (smtpProtocol) {
             smtpServerSetup = createTestServerSetup(ServerSetup.SMTP);
             setups.add(smtpServerSetup);
@@ -119,7 +118,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
         if (imapsProtocol) {
             setups.add(createTestServerSetup(ServerSetup.IMAPS));
         }
-        return (ServerSetup[]) setups.toArray(new ServerSetup[0]);
+        return setups.toArray(new ServerSetup[setups.size()]);
     }
 
     /** Starts the server. */
@@ -345,7 +344,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
      *
      * @param theUsers Value to set for property 'users'.
      */
-    public void setUsers(final List theUsers) {
+    public void setUsers(final List<String> theUsers) {
         users = theUsers;
     }
 
