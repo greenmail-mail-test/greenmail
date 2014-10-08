@@ -6,29 +6,30 @@
 package com.icegreen.greenmail.smtp;
 
 
+import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.mail.MailAddress;
 import com.icegreen.greenmail.mail.MovingMessage;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.user.UserManager;
-import com.icegreen.greenmail.imap.ImapHostManager;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Vector;
 
 
 public class SmtpManager {
     Incoming _incomingQueue;
     UserManager userManager;
     private ImapHostManager imapHostManager;
-    Vector notifyList;
+    Vector<WaitObject> notifyList;
 
     public SmtpManager(ImapHostManager imapHostManager, UserManager userManager) {
         this.imapHostManager = imapHostManager;
         this.userManager = userManager;
         _incomingQueue = new Incoming();
-        notifyList = new Vector();
+        notifyList = new Vector<WaitObject>();
     }
 
 
@@ -49,8 +50,7 @@ public class SmtpManager {
 
     public synchronized void send(SmtpState state) {
         _incomingQueue.enqueue(state.getMessage());
-        for (int i = 0; i < notifyList.size(); i++) {
-            WaitObject o = (WaitObject) notifyList.get(i);
+        for (WaitObject o : notifyList) {
             synchronized (o) {
                 o.emailReceived();
             }
