@@ -19,6 +19,7 @@ import java.net.UnknownHostException;
  * <tr><td>imaps</td><td>993</td></tr>
  * </table>
  * Use {@link ServerSetupTest} for non-default ports
+ *
  * @author Wael Chatila
  * @version $Id: $
  * @since Jan 28, 2006
@@ -31,7 +32,6 @@ public class ServerSetup {
     public static final String PROTOCOL_POP3S = "pop3s";
     public static final String PROTOCOL_IMAP = "imap";
     public static final String PROTOCOL_IMAPS = "imaps";
-
 
     public static final ServerSetup SMTP = new ServerSetup(25, null, PROTOCOL_SMTP);
     public static final ServerSetup SMTPS = new ServerSetup(465, null, PROTOCOL_SMTPS);
@@ -54,25 +54,31 @@ public class ServerSetup {
     private final int port;
     private final String bindAddress;
     private final String protocol;
+    private final static String localhostAddress;
+
+    static {
+        // Only compute this address once and then reuse it
+        String address;
+        try {
+            address = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            address = "127.0.0.1"; // Guess
+        }
+        localhostAddress = address;
+    }
 
     public ServerSetup(int port, String bindAddress, String protocol) {
         this.port = port;
-        if(null == bindAddress || bindAddress.length()==0) {
+        if (null == bindAddress || bindAddress.length() == 0) {
             this.bindAddress = getLocalHostAddress();
-        }
-        else {
+        } else {
             this.bindAddress = bindAddress;
         }
         this.protocol = protocol;
     }
 
     public static String getLocalHostAddress() {
-        try {
-            return InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            return "127.0.0.1"; // Guess
-        }
-
+        return localhostAddress;
     }
 
     public boolean isSecure() {
