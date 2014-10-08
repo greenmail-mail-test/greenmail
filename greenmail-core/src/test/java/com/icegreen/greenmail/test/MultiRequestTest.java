@@ -13,6 +13,7 @@ import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.mail.AuthenticationFailedException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,7 @@ import java.util.List;
  * @since Jan 11, 2007
  */
 public class MultiRequestTest extends TestCase {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    protected final static Logger log = LoggerFactory.getLogger(MultiRequestTest.class);
     GreenMail greenMail;
 
     protected void tearDown() throws Exception {
@@ -40,53 +41,50 @@ public class MultiRequestTest extends TestCase {
         int count;
         boolean finished = false;
 
-        SenderThread(String to,int count, ThreadGroup threadGroup) {
-            super(threadGroup, SenderThread.class.getName()+':'+to);
-            this.to = to;
-            this.count = count;
-        }
-
-        SenderThread(String to,int count) {
+        SenderThread(String to, int count, ThreadGroup threadGroup) {
+            super(threadGroup, SenderThread.class.getName() + ':' + to);
             this.to = to;
             this.count = count;
         }
 
         public void run() {
-            for (int i=0;i<count;i++) {
+            for (int i = 0; i < count; i++) {
                 GreenMailUtil.sendTextEmailTest(to, "from@localhost.com", "subject", "body");
             }
             finished = true;
         }
     }
+
     private static class RetrieverThread extends Thread {
         String to;
         int count;
         Retriever r;
+        private int expectedCount;
 
-        RetrieverThread(String to, Retriever r, ThreadGroup group) {
-            super(group,RetrieverThread.class.getName());
+        RetrieverThread(String to, Retriever r, ThreadGroup group, int expectedCount) {
+            super(group, RetrieverThread.class.getName());
             this.to = to;
             this.r = r;
+            this.expectedCount = expectedCount;
         }
 
         public void run() {
             // Try several times, as message might not have been sent yet
-            for(int i=200;count <1 || i<2000;i+=200) {
+            // If message is not sent after timeout period we abort
+            int timeout = 10000;//ms
+            int increment = timeout / 10;
+            for (int time = 0; time < timeout; time += increment) {
                 try {
                     count = r.getMessages(to, to).length;
+                    if (count == expectedCount) {
+                        return;
+                    }
+                    sleep(increment);
+                } catch (AuthenticationFailedException e) {
+                    // Ignore, user has not been created yet. It will be created
                 } catch (Exception e) {
-                    // Ignore
+                    log.error("Error retrieving messages", e);
                 }
-                try {
-                    sleep(i);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            try {
-                count = r.getMessages(to, to).length;
-            } catch (Exception e) {
-                throw new RuntimeException(e);
             }
         }
 
@@ -101,104 +99,133 @@ public class MultiRequestTest extends TestCase {
         greenMail.start();
 
         final int num = 20;
-        for (int i=1;i<=num;i++) {
-            SenderThread s = new SenderThread("to"+i,i);
-            s.start();
-        }
-        final int tot = (num*(num+1)/2);
-        for (int i=1;i<=tot;i+=2) {
-            assertTrue(greenMail.waitForIncomingEmail(15000,i));
-        }
-        assertTrue(greenMail.waitForIncomingEmail(15000,tot));
-        assertFalse(greenMail.waitForIncomingEmail(15000,tot+1));
+        startSenderThreads(num);
+        final int tot = (num * (num + 1) / 2);
+        assertTrue(greenMail.waitForIncomingEmail(15000, tot));
+        // No more mails can arrive now
+        assertFalse(greenMail.waitForIncomingEmail(1000, tot + 1));
     }
 
-    public void test20Senders10x4Retrievers() throws InterruptedException {
+    public void test20Senders20x4Retrievers() throws InterruptedException {
         greenMail = new GreenMail();
         greenMail.start();
 
         final int num = 20;
-        for (int i=1;i<=num;i++) {
-            SenderThread s = new SenderThread("to"+i,i);
-            s.start();
-        }
+        startSenderThreads(num);
 
-        final int tot = (num*(num+1)/2);
-        assertTrue(greenMail.waitForIncomingEmail(15000,tot));
+        // Now wait for senders to finish and mails to arrive
+        final int sentMessages = (num * (num + 1) / 2);
+        assertTrue(greenMail.waitForIncomingEmail(15000, sentMessages));
 
-        final int num2 = 10;
-        assertTrue(num>num2);
+        // Then start receivers
         ThreadGroup group = new ThreadGroup(RetrieverThread.class.getName());
-        List<RetrieverThread> retriverThreads = new ArrayList<RetrieverThread>();
-        for (int i=(num-num2+1);i<=num;i++) {
-            RetrieverThread r = new RetrieverThread("to"+i,new Retriever(greenMail.getPop3()),group);
-            retriverThreads.add(r);
-            r.start();
-        }
-        for (int i=(num-num2+1);i<=num;i++) {
-            RetrieverThread r = new RetrieverThread("to"+i,new Retriever(greenMail.getImap()),group);
-            retriverThreads.add(r);
-            r.start();
-        }
-        for (int i=(num-num2+1);i<=num;i++) {
-            RetrieverThread r = new RetrieverThread("to"+i,new Retriever(greenMail.getPop3s()),group);
-            retriverThreads.add(r);
-            r.start();
-        }
-        for (int i=(num-num2+1);i<=num;i++) {
-            RetrieverThread r = new RetrieverThread("to"+i,new Retriever(greenMail.getImaps()),group);
-            retriverThreads.add(r);
-            r.start();
-        }
-        long t = System.currentTimeMillis();
-        while(group.activeCount() != 0 && (System.currentTimeMillis() - t)<30000) {
-            Thread.sleep(1000);
-        }
-        int sum = 0;
-        for (RetrieverThread retriverThread : retriverThreads) {
-            sum += retriverThread.getCount();
-        }
-        assertEquals((num*(num+1)/2-num2*(num2+1)/2)*4, sum);
+        List<RetrieverThread> retrieverThreads = new ArrayList<RetrieverThread>();
+        startRetrieverThreads(num, group, retrieverThreads);
+        waitForThreadGroup(group, 20000);
 
+        // Every message is received four times since there are four receivers for every mail account
+        checkRetrieverThreadsMessagesArrived(sentMessages * 4, retrieverThreads);
+
+        // But the total number of messages sent is still the same as above
+        assertTrue(greenMail.waitForIncomingEmail(5000, sentMessages));
     }
 
-    public void test20Senders10x4RetrieversAtTheSameTime() throws InterruptedException {
+    public void test20Senders20x4RetrieversAtTheSameTime() throws InterruptedException {
         greenMail = new GreenMail();
         greenMail.start();
 
         final int num = 20;
+        startSenderThreads(num);
+
+        // Start receivers at the same time senders are also started
+        List<RetrieverThread> retrieverThreads = new ArrayList<RetrieverThread>();
+        ThreadGroup group = new ThreadGroup(RetrieverThread.class.getName());
+        startRetrieverThreads(num, group, retrieverThreads);
+        waitForThreadGroup(group, 30000);
+
+        final int sentMessages = (num * (num + 1) / 2);
+        // Every message is received four times since there are four receivers for every mail account
+        checkRetrieverThreadsMessagesArrived(sentMessages * 4, retrieverThreads);
+
+        // Correct number of received messages
+        assertTrue(greenMail.waitForIncomingEmail(5000, sentMessages));
+    }
+
+    /**
+     * Start n threads that send messages to the addresses to1, to2, to3, ... Every account
+     * receives the same number of messages as the suffix number suggests (to3 gets 3 messages)
+     *
+     * @param n Number of accounts to fill
+     */
+    private void startSenderThreads(int n) {
         ThreadGroup senders = new ThreadGroup("SenderThreads") {
             @Override
             public void uncaughtException(final Thread t, final Throwable e) {
-                log.error("Exception in thread \""+ t.getName(),e);
+                log.error("Exception in thread \"" + t.getName(), e);
             }
         };
-        for (int i=1;i<=num;i++) {
-            SenderThread s = new SenderThread("to"+i,i, senders);
+        for (int i = 1; i <= n; i++) {
+            SenderThread s = new SenderThread("to" + i, i, senders);
             s.start();
         }
+    }
 
-        final int num2 = 10;
-        assertTrue(num>num2);
-        ThreadGroup group = new ThreadGroup(RetrieverThread.class.getName());
-        for (int i=(num-num2+1);i<=num;i++) {
-            RetrieverThread r = new RetrieverThread("to"+i,new Retriever(greenMail.getPop3()),group);
+    /**
+     * Start the receiver threads under the given thread group. the threads retrieve messages via IMAP, IMAPS,
+     * POP, POPS
+     *
+     * @param n                Number of threads to start
+     * @param group            Thread group to add to
+     * @param retrieverThreads List of threads that the threads are added to
+     */
+    private void startRetrieverThreads(int n, ThreadGroup group, List<RetrieverThread> retrieverThreads) {
+        for (int i = 0; i <= n; i++) {
+            RetrieverThread r = new RetrieverThread("to" + i, new Retriever(greenMail.getPop3()), group, i);
+            retrieverThreads.add(r);
             r.start();
         }
-        for (int i=(num-num2+1);i<=num;i++) {
-            RetrieverThread r = new RetrieverThread("to"+i,new Retriever(greenMail.getImap()),group);
+        for (int i = 0; i <= n; i++) {
+            RetrieverThread r = new RetrieverThread("to" + i, new Retriever(greenMail.getImap()), group, i);
+            retrieverThreads.add(r);
             r.start();
         }
-        for (int i=(num-num2+1);i<=num;i++) {
-            RetrieverThread r = new RetrieverThread("to"+i,new Retriever(greenMail.getPop3s()),group);
+        for (int i = 0; i <= n; i++) {
+            RetrieverThread r = new RetrieverThread("to" + i, new Retriever(greenMail.getPop3s()), group, i);
+            retrieverThreads.add(r);
             r.start();
         }
-        for (int i=(num-num2+1);i<=num;i++) {
-            RetrieverThread r = new RetrieverThread("to"+i,new Retriever(greenMail.getImaps()),group);
+        for (int i = 0; i <= n; i++) {
+            RetrieverThread r = new RetrieverThread("to" + i, new Retriever(greenMail.getImaps()), group, i);
+            retrieverThreads.add(r);
             r.start();
         }
+    }
 
-        final int tot = (num*(num+1)/2);
-        assertTrue(greenMail.waitForIncomingEmail(15000,tot));
+    /**
+     * Wait for the thread group to finish for timeout milliseconds
+     *
+     * @param group Thread group
+     * @param timeout Timeout in milliseconds
+     * @throws InterruptedException Thrown if interrupted
+     */
+    private void waitForThreadGroup(ThreadGroup group, int timeout) throws InterruptedException {
+        long t = System.currentTimeMillis();
+        while (group.activeCount() != 0 && (System.currentTimeMillis() - t) < timeout) {
+            Thread.sleep(200);
+        }
+    }
+
+    /**
+     * Checks that the retriever threads received the correct number of messages
+     * @param receivedMessages Number of messages that should have been received
+     * @param retrieverThreads List of threads
+     */
+    private void checkRetrieverThreadsMessagesArrived(int receivedMessages, List<RetrieverThread> retrieverThreads) {
+        // Check that correct number of messages has arrived
+        int sum = 0;
+        for (RetrieverThread retrieverThread : retrieverThreads) {
+            sum += retrieverThread.getCount();
+        }
+        assertEquals(receivedMessages, sum);
     }
 }
