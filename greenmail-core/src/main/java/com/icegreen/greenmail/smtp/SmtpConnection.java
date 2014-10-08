@@ -53,8 +53,8 @@ public class SmtpConnection {
     }
 
     public void println(String line) {
-        if (log.isDebugEnabled()) {
-            log.debug("S: " + line);
+        if (log.isTraceEnabled()) {
+            log.trace("S: " + line);
         }
         out.println(line);
     }
