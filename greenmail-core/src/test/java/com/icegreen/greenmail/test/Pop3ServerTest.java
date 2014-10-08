@@ -29,7 +29,7 @@ public class Pop3ServerTest extends TestCase {
         super.tearDown();
     }
 
-    public void testRetreive() throws Exception {
+    public void testRetrieve() throws Exception {
         greenMail = new GreenMail(ServerSetupTest.SMTP_POP3);
         assertNotNull(greenMail.getPop3());
         greenMail.start();
@@ -64,7 +64,7 @@ public class Pop3ServerTest extends TestCase {
         assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
     }
 
-    public void testRetreiveWithNonDefaultPassword() throws Exception {
+    public void testRetrieveWithNonDefaultPassword() throws Exception {
         greenMail = new GreenMail(ServerSetupTest.SMTP_POP3);
         assertNotNull(greenMail.getPop3());
         final String to = "test@localhost.com";
@@ -91,7 +91,7 @@ public class Pop3ServerTest extends TestCase {
         assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
     }
 
-    public void testRetriveMultipart() throws Exception {
+    public void testRetrieveMultipart() throws Exception {
         greenMail = new GreenMail(ServerSetupTest.SMTP_POP3);
         assertNotNull(greenMail.getPop3());
         greenMail.start();
