@@ -9,6 +9,7 @@ import com.icegreen.greenmail.AbstractServer;
 
 import javax.mail.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -79,7 +80,8 @@ public class Retriever {
         store = session.getStore(protocol);
         store.connect(host, port, account, password);
         Folder rootFolder = store.getFolder("INBOX");
-        return (Message[]) getMessages(rootFolder).toArray(new Message[0]);
+        final List<Message> messages = getMessages(rootFolder);
+        return messages.toArray(new Message[messages.size()]);
     }
 
     public void logout() {
@@ -90,21 +92,19 @@ public class Retriever {
         }
     }
 
-    private List getMessages(Folder folder) throws MessagingException {
-        List ret = new ArrayList();
+    private List<Message> getMessages(Folder folder) throws MessagingException {
+        List<Message> ret = new ArrayList<Message>();
         if ((folder.getType() & Folder.HOLDS_MESSAGES) != 0) {
             if (!folder.isOpen()) {
                 folder.open(Folder.READ_ONLY);
             }
             Message[] messages = folder.getMessages();
-            for (int i = 0; i < messages.length; i++) {
-                ret.add(messages[i]);
-            }
+            Collections.addAll(ret, messages);
         }
         if ((folder.getType() & Folder.HOLDS_FOLDERS) != 0) {
             Folder[] f = folder.list();
-            for (int i = 0; i < f.length; i++) {
-                ret.addAll(getMessages(f[i]));
+            for (Folder aF : f) {
+                ret.addAll(getMessages(aF));
             }
         }
         return ret;
