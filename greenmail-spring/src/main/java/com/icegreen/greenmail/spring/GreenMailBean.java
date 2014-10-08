@@ -1,18 +1,17 @@
 package com.icegreen.greenmail.spring;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.mail.internet.MimeMessage;
-
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.BeanNameAware;
+
+import javax.mail.internet.MimeMessage;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Spring bean for GreenMail server.
@@ -38,17 +37,17 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
     /** Automatically start the servers. */
     private boolean autostart = true;
     /** SMTP server */
-    private boolean smtpProtocoll = true;
+    private boolean smtpProtocol = true;
     /** SMTPS server */
-    private boolean smtpsProtocoll = false;
+    private boolean smtpsProtocol = false;
     /** POP3 server */
-    private boolean pop3Protocoll = true;
+    private boolean pop3Protocol = true;
     /** POP3S server */
-    private boolean pop3sProtocoll = false;
+    private boolean pop3sProtocol = false;
     /** IMAP server. */
-    private boolean imapProtocoll = false;
+    private boolean imapProtocol = false;
     /** IMAPS server. */
-    private boolean imapsProtocoll = false;
+    private boolean imapsProtocol = false;
     /** Users. */
     private List users;
     /** Port offset (default is 3000) */
@@ -100,24 +99,24 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
      */
     private ServerSetup[] createServerSetup() {
         List setups = new ArrayList();
-        if (smtpProtocoll) {
+        if (smtpProtocol) {
             smtpServerSetup = createTestServerSetup(ServerSetup.SMTP);
             setups.add(smtpServerSetup);
         }
-        if (smtpsProtocoll) {
+        if (smtpsProtocol) {
             smtpsServerSetup = createTestServerSetup(ServerSetup.SMTPS);
             setups.add(smtpsServerSetup);
         }
-        if (pop3Protocoll) {
+        if (pop3Protocol) {
             setups.add(createTestServerSetup(ServerSetup.POP3));
         }
-        if (pop3sProtocoll) {
+        if (pop3sProtocol) {
             setups.add(createTestServerSetup(ServerSetup.POP3S));
         }
-        if (imapProtocoll) {
+        if (imapProtocol) {
             setups.add(createTestServerSetup(ServerSetup.IMAP));
         }
-        if (imapsProtocoll) {
+        if (imapsProtocol) {
             setups.add(createTestServerSetup(ServerSetup.IMAPS));
         }
         return (ServerSetup[]) setups.toArray(new ServerSetup[0]);
@@ -198,111 +197,111 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
     }
 
     /**
-     * Setter for property 'smtpProtocoll'.
+     * Setter for property 'smtpProtocol'.
      *
-     * @param theSmtpProtocoll Value to set for property 'smtpProtocoll'.
+     * @param theSmtpProtocoll Value to set for property 'smtpProtocol'.
      */
-    public void setSmtpProtocoll(final boolean theSmtpProtocoll) {
-        smtpProtocoll = theSmtpProtocoll;
+    public void setSmtpProtocol(final boolean theSmtpProtocoll) {
+        smtpProtocol = theSmtpProtocoll;
     }
 
     /**
-     * Getter for property 'smtpProtocoll'.
+     * Getter for property 'smtpProtocol'.
      *
-     * @return Value for property 'smtpProtocoll'.
+     * @return Value for property 'smtpProtocol'.
      */
-    public boolean isSmtpProtocoll() {
-        return smtpProtocoll;
+    public boolean isSmtpProtocol() {
+        return smtpProtocol;
     }
 
     /**
-     * Setter for property 'smtpsProtocoll'.
+     * Setter for property 'smtpsProtocol'.
      *
-     * @param theSmtpsProtocoll Value to set for property 'smtpsProtocoll'.
+     * @param theSmtpsProtocoll Value to set for property 'smtpsProtocol'.
      */
-    public void setSmtpsProtocoll(final boolean theSmtpsProtocoll) {
-        smtpsProtocoll = theSmtpsProtocoll;
+    public void setSmtpsProtocol(final boolean theSmtpsProtocoll) {
+        smtpsProtocol = theSmtpsProtocoll;
     }
 
     /**
-     * Getter for property 'smtpsProtocoll'.
+     * Getter for property 'smtpsProtocol'.
      *
-     * @return Value for property 'smtpsProtocoll'.
+     * @return Value for property 'smtpsProtocol'.
      */
-    public boolean isSmtpsProtocoll() {
-        return smtpsProtocoll;
+    public boolean isSmtpsProtocol() {
+        return smtpsProtocol;
     }
 
     /**
-     * Setter for property 'pop3Protocoll'.
+     * Setter for property 'pop3Protocol'.
      *
-     * @param thePop3Protocoll Value to set for property 'pop3Protocoll'.
+     * @param thePop3Protocoll Value to set for property 'pop3Protocol'.
      */
-    public void setPop3Protocoll(final boolean thePop3Protocoll) {
-        pop3Protocoll = thePop3Protocoll;
+    public void setPop3Protocol(final boolean thePop3Protocoll) {
+        pop3Protocol = thePop3Protocoll;
     }
 
     /**
-     * Getter for property 'pop3Protocoll'.
+     * Getter for property 'pop3Protocol'.
      *
-     * @return Value for property 'pop3Protocoll'.
+     * @return Value for property 'pop3Protocol'.
      */
-    public boolean isPop3Protocoll() {
-        return pop3Protocoll;
+    public boolean isPop3Protocol() {
+        return pop3Protocol;
     }
 
     /**
-     * Setter for property 'pop3sProtocoll'.
+     * Setter for property 'pop3sProtocol'.
      *
-     * @param thePop3sProtocoll Value to set for property 'pop3sProtocoll'.
+     * @param thePop3sProtocoll Value to set for property 'pop3sProtocol'.
      */
-    public void setPop3sProtocoll(final boolean thePop3sProtocoll) {
-        pop3sProtocoll = thePop3sProtocoll;
+    public void setPop3sProtocol(final boolean thePop3sProtocoll) {
+        pop3sProtocol = thePop3sProtocoll;
     }
 
     /**
-     * Getter for property 'pop3sProtocoll'.
+     * Getter for property 'pop3sProtocol'.
      *
-     * @return Value for property 'pop3sProtocoll'.
+     * @return Value for property 'pop3sProtocol'.
      */
-    public boolean isPop3sProtocoll() {
-        return pop3sProtocoll;
+    public boolean isPop3sProtocol() {
+        return pop3sProtocol;
     }
 
     /**
-     * Setter for property 'imapProtocoll'.
+     * Setter for property 'imapProtocol'.
      *
-     * @param theImapProtocoll Value to set for property 'imapProtocoll'.
+     * @param theImapProtocoll Value to set for property 'imapProtocol'.
      */
-    public void setImapProtocoll(final boolean theImapProtocoll) {
-        imapProtocoll = theImapProtocoll;
+    public void setImapProtocol(final boolean theImapProtocoll) {
+        imapProtocol = theImapProtocoll;
     }
 
     /**
-     * Getter for property 'imapProtocoll'.
+     * Getter for property 'imapProtocol'.
      *
-     * @return Value for property 'imapProtocoll'.
+     * @return Value for property 'imapProtocol'.
      */
-    public boolean isImapProtocoll() {
-        return imapProtocoll;
+    public boolean isImapProtocol() {
+        return imapProtocol;
     }
 
     /**
-     * Setter for property 'imapsProtocoll'.
+     * Setter for property 'imapsProtocol'.
      *
-     * @param theImapsProtocoll Value to set for property 'imapsProtocoll'.
+     * @param theImapsProtocoll Value to set for property 'imapsProtocol'.
      */
-    public void setImapsProtocoll(final boolean theImapsProtocoll) {
-        imapsProtocoll = theImapsProtocoll;
+    public void setImapsProtocol(final boolean theImapsProtocoll) {
+        imapsProtocol = theImapsProtocoll;
     }
 
     /**
-     * Getter for property 'imapsProtocoll'.
+     * Getter for property 'imapsProtocol'.
      *
-     * @return Value for property 'imapsProtocoll'.
+     * @return Value for property 'imapsProtocol'.
      */
-    public boolean isImapsProtocoll() {
-        return imapsProtocoll;
+    public boolean isImapsProtocol() {
+        return imapsProtocol;
     }
 
     /**

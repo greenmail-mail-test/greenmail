@@ -21,12 +21,12 @@ public class GreenMailBeanTest extends AbstractTestNGSpringContextTests {
         GreenMail greenMail = greenMailBean.getGreenMail();
 
         // Test if the protocol got activated
-        assert (greenMail.getImap() != null) == greenMailBean.isImapProtocoll();
-        assert (greenMail.getImaps() != null) == greenMailBean.isImapsProtocoll();
-        assert (greenMail.getPop3() != null) == greenMailBean.isPop3Protocoll();
-        assert (greenMail.getPop3s() != null) == greenMailBean.isPop3sProtocoll();
-        assert (greenMail.getSmtp() != null) == greenMailBean.isSmtpProtocoll();
-        assert (greenMail.getSmtps() != null) == greenMailBean.isSmtpsProtocoll();
+        assert (greenMail.getImap() != null) == greenMailBean.isImapProtocol();
+        assert (greenMail.getImaps() != null) == greenMailBean.isImapsProtocol();
+        assert (greenMail.getPop3() != null) == greenMailBean.isPop3Protocol();
+        assert (greenMail.getPop3s() != null) == greenMailBean.isPop3sProtocol();
+        assert (greenMail.getSmtp() != null) == greenMailBean.isSmtpProtocol();
+        assert (greenMail.getSmtps() != null) == greenMailBean.isSmtpsProtocol();
 
         assert greenMailBean.getHostname().equals(greenMail.getSmtp().getBindTo());
         assert greenMailBean.getPortOffset()+25 == greenMail.getSmtp().getPort();
