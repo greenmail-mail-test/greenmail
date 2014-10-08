@@ -387,14 +387,10 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
      */
     public void sendEmail(final String theTo, final String theFrom, final String theSubject,
                           final String theContent) {
-        ServerSetup serverSetup = smtpServerSetup;
-        if (null == serverSetup) {
-            serverSetup = smtpsServerSetup;
-        }
-        if (null == serverSetup) {
+        if (null == smtpServerSetup) {
             throw new IllegalStateException("Can not send mail, no SMTP or SMTPS setup found");
         }
-        GreenMailUtil.sendTextEmail(theTo, theFrom, theSubject, theContent, serverSetup);
+        GreenMailUtil.sendTextEmail(theTo, theFrom, theSubject, theContent, smtpServerSetup);
     }
 
     public void setBeanName(final String pName) {
