@@ -88,7 +88,6 @@ public class ImapHandler extends Thread implements ImapConstants {
             session = new ImapSessionImpl(imapHost,
                     userManager,
                     this,
-                    socket.getInetAddress().getHostName(),
                     socket.getInetAddress().getHostAddress());
 
             while (requestHandler.handleRequest(ins, outs, session)) {

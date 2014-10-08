@@ -7,13 +7,15 @@ package com.icegreen.greenmail.pop3;
 
 import com.icegreen.greenmail.AbstractServer;
 import com.icegreen.greenmail.Managers;
-import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.pop3.commands.Pop3CommandRegistry;
+import com.icegreen.greenmail.util.ServerSetup;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Vector;
 
 public class Pop3Server extends AbstractServer {
+    protected final Vector<Pop3Handler> handlers = new Vector<Pop3Handler>();
 
     public Pop3Server(ServerSetup setup, Managers managers) {
         super(setup, managers);
@@ -22,9 +24,10 @@ public class Pop3Server extends AbstractServer {
     public synchronized void quit() {
 
         try {
-            for (Object handler : handlers) {
-                Pop3Handler pop3Handler = (Pop3Handler) handler;
-                pop3Handler.quit();
+            synchronized (handlers) {
+                for (Pop3Handler handler : handlers) {
+                    handler.quit();
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -55,14 +58,20 @@ public class Pop3Server extends AbstractServer {
             while (keepOn()) {
                 try {
                     Socket clientSocket = serverSocket.accept();
-                    Pop3Handler pop3Handler = new Pop3Handler(new Pop3CommandRegistry(), managers.getUserManager(), clientSocket);
-                    handlers.add(pop3Handler);
-                    pop3Handler.start();
+                    synchronized (handlers) {
+                        if(!keepOn()) {
+                            clientSocket.close();
+                        } else {
+                            Pop3Handler pop3Handler = new Pop3Handler(new Pop3CommandRegistry(), managers.getUserManager(), clientSocket);
+                            handlers.add(pop3Handler);
+                            pop3Handler.start();
+                        }
+                    }
                 } catch (IOException ignored) {
                     //ignored
                 }
             }
-        } finally{
+        } finally {
             quit();
         }
     }

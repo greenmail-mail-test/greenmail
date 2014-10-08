@@ -10,11 +10,10 @@ import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.Service;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;
-import java.net.BindException;
-import java.util.Vector;
 
 /**
  * @author Wael Chatila
@@ -24,7 +23,6 @@ import java.util.Vector;
 public abstract class AbstractServer extends Service {
     protected final InetAddress bindTo;
     protected ServerSocket serverSocket = null;
-    protected Vector handlers = null;
     protected Managers managers;
     protected ServerSetup setup;
 
@@ -38,13 +36,12 @@ public abstract class AbstractServer extends Service {
             throw new RuntimeException(e);
         }
         this.managers = managers;
-        handlers = new Vector();
     }
 
     protected synchronized ServerSocket openServerSocket() throws IOException {
         ServerSocket ret = null;
         IOException retEx = null;
-        for (int i=0;i<25 && (null == ret);i++) {
+        for (int i = 0; i < 25 && (null == ret); i++) {
             try {
                 if (setup.isSecure()) {
                     ret = DummySSLServerSocketFactory.getDefault().createServerSocket(setup.getPort(), 0, bindTo);
@@ -55,7 +52,8 @@ public abstract class AbstractServer extends Service {
                 try {
                     retEx = e;
                     Thread.sleep(10L);
-                } catch (InterruptedException ignored) {}
+                } catch (InterruptedException ignored) {
+                }
             }
         }
         if (null == ret && null != retEx) {
@@ -81,6 +79,6 @@ public abstract class AbstractServer extends Service {
     }
 
     public String toString() {
-        return null!=setup? setup.getProtocol()+':'+setup.getPort() : super.toString();
+        return null != setup ? setup.getProtocol() + ':' + setup.getPort() : super.toString();
     }
 }

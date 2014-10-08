@@ -7,15 +7,17 @@ package com.icegreen.greenmail.smtp;
 
 import com.icegreen.greenmail.AbstractServer;
 import com.icegreen.greenmail.Managers;
-import com.icegreen.greenmail.util.ServerSetup;
-import com.icegreen.greenmail.smtp.commands.SmtpCommandRegistry;
 import com.icegreen.greenmail.foedus.util.InMemoryWorkspace;
+import com.icegreen.greenmail.smtp.commands.SmtpCommandRegistry;
+import com.icegreen.greenmail.util.ServerSetup;
 
 import java.io.IOException;
-import java.net.SocketException;
 import java.net.Socket;
+import java.net.SocketException;
+import java.util.Vector;
 
 public class SmtpServer extends AbstractServer {
+    protected final Vector<SmtpHandler> handlers = new Vector<SmtpHandler>();
 
     public SmtpServer(ServerSetup setup, Managers managers) {
         super(setup, managers);
@@ -23,9 +25,10 @@ public class SmtpServer extends AbstractServer {
 
     public synchronized void quit() {
         try {
-            for (Object handler : handlers) {
-                SmtpHandler smtpHandler = (SmtpHandler) handler;
-                smtpHandler.quit();
+            synchronized (handlers) {
+                for (SmtpHandler handler : handlers) {
+                    handler.quit();
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -55,16 +58,22 @@ public class SmtpServer extends AbstractServer {
             while (keepOn()) {
                 try {
                     Socket clientSocket = serverSocket.accept();
-                    SmtpHandler smtpHandler = new SmtpHandler(new SmtpCommandRegistry(), managers.getSmtpManager(), new InMemoryWorkspace(), clientSocket);
-                    handlers.add(smtpHandler);
-                    smtpHandler.start();
+                    synchronized (handlers) {
+                        if (!keepOn()) {
+                            clientSocket.close();
+                        } else {
+                            SmtpHandler smtpHandler = new SmtpHandler(new SmtpCommandRegistry(), managers.getSmtpManager(), new InMemoryWorkspace(), clientSocket);
+                            handlers.add(smtpHandler);
+                            smtpHandler.start();
+                        }
+                    }
                 } catch (SocketException ignored) {
                 } catch (IOException e) {
                     e.printStackTrace();
                     break;
                 }
             }
-        } finally{
+        } finally {
             quit();
         }
     }

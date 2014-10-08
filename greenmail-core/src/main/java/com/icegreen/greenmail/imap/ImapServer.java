@@ -12,20 +12,22 @@ import com.icegreen.greenmail.util.ServerSetup;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Vector;
 
 public final class ImapServer extends AbstractServer {
+    protected final Vector<ImapHandler> handlers = new Vector<ImapHandler>();
 
     public ImapServer(ServerSetup setup, Managers managers) {
         super(setup, managers);
     }
 
 
-
     public synchronized void quit() {
         try {
-            for (Object handler : handlers) {
-                ImapHandler imapHandler = (ImapHandler) handler;
-                imapHandler.resetHandler();
+            synchronized (handlers) {
+                for (ImapHandler handler : handlers) {
+                    handler.resetHandler();
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -57,14 +59,20 @@ public final class ImapServer extends AbstractServer {
             while (keepOn()) {
                 try {
                     Socket clientSocket = serverSocket.accept();
-                    ImapHandler imapHandler = new ImapHandler(managers.getUserManager(), managers.getImapHostManager(), clientSocket);
-                    handlers.add(imapHandler);
-                    imapHandler.start();
+                    synchronized (handlers) {
+                        if(!keepOn()) {
+                            clientSocket.close();
+                        } else {
+                            ImapHandler imapHandler = new ImapHandler(managers.getUserManager(), managers.getImapHostManager(), clientSocket);
+                            handlers.add(imapHandler);
+                            imapHandler.start();
+                        }
+                    }
                 } catch (IOException ignored) {
                     //ignored
                 }
             }
-        } finally{
+        } finally {
             quit();
         }
     }
