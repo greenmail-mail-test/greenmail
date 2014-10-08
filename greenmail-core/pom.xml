@@ -8,7 +8,6 @@
   <description>GreenMail - Email Test Servers</description>
   <url>http://www.icegreen.com/greenmail/</url>
 
-  <groupId>com.icegreen</groupId>
   <artifactId>greenmail-core</artifactId>
   <packaging>jar</packaging>
   <version>1.4-SNAPSHOT</version>
@@ -41,11 +40,6 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
