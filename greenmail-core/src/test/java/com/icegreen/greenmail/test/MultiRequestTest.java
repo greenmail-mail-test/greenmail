@@ -72,7 +72,7 @@ public class MultiRequestTest extends TestCase {
             // Try several times, as message might not have been sent yet
             // If message is not sent after timeout period we abort
             int timeout = 10000;//ms
-            int increment = timeout / 10;
+            int increment = timeout / 50;
             for (int time = 0; time < timeout; time += increment) {
                 try {
                     count = r.getMessages(to, to).length;
