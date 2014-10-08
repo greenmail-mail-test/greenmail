@@ -29,7 +29,7 @@ public class HeloCommand
                         SmtpManager manager, String commandLine) {
         extractHeloName(conn, commandLine);
         state.clearMessage();
-        conn.println("250 " + conn.getServerGreetingsName());
+        conn.send("250 " + conn.getServerGreetingsName());
     }
 
     private void extractHeloName(SmtpConnection conn,

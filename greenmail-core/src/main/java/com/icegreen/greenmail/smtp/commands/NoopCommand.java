@@ -23,6 +23,6 @@ public class NoopCommand
         extends SmtpCommand {
     public void execute(SmtpConnection conn, SmtpState state,
                         SmtpManager manager, String commandLine) {
-        conn.println("250 Is that all?");
+        conn.send("250 Is that all?");
     }
 }

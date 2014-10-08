@@ -5,11 +5,11 @@
  */
 package com.icegreen.greenmail.smtp.commands;
 
+import com.icegreen.greenmail.foedus.util.StreamUtils;
 import com.icegreen.greenmail.mail.MovingMessage;
 import com.icegreen.greenmail.smtp.SmtpConnection;
 import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpState;
-import com.icegreen.greenmail.foedus.util.StreamUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,18 +32,18 @@ public class DataCommand extends SmtpCommand {
         MovingMessage msg = state.getMessage();
 
         if (msg.getReturnPath() == null) {
-            conn.println("503 MAIL command required");
+            conn.send("503 MAIL command required");
 
             return;
         }
 
         if (!msg.getRecipientIterator().hasNext()) {
-            conn.println("503 RCPT command(s) required");
+            conn.send("503 RCPT command(s) required");
 
             return;
         }
 
-        conn.println("354 Start mail input; end with <CRLF>.<CRLF>");
+        conn.send("354 Start mail input; end with <CRLF>.<CRLF>");
 
         String value = "Return-Path: <" + msg.getReturnPath() +
                 ">\r\n" + "Received: from " +
@@ -56,17 +56,17 @@ public class DataCommand extends SmtpCommand {
 
         String err = manager.checkData(state);
         if (err != null) {
-            conn.println(err);
+            conn.send(err);
 
             return;
         }
 
         try {
             manager.send(state);
-            conn.println("250 OK");
+            conn.send("250 OK");
         } catch (Exception je) {
             je.printStackTrace();
-            conn.println("451 Requested action aborted: local error in processing");
+            conn.send("451 Requested action aborted: local error in processing");
         }
 
         state.clearMessage();

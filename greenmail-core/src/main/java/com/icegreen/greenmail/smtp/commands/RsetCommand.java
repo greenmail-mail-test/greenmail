@@ -24,6 +24,6 @@ public class RsetCommand
     public void execute(SmtpConnection conn, SmtpState state,
                         SmtpManager manager, String commandLine) {
         state.clearMessage();
-        conn.println("250 OK");
+        conn.send("250 OK");
     }
 }

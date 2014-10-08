@@ -40,19 +40,19 @@ public class MailCommand
 
                 String err = manager.checkSender(state, fromAddr);
                 if (err != null) {
-                    conn.println(err);
+                    conn.send(err);
 
                     return;
                 }
 
                 state.clearMessage();
                 state.getMessage().setReturnPath(fromAddr);
-                conn.println("250 OK");
+                conn.send("250 OK");
             } else {
-                conn.println("501 Required syntax: 'MAIL FROM:<email@host>'");
+                conn.send("501 Required syntax: 'MAIL FROM:<email@host>'");
             }
         } catch (AddressException e) {
-            conn.println("501 Malformed email address. Use form email@host");
+            conn.send("501 Malformed email address. Use form email@host");
         }
     }
 }

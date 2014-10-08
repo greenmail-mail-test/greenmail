@@ -23,6 +23,6 @@ public class VrfyCommand
         extends SmtpCommand {
     public void execute(SmtpConnection conn, SmtpState state,
                         SmtpManager manager, String commandLine) {
-        conn.println("252 Cannot VRFY user, but will accept message and attempt delivery");
+        conn.send("252 Cannot VRFY user, but will accept message and attempt delivery");
     }
 }

@@ -26,17 +26,17 @@ public class ApopCommand
                     String[] arguments = cmd.split(" ");
                     String username = arguments[1];
                     state.setUser(state.getUser(username));
-                    conn.println("+OK");
+                    conn.send("+OK");
                 }
                 catch (MailboxException me)
                 {
                     getLogger().warn("APOP exception", me);
-                    conn.println("-ERR " + me);
+                    conn.send("-ERR " + me);
                 }
                 catch (UserException nsue)
                 {
                     getLogger().warn("APOP exception", nsue);
-                    conn.println("-ERR " + nsue);
+                    conn.send("-ERR " + nsue);
                 }
         */
     }

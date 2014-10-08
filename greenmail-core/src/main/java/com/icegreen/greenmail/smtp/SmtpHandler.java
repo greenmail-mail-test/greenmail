@@ -5,9 +5,9 @@
  */
 package com.icegreen.greenmail.smtp;
 
+import com.icegreen.greenmail.foedus.util.Workspace;
 import com.icegreen.greenmail.smtp.commands.SmtpCommand;
 import com.icegreen.greenmail.smtp.commands.SmtpCommandRegistry;
-import com.icegreen.greenmail.foedus.util.Workspace;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -50,7 +50,7 @@ class SmtpHandler extends Thread {
             }
 
         } catch (SocketTimeoutException ste) {
-            _conn.println("421 Service shutting down and closing transmission channel");
+            _conn.send("421 Service shutting down and closing transmission channel");
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -62,13 +62,13 @@ class SmtpHandler extends Thread {
     }
 
     protected void sendGreetings() {
-        _conn.println("220 " + _conn.getServerGreetingsName() +
-                " GreenMail SMTP Service Ready at port "+_conn.sock.getLocalPort());
+        _conn.send("220 " + _conn.getServerGreetingsName() +
+                " GreenMail SMTP Service Ready at port " + _conn.sock.getLocalPort());
     }
 
     protected void handleCommand()
             throws IOException {
-        _currentLine = _conn.readLine();
+        _currentLine = _conn.receiveLine();
 
         if (_currentLine == null) {
             quit();
@@ -87,7 +87,7 @@ class SmtpHandler extends Thread {
         SmtpCommand command = _registry.getCommand(commandName);
 
         if (command == null) {
-            _conn.println("500 Command not recognized");
+            _conn.send("500 Command not recognized");
 
             return;
         }
@@ -97,20 +97,20 @@ class SmtpHandler extends Thread {
 
     private boolean commandLegalSize() {
         if (_currentLine.length() < 4) {
-            _conn.println("500 Invalid command. Must be 4 characters");
+            _conn.send("500 Invalid command. Must be 4 characters");
 
             return false;
         }
 
         if (_currentLine.length() > 4 &&
                 _currentLine.charAt(4) != ' ') {
-            _conn.println("500 Invalid command. Must be 4 characters");
+            _conn.send("500 Invalid command. Must be 4 characters");
 
             return false;
         }
 
         if (_currentLine.length() > 1000) {
-            _conn.println("500 Command too long.  1000 character maximum.");
+            _conn.send("500 Command too long.  1000 character maximum.");
 
             return false;
         }

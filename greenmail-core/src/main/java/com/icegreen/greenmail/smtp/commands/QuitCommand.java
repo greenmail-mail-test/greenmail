@@ -24,7 +24,7 @@ public class QuitCommand
     public void execute(SmtpConnection conn, SmtpState state,
                         SmtpManager manager, String commandLine) {
         state.clearMessage();
-        conn.println("221 " + conn.getServerGreetingsName() +
+        conn.send("221 " + conn.getServerGreetingsName() +
                 " Service closing transmission channel");
         conn.quit();
     }

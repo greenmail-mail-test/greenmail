@@ -52,7 +52,7 @@ public class SmtpConnection {
         this.handler = handler;
     }
 
-    public void println(String line) {
+    public void send(String line) {
         if (log.isTraceEnabled()) {
             log.trace("S: " + line);
         }
@@ -63,11 +63,11 @@ public class SmtpConnection {
         return in;
     }
 
-    public String readLine()
+    public String receiveLine()
             throws IOException {
         String line = in.readLine();
-        if (log.isDebugEnabled()) {
-            log.debug("C: " + line);
+        if (log.isTraceEnabled()) {
+            log.trace("C: " + line);
         }
 
         return line;

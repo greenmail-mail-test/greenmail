@@ -42,21 +42,21 @@ public class RcptCommand
 
                     String err = manager.checkRecipient(state, toAddr);
                     if (err != null) {
-                        conn.println(err);
+                        conn.send(err);
 
                         return;
                     }
 
                     state.getMessage().addRecipient(toAddr);
-                    conn.println("250 OK");
+                    conn.send("250 OK");
                 } else {
-                    conn.println("503 MAIL must come before RCPT");
+                    conn.send("503 MAIL must come before RCPT");
                 }
             } else {
-                conn.println("501 Required syntax: 'RCPT TO:<email@host>'");
+                conn.send("501 Required syntax: 'RCPT TO:<email@host>'");
             }
         } catch (AddressException e) {
-            conn.println("501 Malformed email address. Use form email@host");
+            conn.send("501 Malformed email address. Use form email@host");
 
         }
     }
