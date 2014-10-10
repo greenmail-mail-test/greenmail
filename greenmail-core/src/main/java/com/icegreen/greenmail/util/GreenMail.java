@@ -74,7 +74,7 @@ public class GreenMail {
         for (Service service : services.values()) {
             service.startService(null);
         }
-        //quick hack for now, will change eventually
+        //quick hack
         boolean allup = false;
         for (int i=0;i<200 && !allup;i++) {
             allup = true;
@@ -85,6 +85,7 @@ public class GreenMail {
                 try {
                     wait(5);
                 } catch (InterruptedException e) {
+                    // We don't care
                 }
             }
         }
