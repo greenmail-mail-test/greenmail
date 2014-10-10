@@ -26,13 +26,12 @@ import java.util.List;
  * by reference counting. When an object first obtains a reference
  * to a MovingMessage, it should immediately call {@link #acquire()}.
  * As soon as it has finished processing, that object must call
- * {@link #releaseContent()}.  For example usage, see {@link
- * foedus.processing.OutgoingImpl}.
+ * {@link #releaseContent()}.
  * </p>
  */
 public class MovingMessage {
     MailAddress returnPath;
-    List toAddresses = new LinkedList();
+    List<MailAddress> toAddresses = new LinkedList<MailAddress>();
     Workspace _workspace;
     Resource _content;
     MimeMessage message;
