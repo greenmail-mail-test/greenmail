@@ -24,8 +24,7 @@ abstract class SelectedStateCommand extends CommandTemplate {
     }
 
     protected boolean includes(IdRange[] idSet, long id) {
-        for (int i = 0; i < idSet.length; i++) {
-            IdRange idRange = idSet[i];
+        for (IdRange idRange : idSet) {
             if (idRange.includes(id)) {
                 return true;
             }
