@@ -9,7 +9,7 @@ package com.icegreen.greenmail.imap.commands;
 import com.icegreen.greenmail.imap.*;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MessageFlags;
-import com.icegreen.greenmail.store.SimpleStoredMessage;
+import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.util.GreenMailUtil;
 
 import javax.mail.BodyPart;
@@ -64,7 +64,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
             if ((useUids && includes(idSet, uid)) ||
                     (!useUids && includes(idSet, msn))) {
-                SimpleStoredMessage storedMessage = mailbox.getMessage(uid);
+                StoredMessage storedMessage = mailbox.getMessage(uid);
                 String msgData = outputMessage(fetch, storedMessage, mailbox, useUids);
                 response.fetchResponse(msn, msgData);
             }
@@ -77,7 +77,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
     final static Flags FLAGS_SEEN = new Flags(Flags.Flag.SEEN);
 
-    private String outputMessage(FetchRequest fetch, SimpleStoredMessage message,
+    private String outputMessage(FetchRequest fetch, StoredMessage message,
                                  ImapSessionFolder folder, boolean useUids)
             throws FolderException, ProtocolException {
         // Check if this fetch will cause the "SEEN" flag to be set on this message

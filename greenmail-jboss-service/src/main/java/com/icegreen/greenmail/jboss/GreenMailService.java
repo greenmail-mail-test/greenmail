@@ -1,18 +1,5 @@
 package com.icegreen.greenmail.jboss;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
-
-import javax.mail.Address;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-
 import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.imap.ImapServer;
 import com.icegreen.greenmail.pop3.Pop3Server;
@@ -28,6 +15,17 @@ import com.icegreen.greenmail.util.Service;
 import org.jboss.system.ServiceMBeanSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.mail.Address;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.EnumMap;
 
 /**
  * Implements the GreenMailServiceMBean.

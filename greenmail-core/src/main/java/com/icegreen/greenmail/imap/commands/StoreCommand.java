@@ -10,7 +10,7 @@ import com.icegreen.greenmail.imap.*;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.FolderListener;
 import com.icegreen.greenmail.store.MessageFlags;
-import com.icegreen.greenmail.store.SimpleStoredMessage;
+import com.icegreen.greenmail.store.StoredMessage;
 
 import javax.mail.Flags;
 
@@ -91,7 +91,7 @@ class StoreCommand extends SelectedStateCommand implements UidEnabledCommand {
         response.commandComplete(this);
     }
 
-    private void storeFlags(SimpleStoredMessage storedMessage, StoreDirective directive, Flags newFlags) {
+    private void storeFlags(StoredMessage storedMessage, StoreDirective directive, Flags newFlags) {
         if (directive.getSign() == 0) {
             storedMessage.setFlags(MessageFlags.ALL_FLAGS, false);
             storedMessage.setFlags(newFlags, true);

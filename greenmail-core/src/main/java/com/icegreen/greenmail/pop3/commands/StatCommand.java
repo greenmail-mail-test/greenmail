@@ -9,10 +9,9 @@ import com.icegreen.greenmail.mail.MailException;
 import com.icegreen.greenmail.pop3.Pop3Connection;
 import com.icegreen.greenmail.pop3.Pop3State;
 import com.icegreen.greenmail.store.MailFolder;
-import com.icegreen.greenmail.store.SimpleStoredMessage;
+import com.icegreen.greenmail.store.StoredMessage;
 
 import javax.mail.MessagingException;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -39,8 +38,8 @@ public class StatCommand
             throws MailException {
         long total = 0;
 
-        for (Iterator i = messages.iterator(); i.hasNext();) {
-            SimpleStoredMessage msg = (SimpleStoredMessage) i.next();
+        for (Object message : messages) {
+            StoredMessage msg = (StoredMessage) message;
             try {
                 total += msg.getMimeMessage().getSize();
             } catch (MessagingException e) {
