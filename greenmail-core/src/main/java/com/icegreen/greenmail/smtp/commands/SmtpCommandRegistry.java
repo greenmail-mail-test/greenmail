@@ -12,8 +12,7 @@ import java.util.Map;
 public class SmtpCommandRegistry {
     private static final Map<String, SmtpCommand> commands = new HashMap<String, SmtpCommand>();
 
-    public void load()
-            throws Exception {
+    public void load() {
         commands.put("HELO", new HeloCommand());
         commands.put("EHLO", new HeloCommand());
         commands.put("NOOP", new NoopCommand());
@@ -27,11 +26,7 @@ public class SmtpCommandRegistry {
 
     public SmtpCommand getCommand(String name) {
         if (commands.size() == 0) {
-            try {
-                load();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            load();
         }
         return commands.get(name);
     }
