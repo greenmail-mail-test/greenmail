@@ -58,8 +58,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
         ImapSessionFolder mailbox = session.getSelected();
         long[] uids = mailbox.getMessageUids();
-        for (int i = 0; i < uids.length; i++) {
-            long uid = uids[i];
+        for (long uid : uids) {
             int msn = mailbox.getMsn(uid);
 
             if ((useUids && includes(idSet, uid)) ||
@@ -137,8 +136,8 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
         // BODY part responses.
         Collection elements = fetch.getBodyElements();
-        for (Iterator iterator = elements.iterator(); iterator.hasNext();) {
-            BodyFetchElement fetchElement = (BodyFetchElement) iterator.next();
+        for (Object element : elements) {
+            BodyFetchElement fetchElement = (BodyFetchElement) element;
             response.append(SP);
             response.append(fetchElement.getResponseName());
             if (null == fetchElement.getPartial()) {
@@ -255,8 +254,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         response.append('}');
         response.append("\r\n");
 
-        for (int i = 0; i < bytes.length; i++) {
-            byte b = bytes[i];
+        for (byte b : bytes) {
             response.append((char) b);
         }
     }
@@ -265,12 +263,11 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
     private String[] extractHeaderList(String headerList, int prefixLen) {
         // Remove the trailing and leading ')('
         String tmp = headerList.substring(prefixLen + 1, headerList.length() - 1);
-        String[] headerNames = split(tmp, " ");
-        return headerNames;
+        return split(tmp, " ");
     }
 
     private String[] split(String value, String delimiter) {
-        ArrayList strings = new ArrayList();
+        ArrayList<String> strings = new ArrayList<String>();
         int startPos = 0;
         int delimPos;
         while ((delimPos = value.indexOf(delimiter, startPos)) != -1) {
@@ -281,11 +278,11 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         String sub = value.substring(startPos);
         strings.add(sub);
 
-        return (String[]) strings.toArray(new String[strings.size()]);
+        return strings.toArray(new String[strings.size()]);
     }
 
     private void addHeaders(Enumeration inum, StringBuffer response) {
-        List lines = new ArrayList();
+        List<String> lines = new ArrayList<String>();
         int count = 0;
         while (inum.hasMoreElements()) {
             String line = (String) inum.nextElement();
@@ -297,9 +294,8 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         response.append('}');
         response.append("\r\n");
 
-        Iterator lit = lines.iterator();
-        while (lit.hasNext()) {
-            String line = (String) lit.next();
+        for (Object line1 : lines) {
+            String line = (String) line1;
             response.append(line);
             response.append("\r\n");
         }
@@ -326,10 +322,10 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
                 throws ProtocolException {
             FetchRequest fetch = new FetchRequest();
 
-            char next = nextNonSpaceChar(request);
+            nextNonSpaceChar(request);
             consumeChar(request, '(');
 
-            next = nextNonSpaceChar(request);
+            char next = nextNonSpaceChar(request);
             while (next != ')') {
                 addNextElement(request, fetch);
                 next = nextNonSpaceChar(request);
@@ -463,9 +459,9 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
         private boolean setSeen = false;
 
-        private Set bodyElements = new HashSet();
+        private Set<BodyFetchElement> bodyElements = new HashSet<BodyFetchElement>();
 
-        public Collection getBodyElements() {
+        public Collection<BodyFetchElement> getBodyElements() {
             return bodyElements;
         }
 
