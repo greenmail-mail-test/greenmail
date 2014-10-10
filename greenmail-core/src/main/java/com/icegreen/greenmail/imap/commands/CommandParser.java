@@ -384,7 +384,7 @@ public class CommandParser {
             return new IdRange[]{parseRange(nextWord)};
         }
 
-        ArrayList rangeList = new ArrayList();
+        ArrayList<IdRange> rangeList = new ArrayList<IdRange>();
         int pos = 0;
         while (commaPos != -1) {
             String range = nextWord.substring(pos, commaPos);
@@ -396,7 +396,7 @@ public class CommandParser {
         }
         String range = nextWord.substring(pos);
         rangeList.add(parseRange(range));
-        return (IdRange[]) rangeList.toArray(new IdRange[rangeList.size()]);
+        return rangeList.toArray(new IdRange[rangeList.size()]);
     }
 
     private IdRange parseRange(String range) throws ProtocolException {
