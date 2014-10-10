@@ -1,13 +1,10 @@
 /* -------------------------------------------------------------------
 * Copyright (c) 2006 Wael Chatila / Icegreen Technologies. All Rights Reserved.
-* This software is released under the LGPL which is available at http://www.gnu.org/copyleft/lesser.html
+* This software is released under the Apache license 2.0
 * This file has been modified by the copyright holder. Original file can be found at http://james.apache.org
 * -------------------------------------------------------------------
 */
 package com.icegreen.greenmail.imap.commands;
-
-import javax.mail.search.AndTerm;
-import javax.mail.search.SearchTerm;
 
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ImapResponse;
@@ -17,6 +14,9 @@ import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.mail.search.AndTerm;
+import javax.mail.search.SearchTerm;
 
 /**
  * Handles processeing for the SEARCH imap command.

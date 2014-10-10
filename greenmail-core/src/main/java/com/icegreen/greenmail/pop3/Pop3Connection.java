@@ -1,24 +1,19 @@
 /*
  * Copyright (c) 2006 Wael Chatila / Icegreen Technologies. All Rights Reserved.
- * This software is released under the LGPL which is available at http://www.gnu.org/copyleft/lesser.html
+ * This software is released under the Apache license 2.0
  * This file has been used and modified. Original file can be found on http://foedus.sourceforge.net
  */
 package com.icegreen.greenmail.pop3;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.SocketException;
 
 import com.icegreen.greenmail.foedus.util.StreamUtils;
 import com.icegreen.greenmail.util.InternetPrintWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.SocketException;
 
 
 public class Pop3Connection {

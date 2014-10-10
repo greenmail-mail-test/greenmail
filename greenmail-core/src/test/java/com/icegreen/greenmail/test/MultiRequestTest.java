@@ -1,6 +1,6 @@
 /* -------------------------------------------------------------------
 * Copyright (c) 2007 Wael Chatila / Icegreen Technologies. All Rights Reserved.
-* This software is released under the LGPL which is available at http://www.gnu.org/copyleft/lesser.html
+* This software is released under the Apache license 2.0
 * -------------------------------------------------------------------
 */
 package com.icegreen.greenmail.test;

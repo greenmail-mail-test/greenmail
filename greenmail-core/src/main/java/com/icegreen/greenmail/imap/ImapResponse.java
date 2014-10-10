@@ -1,14 +1,14 @@
 /* -------------------------------------------------------------------
  * Copyright (c) 2006 Wael Chatila / Icegreen Technologies. All Rights Reserved.
- * This software is released under the LGPL which is available at http://www.gnu.org/copyleft/lesser.html
+ * This software is released under the Apache license 2.0
  * This file has been modified by the copyright holder. Original file can be found at http://james.apache.org
  * -------------------------------------------------------------------
  */
 package com.icegreen.greenmail.imap;
 
-import com.icegreen.greenmail.util.InternetPrintWriter;
 import com.icegreen.greenmail.imap.commands.ImapCommand;
 import com.icegreen.greenmail.store.MessageFlags;
+import com.icegreen.greenmail.util.InternetPrintWriter;
 
 import javax.mail.Flags;
 import java.io.OutputStream;

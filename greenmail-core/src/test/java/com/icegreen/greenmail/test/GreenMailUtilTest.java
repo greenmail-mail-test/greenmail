@@ -1,6 +1,6 @@
 /* -------------------------------------------------------------------
  * Copyright (c) 2007 Wael Chatila / Icegreen Technologies. All Rights Reserved.
- * This software is released under the LGPL which is available at http://www.gnu.org/copyleft/lesser.html
+ * This software is released under the Apache license 2.0
  * This file has been modified by the copyright holder.
  * -------------------------------------------------------------------
  */
@@ -8,17 +8,10 @@ package com.icegreen.greenmail.test;
 
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import junit.framework.TestCase;
 
-import javax.mail.Address;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Store;
-import javax.mail.URLName;
+import javax.mail.*;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.util.Properties;

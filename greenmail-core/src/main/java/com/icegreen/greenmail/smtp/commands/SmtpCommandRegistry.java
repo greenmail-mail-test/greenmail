@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2006 Wael Chatila / Icegreen Technologies. All Rights Reserved.
- * This software is released under the LGPL which is available at http://www.gnu.org/copyleft/lesser.html
+ * This software is released under the Apache license 2.0
  * This file has been used and modified. Original file can be found on http://foedus.sourceforge.net
  */
 package com.icegreen.greenmail.smtp.commands;
@@ -22,15 +22,15 @@ public class SmtpCommandRegistry {
 
     public void load()
             throws Exception {
-        for (int i = 0; i < COMMANDS.length; i++) {
-            String name = COMMANDS[i][0].toString();
+        for (Object[] COMMAND : COMMANDS) {
+            String name = COMMAND[0].toString();
 
-            if (commands.containsKey(name))
-
+            if (commands.containsKey(name)) {
                 continue;
+            }
 
             try {
-                SmtpCommand command = (SmtpCommand) COMMANDS[i][1];
+                SmtpCommand command = (SmtpCommand) COMMAND[1];
                 registerCommand(name, command);
             } catch (Exception e) {
                 throw e;
