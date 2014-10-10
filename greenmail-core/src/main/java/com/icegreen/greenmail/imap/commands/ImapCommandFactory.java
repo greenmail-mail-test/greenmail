@@ -17,11 +17,9 @@ import java.util.Map;
  * @version $Revision: 109034 $
  */
 public class ImapCommandFactory {
-    private Map _imapCommands;
+    private final Map<String, Class<? extends ImapCommand>> _imapCommands = new HashMap<String, Class<? extends ImapCommand>>();
 
     public ImapCommandFactory() {
-        _imapCommands = new HashMap();
-
         // Commands valid in any state
         // CAPABILITY, NOOP, and LOGOUT
         _imapCommands.put(CapabilityCommand.NAME, CapabilityCommand.class);
@@ -76,7 +74,7 @@ public class ImapCommandFactory {
     }
 
     public ImapCommand getCommand(String commandName) {
-        Class cmdClass = (Class) _imapCommands.get(commandName.toUpperCase());
+        Class<? extends ImapCommand> cmdClass = _imapCommands.get(commandName.toUpperCase());
 
         if (cmdClass == null) {
             return null;
@@ -85,9 +83,9 @@ public class ImapCommandFactory {
         }
     }
 
-    private ImapCommand createCommand(Class commandClass) {
+    private ImapCommand createCommand(Class<? extends ImapCommand> commandClass) {
         try {
-            ImapCommand cmd = (ImapCommand) commandClass.newInstance();
+            ImapCommand cmd = commandClass.newInstance();
 
             if (cmd instanceof UidCommand) {
                 ((UidCommand) cmd).setCommandFactory(this);
