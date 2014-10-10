@@ -10,36 +10,19 @@ import java.util.Map;
 
 
 public class SmtpCommandRegistry {
-    private static Map commands = new HashMap();
-    private static Object[][] COMMANDS = new Object[][]
-    {
-        {"HELO", new HeloCommand()}, {"EHLO", new HeloCommand()},
-        {"NOOP", new NoopCommand()}, {"RSET", new RsetCommand()},
-        {"QUIT", new QuitCommand()}, {"MAIL", new MailCommand()},
-        {"RCPT", new RcptCommand()}, {"DATA", new DataCommand()},
-        {"VRFY", new VrfyCommand()}
-    };
+    private static final Map<String, SmtpCommand> commands = new HashMap<String, SmtpCommand>();
 
     public void load()
             throws Exception {
-        for (Object[] COMMAND : COMMANDS) {
-            String name = COMMAND[0].toString();
-
-            if (commands.containsKey(name)) {
-                continue;
-            }
-
-            try {
-                SmtpCommand command = (SmtpCommand) COMMAND[1];
-                registerCommand(name, command);
-            } catch (Exception e) {
-                throw e;
-            }
-        }
-    }
-
-    private void registerCommand(String name, SmtpCommand command) {
-        commands.put(name, command);
+        commands.put("HELO", new HeloCommand());
+        commands.put("EHLO", new HeloCommand());
+        commands.put("NOOP", new NoopCommand());
+        commands.put("RSET", new RsetCommand());
+        commands.put("QUIT", new QuitCommand());
+        commands.put("MAIL", new MailCommand());
+        commands.put("RCPT", new RcptCommand());
+        commands.put("DATA", new DataCommand());
+        commands.put("VRFY", new VrfyCommand());
     }
 
     public SmtpCommand getCommand(String name) {
@@ -50,6 +33,6 @@ public class SmtpCommandRegistry {
                 throw new RuntimeException(e);
             }
         }
-        return (SmtpCommand) commands.get(name);
+        return commands.get(name);
     }
 }
