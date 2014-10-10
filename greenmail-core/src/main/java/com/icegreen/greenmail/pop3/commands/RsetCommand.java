@@ -1,12 +1,12 @@
 package com.icegreen.greenmail.pop3.commands;
 
-import java.util.List;
-import javax.mail.Flags;
-
 import com.icegreen.greenmail.pop3.Pop3Connection;
 import com.icegreen.greenmail.pop3.Pop3State;
 import com.icegreen.greenmail.store.MailFolder;
-import com.icegreen.greenmail.store.SimpleStoredMessage;
+import com.icegreen.greenmail.store.StoredMessage;
+
+import javax.mail.Flags;
+import java.util.List;
 
 /**
  * Handles the RSET command.
@@ -46,7 +46,7 @@ public class RsetCommand extends Pop3Command {
             List msgList = inbox.getMessages();
             int count = 0;
             for(int i=0;i<msgList.size();i++) {
-                SimpleStoredMessage msg = (SimpleStoredMessage) msgList.get(i);
+                StoredMessage msg = (StoredMessage) msgList.get(i);
                 if (msg.isSet(Flags.Flag.DELETED)) {
                     count++;
                     msg.setFlag(Flags.Flag.DELETED, false);

@@ -9,7 +9,7 @@ import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import com.icegreen.greenmail.pop3.Pop3Connection;
 import com.icegreen.greenmail.pop3.Pop3State;
 import com.icegreen.greenmail.store.MailFolder;
-import com.icegreen.greenmail.store.SimpleStoredMessage;
+import com.icegreen.greenmail.store.StoredMessage;
 
 import javax.mail.Flags;
 import java.util.List;
@@ -36,7 +36,7 @@ public class DeleCommand
                 return;
             }
 
-            SimpleStoredMessage msg = (SimpleStoredMessage) msgList.get(0);
+            StoredMessage msg = (StoredMessage) msgList.get(0);
             if (msg.isSet(Flags.Flag.DELETED)) {
                 conn.println("-ERR message already deleted");
                 return;

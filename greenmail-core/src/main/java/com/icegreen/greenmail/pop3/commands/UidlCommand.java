@@ -10,7 +10,7 @@ import com.icegreen.greenmail.pop3.Pop3Connection;
 import com.icegreen.greenmail.pop3.Pop3State;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
-import com.icegreen.greenmail.store.SimpleStoredMessage;
+import com.icegreen.greenmail.store.StoredMessage;
 
 import java.util.Iterator;
 import java.util.List;
@@ -38,14 +38,14 @@ public class UidlCommand
                     return;
                 }
 
-                SimpleStoredMessage msg = (SimpleStoredMessage) msgList.get(0);
+                StoredMessage msg = (StoredMessage) msgList.get(0);
                 conn.println("+OK " + msgNumStr + " " + msg.getUid());
             } else {
                 messages = inbox.getNonDeletedMessages();
 
                 conn.println("+OK");
                 for (Iterator i = messages.iterator(); i.hasNext();) {
-                    SimpleStoredMessage msg = (SimpleStoredMessage) i.next();
+                    StoredMessage msg = (StoredMessage) i.next();
                     conn.println(inbox.getMsn(msg.getUid()) + " " + msg.getUid());
                 }
 

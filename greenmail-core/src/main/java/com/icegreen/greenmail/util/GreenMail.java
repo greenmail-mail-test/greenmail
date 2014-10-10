@@ -10,7 +10,6 @@ import com.icegreen.greenmail.imap.ImapServer;
 import com.icegreen.greenmail.pop3.Pop3Server;
 import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpServer;
-import com.icegreen.greenmail.store.SimpleStoredMessage;
 import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
@@ -180,8 +179,8 @@ public class GreenMail {
         List msgs = managers.getImapHostManager().getAllMessages();
         MimeMessage[] ret = new MimeMessage[msgs.size()];
         for (int i = 0; i < msgs.size(); i++) {
-            SimpleStoredMessage simpleStoredMessage = (SimpleStoredMessage) msgs.get(i);
-            ret[i] = simpleStoredMessage.getMimeMessage();
+            StoredMessage storedMessage = (StoredMessage) msgs.get(i);
+            ret[i] = storedMessage.getMimeMessage();
         }
         return ret;
     }

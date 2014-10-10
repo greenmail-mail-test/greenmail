@@ -8,7 +8,10 @@ package com.icegreen.greenmail.imap;
 
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import com.icegreen.greenmail.mail.MovingMessage;
-import com.icegreen.greenmail.store.*;
+import com.icegreen.greenmail.store.FolderException;
+import com.icegreen.greenmail.store.FolderListener;
+import com.icegreen.greenmail.store.MailFolder;
+import com.icegreen.greenmail.store.StoredMessage;
 
 import javax.mail.Flags;
 import javax.mail.internet.MimeMessage;
@@ -183,7 +186,7 @@ public class ImapSessionFolder implements MailFolder, FolderListener {
         _folder.store(mail);
     }
 
-    public SimpleStoredMessage getMessage(long uid) {
+    public StoredMessage getMessage(long uid) {
         return _folder.getMessage(uid);
     }
 

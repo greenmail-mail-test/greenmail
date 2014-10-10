@@ -9,7 +9,7 @@ import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import com.icegreen.greenmail.pop3.Pop3Connection;
 import com.icegreen.greenmail.pop3.Pop3State;
 import com.icegreen.greenmail.store.MailFolder;
-import com.icegreen.greenmail.store.SimpleStoredMessage;
+import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.util.GreenMailUtil;
 
 import java.io.BufferedReader;
@@ -41,7 +41,7 @@ public class TopCommand
                 return;
             }
 
-            SimpleStoredMessage msg = (SimpleStoredMessage) msgList.get(0);
+            StoredMessage msg = (StoredMessage) msgList.get(0);
 
             int numLines = Integer.parseInt(cmdLine[2]);
 
