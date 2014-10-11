@@ -7,7 +7,6 @@ package com.icegreen.greenmail.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.security.ssl.SSLSocketImpl;
 
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
@@ -15,6 +14,8 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -24,7 +25,7 @@ import java.util.Random;
  * DummySSLSocketFactory - NOT SECURE
  */
 public class DummySSLSocketFactory extends SSLSocketFactory {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    protected static final Logger log = LoggerFactory.getLogger(DummySSLSocketFactory.class);
     private SSLSocketFactory factory;
 
     public DummySSLSocketFactory() {
@@ -63,18 +64,7 @@ public class DummySSLSocketFactory extends SSLSocketFactory {
     public Socket createSocket()
             throws IOException {
         final Socket socket = factory.createSocket();
-        if (socket instanceof SSLSocketImpl) {
-            SSLSocketImpl sslSocket = (SSLSocketImpl) socket;
-            // We set the host name of the remote machine because otherwise the SSL implementation is going to try
-            // to try to do a reverse lookup to find out the host name for the host which is really slow.
-            // Of course we don't know the host name of the remote machine so we just set a fake host name that is unique.
-
-            // This forces the SSL stack to do key negociation every time we connect to a host but is still much faster
-            // than doing the reverse hostname lookup. The negociation is caused by the fact that the SSL stack remembers
-            // a trust relationship with a host. If we connect to the same host twice this relationship is reused. Since
-            // we set the host name to a random value this reuse never happens.
-            sslSocket.setHost("greenmailHost" + new BigInteger(130, new Random()).toString(32));
-        }
+        trySetFakeRemoteHost(socket);
         return addAnonCipher(socket);
     }
 
@@ -109,5 +99,31 @@ public class DummySSLSocketFactory extends SSLSocketFactory {
 
     public String[] getSupportedCipherSuites() {
         return factory.getSupportedCipherSuites();
+    }
+
+    /**
+     * We set the host name of the remote machine because otherwise the SSL implementation is going to try
+     * to try to do a reverse lookup to find out the host name for the host which is really slow.
+     * Of course we don't know the host name of the remote machine so we just set a fake host name that is unique.
+     * <p/>
+     * This forces the SSL stack to do key negociation every time we connect to a host but is still much faster
+     * than doing the reverse hostname lookup. The negociation is caused by the fact that the SSL stack remembers
+     * a trust relationship with a host. If we connect to the same host twice this relationship is reused. Since
+     * we set the host name to a random value this reuse never happens.
+     *
+     * @param socket Socket to set host on
+     */
+    private static void trySetFakeRemoteHost(Socket socket) {
+        try {
+            final Method setHostMethod = socket.getClass().getMethod("setHost", String.class);
+            String fakeHostName = "greenmailHost" + new BigInteger(130, new Random()).toString(32);
+            setHostMethod.invoke(socket, fakeHostName);
+        } catch (NoSuchMethodException e) {
+            log.debug("Could not set fake remote host. SSL connection setup may be slow.");
+        } catch (InvocationTargetException e) {
+            log.debug("Could not set fake remote host. SSL connection setup may be slow.");
+        } catch (IllegalAccessException e) {
+            log.debug("Could not set fake remote host. SSL connection setup may be slow.");
+        }
     }
 }
