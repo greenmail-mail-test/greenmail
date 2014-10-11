@@ -1,20 +1,19 @@
 package com.icegreen.greenmail.webapp;
 
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
 import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.util.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Automatically starts and stops GreenMail server upon deployment/undeployment.
@@ -61,7 +60,7 @@ public class GreenMailListener implements ServletContextListener {
         }
     }
 
-    private Map extractParameters(ServletContext pServletContext) {
+    private Map<String, String> extractParameters(ServletContext pServletContext) {
         Enumeration names = pServletContext.getInitParameterNames();
         Map<String, String> parameterMap = new HashMap<String, String>();
         while (names.hasMoreElements()) {
