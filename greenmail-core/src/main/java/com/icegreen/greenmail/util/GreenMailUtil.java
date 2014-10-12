@@ -7,6 +7,7 @@ package com.icegreen.greenmail.util;
 
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.sun.mail.imap.IMAPStore;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+
 import java.io.*;
 import java.util.Properties;
 import java.util.Random;
@@ -243,6 +245,15 @@ public class GreenMailUtil {
         }
     }
 
+    //Assumes a valid JavaMail Session has been set when MimeMessage was instantiated
+    public static void sendMimeMessage(MimeMessage mimeMessage) {
+    	try {
+    		Transport.send(mimeMessage);
+    		
+    	} catch (Throwable e) {
+    		throw new RuntimeException(e);
+    	}
+    }
     public static Session getSession(final ServerSetup setup) {
         return getSession(setup, null);
     }
