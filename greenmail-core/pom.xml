@@ -1,47 +1,47 @@
 <?xml version='1.0'?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <name>== GreenMail Core ==</name>
-  <description>GreenMail - Email Test Servers</description>
-  <url>http://www.icegreen.com/greenmail/</url>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<name>== GreenMail Core ==</name>
+	<description>GreenMail - Email Test Servers</description>
+	<url>http://www.icegreen.com/greenmail/</url>
 
-  <artifactId>greenmail-core</artifactId>
-  <packaging>jar</packaging>
-  <version>1.4-SNAPSHOT</version>
+	<artifactId>greenmail-core</artifactId>
+	<packaging>jar</packaging>
+	<version>1.4-SNAPSHOT</version>
 
-  <parent>
-    <groupId>com.icegreen</groupId>
-    <artifactId>greenmail-parent</artifactId>
-    <version>1.4-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
-  </parent>
+	<parent>
+		<groupId>com.icegreen</groupId>
+		<artifactId>greenmail-parent</artifactId>
+		<version>1.4-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
 
-  <dependencies>
-    <!-- Compile scope (=default) -->
-    <dependency>
-      <groupId>javax.mail</groupId>
-      <artifactId>mail</artifactId>
-    </dependency>
+	<dependencies>
+		<!-- Compile scope (=default) -->
+		<dependency>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>javax.mail</artifactId>
+			<version>1.5.2</version>
+		</dependency>
 
-    <dependency> <!-- SLF4J Core -->
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
+		<dependency> <!-- SLF4J Core -->
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
 
-    <!-- Test scope -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+		<!-- Test scope -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 </project>
