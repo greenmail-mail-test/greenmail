@@ -62,7 +62,7 @@ as the "upstream" to your .git/config such as:
     url = https://github.com/greenmail-mail-test/greenmail.git
     fetch = +refs/heads/:refs/remotes/upstream/
 
-Then you fetch "upstream" and create a new branch at upstream/master (name it issue-XXX or something like that.
+Then you fetch "upstream" and create a new branch at upstream/master (name it issue-XXX or something like that).
 Now you can add commits on that branch and then create a pull request for that branch (after pushing it to your
 github). That way commits are isolated for one feature.
 
