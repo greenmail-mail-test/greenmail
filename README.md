@@ -58,11 +58,9 @@ among subprojects. Please do not add any version tags into the child pom.xml fil
 The best strategy for opening a pull request is to add the this repository ( https://github.com/greenmail-mail-test/greenmail )
 as the "upstream" to your .git/config such as:
 
-[remote "upstream"]
-
-url = https://github.com/greenmail-mail-test/greenmail.git
-
-fetch = +refs/heads/:refs/remotes/upstream/
+    [remote "upstream"]
+    url = https://github.com/greenmail-mail-test/greenmail.git
+    fetch = +refs/heads/:refs/remotes/upstream/
 
 Then you fetch "upstream" and create a new branch at upstream/master (name it issue-XXX or something like that.
 Now you can add commits on that branch and then create a pull request for that branch (after pushing it to your
