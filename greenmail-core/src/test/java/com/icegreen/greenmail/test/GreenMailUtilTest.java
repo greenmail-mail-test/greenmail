@@ -113,10 +113,9 @@ public class GreenMailUtilTest extends TestCase {
             Message m = msgs[0];
 
             Address a[] = m.getRecipients(Message.RecipientType.TO);
-
-        } catch (Exception e) {
-            assertEquals("Failed to load IMAP envelope", e.getMessage());
-        } finally {
+            assertEquals(greenMailUser,a[0].toString());
+        } 
+        finally {
             greenMail.stop();
         }
 
