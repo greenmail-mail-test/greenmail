@@ -223,6 +223,21 @@
         <artifactId>javax.mail</artifactId>
         <version>1.5.2</version>
       </dependency>
+     <dependency>
+      <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+         <version>3.3.2</version>
+         <exclusions>
+         <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+         </exclusion>
+         <exclusion>
+         <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+         </exclusion>
+         </exclusions>
+    </dependency>
       <dependency>
         <groupId>javax.activation</groupId>
         <artifactId>activation</artifactId>
