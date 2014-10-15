@@ -6,6 +6,7 @@ package com.icegreen.greenmail.util;
 
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.sun.mail.imap.IMAPStore;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +17,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+
 import java.io.*;
 import java.util.Properties;
 import java.util.Random;
@@ -242,6 +244,17 @@ public class GreenMailUtil {
         }
     }
 
+    // Assumes a valid JavaMail Session has been set when MimeMessage was
+    // instantiated
+    public static void sendMimeMessage(MimeMessage mimeMessage) {
+        try {
+            Transport.send(mimeMessage);
+
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static Session getSession(final ServerSetup setup) {
         return getSession(setup, null);
     }
@@ -287,7 +300,11 @@ public class GreenMailUtil {
         return Session.getInstance(props, null);
     }
 
-    public static void sendAttachmentEmail(String to, String from, String subject, String msg, final byte[] attachment, final String contentType, final String filename, final String description, final ServerSetup setup) throws MessagingException, IOException {
+    public static void sendAttachmentEmail(String to, String from,
+            String subject, String msg, final byte[] attachment,
+            final String contentType, final String filename,
+            final String description, final ServerSetup setup)
+            throws MessagingException, IOException {
         Session session = getSession(setup);
 
         Address[] tos = new InternetAddress[]{new InternetAddress(to)};
@@ -345,7 +362,8 @@ public class GreenMailUtil {
             store.connect(user.getEmail(), user.getPassword());
             store.setQuota(quota);
         } catch (Exception ex) {
-            throw new IllegalStateException("Can not set quota " + quota + " for user " + user, ex);
+            throw new IllegalStateException("Can not set quota " + quota
+                    + " for user " + user, ex);
         }
     }
 
@@ -363,8 +381,8 @@ public class GreenMailUtil {
             store.connect(user.getEmail(), user.getPassword());
             return store.getQuota(quotaRoot);
         } catch (Exception ex) {
-            throw new IllegalStateException("Can not get quota for quota root " +
-                    quotaRoot + " for user " + user, ex);
+            throw new IllegalStateException("Can not get quota for quota root "
+                    + quotaRoot + " for user " + user, ex);
         }
     }
 }

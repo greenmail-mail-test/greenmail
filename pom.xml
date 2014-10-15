@@ -1,8 +1,7 @@
 <?xml version='1.0'?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <name>== GreenMail ==</name>
   <description>GreenMail - Email Test Servers</description>
@@ -107,22 +106,10 @@
   </contributors>
 
   <!-- distribution -->
-  <!-- TODO
-  <distributionManagement>
-    <repository>
-      <id>repository-sf-greenmail</id>
-      <url>scp://HOSTNAME/PATH</url>
-    </repository>
-    <snapshotRepository>
-      <id>snapshot-repository-sf-greenmail</id>
-      <url>scp://HOSTNAME/PATH</url>
-    </snapshotRepository>
-    <site>
-      <id>site-sf-greenmail</id>
-      <url>scp://HOSTNAME/PATH/TO/HTDOCS</url>
-    </site>
-  </distributionManagement>
-  -->
+  <!-- TODO <distributionManagement> <repository> <id>repository-sf-greenmail</id> 
+    <url>scp://HOSTNAME/PATH</url> </repository> <snapshotRepository> <id>snapshot-repository-sf-greenmail</id> 
+    <url>scp://HOSTNAME/PATH</url> </snapshotRepository> <site> <id>site-sf-greenmail</id> 
+    <url>scp://HOSTNAME/PATH/TO/HTDOCS</url> </site> </distributionManagement> -->
 
   <build>
     <defaultGoal>install</defaultGoal>
@@ -232,10 +219,25 @@
 
       <!-- Compile scope (=default) -->
       <dependency>
-        <groupId>javax.mail</groupId>
-        <artifactId>mail</artifactId>
-        <version>1.4.7</version>
+        <groupId>com.sun.mail</groupId>
+        <artifactId>javax.mail</artifactId>
+        <version>1.5.2</version>
       </dependency>
+     <dependency>
+      <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+         <version>3.3.2</version>
+         <exclusions>
+         <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+         </exclusion>
+         <exclusion>
+         <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+         </exclusion>
+         </exclusions>
+    </dependency>
       <dependency>
         <groupId>javax.activation</groupId>
         <artifactId>activation</artifactId>
@@ -316,7 +318,7 @@
 
   <profiles>
     <profile>
-      <!-- Profile containing all settings specific to consol  -->
+      <!-- Profile containing all settings specific to consol -->
       <id>repository-dev-java-net</id>
       <repositories>
         <repository>
@@ -349,8 +351,8 @@
                 <goals>
                   <goal>jar</goal>
                 </goals>
-               </execution>
-             </executions>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>
@@ -381,7 +383,7 @@
             <artifactId>maven-javadoc-plugin</artifactId>
             <version>2.8.1</version>
             <configuration>
-              <quiet/>
+              <quiet />
               <aggregate>true</aggregate>
               <linksource>true</linksource>
               <links>
@@ -394,7 +396,7 @@
 
           <plugin>
             <artifactId>maven-jxr-plugin</artifactId>
-             <version>2.3</version>
+            <version>2.3</version>
             <configuration>
               <linkJavadoc>true</linkJavadoc>
               <aggregate>true</aggregate>
