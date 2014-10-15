@@ -1,12 +1,13 @@
 /*
-* Copyright (c) 2006 Wael Chatila / Icegreen Technologies. All Rights Reserved.
-* This software is released under the Apache license 2.0
-*
-*/
+ * Copyright (c) 2006 Wael Chatila / Icegreen Technologies. All Rights Reserved.
+ * This software is released under the Apache license 2.0
+ *
+ */
 package com.icegreen.greenmail.util;
 
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.sun.mail.imap.IMAPStore;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+
 import java.io.*;
 import java.util.Properties;
 import java.util.Random;
@@ -27,7 +29,8 @@ import java.util.Random;
  * @since Jan 29, 2006
  */
 public class GreenMailUtil {
-    private final static Logger log = LoggerFactory.getLogger(GreenMailUtil.class);
+    private final static Logger log = LoggerFactory
+            .getLogger(GreenMailUtil.class);
     /**
      * used internally for {@link #random()}
      */
@@ -38,7 +41,7 @@ public class GreenMailUtil {
     private static GreenMailUtil instance = new GreenMailUtil();
 
     private GreenMailUtil() {
-        //empty
+        // empty
     }
 
     public static GreenMailUtil instance() {
@@ -47,10 +50,11 @@ public class GreenMailUtil {
 
     /**
      * Writes the content of an input stream to an output stream
-     *
+     * 
      * @throws IOException
      */
-    public static void copyStream(final InputStream src, OutputStream dest) throws IOException {
+    public static void copyStream(final InputStream src, OutputStream dest)
+            throws IOException {
         byte[] buffer = new byte[1024];
         int read;
         while ((read = src.read(buffer)) > -1) {
@@ -60,11 +64,13 @@ public class GreenMailUtil {
     }
 
     /**
-     * Convenience method which creates a new {@link MimeMessage} from an input stream
+     * Convenience method which creates a new {@link MimeMessage} from an input
+     * stream
      */
     public static MimeMessage newMimeMessage(InputStream inputStream) {
         try {
-            return new MimeMessage(Session.getDefaultInstance(new Properties()), inputStream);
+            return new MimeMessage(
+                    Session.getDefaultInstance(new Properties()), inputStream);
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
@@ -72,10 +78,11 @@ public class GreenMailUtil {
 
     /**
      * Convenience method which creates a new {@link MimeMessage} from a string
-     *
+     * 
      * @throws MessagingException
      */
-    public static MimeMessage newMimeMessage(String mailString) throws MessagingException {
+    public static MimeMessage newMimeMessage(String mailString)
+            throws MessagingException {
         try {
             byte[] bytes = mailString.getBytes("US-ASCII");
             return newMimeMessage(new ByteArrayInputStream(bytes));
@@ -97,7 +104,8 @@ public class GreenMailUtil {
                 }
                 return false;
             } else {
-                return !m.getContentType().trim().toLowerCase().startsWith("text");
+                return !m.getContentType().trim().toLowerCase()
+                        .startsWith("text");
             }
         } catch (Throwable e) {
             throw new RuntimeException(e);
@@ -164,20 +172,19 @@ public class GreenMailUtil {
     }
 
     /**
-     * @return same as {@link #getWholeMessage(javax.mail.Part)} }
+     * @return same as {@link #getWholeMessage(javax.mail.Part)}
      */
     public static String toString(Part msg) {
         return getWholeMessage(msg);
     }
 
-
     /**
      * Generates a random generated password consisting of letters and digits
-     * with a length variable between 5 and 8 characters long.
-     * Passwords are further optimized for displays
-     * that could potentially display the characters <i>1,l,I,0,O,Q</i> in a way
-     * that a human could easily mix them up.
-     *
+     * with a length variable between 5 and 8 characters long. Passwords are
+     * further optimized for displays that could potentially display the
+     * characters <i>1,l,I,0,O,Q</i> in a way that a human could easily mix them
+     * up.
+     * 
      * @return the random string.
      */
     public static String random() {
@@ -190,13 +197,15 @@ public class GreenMailUtil {
         Random r = new Random();
         StringBuilder ret = new StringBuilder();
         for (/* empty */; nbrOfLetters > 0; nbrOfLetters--) {
-            int pos = (r.nextInt(generateSetSize) + (++generateCount)) % generateSetSize;
+            int pos = (r.nextInt(generateSetSize) + (++generateCount))
+                    % generateSetSize;
             ret.append(generateSet.charAt(pos));
         }
         return ret.toString();
     }
 
-    public static void sendTextEmailTest(String to, String from, String subject, String msg) {
+    public static void sendTextEmailTest(String to, String from,
+            String subject, String msg) {
         try {
             sendTextEmail(to, from, subject, msg, ServerSetupTest.SMTP);
         } catch (Throwable e) {
@@ -204,7 +213,8 @@ public class GreenMailUtil {
         }
     }
 
-    public static void sendTextEmailSecureTest(String to, String from, String subject, String msg) {
+    public static void sendTextEmailSecureTest(String to, String from,
+            String subject, String msg) {
         try {
             sendTextEmail(to, from, subject, msg, ServerSetupTest.SMTPS);
         } catch (Exception e) {
@@ -226,12 +236,13 @@ public class GreenMailUtil {
         return ret.toString();
     }
 
-    public static void sendTextEmail(String to, String from, String subject, String msg, final ServerSetup setup) {
+    public static void sendTextEmail(String to, String from, String subject,
+            String msg, final ServerSetup setup) {
         try {
             Session session = getSession(setup);
 
-            Address[] tos = new InternetAddress[]{new InternetAddress(to)};
-            Address[] froms = new InternetAddress[]{new InternetAddress(from)};
+            Address[] tos = new InternetAddress[] { new InternetAddress(to) };
+            Address[] froms = new InternetAddress[] { new InternetAddress(from) };
             MimeMessage mimeMessage = new MimeMessage(session);
             mimeMessage.setSubject(subject);
             mimeMessage.setFrom(froms[0]);
@@ -243,22 +254,38 @@ public class GreenMailUtil {
         }
     }
 
+    // Assumes a valid JavaMail Session has been set when MimeMessage was
+    // instantiated
+    public static void sendMimeMessage(MimeMessage mimeMessage) {
+        try {
+            Transport.send(mimeMessage);
+
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static Session getSession(final ServerSetup setup) {
         return getSession(setup, null);
     }
 
     /**
-     * Gets a JavaMail Session for given server type such as IMAP and additional props for JavaMail.
-     *
-     * @param setup     the setup type, such as <code>ServerSetup.IMAP</code>
-     * @param mailProps additional mail properties.
+     * Gets a JavaMail Session for given server type such as IMAP and additional
+     * props for JavaMail.
+     * 
+     * @param setup
+     *            the setup type, such as <code>ServerSetup.IMAP</code>
+     * @param mailProps
+     *            additional mail properties.
      * @return the JavaMail session.
      */
-    public static Session getSession(final ServerSetup setup, Properties mailProps) {
+    public static Session getSession(final ServerSetup setup,
+            Properties mailProps) {
         Properties props = new Properties();
         props.put("mail.smtps.starttls.enable", Boolean.TRUE);
         if (setup.isSecure()) {
-            props.setProperty("mail.smtp.socketFactory.class", DummySSLSocketFactory.class.getName());
+            props.setProperty("mail.smtp.socketFactory.class",
+                    DummySSLSocketFactory.class.getName());
         }
 
         props.setProperty("mail.transport.protocol", setup.getProtocol());
@@ -266,18 +293,24 @@ public class GreenMailUtil {
         // Should these two props be taken from the setup info?
         props.setProperty("mail.smtps.port", String.valueOf(setup.getPort()));
         props.setProperty("mail.smtp.port", String.valueOf(setup.getPort()));
-//        props.setProperty("mail.debug", "true");
+        // props.setProperty("mail.debug", "true");
 
-        // Set local host address (makes tests much faster. If this is not set java mail always looks for the address)
-        props.setProperty("mail.smtp.localaddress", String.valueOf(ServerSetup.getLocalHostAddress()));
-        props.setProperty("mail.smtps.localaddress", String.valueOf(ServerSetup.getLocalHostAddress()));
+        // Set local host address (makes tests much faster. If this is not set
+        // java mail always looks for the address)
+        props.setProperty("mail.smtp.localaddress",
+                String.valueOf(ServerSetup.getLocalHostAddress()));
+        props.setProperty("mail.smtps.localaddress",
+                String.valueOf(ServerSetup.getLocalHostAddress()));
 
-        props.setProperty("mail." + setup.getProtocol() + ".port", String.valueOf(setup.getPort()));
-        props.setProperty("mail." + setup.getProtocol() + ".host", String.valueOf(setup.getBindAddress()));
+        props.setProperty("mail." + setup.getProtocol() + ".port",
+                String.valueOf(setup.getPort()));
+        props.setProperty("mail." + setup.getProtocol() + ".host",
+                String.valueOf(setup.getBindAddress()));
         // On Mac, somehow we need to set the smtp host for smtps.
         // Otherwise, JavaMail uses a default host 'localhost'
         if (setup.isSecure() && "smtps".equals(setup.getProtocol())) {
-            props.setProperty("mail.smtp.host", String.valueOf(setup.getBindAddress()));
+            props.setProperty("mail.smtp.host",
+                    String.valueOf(setup.getBindAddress()));
         }
         if (null != mailProps && !mailProps.isEmpty()) {
             props.putAll(mailProps);
@@ -288,11 +321,15 @@ public class GreenMailUtil {
         return Session.getInstance(props, null);
     }
 
-    public static void sendAttachmentEmail(String to, String from, String subject, String msg, final byte[] attachment, final String contentType, final String filename, final String description, final ServerSetup setup) throws MessagingException, IOException {
+    public static void sendAttachmentEmail(String to, String from,
+            String subject, String msg, final byte[] attachment,
+            final String contentType, final String filename,
+            final String description, final ServerSetup setup)
+            throws MessagingException, IOException {
         Session session = getSession(setup);
 
-        Address[] tos = new InternetAddress[]{new InternetAddress(to)};
-        Address[] froms = new InternetAddress[]{new InternetAddress(from)};
+        Address[] tos = new InternetAddress[] { new InternetAddress(to) };
+        Address[] froms = new InternetAddress[] { new InternetAddress(from) };
         MimeMessage mimeMessage = new MimeMessage(session);
         mimeMessage.setSubject(subject);
         mimeMessage.setFrom(froms[0]);
@@ -335,9 +372,11 @@ public class GreenMailUtil {
 
     /**
      * Sets a quota for a users.
-     *
-     * @param user  the user.
-     * @param quota the quota.
+     * 
+     * @param user
+     *            the user.
+     * @param quota
+     *            the quota.
      */
     public static void setQuota(final GreenMailUser user, final Quota quota) {
         Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP);
@@ -346,26 +385,30 @@ public class GreenMailUtil {
             store.connect(user.getEmail(), user.getPassword());
             store.setQuota(quota);
         } catch (Exception ex) {
-            throw new IllegalStateException("Can not set quota " + quota + " for user " + user, ex);
+            throw new IllegalStateException("Can not set quota " + quota
+                    + " for user " + user, ex);
         }
     }
 
     /**
      * Gets the quotas for the user.
-     *
-     * @param user      the user.
-     * @param quotaRoot the quota root, eg 'INBOX.
+     * 
+     * @param user
+     *            the user.
+     * @param quotaRoot
+     *            the quota root, eg 'INBOX.
      * @return array of current quotas.
      */
-    public static Quota[] getQuota(final GreenMailUser user, final String quotaRoot) {
+    public static Quota[] getQuota(final GreenMailUser user,
+            final String quotaRoot) {
         Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP);
         try {
             IMAPStore store = (IMAPStore) session.getStore("imap");
             store.connect(user.getEmail(), user.getPassword());
             return store.getQuota(quotaRoot);
         } catch (Exception ex) {
-            throw new IllegalStateException("Can not get quota for quota root " +
-                    quotaRoot + " for user " + user, ex);
+            throw new IllegalStateException("Can not get quota for quota root "
+                    + quotaRoot + " for user " + user, ex);
         }
     }
 }

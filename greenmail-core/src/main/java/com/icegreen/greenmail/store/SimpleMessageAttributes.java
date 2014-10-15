@@ -11,6 +11,7 @@ import com.icegreen.greenmail.mail.MailAddress;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
@@ -363,6 +364,7 @@ public class SimpleMessageAttributes
         }
         response.add(SP);
         if (messageID != null && messageID.length > 0) {
+            messageID[0] = StringEscapeUtils.escapeJava(messageID[0]);
             response.add(Q + messageID[0] + Q);
         } else {
             response.add(NIL);
