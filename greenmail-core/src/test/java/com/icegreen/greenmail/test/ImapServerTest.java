@@ -1,20 +1,9 @@
 /*
- * Copyright (c) 2006 Your Corporation. All Rights Reserved.
+ * Copyright (c) 2014 Wael Chatila / Icegreen Technologies. All Rights Reserved.
+ * This software is released under the Apache license 2.0
  */
 package com.icegreen.greenmail.test;
 
-import java.io.ByteArrayOutputStream;
-import java.util.List;
-import java.util.Properties;
-
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.search.FlagTerm;
-import javax.mail.search.HeaderTerm;
-
-import static javax.mail.Flags.Flag.DELETED;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.user.GreenMailUser;
@@ -25,6 +14,18 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.imap.IMAPStore;
 import junit.framework.TestCase;
+
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.search.FlagTerm;
+import javax.mail.search.HeaderTerm;
+import java.io.ByteArrayOutputStream;
+import java.util.List;
+import java.util.Properties;
+
+import static javax.mail.Flags.Flag.DELETED;
 
 /**
  * @author Wael Chatila

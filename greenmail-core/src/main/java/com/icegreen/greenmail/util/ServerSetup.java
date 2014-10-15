@@ -1,7 +1,6 @@
 /*
- * Copyright (c) 2006 Wael Chatila / Icegreen Technologies. All Rights Reserved.
+ * Copyright (c) 2014 Wael Chatila / Icegreen Technologies. All Rights Reserved.
  * This software is released under the Apache license 2.0
- *
  */
 package com.icegreen.greenmail.util;
 
