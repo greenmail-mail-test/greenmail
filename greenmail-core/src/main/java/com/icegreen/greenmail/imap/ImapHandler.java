@@ -147,62 +147,8 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
             outs = null;
         }
 
-//        synchronized ( this ) {
-//            // Interrupt the thread to recover from internal hangs
-//            if ( handlerThread != null ) {
-//                handlerThread.interrupt();
-//                handlerThread = null;
-//            }
-//        }
-
         // Clear user data
         session = null;
-    }
-
-    /**
-     * Implements a "stat".  If the handler is currently in
-     * a transaction state, this amounts to a rollback of the
-     * mailbox contents to the beginning of the transaction.
-     * This method is also called when first entering the
-     * transaction state to initialize the handler copies of the
-     * user inbox.
-     */
-    private void stat() {
-//        userMailbox = new Vector();
-//        userMailbox.addElement(DELETED);
-//        for (Iterator it = userInbox.list(); it.hasNext(); ) {
-//            String key = (String) it.next();
-//            MovingMessage mc = userInbox.retrieve(key);
-//            // Retrieve can return null if the mail is no longer in the store.
-//            // In this case we simply continue to the next key
-//            if (mc == null) {
-//                continue;
-//            }
-//            userMailbox.addElement(mc);
-//        }
-//        backupUserMailbox = (Vector) userMailbox.clone();
-    }
-
-    /**
-     * Write and flush a response string.  The response is also logged.
-     * Should be used for the last line of a multi-line response or
-     * for a single line response.
-     *
-     * @param responseString the response string sent to the client
-     */
-    final void writeLoggedFlushedResponse(String responseString) {
-        out.println(responseString);
-        out.flush();
-    }
-
-    /**
-     * Write a response string.  The response is also logged.
-     * Used for multi-line responses.
-     *
-     * @param responseString the response string sent to the client
-     */
-    final void writeLoggedResponse(String responseString) {
-        out.println(responseString);
     }
 }
 
