@@ -21,9 +21,9 @@ Development
 -----------
 
 * Build GreenMail from source 
-```
-    mvn clean install
-```
+
+  `mvn clean install`
+
   Make sure you got [Maven 3.0.5+][maven_download] or higher.
 
 * Build the Maven site (and the optional example report)
