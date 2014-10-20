@@ -28,16 +28,16 @@ Development
 
 * Build the Maven site (and the optional example report)
 
-    mvn site -Psite
+  `mvn site -Psite`
 
   To build the project site using [jekyll][jekyll], run
 
-    cd greenmail-site
-    jekyll build
+  `cd greenmail-site
+  `jekyll build`
 
 * Build a release
 
-    mvn clean install -Prelease 
+  `mvn clean install -Prelease`
 
 [greenmail_project_site]: http://www.icegreen.com/greenmail
 [greenmail_examples]: http://www.icegreen.com/greenmail/examples.html
