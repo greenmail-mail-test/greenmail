@@ -26,9 +26,14 @@ Development
 
   Make sure you got [Maven 3.0.5+][maven_download] or higher.
 
-* Build the site (and the optional example report)
+* Build the Maven site (and the optional example report)
 
     mvn site -Psite
+
+  To build the project site using [jekyll][jekyll], run
+
+    cd greenmail-site
+    jekyll build
 
 * Build a release
 
@@ -42,6 +47,7 @@ Development
 [greenmail_sf_site]: https://sourceforge.net/p/greenmail
 [maven_repository_com]: http://mvnrepository.com/artifact/com.icegreen/greenmail
 [maven_download]: http://maven.apache.org
+[jekyll]: http://jekyllrb.com/
 
 Contribution guidelines
 -----------------------

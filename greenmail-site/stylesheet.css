@@ -157,12 +157,20 @@ div.codeSample {
   background: #dfdfdf;
   margin-left: 32px;
   margin-right: 32px;
-  padding: 16px;
+  padding: 4px;
   overflow: auto;
 }
-.pre {
-margin:30px;
-padding:300px;
+div.codeSample pre {
+  margin:0;
+}
+div.highlight {
+  background: #dfdfdf;
+  margin-left: 32px;
+  margin-right: 32px;
+  padding: 4px;
+}
+div.highlight pre {
+  margin:0;
 }
 a:link, a:visited, a:active {
   color: #4169AA;

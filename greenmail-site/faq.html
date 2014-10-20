@@ -1,55 +1,33 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-  <title>GreenMail - Email Test Servers</title>
-  <link rel="stylesheet" href="stylesheet.css" type="text/css" />
-</head>
-<body>
-
-<div id="header">
-<img src="pics/greenmail.gif" title="GreenMail - Testing SMTP, POP3, IMAP">
-Latest Release GreenMail v1.3.1b - May 27th, 2009
-</div>
-
-<div class="pages">
-<span class="page"><a href="readme.html">About</a></span>
-| <span class="page"><a href="examples.html">Examples</a></span>
-| <span class="page"><a href="jboss-service.html">JBoss</a></span>
-| <span class="page"><a href="webapp.html">Webapp</a></span>
-| <span class="page"><a href="faq.html">FAQ</a></span>
-| <span class="page"><a href="javadocs/index.html">Javadocs</a></span>
-| <span class="page"><a href="http://www.icegreen.com/articles">Blog</a></span>
-| <span class="page"><a href="maven.html">Maven Quickstart</a></span>
-| <span class="page"><a href="download.html">Download</a></span>
-| <span class="page"><a href="feedback.html">Feedback</a></span>
-</div>
-<br>
-
+---
+layout: default
+title: GreenMail - Email Test Servers
+---
 <table width="100%">
 <tr><td valign="top">
 <h2 class="faq">Is any mail delivered?</h2>
 No. Further, GreenMail stores all recieved messages in memory.
 
 <h2 class="faq">Which versions of JDK does GreenMail run under?</h2>
-JDK 1.5 and above
+JDK 1.6 and above
 
 <h2 class="faq">How do I create User Accounts?</h2>
-<div class="codeSample"><pre>
-   Servers server ...;
-   User user = server.setUser("email@address.com", "login", "password");
-</pre>   
-</div>
+{% highlight java %}
+Servers server ...;
+User user = server.setUser("email@address.com", "login", "password");
+{% endhighlight %}
 <h2 class="faq">How come I don't have to create any accounts to send/retrieve?</h2>
 By default GreenMail accepts all incoming emails. If there is no corresponding existing email account, one is automatically created with login and password being the same as the to-address.
 
 
 <h2 class="faq">What other library dependencies are there?</h2>
-<div class="codeSample"><pre>   
-	javamail.jar
-	activation.jar
-	slf4j-api.jar
-</pre>   	
+<ul>
+  <li>javamail.jar</li>
+  <li>activation.jar</li>
+  <li>slf4j-api.jar</li>
+  <li>commons-lang3.jar</li>
+</ul>
 </div>
+
 These libraries ship with the distribution.
 
 <h2 class="faq">How come I don't need to install any SSL/TLS related certificates?</h2>
@@ -82,15 +60,3 @@ google_color_text = "000000";
 </tr>
 
 </table>
-
-<br>
-<br>
-<br>
-<div class="footer">
-Copyright &copy; 2009 <a href="http://www.icegreen.com">Icegreen Technologies</a>
-<br><br>
-<a href="https://github.com/greenmail-mail-test/greenmail">Fork me on GitHub</a>
-</div>
-
-</body>
-</html>
