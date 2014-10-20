@@ -7,6 +7,7 @@
 package com.icegreen.greenmail.smtp;
 
 import com.icegreen.greenmail.foedus.util.Workspace;
+import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.smtp.commands.SmtpCommand;
 import com.icegreen.greenmail.smtp.commands.SmtpCommandRegistry;
 
@@ -14,7 +15,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
-class SmtpHandler extends Thread {
+class SmtpHandler implements ProtocolHandler {
 
     // protocol and configuration global stuff
     SmtpCommandRegistry _registry;
@@ -72,7 +73,7 @@ class SmtpHandler extends Thread {
         _currentLine = _conn.receiveLine();
 
         if (_currentLine == null) {
-            quit();
+            close();
 
             return;
         }
@@ -119,7 +120,7 @@ class SmtpHandler extends Thread {
         return true;
     }
 
-    public void quit() {
+    public void close() {
         _quitting = true;
         try {
             if (_socket != null && !_socket.isClosed()) {

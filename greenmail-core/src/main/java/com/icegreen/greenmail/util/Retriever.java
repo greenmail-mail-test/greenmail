@@ -4,7 +4,7 @@
  */
 package com.icegreen.greenmail.util;
 
-import com.icegreen.greenmail.AbstractServer;
+import com.icegreen.greenmail.server.AbstractServer;
 
 import javax.mail.*;
 import java.util.ArrayList;

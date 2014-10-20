@@ -9,6 +9,7 @@ package com.icegreen.greenmail.pop3;
 
 import com.icegreen.greenmail.pop3.commands.Pop3Command;
 import com.icegreen.greenmail.pop3.commands.Pop3CommandRegistry;
+import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.user.UserManager;
 
 import java.io.IOException;
@@ -17,7 +18,7 @@ import java.net.SocketTimeoutException;
 import java.util.StringTokenizer;
 
 
-public class Pop3Handler extends Thread {
+public class Pop3Handler implements ProtocolHandler {
     Pop3CommandRegistry _registry;
     Pop3Connection _conn;
     UserManager _manager;
@@ -69,7 +70,7 @@ public class Pop3Handler extends Thread {
         _currentLine = _conn.readLine();
 
         if (_currentLine == null) {
-            quit();
+            close();
 
             return;
         }
@@ -94,7 +95,7 @@ public class Pop3Handler extends Thread {
         command.execute(_conn, _state, _currentLine);
     }
 
-    public void quit() {
+    public void close() {
          _quitting = true;
         try {
             if (_socket != null && !_socket.isClosed()) {

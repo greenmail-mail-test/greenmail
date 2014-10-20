@@ -105,6 +105,6 @@ public class SmtpConnection {
     }
 
     public void quit() {
-        handler.quit();
+        handler.close();
     }
 }

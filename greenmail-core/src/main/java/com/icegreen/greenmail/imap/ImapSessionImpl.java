@@ -88,7 +88,7 @@ public final class ImapSessionImpl implements ImapSession {
     }
 
     public void closeConnection() {
-        handler.resetHandler();
+        handler.close();
     }
 
     public UserManager getUserManager() {

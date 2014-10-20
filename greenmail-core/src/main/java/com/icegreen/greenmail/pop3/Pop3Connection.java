@@ -61,7 +61,7 @@ public class Pop3Connection {
     }
 
     public void quit() {
-        _handler.quit();
+        _handler.close();
     }
 
     public void println(String line) {

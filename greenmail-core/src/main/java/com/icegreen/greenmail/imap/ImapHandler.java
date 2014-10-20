@@ -6,6 +6,7 @@
  */
 package com.icegreen.greenmail.imap;
 
+import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.user.UserManager;
 import com.icegreen.greenmail.util.InternetPrintWriter;
 import org.slf4j.Logger;
@@ -22,7 +23,7 @@ import java.net.Socket;
  * @author Federico Barbieri <scoobie@systemy.it>
  * @author Peter M. Goldstein <farsight@alum.mit.edu>
  */
-public class ImapHandler extends Thread implements ImapConstants {
+public class ImapHandler implements ImapConstants, ProtocolHandler {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private ImapRequestHandler requestHandler = new ImapRequestHandler();
     private ImapSession session;
@@ -65,7 +66,7 @@ public class ImapHandler extends Thread implements ImapConstants {
     public void forceConnectionClose(final String message) {
         ImapResponse response = new ImapResponse(outs);
         response.byeResponse(message);
-        resetHandler();
+        close();
     }
 
     public void run() {
@@ -96,14 +97,14 @@ public class ImapHandler extends Thread implements ImapConstants {
         } catch (Exception e) {
             log.error("Can not handle IMAP connection", e);
         } finally {
-            resetHandler();
+           close();
         }
     }
 
     /**
      * Resets the handler data to a basic state.
      */
-    void resetHandler() {
+    public void close() {
 
         // Close and clear streams, sockets
 
