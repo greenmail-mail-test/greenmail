@@ -93,9 +93,16 @@ public abstract class AbstractServer extends Service {
                     if (!keepOn()) {
                         clientSocket.close();
                     } else {
-                        ProtocolHandler handler = createProtocolHandler(clientSocket);
+                        final ProtocolHandler handler = createProtocolHandler(clientSocket);
                         addHandler(handler);
-                        new Thread(handler).start();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                handler.run();
+                                 // Make sure to deregister, see https://github.com/greenmail-mail-test/greenmail/issues/18
+                                removeHandler(handler);
+                            }
+                        }).start();
                     }
                 } catch (IOException ignored) {
                     //ignored
@@ -111,8 +118,17 @@ public abstract class AbstractServer extends Service {
      *
      * @param handler the handler.
      */
-    public void addHandler(ProtocolHandler handler) {
+    private void addHandler(ProtocolHandler handler) {
         handlers.add(handler);
+    }
+
+    /**
+     * Adds a protocol handler, for eg. shutting down.
+     *
+     * @param handler the handler.
+     */
+    private void removeHandler(ProtocolHandler handler) {
+        handlers.remove(handler);
     }
 
     public synchronized void quit() {
