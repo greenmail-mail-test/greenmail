@@ -32,7 +32,8 @@ Development
 
   To build the project site using [jekyll][jekyll], run
 
-  `cd greenmail-site
+  `cd greenmail-site`
+
   `jekyll build`
 
 * Build a release
