@@ -107,16 +107,13 @@ public class ImapHandler extends Thread implements ImapConstants {
 
         // Close and clear streams, sockets
 
+              // Close and clear streams, sockets etc.
         try {
-            try {
-                if (socket != null && !socket.isClosed()) {
-                    socket.close();
-                }
-            } catch(NullPointerException ignored) {
-                //empty
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
             }
-        } catch (IOException ioe) {
-            // Ignoring exception on close
+        } catch (IOException e) {
+            log.warn("Can not close socket", e);
         } finally {
             socket = null;
         }
@@ -126,7 +123,7 @@ public class ImapHandler extends Thread implements ImapConstants {
                 in.close();
             }
         } catch (Exception e) {
-            // Ignored
+            log.warn("Can not close input stream", e);
         } finally {
             in = null;
         }
@@ -137,6 +134,7 @@ public class ImapHandler extends Thread implements ImapConstants {
             }
         } catch (Exception e) {
             // Ignored
+            log.warn("Can not close writer", e);
         } finally {
             out = null;
         }
@@ -146,7 +144,7 @@ public class ImapHandler extends Thread implements ImapConstants {
                 outs.close();
             }
         } catch (Exception e) {
-            // Ignored
+            log.warn("Can not close output stream", e);
         } finally {
             outs = null;
         }
