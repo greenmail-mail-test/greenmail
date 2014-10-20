@@ -105,10 +105,7 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
      * Resets the handler data to a basic state.
      */
     public void close() {
-
-        // Close and clear streams, sockets
-
-              // Close and clear streams, sockets etc.
+        // Close and clear streams, sockets etc.
         try {
             if (socket != null && !socket.isClosed()) {
                 socket.close();

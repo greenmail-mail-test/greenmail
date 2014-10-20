@@ -63,6 +63,9 @@ public abstract class AbstractServer extends Service {
                     retEx = e;
                     Thread.sleep(10L);
                 } catch (InterruptedException ignored) {
+                    if(log.isDebugEnabled()) {
+                        log.debug("Can not open port, retrying ...", e);
+                    }
                 }
             }
         }
@@ -103,6 +106,11 @@ public abstract class AbstractServer extends Service {
         }
     }
 
+    /**
+     * Adds a protocol handler, for eg. shutting down.
+     *
+     * @param handler the handler.
+     */
     public void addHandler(ProtocolHandler handler) {
         handlers.add(handler);
     }

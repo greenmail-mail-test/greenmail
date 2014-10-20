@@ -131,9 +131,9 @@ public class InMemoryStore
         }
         return folder;
     }
-    public Collection getChildren(MailFolder parent) {
+    public Collection<MailFolder> getChildren(MailFolder parent) {
         Collection children = ((HierarchicalFolder) parent).getChildren();
-        return Collections.unmodifiableCollection(children);
+        return Collections.<MailFolder>unmodifiableCollection(children);
     }
 
     public MailFolder setSelectable(MailFolder folder, boolean selectable) {
@@ -155,7 +155,7 @@ public class InMemoryStore
             throw new FolderException("WIldcard characters are only handled as the last character of a list argument.");
         }
 
-        ArrayList mailboxes = new ArrayList();
+        List<MailFolder> mailboxes = new ArrayList<MailFolder>();
         if (starIndex != -1 || percentIndex != -1) {
             int lastDot = searchPattern.lastIndexOf(HIERARCHY_DELIMITER);
             String parentName;
@@ -193,7 +193,7 @@ public class InMemoryStore
     }
 
     public Quota[] getQuota(final String root, final String qualifiedRootPrefix) {
-        Set<String> rootPaths = new HashSet();
+        Set<String> rootPaths = new HashSet<String>();
         if(root.indexOf(ImapConstants.HIERARCHY_DELIMITER)<0) {
             rootPaths.add(qualifiedRootPrefix+root);
         }
