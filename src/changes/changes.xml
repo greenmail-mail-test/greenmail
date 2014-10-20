@@ -12,6 +12,9 @@
   </properties>
   <body>
   <release version="1.4" date="?" description="Changes for 1.4 release">
+    <action type="fix" issue="18">
+      Server does not clean up session handlers
+    </action>
     <action type="update">
       Minimum required JDK is 1.6 for runtime and for language level.
     </action>
