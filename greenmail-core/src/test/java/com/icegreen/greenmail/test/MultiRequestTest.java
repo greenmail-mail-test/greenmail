@@ -5,35 +5,28 @@
 */
 package com.icegreen.greenmail.test;
 
-import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import junit.framework.TestCase;
+import org.junit.Rule;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.mail.AuthenticationFailedException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Wael Chatila
- * @version $Id: $
- * @since Jan 11, 2007
- */
-public class MultiRequestTest extends TestCase {
-    protected final static Logger log = LoggerFactory.getLogger(MultiRequestTest.class);
-    GreenMail greenMail;
+import static org.junit.Assert.*;
 
-    protected void tearDown() throws Exception {
-        try {
-            greenMail.stop();
-        } catch (NullPointerException ignored) {
-            //empty
-        }
-        super.tearDown();
-    }
+/**
+ * Test multiple senders and receivers using all available protocols
+ */
+public class MultiRequestTest {
+    protected final static Logger log = LoggerFactory.getLogger(MultiRequestTest.class);
+
+    @Rule
+    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
 
     //~ INNER CLASSES -----------------------------------------------
     private static class SenderThread extends Thread {
@@ -80,8 +73,6 @@ public class MultiRequestTest extends TestCase {
                         return;
                     }
                     sleep(increment);
-                } catch (AuthenticationFailedException e) {
-                    // Ignore, user has not been created yet. It will be created
                 } catch (Exception e) {
                     log.error("Error retrieving messages", e);
                 }
@@ -94,11 +85,10 @@ public class MultiRequestTest extends TestCase {
     }
     //~ END INNER CLASSES -----------------------------------------------
 
+    @Test
     public void test20Senders() throws InterruptedException {
-        greenMail = new GreenMail(ServerSetupTest.SMTP);
-        greenMail.start();
-
         final int num = 20;
+        addUsers(num);
         startSenderThreads(num);
         final int tot = (num * (num + 1) / 2);
         assertTrue(greenMail.waitForIncomingEmail(15000, tot));
@@ -106,11 +96,10 @@ public class MultiRequestTest extends TestCase {
         assertFalse(greenMail.waitForIncomingEmail(1000, tot + 1));
     }
 
+    @Test
     public void test20Senders20x4Retrievers() throws InterruptedException {
-        greenMail = new GreenMail();
-        greenMail.start();
-
         final int num = 20;
+        addUsers(num);
         startSenderThreads(num);
 
         // Now wait for senders to finish and mails to arrive
@@ -130,11 +119,10 @@ public class MultiRequestTest extends TestCase {
         assertTrue(greenMail.waitForIncomingEmail(5000, sentMessages));
     }
 
+    @Test
     public void test20Senders20x4RetrieversAtTheSameTime() throws InterruptedException {
-        greenMail = new GreenMail();
-        greenMail.start();
-
         final int num = 20;
+        addUsers(num);
         startSenderThreads(num);
 
         // Start receivers at the same time senders are also started
@@ -149,6 +137,18 @@ public class MultiRequestTest extends TestCase {
 
         // Correct number of received messages
         assertTrue(greenMail.waitForIncomingEmail(5000, sentMessages));
+    }
+
+    /**
+     * Add [num] users, naming them from to1, to2, ..., to[num]
+     *
+     * @param num Number of users to create
+     */
+    private void addUsers(int num) {
+        for (int i = 1; i <= num; i++) {
+            final String newUserName = "to" + i;
+            greenMail.setUser(newUserName, newUserName);
+        }
     }
 
     /**
@@ -179,22 +179,22 @@ public class MultiRequestTest extends TestCase {
      * @param retrieverThreads List of threads that the threads are added to
      */
     private void startRetrieverThreads(int n, ThreadGroup group, List<RetrieverThread> retrieverThreads) {
-        for (int i = 0; i <= n; i++) {
+        for (int i = 1; i <= n; i++) {
             RetrieverThread r = new RetrieverThread("to" + i, new Retriever(greenMail.getPop3()), group, i);
             retrieverThreads.add(r);
             r.start();
         }
-        for (int i = 0; i <= n; i++) {
+        for (int i = 1; i <= n; i++) {
             RetrieverThread r = new RetrieverThread("to" + i, new Retriever(greenMail.getImap()), group, i);
             retrieverThreads.add(r);
             r.start();
         }
-        for (int i = 0; i <= n; i++) {
+        for (int i = 1; i <= n; i++) {
             RetrieverThread r = new RetrieverThread("to" + i, new Retriever(greenMail.getPop3s()), group, i);
             retrieverThreads.add(r);
             r.start();
         }
-        for (int i = 0; i <= n; i++) {
+        for (int i = 1; i <= n; i++) {
             RetrieverThread r = new RetrieverThread("to" + i, new Retriever(greenMail.getImaps()), group, i);
             retrieverThreads.add(r);
             r.start();
@@ -204,7 +204,7 @@ public class MultiRequestTest extends TestCase {
     /**
      * Wait for the thread group to finish for timeout milliseconds
      *
-     * @param group Thread group
+     * @param group   Thread group
      * @param timeout Timeout in milliseconds
      * @throws InterruptedException Thrown if interrupted
      */
@@ -217,6 +217,7 @@ public class MultiRequestTest extends TestCase {
 
     /**
      * Checks that the retriever threads received the correct number of messages
+     *
      * @param receivedMessages Number of messages that should have been received
      * @param retrieverThreads List of threads
      */

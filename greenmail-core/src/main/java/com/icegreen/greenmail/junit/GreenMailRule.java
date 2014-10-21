@@ -1,0 +1,52 @@
+package com.icegreen.greenmail.junit;
+
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.GreenMailProxy;
+import com.icegreen.greenmail.util.ServerSetup;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import org.junit.rules.MethodRule;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.Statement;
+
+public class GreenMailRule extends GreenMailProxy implements MethodRule, TestRule {
+    private GreenMail greenMail;
+    private final ServerSetup[] serverSetups;
+
+    public GreenMailRule(ServerSetup[] serverSetups) {
+        this.serverSetups = serverSetups;
+    }
+
+    public GreenMailRule() {
+        this(ServerSetupTest.ALL);
+    }
+
+    @Override
+    public Statement apply(final Statement base, Description description) {
+        return apply(base, null, null);
+    }
+
+    @Override
+    public Statement apply(final Statement base, FrameworkMethod method, Object target) {
+        return new Statement() {
+            @Override
+            public void evaluate() throws Throwable {
+                greenMail=new GreenMail(serverSetups);
+                greenMail.start();
+                try {
+                    base.evaluate();
+                } finally {
+                    greenMail.stop();
+                }
+            }
+
+        };
+    }
+
+    @Override
+    protected GreenMail getGreenMail() {
+        return greenMail;
+    }
+}
+

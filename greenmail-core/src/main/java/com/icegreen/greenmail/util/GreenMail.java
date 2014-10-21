@@ -21,11 +21,9 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * @author Wael Chatila
- * @version $Id: $
- * @since Jan 28, 2006
+ * Utility class that manages a greenmail server with support for multiple protocols
  */
-public class GreenMail {
+public class GreenMail implements GreenMailOperations {
     Managers managers;
     HashMap<String, Service> services;
 
@@ -98,28 +96,34 @@ public class GreenMail {
         }
     }
 
+    @Override
     public SmtpServer getSmtp() {
         return (SmtpServer) services.get(ServerSetup.PROTOCOL_SMTP);
     }
 
+    @Override
     public ImapServer getImap() {
         return (ImapServer) services.get(ServerSetup.PROTOCOL_IMAP);
 
     }
 
+    @Override
     public Pop3Server getPop3() {
         return (Pop3Server) services.get(ServerSetup.PROTOCOL_POP3);
     }
 
+    @Override
     public SmtpServer getSmtps() {
         return (SmtpServer) services.get(ServerSetup.PROTOCOL_SMTPS);
     }
 
+    @Override
     public ImapServer getImaps() {
         return (ImapServer) services.get(ServerSetup.PROTOCOL_IMAPS);
 
     }
 
+    @Override
     public Pop3Server getPop3s() {
         return (Pop3Server) services.get(ServerSetup.PROTOCOL_POP3S);
     }
@@ -128,20 +132,9 @@ public class GreenMail {
         return managers;
     }
 
-
-
     //~ Convenience Methods, often needed while testing ---------------------------------------------------------------
-    /**
-     * Use this method if you are sending email in a different thread from the one you're testing from.
-     * Block waits for an email to arrive in any mailbox for any user.
-     * Implementation Detail: No polling wait implementation
-     *
-     * @param timeout    maximum time in ms to wait for emailCount of messages to arrive before giving up and returning false
-     * @param emailCount waits for these many emails to arrive before returning
-     * @return Returns false if timeout period was reached, otherwise true.
-     * @throws InterruptedException
-     */
-    public boolean waitForIncomingEmail(long timeout, int emailCount) throws InterruptedException {
+    @Override
+    public boolean waitForIncomingEmail(long timeout, int emailCount) {
         final SmtpManager.WaitObject o = managers.getSmtpManager().createAndAddNewWaitObject(emailCount);
         if (null == o) {
             return true;
@@ -151,7 +144,11 @@ public class GreenMail {
             long t0 = System.currentTimeMillis();
             while (!o.isArrived()) {
                 //this loop is necessary to insure correctness, see documentation on Object.wait()
-                o.wait(timeout);
+                try {
+                    o.wait(timeout);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException("Thread was interrupted while waiting", e);
+                }
                 if ((System.currentTimeMillis() - t0) > timeout) {
                     return false;
                 }
@@ -160,20 +157,13 @@ public class GreenMail {
         }
         return true;
     }
-    /**
-     * Does the same thing as {@link #wait(long, int)} but with a timeout of 5000ms
-     *
-     * @param emailCount waits for these many emails to arrive before returning
-     * @return Returns false if timeout period was reached, otherwise true.
-     * @throws InterruptedException
-     */
-    public boolean waitForIncomingEmail(int emailCount) throws InterruptedException {
+
+    @Override
+    public boolean waitForIncomingEmail(int emailCount) {
         return waitForIncomingEmail(5000l,emailCount);
     }
-    /**
-     * @return Returns all messags in all folders for all users
-     * {@link GreenMailUtil} has a bunch of static helper methods to extract body text etc.
-     */
+
+    @Override
     public MimeMessage[] getReceivedMessages() {
         List msgs = managers.getImapHostManager().getAllMessages();
         MimeMessage[] ret = new MimeMessage[msgs.size()];
@@ -184,10 +174,7 @@ public class GreenMail {
         return ret;
     }
 
-    /**
-     * This method can be used as an easy 'catch-all' mechanism.
-     * @param domain returns all receved messages arrived to domain.
-     */
+    @Override
     public MimeMessage[] getReceviedMessagesForDomain(String domain) {
         List<StoredMessage> msgs = managers.getImapHostManager().getAllMessages();
         List<MimeMessage> ret = new ArrayList<MimeMessage>();
@@ -203,17 +190,13 @@ public class GreenMail {
         }
         return ret.toArray(new MimeMessage[ret.size()]);
     }
-    /**
-     * Sets the password for the account linked to email. If no account exits, one is automatically created when an email is received
-     * The automatically created account has the account login and password equal to the email address.
-     *
-     * @param email
-     * @param password
-     */
-    public GreenMailUser setUser(String email, String password) {
-        return setUser(email, email, password);
+
+    @Override
+    public GreenMailUser setUser(String login, String password) {
+        return setUser(login, login, password);
     }
 
+    @Override
     public GreenMailUser setUser(String email, String login, String password) {
         GreenMailUser user = managers.getUserManager().getUser(email);
         if (null == user) {
@@ -228,22 +211,12 @@ public class GreenMail {
         return user;
     }
 
-    /**
-     * Toggles the IMAP quota support.
-     *
-     * Quotas are enabled by default.
-     *
-     * @param isEnabled true, if quotas should be supported.
-     */
+    @Override
     public void setQuotaSupported(boolean isEnabled) {
         managers.getImapHostManager().getStore().setQuotaSupported(isEnabled);
     }
 
-    /**
-     * Sets up accounts with password based on a properties map where the key is the email and the value the password
-     *
-     * @param users
-     */
+    @Override
     public void setUsers(Properties users) {
         for (Object o : users.keySet()) {
             String email = (String) o;

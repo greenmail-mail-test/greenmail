@@ -34,12 +34,14 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
 
-    <!-- Test scope -->
+    <!-- We need junit in compile scope since we want to offer Junit specific functionality (e.g. the GreenMailRule) -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <scope>test</scope>
+      <scope>compile</scope>
     </dependency>
+
+    <!-- Test scope -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
