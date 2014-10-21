@@ -12,6 +12,9 @@
   </properties>
   <body>
   <release version="1.4" date="?" description="Changes for 1.4 release">
+    <action type="update">
+      Remove dependency on testng, all tests are JUnit now
+    </action>
     <action type="add">
       Add GreenMailRule that allows more convenient testing when using junit. This means that we also have a dependency
       towards junit now.

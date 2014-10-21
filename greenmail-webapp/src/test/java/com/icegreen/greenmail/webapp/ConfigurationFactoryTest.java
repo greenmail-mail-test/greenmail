@@ -1,19 +1,19 @@
 package com.icegreen.greenmail.webapp;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.testng.annotations.Test;
 
 /**
  * Test for ConfigurationFactory.
  *
  * @author mm
  */
-@Test
 public class ConfigurationFactoryTest {
 
+    @Test
     public void testCreate() {
         Map<String, String> paramValues = new HashMap<String, String>();
         paramValues.put("greenmail.defaultHostname", "127.0.0.1");

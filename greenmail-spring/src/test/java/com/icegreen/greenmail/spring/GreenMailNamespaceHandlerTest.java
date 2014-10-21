@@ -1,9 +1,10 @@
 package com.icegreen.greenmail.spring;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.testng.annotations.Test;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * Tests GreenMailBean configured via xml namespace handler.
@@ -11,7 +12,8 @@ import org.testng.annotations.Test;
  * @author Marcel May (mm)
  */
 @ContextConfiguration
-public class GreenMailNamespaceHandlerTest extends AbstractTestNGSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+public class GreenMailNamespaceHandlerTest {
     @Autowired
     private GreenMailBean greenMailBean;
 
