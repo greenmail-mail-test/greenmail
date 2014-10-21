@@ -14,8 +14,22 @@ public class GreenMailRule extends GreenMailProxy implements MethodRule, TestRul
     private GreenMail greenMail;
     private final ServerSetup[] serverSetups;
 
+    /**
+     * Initialize with multiple server setups
+     *
+     * @param serverSetups All setups to use
+     */
     public GreenMailRule(ServerSetup[] serverSetups) {
         this.serverSetups = serverSetups;
+    }
+
+    /**
+     * Initialize with single server setups
+     *
+     * @param serverSetup Setup to use
+     */
+    public GreenMailRule(ServerSetup serverSetup) {
+        this.serverSetups = new ServerSetup[]{serverSetup};
     }
 
     public GreenMailRule() {
@@ -32,7 +46,7 @@ public class GreenMailRule extends GreenMailProxy implements MethodRule, TestRul
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                greenMail=new GreenMail(serverSetups);
+                greenMail = new GreenMail(serverSetups);
                 greenMail.start();
                 try {
                     base.evaluate();
