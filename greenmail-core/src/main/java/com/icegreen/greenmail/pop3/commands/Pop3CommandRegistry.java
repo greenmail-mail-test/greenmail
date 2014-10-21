@@ -13,7 +13,7 @@ import java.util.Map;
 public class Pop3CommandRegistry {
     private final static Map<String, Pop3Command> commands = new HashMap<String, Pop3Command>();
 
-    public void load() {
+    static {
         commands.put("QUIT", new QuitCommand());
         commands.put("STAT", new StatCommand());
         commands.put("APOP", new ApopCommand());
@@ -26,12 +26,10 @@ public class Pop3CommandRegistry {
         commands.put("DELE", new DeleCommand());
         commands.put("NOOP", new NoopCommand());
         commands.put("RSET", new RsetCommand());
+        commands.put("CAPA", new CapaCommand());
     }
 
     public Pop3Command getCommand(String name) {
-        if (commands.size() == 0) {
-            load();
-        }
         return commands.get(name);
     }
 }
