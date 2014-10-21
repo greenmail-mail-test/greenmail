@@ -6,18 +6,13 @@ package com.icegreen.greenmail.util;
 
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.sun.mail.imap.IMAPStore;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-
+import javax.mail.internet.*;
 import java.io.*;
 import java.util.Properties;
 import java.util.Random;
@@ -244,13 +239,100 @@ public class GreenMailUtil {
         }
     }
 
-    // Assumes a valid JavaMail Session has been set when MimeMessage was
-    // instantiated
+    /**
+     * Send the message using the JavaMail session defined in the message
+     *
+     * @param mimeMessage Message to send
+     */
     public static void sendMimeMessage(MimeMessage mimeMessage) {
         try {
             Transport.send(mimeMessage);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-        } catch (Throwable e) {
+    /**
+     * Send the message with the given attributes and the given body using the specified SMTP settings
+     *
+     * @param to          Destination address(es)
+     * @param from        Sender address
+     * @param subject     Message subject
+     * @param body        Message content. May either be a MimeMultipart or another body that java mail recognizes
+     * @param contentType MIME content type of body
+     * @param serverSetup Server settings to use for connecting to the SMTP server
+     */
+    public static void sendMessageBody(String to, String from, String subject, Object body, String contentType, ServerSetup serverSetup) {
+        try {
+            Session smtpSession = getSession(serverSetup);
+            MimeMessage mimeMessage = new MimeMessage(smtpSession);
+
+            mimeMessage.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+            mimeMessage.setFrom(new InternetAddress(from));
+            mimeMessage.setSubject(subject);
+            mimeMessage.setContent(body, contentType);
+            sendMimeMessage(mimeMessage);
+        } catch (AddressException e) {
+            throw new RuntimeException(e);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void sendAttachmentEmail(String to, String from,
+                                           String subject, String msg, final byte[] attachment,
+                                           final String contentType, final String filename,
+                                           final String description, final ServerSetup setup) {
+        MimeMultipart multiPart = createMultipartWithAttachment(msg, attachment, contentType, filename, description);
+        sendMessageBody(to, from, subject, multiPart, null, setup);
+    }
+
+    /**
+     * Create new multipart with a text part and an attachment
+     *
+     * @param msg         Message text
+     * @param attachment  Attachment data
+     * @param contentType MIME content type of body
+     * @param filename    File name of the attachment
+     * @param description Description of the attachment
+     * @return New multipart
+     */
+    private static MimeMultipart createMultipartWithAttachment(String msg, final byte[] attachment, final String contentType,
+                                                               final String filename, String description) {
+        try {
+            MimeMultipart multiPart = new MimeMultipart();
+
+            MimeBodyPart textPart = new MimeBodyPart();
+            multiPart.addBodyPart(textPart);
+            textPart.setText(msg);
+
+            MimeBodyPart binaryPart = new MimeBodyPart();
+            multiPart.addBodyPart(binaryPart);
+
+            DataSource ds = new DataSource() {
+                public InputStream getInputStream() throws IOException {
+                    return new ByteArrayInputStream(attachment);
+                }
+
+                public OutputStream getOutputStream() throws IOException {
+                    ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+                    byteStream.write(attachment);
+                    return byteStream;
+                }
+
+                public String getContentType() {
+                    return contentType;
+                }
+
+                public String getName() {
+                    return filename;
+                }
+            };
+            binaryPart.setDataHandler(new DataHandler(ds));
+            binaryPart.setFileName(filename);
+            binaryPart.setDescription(description);
+            return multiPart;
+        } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
     }
@@ -298,55 +380,6 @@ public class GreenMailUtil {
             log.debug("Mail session properties are " + props);
         }
         return Session.getInstance(props, null);
-    }
-
-    public static void sendAttachmentEmail(String to, String from,
-            String subject, String msg, final byte[] attachment,
-            final String contentType, final String filename,
-            final String description, final ServerSetup setup)
-            throws MessagingException, IOException {
-        Session session = getSession(setup);
-
-        Address[] tos = new InternetAddress[]{new InternetAddress(to)};
-        Address[] froms = new InternetAddress[]{new InternetAddress(from)};
-        MimeMessage mimeMessage = new MimeMessage(session);
-        mimeMessage.setSubject(subject);
-        mimeMessage.setFrom(froms[0]);
-
-        MimeMultipart multiPart = new MimeMultipart();
-
-        MimeBodyPart textPart = new MimeBodyPart();
-        multiPart.addBodyPart(textPart);
-        textPart.setText(msg);
-
-        MimeBodyPart binaryPart = new MimeBodyPart();
-        multiPart.addBodyPart(binaryPart);
-
-        DataSource ds = new DataSource() {
-            public InputStream getInputStream() throws IOException {
-                return new ByteArrayInputStream(attachment);
-            }
-
-            public OutputStream getOutputStream() throws IOException {
-                ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-                byteStream.write(attachment);
-                return byteStream;
-            }
-
-            public String getContentType() {
-                return contentType;
-            }
-
-            public String getName() {
-                return filename;
-            }
-        };
-        binaryPart.setDataHandler(new DataHandler(ds));
-        binaryPart.setFileName(filename);
-        binaryPart.setDescription(description);
-
-        mimeMessage.setContent(multiPart);
-        Transport.send(mimeMessage, tos);
     }
 
     /**

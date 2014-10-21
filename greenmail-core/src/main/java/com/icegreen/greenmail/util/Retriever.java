@@ -18,11 +18,6 @@ import java.util.Properties;
  * @since Apr 16, 2005
  */
 public class Retriever {
-    public static final String PROTOCOL_POP3 = "pop3";
-    public static final String PROTOCOL_POP3S = "pop3s";
-    public static final String PROTOCOL_IMAP = "imap";
-    public static final String PROTOCOL_IMAPS = "imaps";
-
     private String protocol;
     private int port;
     private String host;
@@ -47,11 +42,11 @@ public class Retriever {
         host = server.getBindTo();
     }
 
-    public Message[] getMessages(String account) throws Exception {
+    public Message[] getMessages(String account) {
         return getMessages(account, account);
     }
 
-    public Message[] getMessages(String account, String password) throws Exception {
+    public Message[] getMessages(String account, String password) {
         Properties props = new Properties();
         if (protocol.endsWith("s")) {
             props.put("mail.pop3.starttls.enable", Boolean.TRUE);
@@ -76,11 +71,17 @@ public class Retriever {
 
         Session session = Session.getInstance(props, null);
 //        session.setDebug(true);
-        store = session.getStore(protocol);
-        store.connect(host, port, account, password);
-        Folder rootFolder = store.getFolder("INBOX");
-        final List<Message> messages = getMessages(rootFolder);
-        return messages.toArray(new Message[messages.size()]);
+        try {
+            store = session.getStore(protocol);
+            store.connect(host, port, account, password);
+            Folder rootFolder = store.getFolder("INBOX");
+            final List<Message> messages = getMessages(rootFolder);
+            return messages.toArray(new Message[messages.size()]);
+        } catch (NoSuchProviderException e) {
+            throw new RuntimeException(e);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void logout() {
