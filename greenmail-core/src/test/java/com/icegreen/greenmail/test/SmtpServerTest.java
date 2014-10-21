@@ -4,10 +4,11 @@
  */
 package com.icegreen.greenmail.test;
 
-import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import junit.framework.TestCase;
+import org.junit.Rule;
+import org.junit.Test;
 
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -16,27 +17,20 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 /**
  * @author Wael Chatila
  * @version $Id: $
  * @since Jan 28, 2006
  */
-public class SmtpServerTest extends TestCase {
+public class SmtpServerTest {
+    @Rule
+    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
 
-    GreenMail greenMail;
-
-    protected void tearDown() throws Exception {
-        try {
-            greenMail.stop();
-        } catch (NullPointerException ignored) {
-            //empty
-        }
-        super.tearDown();
-    }
-
+    @Test
     public void testSmtpServerBasic() throws MessagingException {
-        greenMail = new GreenMail(ServerSetupTest.SMTP);
-        greenMail.start();
         GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", "body");
         MimeMessage[] emails = greenMail.getReceivedMessages();
         assertEquals(1, emails.length);
@@ -44,9 +38,8 @@ public class SmtpServerTest extends TestCase {
         assertEquals("body", GreenMailUtil.getBody(emails[0]));
     }
 
+    @Test
     public void testSmtpServerTimeout() throws Throwable {
-        greenMail = new GreenMail(ServerSetupTest.SMTP);
-        greenMail.start();
         assertEquals(0, greenMail.getReceivedMessages().length);
         long t0 = System.currentTimeMillis();
         greenMail.waitForIncomingEmail(500, 1);
@@ -55,13 +48,8 @@ public class SmtpServerTest extends TestCase {
         assertEquals(0, emails.length);
     }
 
+    @Test
     public void testSmtpServerReceiveWithSetup() throws Throwable {
-        greenMail = new GreenMail(ServerSetupTest.SMTP);
-        runSmtpServerReceive();
-    }
-
-    public void runSmtpServerReceive() throws Throwable {
-        greenMail.start();
         assertEquals(0, greenMail.getReceivedMessages().length);
 
         String subject = GreenMailUtil.random();
@@ -74,9 +62,8 @@ public class SmtpServerTest extends TestCase {
         assertEquals(body, GreenMailUtil.getBody(emails[0]).trim());
     }
 
+    @Test
     public void testSmtpsServerReceive() throws Throwable {
-        greenMail = new GreenMail(ServerSetupTest.SMTPS);
-        greenMail.start();
         assertEquals(0, greenMail.getReceivedMessages().length);
 
         String subject = GreenMailUtil.random();
@@ -89,9 +76,8 @@ public class SmtpServerTest extends TestCase {
         assertEquals(body, GreenMailUtil.getBody(emails[0]).trim());
     }
 
+    @Test
     public void testSmtpServerReceiveInThread() throws Throwable {
-        greenMail = new GreenMail(ServerSetupTest.SMTP);
-        greenMail.start();
         assertEquals(0, greenMail.getReceivedMessages().length);
 
         Thread sendThread = new Thread() {
@@ -111,9 +97,8 @@ public class SmtpServerTest extends TestCase {
         sendThread.join(10000);
     }
 
+    @Test
     public void testSmtpServerReceiveMultipart() throws Exception {
-        greenMail = new GreenMail(ServerSetupTest.SMTP);
-        greenMail.start();
         assertEquals(0, greenMail.getReceivedMessages().length);
 
         String subject = GreenMailUtil.random();

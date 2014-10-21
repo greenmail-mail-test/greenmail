@@ -4,36 +4,32 @@
  */
 package com.icegreen.greenmail.test;
 
-import com.icegreen.greenmail.util.*;
-import junit.framework.TestCase;
+import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.Retriever;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import org.junit.Rule;
+import org.junit.Test;
 
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 
+import static org.junit.Assert.*;
+
 /**
  * @author Wael Chatila
  * @version $Id: $
  * @since Jan 28, 2006
  */
-public class Pop3ServerTest extends TestCase {
+public class Pop3ServerTest {
+    @Rule
+    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
 
-    GreenMail greenMail;
-
-    protected void tearDown() throws Exception {
-        try {
-            greenMail.stop();
-        } catch (NullPointerException ignored) {
-            //empty
-        }
-        super.tearDown();
-    }
-
+    @Test
     public void testRetrieve() throws Exception {
-        greenMail = new GreenMail(ServerSetupTest.SMTP_POP3);
         assertNotNull(greenMail.getPop3());
-        greenMail.start();
         final String subject = GreenMailUtil.random();
         final String body = GreenMailUtil.random() + "\r\n" + GreenMailUtil.random() + "\r\n" + GreenMailUtil.random();
         String to = "test@localhost.com";
@@ -47,11 +43,9 @@ public class Pop3ServerTest extends TestCase {
         assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
     }
 
+    @Test
     public void testPop3sReceive() throws Throwable {
-        greenMail = new GreenMail(new ServerSetup[]{ServerSetupTest.SMTPS, ServerSetupTest.POP3S});
-        assertNull(greenMail.getPop3());
         assertNotNull(greenMail.getPop3s());
-        greenMail.start();
         final String subject = GreenMailUtil.random();
         final String body = GreenMailUtil.random();
         String to = "test@localhost.com";
@@ -65,13 +59,12 @@ public class Pop3ServerTest extends TestCase {
         assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
     }
 
+    @Test
     public void testRetrieveWithNonDefaultPassword() throws Exception {
-        greenMail = new GreenMail(ServerSetupTest.SMTP_POP3);
         assertNotNull(greenMail.getPop3());
         final String to = "test@localhost.com";
         final String password = "donotharmanddontrecipricateharm";
         greenMail.setUser(to, password);
-        greenMail.start();
         final String subject = GreenMailUtil.random();
         final String body = GreenMailUtil.random();
         GreenMailUtil.sendTextEmailTest(to, "from@localhost.com", subject, body);
@@ -80,7 +73,7 @@ public class Pop3ServerTest extends TestCase {
         Retriever retriever = new Retriever(greenMail.getPop3());
         boolean login_failed = false;
         try {
-            Message[] messages = retriever.getMessages(to, "wrongpassword");
+            retriever.getMessages(to, "wrongpassword");
         } catch (Throwable e) {
             login_failed = true;
         }
@@ -92,10 +85,9 @@ public class Pop3ServerTest extends TestCase {
         assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
     }
 
+    @Test
     public void testRetrieveMultipart() throws Exception {
-        greenMail = new GreenMail(ServerSetupTest.SMTP_POP3);
         assertNotNull(greenMail.getPop3());
-        greenMail.start();
 
         String subject = GreenMailUtil.random();
         String body = GreenMailUtil.random();

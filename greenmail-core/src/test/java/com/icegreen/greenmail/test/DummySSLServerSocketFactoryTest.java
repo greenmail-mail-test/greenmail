@@ -1,18 +1,15 @@
 package com.icegreen.greenmail.test;
 
+import com.icegreen.greenmail.util.DummySSLServerSocketFactory;
+import org.junit.Test;
+
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 
-import javax.mail.Message;
+import static org.junit.Assert.assertTrue;
 
-import com.icegreen.greenmail.util.DummySSLServerSocketFactory;
-import com.icegreen.greenmail.util.GreenMail;
-import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.Retriever;
-import com.icegreen.greenmail.util.ServerSetupTest;
-import junit.framework.TestCase;
-
-public class DummySSLServerSocketFactoryTest extends TestCase {
+public class DummySSLServerSocketFactoryTest {
+    @Test
     public void testKeyStore() throws KeyStoreException {
         DummySSLServerSocketFactory factory = new DummySSLServerSocketFactory();
         KeyStore ks = factory.getKeyStore();

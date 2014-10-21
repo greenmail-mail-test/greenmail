@@ -9,38 +9,37 @@ package com.icegreen.greenmail.test;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.mail.Address;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Store;
-
 import java.io.IOException;
 import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Wael Chatila
  * @version $Id: $
  * @since Jan 29, 2006
  */
-public class GreenMailUtilTest extends TestCase {
+public class GreenMailUtilTest {
+    @Test
     public void testMimeMessageLoading() throws MessagingException {
         MimeMessage message = GreenMailUtil.newMimeMessage(SAMPLE_EMAIL);
         assertEquals("wassup", message.getSubject());
     }
 
+    @Test
     public void testGetBody() throws MessagingException, IOException {
         MimeMessage message = GreenMailUtil.newMimeMessage(SAMPLE_EMAIL);
         String body = GreenMailUtil.getBody(message);
         assertEquals("Yo wassup Bertil", body.trim());
     }
 
+    @Test
     public void testSendTextEmailTest() throws Exception {
         GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
         greenMail.setUser("foo@localhost", "pwd");
@@ -76,6 +75,7 @@ public class GreenMailUtilTest extends TestCase {
         }
     }
 
+    @Test
     public void testImapBadEnvelope() throws Exception {
         String greenMailUser = "foo@localhost";
         String from = "bar@localhost";
