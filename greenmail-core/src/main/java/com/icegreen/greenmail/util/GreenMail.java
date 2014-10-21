@@ -128,6 +128,7 @@ public class GreenMail implements GreenMailOperations {
         return (Pop3Server) services.get(ServerSetup.PROTOCOL_POP3S);
     }
 
+    @Override
     public Managers getManagers() {
         return managers;
     }

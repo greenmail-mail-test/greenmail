@@ -1,5 +1,6 @@
 package com.icegreen.greenmail.util;
 
+import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.imap.ImapServer;
 import com.icegreen.greenmail.pop3.Pop3Server;
 import com.icegreen.greenmail.smtp.SmtpServer;
@@ -41,6 +42,11 @@ public interface GreenMailOperations {
      * @return SMTP server operated by this GreenMail instance or null if there is none
      */
     Pop3Server getPop3s();
+
+    /**
+     * @return Greenmail protocol managers
+     */
+    Managers getManagers();
 
     /**
      * Use this method if you are sending email in a different thread from the one you're testing from.

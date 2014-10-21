@@ -1,5 +1,6 @@
 package com.icegreen.greenmail.util;
 
+import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.imap.ImapServer;
 import com.icegreen.greenmail.pop3.Pop3Server;
 import com.icegreen.greenmail.smtp.SmtpServer;
@@ -40,6 +41,11 @@ public abstract class GreenMailProxy implements GreenMailOperations {
     @Override
     public Pop3Server getPop3s() {
         return getGreenMail().getPop3s();
+    }
+
+    @Override
+    public Managers getManagers() {
+        return getGreenMail().getManagers();
     }
 
     @Override
