@@ -8,6 +8,7 @@ package com.icegreen.greenmail.user;
 
 import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.mail.MovingMessage;
+import com.icegreen.greenmail.store.FolderException;
 
 import javax.mail.internet.MimeMessage;
 import java.io.Serializable;
@@ -26,18 +27,15 @@ public class UserImpl implements GreenMailUser, Serializable {
         this.imapHostManager = imapHostManager;
     }
 
-    public void create()
-            throws UserException {
+    public void create() {
         try {
-
             imapHostManager.createPrivateMailAccount(this);
-        } catch (Exception me) {
-            throw new UserException(me);
+        } catch (FolderException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public void delete()
-            throws UserException {
+    public void delete() {
 //        try {
 //            imapHostManager.destroyMailbox(this);
 //        } catch (MailboxException me) {
@@ -45,21 +43,23 @@ public class UserImpl implements GreenMailUser, Serializable {
 //        }
     }
 
-    public void deliver(MovingMessage msg)
-            throws UserException {
+    public void deliver(MovingMessage msg) {
         try {
             imapHostManager.getInbox(this).store(msg);
-        } catch (Exception me) {
-            throw new UserException(me);
+        } catch (FolderException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public void deliver(MimeMessage msg)
-            throws UserException {
+    public void deliver(MimeMessage msg)  {
         try {
             imapHostManager.getInbox(this).store(msg);
-        } catch (Exception me) {
-            throw new UserException(me);
+        } catch (FolderException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -82,10 +82,10 @@ public class UserImpl implements GreenMailUser, Serializable {
         this.password = password;
     }
 
-    public void authenticate(String pass)
-            throws UserException {
-        if (!password.equals(pass))
+    public void authenticate(String pass) throws UserException {
+        if (!password.equals(pass)) {
             throw new UserException("Invalid password");
+        }
     }
 
     public String getQualifiedMailboxName() {

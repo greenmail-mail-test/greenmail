@@ -10,10 +10,14 @@ import com.icegreen.greenmail.imap.ImapHostManager;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class UserManager {
-    Map<String, GreenMailUser> _users = Collections.synchronizedMap(new HashMap<String, GreenMailUser>());
+    /**
+     * User list by their trimmed, lowercased user names
+     */
+    private Map<String, GreenMailUser> _users = Collections.synchronizedMap(new HashMap<String, GreenMailUser>());
     private ImapHostManager imapHostManager;
 
     public UserManager(ImapHostManager imapHostManager) {
@@ -21,20 +25,11 @@ public class UserManager {
     }
 
     public GreenMailUser getUser(String login) {
-        return _users.get(login);
+        return _users.get(normalizerUserName(login));
     }
 
     public GreenMailUser getUserByEmail(String email) {
-        GreenMailUser ret = getUser(email);
-        if (null == ret) {
-            for (Object o : _users.values()) {
-                GreenMailUser u = (GreenMailUser) o;
-                if (u.getEmail().trim().equalsIgnoreCase(email.trim())) {
-                    return u;
-                }
-            }
-        }
-        return ret;
+        return getUser(email);
     }
 
     public GreenMailUser createUser(String name, String login, String password) throws UserException {
@@ -45,14 +40,15 @@ public class UserManager {
     }
 
     private void addUser(GreenMailUser user) {
-        _users.put(user.getLogin(), user);
+        deleteUser(user);
+        _users.put(normalizerUserName(user.getLogin()), user);
     }
 
-    public void deleteUser(GreenMailUser user)
-            throws UserException {
-        user = _users.remove(user.getLogin());
-        if (user != null)
+    public void deleteUser(GreenMailUser user) {
+        user = _users.remove(normalizerUserName(user.getLogin()));
+        if (user != null) {
             user.delete();
+        }
     }
 
     public boolean test(String userid, String password) {
@@ -65,5 +61,13 @@ public class UserManager {
         return imapHostManager;
     }
 
-
+    /**
+     * Normalize the user name (to lowercase, trim)
+     *
+     * @param login Login name
+     * @return Normalized name
+     */
+    private static String normalizerUserName(String login) {
+        return login.trim().toLowerCase(Locale.ENGLISH);
+    }
 }

@@ -13,20 +13,18 @@ public interface GreenMailUser {
     String getEmail();
     String getLogin();
 
-    void deliver(MovingMessage msg) throws UserException;
-    void deliver(MimeMessage msg) throws UserException;
+    void deliver(MovingMessage msg);
+    void deliver(MimeMessage msg);
 
-    void create() throws UserException;
+    void create();
 
-    void delete()
-            throws UserException;
+    void delete();
 
     String getPassword();
 
     void setPassword(String password);
 
-    void authenticate(String password)
-            throws UserException;
+    void authenticate(String password) throws UserException;
 
     String getQualifiedMailboxName();
 
