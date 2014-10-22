@@ -237,7 +237,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
                 len = bytes.length;
             }
             start = Math.min(start, bytes.length);
-            len = Math.min(len, bytes.length);
+            len = Math.min(len, bytes.length - start);
             byte[] newBytes = new byte[len];
             System.arraycopy(bytes, start, newBytes, 0, len);
             bytes = newBytes;

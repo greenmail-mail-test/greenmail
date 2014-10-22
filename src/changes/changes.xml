@@ -12,6 +12,9 @@
   </properties>
   <body>
   <release version="1.4" date="?" description="Changes for 1.4 release">
+    <action type="fix" issue="6">
+      Message size is no longer limited in FetchCommand + Test
+    </action>
     <action type="update">
       Remove dependency on testng, all tests are JUnit now
     </action>
