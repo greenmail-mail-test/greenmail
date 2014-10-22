@@ -12,6 +12,10 @@
   </properties>
   <body>
   <release version="1.4" date="?" description="Changes for 1.4 release">
+    <action type="fix" issue="7">
+      Do not try to add receiver addresses any more to MIME message. Handling of BCC addresses is now correct. BCC
+      receivers are now no longer shown to other receivers.
+    </action>
     <action type="fix" issue="6">
       Message size is no longer limited in FetchCommand + Test
     </action>

@@ -16,9 +16,6 @@ import com.icegreen.greenmail.user.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.util.Vector;
 
 
@@ -76,15 +73,15 @@ public class SmtpManager {
     }
 
     //~----------------------------------------------------------------------------------------------------------------
+
     /**
      * This Object is used by a thread to wait until a number of emails have arrived.
      * (for example Server's waitForIncomingEmail method)
-     *
+     * <p/>
      * Every time an email has arrived, the method emailReceived() must be called.
-     *
+     * <p/>
      * The notify() or notifyALL() methods should not be called on this object unless
      * you want to notify waiting threads even if not all the required emails have arrived.
-     *
      */
     public static class WaitObject {
         private boolean arrived = false;
@@ -108,7 +105,7 @@ public class SmtpManager {
 
         public void emailReceived() {
             emailCount--;
-            if (emailCount<=0) {
+            if (emailCount <= 0) {
                 setArrived();
                 this.notifyAll();
             }
@@ -117,19 +114,6 @@ public class SmtpManager {
 
     private class Incoming {
         public void enqueue(MovingMessage msg) {
-            StringBuilder tos = new StringBuilder();
-            final MimeMessage message = msg.getMessage();
-            for (MailAddress address : msg.getToAddresses()) {
-                if (tos.length()>0) {
-                    tos.append(',');
-                }
-                tos.append(address.getEmail());
-            }
-            try {
-                message.addRecipients(Message.RecipientType.TO, tos.toString());
-            } catch (MessagingException e) {
-                throw new RuntimeException(e);
-            }
             for (MailAddress address : msg.getToAddresses()) {
                 handle(msg, address);
             }
