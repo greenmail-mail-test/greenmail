@@ -9,9 +9,9 @@ package com.icegreen.greenmail.store;
 
 import com.icegreen.greenmail.mail.MailAddress;
 import com.icegreen.greenmail.util.GreenMailUtil;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.commons.lang3.StringEscapeUtils;
 
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
@@ -224,7 +224,6 @@ public class SimpleMessageAttributes
                         partAttrs.parseMimePart((MimePart) nextPart);
                         parts[i] = partAttrs;
 
-                    } else {
                     }
                 }
             } catch (Exception e) {
@@ -268,7 +267,7 @@ public class SimpleMessageAttributes
      * Builds IMAP envelope String from pre-parsed data.
      */
     String parseEnvelope() {
-        List response = new ArrayList();
+        List<String> response = new ArrayList<String>();
         //1. Date ---------------
         response.add(LB + Q + interalDateEnvelopeString + Q + SP);
         //2. Subject ---------------
@@ -280,8 +279,8 @@ public class SimpleMessageAttributes
         //3. From ---------------
         if (from != null && from.length > 0) {
             response.add(LB);
-            for (int i = 0; i < from.length; i++) {
-                response.add(parseAddress(from[i]));
+            for (String aFrom : from) {
+                response.add(parseAddress(aFrom));
             }
             response.add(RB);
         } else {
@@ -293,17 +292,17 @@ public class SimpleMessageAttributes
 //            if (DEBUG) getLogger().debug("parsingEnvelope - sender[0] is: " + sender[0]);
             //Check for Netscape feature - sender is local part only
             if (sender[0].indexOf('@') == -1) {
-                response.add(LB + (String) response.get(3) + RB); //first From address
+                response.add(LB + response.get(3) + RB); //first From address
             } else {
                 response.add(LB);
-                for (int i = 0; i < sender.length; i++) {
-                    response.add(parseAddress(sender[i]));
+                for (String aSender : sender) {
+                    response.add(parseAddress(aSender));
                 }
                 response.add(RB);
             }
         } else {
             if (from != null && from.length > 0) {
-                response.add(LB + (String) response.get(3) + RB); //first From address
+                response.add(LB + response.get(3) + RB); //first From address
             } else {
                 response.add(NIL);
             }
@@ -311,17 +310,17 @@ public class SimpleMessageAttributes
         response.add(SP);
         if (replyTo != null && replyTo.length > 0) {
             if (replyTo[0].indexOf('@') == -1) {
-                response.add(LB + (String) response.get(3) + RB); //first From address
+                response.add(LB + response.get(3) + RB); //first From address
             } else {
                 response.add(LB);
-                for (int i = 0; i < replyTo.length; i++) {
-                    response.add(parseAddress(replyTo[i]));
+                for (String aReplyTo : replyTo) {
+                    response.add(parseAddress(aReplyTo));
                 }
                 response.add(RB);
             }
         } else {
             if (from != null && from.length > 0) {
-                response.add(LB + (String) response.get(3) + RB); //first From address
+                response.add(LB + response.get(3) + RB); //first From address
             } else {
                 response.add(NIL);
             }
@@ -329,8 +328,8 @@ public class SimpleMessageAttributes
         response.add(SP);
         if (to != null && to.length > 0) {
             response.add(LB);
-            for (int i = 0; i < to.length; i++) {
-                response.add(parseAddress(to[i]));
+            for (String aTo : to) {
+                response.add(parseAddress(aTo));
             }
             response.add(RB);
         } else {
@@ -339,8 +338,8 @@ public class SimpleMessageAttributes
         response.add(SP);
         if (cc != null && cc.length > 0) {
             response.add(LB);
-            for (int i = 0; i < cc.length; i++) {
-                response.add(parseAddress(cc[i]));
+            for (String aCc : cc) {
+                response.add(parseAddress(aCc));
             }
             response.add(RB);
         } else {
@@ -349,8 +348,8 @@ public class SimpleMessageAttributes
         response.add(SP);
         if (bcc != null && bcc.length > 0) {
             response.add(LB);
-            for (int i = 0; i < bcc.length; i++) {
-                response.add(parseAddress(bcc[i]));
+            for (String aBcc : bcc) {
+                response.add(parseAddress(aBcc));
             }
             response.add(RB);
         } else {
@@ -372,8 +371,8 @@ public class SimpleMessageAttributes
         response.add(RB);
 
         StringBuilder buf = new StringBuilder(16 * response.size());
-        for (int j = 0; j < response.size(); j++) {
-            buf.append((String) response.get(j));
+        for (String aResponse : response) {
+            buf.append(aResponse);
         }
 
         return buf.toString();
@@ -387,7 +386,7 @@ public class SimpleMessageAttributes
         StringBuilder buf = new StringBuilder();
         if (comma == -1) { //single address
             buf.append(LB);
-            InternetAddress netAddr = null;
+            InternetAddress netAddr;
             try {
                 netAddr = new InternetAddress(address);
             } catch (AddressException ae) {
@@ -512,9 +511,9 @@ public class SimpleMessageAttributes
                 buf.append(parts[0].getBodyStructure(false)).append(SP);
                 buf.append(lineCount);
             } else if (primaryType.equalsIgnoreCase(MULTIPART)) {
-                for (int i = 0; i < parts.length; i++) {
+                for (MailMessageAttributes part : parts) {
 //                    setupLogger(parts[i]); // reset transient getLogger()
-                    buf.append(parts[i].getBodyStructure(includeExtension));
+                    buf.append(part.getBodyStructure(includeExtension));
                 }
                 buf.append(SP + Q).append(secondaryType).append(Q);
             } else {
@@ -675,13 +674,13 @@ public class SimpleMessageAttributes
     //~ inner class
     private static class Header {
         String value;
-        Set params = null;
+        Set<String> params = null;
 
         public Header(String line) {
             String[] strs = line.split(";");
             value = strs[0];
             if (0 != strs.length) {
-                params = new HashSet();
+                params = new HashSet<String>();
                 for (int i = 1; i < strs.length; i++) {
                     String p = strs[i].trim();
                     int e = p.indexOf('=');
@@ -710,12 +709,11 @@ public class SimpleMessageAttributes
                 ret.append(Q).append(value).append(Q + SP);
                 ret.append(LB);
                 int i = 0;
-                for (Iterator iterator = params.iterator(); iterator.hasNext();) {
+                for (String param : params) {
                     if (i++ > 0) {
                         ret.append(SP);
                     }
-                    String s = (String) iterator.next();
-                    ret.append(s);
+                    ret.append(param);
                 }
                 ret.append(RB);
                 ret.append(RB);
