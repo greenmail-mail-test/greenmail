@@ -7,7 +7,7 @@
   <description>GreenMail - Email Test Servers</description>
   <url>http://www.icegreen.com/greenmail/</url>
 
-  <artifactId>greenmail-core</artifactId>
+  <artifactId>greenmail</artifactId>
   <packaging>jar</packaging>
   <version>1.4-SNAPSHOT</version>
 
