@@ -38,7 +38,7 @@ public class DataCommand extends SmtpCommand {
             return;
         }
 
-        if (!msg.getRecipientIterator().hasNext()) {
+        if (msg.getToAddresses().size() == 0) {
             conn.send("503 RCPT command(s) required");
 
             return;

@@ -13,7 +13,6 @@ import com.icegreen.greenmail.util.InternetPrintWriter;
 
 import javax.mail.internet.MimeMessage;
 import java.io.*;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,14 +30,14 @@ import java.util.List;
  * </p>
  */
 public class MovingMessage {
-    MailAddress returnPath;
-    List<MailAddress> toAddresses = new LinkedList<MailAddress>();
-    Workspace _workspace;
-    Resource _content;
-    MimeMessage message;
-    int _references = 0;
+    private MailAddress returnPath;
+    private List<MailAddress> toAddresses = new LinkedList<MailAddress>();
+    private Workspace _workspace;
+    private Resource _content;
+    private MimeMessage message;
+    private int _references = 0;
 
-    public List getToAddresses() {
+    public List<MailAddress> getToAddresses() {
         return toAddresses;
     }
 
@@ -84,11 +83,6 @@ public class MovingMessage {
 
     public void removeRecipient(MailAddress s) {
         toAddresses.remove(s);
-    }
-
-    public Iterator getRecipientIterator() {
-
-        return toAddresses.iterator();
     }
 
     /**

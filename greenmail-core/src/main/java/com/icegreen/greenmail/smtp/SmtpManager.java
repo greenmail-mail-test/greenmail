@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import java.util.Iterator;
+import javax.mail.internet.MimeMessage;
 import java.util.Vector;
 
 
@@ -117,24 +117,21 @@ public class SmtpManager {
 
     private class Incoming {
         public void enqueue(MovingMessage msg) {
-            Iterator iterator = msg.getRecipientIterator();
             StringBuilder tos = new StringBuilder();
-            while (iterator.hasNext()) {
-                MailAddress username = (MailAddress) iterator.next();
+            final MimeMessage message = msg.getMessage();
+            for (MailAddress address : msg.getToAddresses()) {
                 if (tos.length()>0) {
                     tos.append(',');
                 }
-                tos.append(username);
+                tos.append(address.getEmail());
             }
             try {
-                msg.getMessage().addRecipients(Message.RecipientType.TO,tos.toString());
+                message.addRecipients(Message.RecipientType.TO, tos.toString());
             } catch (MessagingException e) {
                 throw new RuntimeException(e);
             }
-            iterator = msg.getRecipientIterator();
-            while (iterator.hasNext()) {
-                MailAddress username = (MailAddress) iterator.next();
-                handle(msg, username);
+            for (MailAddress address : msg.getToAddresses()) {
+                handle(msg, address);
             }
 
         }
