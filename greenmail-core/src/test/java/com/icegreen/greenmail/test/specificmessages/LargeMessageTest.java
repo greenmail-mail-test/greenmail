@@ -24,9 +24,6 @@ import static org.junit.Assert.*;
  * Tests sending and receiving large messages
  */
 public class LargeMessageTest {
-    /**
-     * Rule to specify that the WireMock HTTP-server shall be reachable at localhost:8089
-     */
     @Rule
     public GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_POP3_IMAP);
 
