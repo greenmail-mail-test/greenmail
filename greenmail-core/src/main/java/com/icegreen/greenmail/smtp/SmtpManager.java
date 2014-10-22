@@ -13,6 +13,8 @@ import com.icegreen.greenmail.mail.MovingMessage;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.user.UserManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -21,6 +23,8 @@ import java.util.Vector;
 
 
 public class SmtpManager {
+    protected final static Logger log = LoggerFactory.getLogger(SmtpManager.class);
+
     Incoming _incomingQueue;
     UserManager userManager;
     private ImapHostManager imapHostManager;
@@ -140,7 +144,11 @@ public class SmtpManager {
                 try {
                     GreenMailUser user = userManager.getUserByEmail(mailAddress.getEmail());
                     if (null == user) {
-                        user = userManager.createUser(mailAddress.getEmail(),mailAddress.getEmail(), mailAddress.getEmail());
+                        String login = mailAddress.getEmail();
+                        String email = mailAddress.getEmail();
+                        String password = mailAddress.getEmail();
+                        user = userManager.createUser(email, login, password);
+                        log.warn("Created user login {} for address {} with password {} because it didn't exist before.", login, email, password);
                     }
 
                     user.deliver(msg);
