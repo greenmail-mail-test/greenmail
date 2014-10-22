@@ -39,6 +39,13 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>compile</scope>
+      <!-- We only need the API in compile scope. Matchers are needed in test scope -->
+      <exclusions>
+        <exclusion>
+          <groupId>org.hamcrest</groupId>
+          <artifactId>hamcrest-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Test scope -->
@@ -50,6 +57,10 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-core</artifactId>
     </dependency>
   </dependencies>
 
