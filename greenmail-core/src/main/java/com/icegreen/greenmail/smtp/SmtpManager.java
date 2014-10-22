@@ -148,7 +148,7 @@ public class SmtpManager {
                         String email = mailAddress.getEmail();
                         String password = mailAddress.getEmail();
                         user = userManager.createUser(email, login, password);
-                        log.warn("Created user login {} for address {} with password {} because it didn't exist before.", login, email, password);
+                        log.info("Created user login {} for address {} with password {} because it didn't exist before.", login, email, password);
                     }
 
                     user.deliver(msg);
