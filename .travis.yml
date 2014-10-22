@@ -4,4 +4,4 @@ jdk:
   - openjdk7
   - oraclejdk7
   - oraclejdk8
-script: mvn clean install site -Psite | egrep -v 'Download.*|Generating .*\.html\.\.\.'
+script: set -o pipefail; mvn clean install | egrep -v 'Download.*|Generating .*\.html\.\.\.'
