@@ -99,7 +99,7 @@ public class GreenMail implements GreenMailOperations {
                 }
             }
         }
-        managers = null;
+        managers = new Managers();
         services = null;
     }
 
