@@ -231,9 +231,10 @@ public class GreenMailUtil {
             MimeMessage mimeMessage = new MimeMessage(session);
             mimeMessage.setSubject(subject);
             mimeMessage.setFrom(froms[0]);
+            mimeMessage.setRecipients(Message.RecipientType.TO, tos);
 
             mimeMessage.setText(msg);
-            Transport.send(mimeMessage, tos);
+            Transport.send(mimeMessage);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
