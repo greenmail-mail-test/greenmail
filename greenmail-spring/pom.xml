@@ -19,7 +19,7 @@
   <dependencies>
     <dependency>
       <groupId>com.icegreen</groupId>
-      <artifactId>greenmail-core</artifactId>
+      <artifactId>greenmail</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>

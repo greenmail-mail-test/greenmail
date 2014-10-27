@@ -20,7 +20,7 @@
   <dependencies>
     <dependency>
       <groupId>com.icegreen</groupId>
-      <artifactId>greenmail-core</artifactId>
+      <artifactId>greenmail</artifactId>
     </dependency>
     <!-- JBoss
       Note: this is a wicked version mix ... but these are the best available JBoss artifacts I could find
