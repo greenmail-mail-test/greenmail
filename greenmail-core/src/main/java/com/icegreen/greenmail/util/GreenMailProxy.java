@@ -88,6 +88,21 @@ public abstract class GreenMailProxy implements GreenMailOperations {
         getGreenMail().setQuotaSupported(isEnabled);
     }
 
+    @Override
+    public void start() {
+        getGreenMail().start();
+    }
+
+    @Override
+    public void stop() {
+        getGreenMail().stop();
+    }
+
+    @Override
+    public void reset() {
+        getGreenMail().reset();
+    }
+
     /**
      * @return Greenmail instance provided by child class
      */

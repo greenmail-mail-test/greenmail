@@ -70,7 +70,7 @@ abstract public class Service extends Thread {
                 if (null == millis) {
                     join();
                 } else {
-                    join(millis.longValue());
+                    join(millis);
                 }
             }
         } catch (InterruptedException e) {

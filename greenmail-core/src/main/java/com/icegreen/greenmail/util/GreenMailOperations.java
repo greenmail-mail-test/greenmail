@@ -113,4 +113,19 @@ public interface GreenMailOperations {
      * @param isEnabled true, if quotas should be supported.
      */
     void setQuotaSupported(boolean isEnabled);
+
+    /**
+     * Start the GreenMail server
+     */
+    void start();
+
+    /**
+     * Stop the GreenMail server. Clear all data (send messages, users, ...).
+     */
+    void stop();
+
+    /**
+     * Restart the GreenMail server. Clear all data (send messages, users, ...)
+     */
+    void reset();
 }

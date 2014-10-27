@@ -15,17 +15,15 @@ import com.icegreen.greenmail.user.UserException;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Utility class that manages a greenmail server with support for multiple protocols
  */
 public class GreenMail implements GreenMailOperations {
-    Managers managers;
-    HashMap<String, Service> services;
+    private Managers managers;
+    private Map<String, Service> services;
+    private ServerSetup[] config;
 
     /**
      * Creates a SMTP, SMTPS, POP3, POP3S, IMAP, and IMAPS server binding onto non-default ports.
@@ -37,6 +35,7 @@ public class GreenMail implements GreenMailOperations {
 
     /**
      * Call this constructor if you want to run one of the email servers only
+     *
      * @param config
      */
     public GreenMail(ServerSetup config) {
@@ -45,34 +44,31 @@ public class GreenMail implements GreenMailOperations {
 
     /**
      * Call this constructor if you want to run more than one of the email servers
+     *
      * @param config
      */
     public GreenMail(ServerSetup[] config) {
-        managers = new Managers();
-        services = new HashMap<String, Service>();
-        for (ServerSetup setup : config) {
-            if (services.containsKey(setup.getProtocol())) {
-                throw new IllegalArgumentException("Server '" + setup.getProtocol() + "' was found at least twice in the array");
-            }
-            final String protocol = setup.getProtocol();
-            if (protocol.startsWith(ServerSetup.PROTOCOL_SMTP)) {
-                services.put(protocol, new SmtpServer(setup, managers));
-            } else if (protocol.startsWith(ServerSetup.PROTOCOL_POP3)) {
-                services.put(protocol, new Pop3Server(setup, managers));
-            } else if (protocol.startsWith(ServerSetup.PROTOCOL_IMAP)) {
-                services.put(protocol, new ImapServer(setup, managers));
-            }
-        }
+        this.config = config;
+        init();
     }
 
+    /**
+     * Initialize
+     */
+    private void init() {
+        managers = new Managers();
+        services = createServices(config, managers);
+    }
 
+    @Override
     public synchronized void start() {
+        init();
         for (Service service : services.values()) {
             service.startService(null);
         }
         //quick hack
         boolean allup = false;
-        for (int i=0;i<200 && !allup;i++) {
+        for (int i = 0; i < 200 && !allup; i++) {
             allup = true;
             for (Service service : services.values()) {
                 allup = allup && service.isRunning();
@@ -90,10 +86,47 @@ public class GreenMail implements GreenMailOperations {
         }
     }
 
+    @Override
     public synchronized void stop() {
-        for (Service service : services.values()) {
-            service.stopService(null);
+        if (services != null) {
+            for (Service service : services.values()) {
+                if (service.isRunning()) {
+                    service.stopService(null);
+                }
+            }
         }
+        managers = null;
+        services = null;
+    }
+
+    @Override
+    public void reset() {
+        stop();
+        start();
+    }
+
+    /**
+     * Create the required services according to the server setup
+     *
+     * @param config Service configuration
+     * @return Services map
+     */
+    private static Map<String, Service> createServices(ServerSetup[] config, Managers mgr) {
+        Map<String, Service> srvc = new HashMap<String, Service>();
+        for (ServerSetup setup : config) {
+            if (srvc.containsKey(setup.getProtocol())) {
+                throw new IllegalArgumentException("Server '" + setup.getProtocol() + "' was found at least twice in the array");
+            }
+            final String protocol = setup.getProtocol();
+            if (protocol.startsWith(ServerSetup.PROTOCOL_SMTP)) {
+                srvc.put(protocol, new SmtpServer(setup, mgr));
+            } else if (protocol.startsWith(ServerSetup.PROTOCOL_POP3)) {
+                srvc.put(protocol, new Pop3Server(setup, mgr));
+            } else if (protocol.startsWith(ServerSetup.PROTOCOL_IMAP)) {
+                srvc.put(protocol, new ImapServer(setup, mgr));
+            }
+        }
+        return srvc;
     }
 
     @Override
@@ -161,7 +194,7 @@ public class GreenMail implements GreenMailOperations {
 
     @Override
     public boolean waitForIncomingEmail(int emailCount) {
-        return waitForIncomingEmail(5000l,emailCount);
+        return waitForIncomingEmail(5000l, emailCount);
     }
 
     @Override
