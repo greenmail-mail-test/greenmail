@@ -56,8 +56,12 @@ public class GreenMail implements GreenMailOperations {
      * Initialize
      */
     private void init() {
-        managers = new Managers();
-        services = createServices(config, managers);
+        if (managers == null) {
+            managers = new Managers();
+        }
+        if(services == null) {
+            services = createServices(config, managers);
+        }
     }
 
     @Override
