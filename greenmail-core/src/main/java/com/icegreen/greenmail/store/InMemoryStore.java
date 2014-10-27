@@ -38,7 +38,7 @@ public class InMemoryStore
         PERMANENT_FLAGS.add(Flags.Flag.SEEN);
     }
 
-    private Map<String,Set<Quota>> quotaMap = new HashMap<String, Set<Quota>>();
+    private Map<String, Set<Quota>> quotaMap = new HashMap<String, Set<Quota>>();
     private static final Quota[] EMPTY_QUOTAS = new Quota[0];
 
     public MailFolder getMailbox(String absoluteMailboxName) {
@@ -98,26 +98,24 @@ public class InMemoryStore
         int idx = newName.lastIndexOf(ImapConstants.HIERARCHY_DELIMITER_CHAR);
         String newFolderName;
         String newFolderPathWithoutName;
-        if(idx>0) {
-            newFolderName = newName.substring(idx+1);
-            newFolderPathWithoutName = newName.substring(0,idx);
-        }
-        else {
+        if (idx > 0) {
+            newFolderName = newName.substring(idx + 1);
+            newFolderPathWithoutName = newName.substring(0, idx);
+        } else {
             newFolderName = newName;
             newFolderPathWithoutName = "";
         }
 
-        if(parent.getName().equals(newFolderPathWithoutName)) {
+        if (parent.getName().equals(newFolderPathWithoutName)) {
             // Simple rename
             toRename.setName(newFolderName);
-        }
-        else {
+        } else {
             // Hierarchy change
             parent.getChildren().remove(toRename);
             HierarchicalFolder userFolder = findParentByName(toRename, ImapConstants.INBOX_NAME).getParent();
-            String[] path = newName.split('\\'+ImapConstants.HIERARCHY_DELIMITER);
+            String[] path = newName.split('\\' + ImapConstants.HIERARCHY_DELIMITER);
             HierarchicalFolder newParent = userFolder;
-            for(int i=0;i<path.length-1;i++) {
+            for (int i = 0; i < path.length - 1; i++) {
                 newParent = newParent.getChild(path[i]);
             }
             toRename.moveToNewParent(newParent);
@@ -126,11 +124,12 @@ public class InMemoryStore
     }
 
     private HierarchicalFolder findParentByName(HierarchicalFolder folder, String parentName) {
-        while(null!=folder && !parentName.equals(folder.getName())) {
+        while (null != folder && !parentName.equals(folder.getName())) {
             folder = folder.getParent();
         }
         return folder;
     }
+
     public Collection<MailFolder> getChildren(MailFolder parent) {
         Collection children = ((HierarchicalFolder) parent).getChildren();
         return Collections.<MailFolder>unmodifiableCollection(children);
@@ -194,38 +193,37 @@ public class InMemoryStore
 
     public Quota[] getQuota(final String root, final String qualifiedRootPrefix) {
         Set<String> rootPaths = new HashSet<String>();
-        if(root.indexOf(ImapConstants.HIERARCHY_DELIMITER)<0) {
-            rootPaths.add(qualifiedRootPrefix+root);
-        }
-        else {
-            for(String r: root.split(ImapConstants.HIERARCHY_DELIMITER)) {
-                rootPaths.add(qualifiedRootPrefix+r);
+        if (!root.contains(ImapConstants.HIERARCHY_DELIMITER)) {
+            rootPaths.add(qualifiedRootPrefix + root);
+        } else {
+            for (String r : root.split(ImapConstants.HIERARCHY_DELIMITER)) {
+                rootPaths.add(qualifiedRootPrefix + r);
             }
         }
         rootPaths.add(qualifiedRootPrefix); // Add default root
 
         Set<Quota> collectedQuotas = new HashSet<Quota>();
-        for(String p: rootPaths) {
+        for (String p : rootPaths) {
             Set<Quota> quotas = quotaMap.get(p);
-            if(null!=quotas) {
+            if (null != quotas) {
                 collectedQuotas.addAll(quotas);
             }
         }
         updateQuotas(collectedQuotas, qualifiedRootPrefix);
-        return collectedQuotas.toArray(EMPTY_QUOTAS);
+        return collectedQuotas.toArray(new Quota[collectedQuotas.size()]);
     }
 
     private void updateQuotas(final Set<Quota> quotas,
                               final String qualifiedRootPrefix) {
-        for(Quota q: quotas) {
+        for (Quota q : quotas) {
             updateQuota(q, qualifiedRootPrefix);
         }
     }
 
     private void updateQuota(final Quota quota, final String pQualifiedRootPrefix) {
         MailFolder folder = getMailbox(
-                ImapConstants.USER_NAMESPACE+ImapConstants.HIERARCHY_DELIMITER+
-                        pQualifiedRootPrefix+ImapConstants.HIERARCHY_DELIMITER+
+                ImapConstants.USER_NAMESPACE + ImapConstants.HIERARCHY_DELIMITER +
+                        pQualifiedRootPrefix + ImapConstants.HIERARCHY_DELIMITER +
                         quota.quotaRoot);
         try {
             for (Quota.Resource r : quota.resources) {
@@ -235,11 +233,9 @@ public class InMemoryStore
                         size += m.getMimeMessage().getSize();
                     }
                     r.usage = size;
-                }
-                else if(MESSAGES.equals(r.name)) {
+                } else if (MESSAGES.equals(r.name)) {
                     r.usage = folder.getMessageCount();
-                }
-                else {
+                } else {
                     throw new IllegalStateException("Quota " + r.name + " not supported");
                 }
             }
@@ -250,19 +246,18 @@ public class InMemoryStore
 
     public void setQuota(final Quota quota, String qualifiedRootPrefix) {
         // Validate
-        for(Quota.Resource r: quota.resources) {
-            if(!STORAGE.equals(r.name) && !MESSAGES.equals(r.name)) {
-                throw new IllegalStateException("Quota "+r.name+" not supported");
+        for (Quota.Resource r : quota.resources) {
+            if (!STORAGE.equals(r.name) && !MESSAGES.equals(r.name)) {
+                throw new IllegalStateException("Quota " + r.name + " not supported");
             }
         }
 
         // Save quota
-        Set<Quota> quotas = quotaMap.get(qualifiedRootPrefix+quota.quotaRoot);
-        if(null == quotas) {
+        Set<Quota> quotas = quotaMap.get(qualifiedRootPrefix + quota.quotaRoot);
+        if (null == quotas) {
             quotas = new HashSet<Quota>();
-            quotaMap.put(qualifiedRootPrefix+quota.quotaRoot, quotas);
-        }
-        else {
+            quotaMap.put(qualifiedRootPrefix + quota.quotaRoot, quotas);
+        } else {
             quotas.clear(); // " Any previous resource limits for the named quota root are discarded"
         }
         quotas.add(quota);
@@ -270,9 +265,8 @@ public class InMemoryStore
 
     private void addAllChildren(HierarchicalFolder mailbox, Collection mailboxes) {
         Collection children = mailbox.getChildren();
-        Iterator iterator = children.iterator();
-        while (iterator.hasNext()) {
-            HierarchicalFolder child = (HierarchicalFolder) iterator.next();
+        for (Object aChildren : children) {
+            HierarchicalFolder child = (HierarchicalFolder) aChildren;
             mailboxes.add(child);
             addAllChildren(child, mailboxes);
         }
@@ -295,11 +289,11 @@ public class InMemoryStore
         protected String name;
         private boolean isSelectable = false;
 
-        private List<StoredMessage> mailMessages = Collections.synchronizedList(new LinkedList<StoredMessage>());
+        private List<StoredMessage> mailMessages = Collections.synchronizedList(new ArrayList<StoredMessage>());
         private long nextUid = 1;
         private long uidValidity;
 
-        private final List<FolderListener> _mailboxListeners = Collections.synchronizedList(new LinkedList<FolderListener>());
+        private final List<FolderListener> _mailboxListeners = Collections.synchronizedList(new ArrayList<FolderListener>());
 
         public HierarchicalFolder(HierarchicalFolder parent,
                                   String name) {
@@ -318,7 +312,7 @@ public class InMemoryStore
         }
 
         public void moveToNewParent(HierarchicalFolder newParent) {
-            if(!newParent.getChildren().contains(this)) {
+            if (!newParent.getChildren().contains(this)) {
                 parent = newParent;
                 parent.getChildren().add(this);
             }
@@ -350,7 +344,9 @@ public class InMemoryStore
         }
 
         public int getMessageCount() {
-            return mailMessages.size();
+            synchronized (mailMessages) {
+                return mailMessages.size();
+            }
         }
 
         public long getUidValidity() {
@@ -363,10 +359,11 @@ public class InMemoryStore
 
         public int getUnseenCount() {
             int count = 0;
-            for (StoredMessage mailMessage : mailMessages) {
-                StoredMessage message = (StoredMessage) mailMessage;
-                if (!message.isSet(Flags.Flag.SEEN)) {
-                    count++;
+            synchronized (mailMessages) {
+                for (StoredMessage message : mailMessages) {
+                    if (!message.isSet(Flags.Flag.SEEN)) {
+                        count++;
+                    }
                 }
             }
             return count;
@@ -378,10 +375,12 @@ public class InMemoryStore
          * the first unseen.
          */
         public int getFirstUnseen() {
-            for (int i = 0; i < mailMessages.size(); i++) {
-                StoredMessage message = (StoredMessage) mailMessages.get(i);
-                if (!message.isSet(Flags.Flag.SEEN)) {
-                    return i + 1;
+            synchronized (mailMessages) {
+                for (int i = 0; i < mailMessages.size(); i++) {
+                    StoredMessage message = mailMessages.get(i);
+                    if (!message.isSet(Flags.Flag.SEEN)) {
+                        return i + 1;
+                    }
                 }
             }
             return -1;
@@ -389,12 +388,13 @@ public class InMemoryStore
 
         public int getRecentCount(boolean reset) {
             int count = 0;
-            for (StoredMessage mailMessage : mailMessages) {
-                StoredMessage message = (StoredMessage) mailMessage;
-                if (message.isSet(Flags.Flag.RECENT)) {
-                    count++;
-                    if (reset) {
-                        message.setFlag(Flags.Flag.RECENT, false);
+            synchronized (mailMessages) {
+                for (StoredMessage message : mailMessages) {
+                    if (message.isSet(Flags.Flag.RECENT)) {
+                        count++;
+                        if (reset) {
+                            message.setFlag(Flags.Flag.RECENT, false);
+                        }
                     }
                 }
             }
@@ -402,10 +402,12 @@ public class InMemoryStore
         }
 
         public int getMsn(long uid) throws FolderException {
-            for (int i = 0; i < mailMessages.size(); i++) {
-                StoredMessage message = (StoredMessage) mailMessages.get(i);
-                if (message.getUid() == uid) {
-                    return i + 1;
+            synchronized (mailMessages) {
+                for (int i = 0; i < mailMessages.size(); i++) {
+                    StoredMessage message = mailMessages.get(i);
+                    if (message.getUid() == uid) {
+                        return i + 1;
+                    }
                 }
             }
             throw new FolderException("No such message.");
@@ -423,9 +425,12 @@ public class InMemoryStore
 
         public List getMessages(MsgRangeFilter range) {
             List<StoredMessage> ret = new ArrayList<StoredMessage>();
-            for (int i = 0; i < mailMessages.size(); i++) {
-                if (range.includes(i+1)) {
-                    ret.add(mailMessages.get(i));
+
+            synchronized (mailMessages) {
+                for (int i = 0; i < mailMessages.size(); i++) {
+                    if (range.includes(i + 1)) {
+                        ret.add(mailMessages.get(i));
+                    }
                 }
             }
 
@@ -433,16 +438,23 @@ public class InMemoryStore
         }
 
         public List<StoredMessage> getMessages() {
-            return mailMessages;
+            synchronized (mailMessages) {
+                // Return new list since we don't want to give the caller access to the internal list
+                return new ArrayList<StoredMessage>(mailMessages);
+            }
         }
 
         public List<StoredMessage> getNonDeletedMessages() {
             List<StoredMessage> ret = new ArrayList<StoredMessage>();
-            for (StoredMessage mailMessage : mailMessages) {
-                if (!mailMessage.getFlags().contains(Flags.Flag.DELETED)) {
-                    ret.add(mailMessage);
+
+            synchronized (mailMessages) {
+                for (StoredMessage mailMessage : mailMessages) {
+                    if (!mailMessage.getFlags().contains(Flags.Flag.DELETED)) {
+                        ret.add(mailMessage);
+                    }
                 }
             }
+
             return ret;
         }
 
@@ -469,8 +481,11 @@ public class InMemoryStore
             StoredMessage storedMessage = new StoredMessage(message,
                     internalDate, uid);
 
-            mailMessages.add(storedMessage);
-            int newMsn = mailMessages.size();
+            int newMsn;
+            synchronized (mailMessages) {
+                mailMessages.add(storedMessage);
+                newMsn = mailMessages.size();
+            }
 
             // Notify all the listeners of the new message
             synchronized (_mailboxListeners) {
@@ -484,7 +499,7 @@ public class InMemoryStore
 
         public void setFlags(Flags flags, boolean value, long uid, FolderListener silentListener, boolean addUid) throws FolderException {
             int msn = getMsn(uid);
-            StoredMessage message = (StoredMessage) mailMessages.get(msn - 1);
+            StoredMessage message = mailMessages.get(msn - 1);
 
             message.setFlags(flags, value);
 
@@ -497,7 +512,7 @@ public class InMemoryStore
 
         public void replaceFlags(Flags flags, long uid, FolderListener silentListener, boolean addUid) throws FolderException {
             int msn = getMsn(uid);
-            StoredMessage message = (StoredMessage) mailMessages.get(msn - 1);
+            StoredMessage message = mailMessages.get(msn - 1);
             message.setFlags(MessageFlags.ALL_FLAGS, false);
             message.setFlags(flags, true);
 
@@ -521,7 +536,9 @@ public class InMemoryStore
         }
 
         public void deleteAllMessages() {
-            mailMessages.clear();
+            synchronized (mailMessages) {
+                mailMessages.clear();
+            }
         }
 
         public void store(MovingMessage mail) throws Exception {
@@ -536,33 +553,41 @@ public class InMemoryStore
         }
 
         public StoredMessage getMessage(long uid) {
-            for (StoredMessage mailMessage : mailMessages) {
-                if (mailMessage.getUid() == uid) {
-                    return mailMessage;
+            synchronized (mailMessages) {
+                for (StoredMessage mailMessage : mailMessages) {
+                    if (mailMessage.getUid() == uid) {
+                        return mailMessage;
+                    }
                 }
             }
             return null;
         }
 
         public long[] getMessageUids() {
-            long[] uids = new long[mailMessages.size()];
-            for (int i = 0; i < mailMessages.size(); i++) {
-                StoredMessage message = (StoredMessage) mailMessages.get(i);
-                uids[i] = message.getUid();
+            synchronized (mailMessages) {
+                long[] uids = new long[mailMessages.size()];
+                for (int i = 0; i < mailMessages.size(); i++) {
+                    StoredMessage message = mailMessages.get(i);
+                    uids[i] = message.getUid();
+                }
+                return uids;
             }
-            return uids;
         }
 
         private void deleteMessage(int msn) {
-            mailMessages.remove(msn - 1); //NOTE BY WAEL: is this really correct, the number of items in the iterating list is changed see expunge()
+            synchronized (mailMessages) {
+                mailMessages.remove(msn - 1); // input is 1 based index
+            }
         }
 
         public long[] search(SearchTerm searchTerm) {
             ArrayList<StoredMessage> matchedMessages = new ArrayList<StoredMessage>();
 
-            for (StoredMessage mailMessage : mailMessages) {
-                if (searchTerm.match(mailMessage.getMimeMessage())) {
-                    matchedMessages.add(mailMessage);
+            synchronized (mailMessages) {
+                for (StoredMessage mailMessage : mailMessages) {
+                    if (searchTerm.match(mailMessage.getMimeMessage())) {
+                        matchedMessages.add(mailMessage);
+                    }
                 }
             }
 
@@ -582,7 +607,7 @@ public class InMemoryStore
             try {
                 newMime = new MimeMessage(originalMessage.getMimeMessage());
             } catch (MessagingException e) {
-                throw new FolderException("Can not copy message "+uid+" to folder " + toFolder, e);
+                throw new FolderException("Can not copy message " + uid + " to folder " + toFolder, e);
             }
             Date newDate = originalMessage.getInternalDate();
 
@@ -590,10 +615,12 @@ public class InMemoryStore
         }
 
         public void expunge() throws FolderException {
-            for (int i = mailMessages.size()-1; i >= 0; i--) {
-                StoredMessage message = (StoredMessage) mailMessages.get(i);
-                if (message.isSet(Flags.Flag.DELETED)) {
-                    expungeMessage(i+1); // MSNs start counting at 1
+            synchronized (mailMessages) {
+                for (int i = mailMessages.size() - 1; i >= 0; i--) {
+                    StoredMessage message = mailMessages.get(i);
+                    if (message.isSet(Flags.Flag.DELETED)) {
+                        expungeMessage(i + 1); // MSNs start counting at 1
+                    }
                 }
             }
         }
