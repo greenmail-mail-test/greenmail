@@ -1,15 +1,13 @@
 package com.icegreen.greenmail.imap.commands;
 
+import javax.mail.Flags;
+import javax.mail.Message;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.search.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.mail.Flags;
-import javax.mail.Message;
-import javax.mail.search.AndTerm;
-import javax.mail.search.FlagTerm;
-import javax.mail.search.HeaderTerm;
-import javax.mail.search.SearchTerm;
 
 /**
  * Builder for search terms.
@@ -30,17 +28,17 @@ public abstract class SearchTermBuilder {
                 break;
             // Flags
             case ALL:
-                builder = createSearchTermBuilder(
-                        new SearchTerm() {
-                            @Override
-                            public boolean match(Message msg) {
-                                return true;
-                            }
-                        });
+                builder = createSearchTermBuilder(new AllSearchTerm());
                 break;
             case ANSWERED:
                 builder = createFlagSearchTermBuilder("ANSWERED", true);
-            break;
+                break;
+            case BCC:
+                builder = createRecipientSearchTermBuilder(Message.RecipientType.BCC);
+                break;
+            case CC:
+                builder = createRecipientSearchTermBuilder(Message.RecipientType.CC);
+                break;
             case DELETED:
                 builder = createFlagSearchTermBuilder("DELETED", true);
                 break;
@@ -49,6 +47,9 @@ public abstract class SearchTermBuilder {
                 break;
             case FLAGGED:
                 builder = createFlagSearchTermBuilder("FLAGGED", true);
+                break;
+            case FROM:
+                builder = createFromSearchTermBuilder();
                 break;
             case NEW:
                 builder = createSearchTermBuilder(
@@ -63,6 +64,9 @@ public abstract class SearchTermBuilder {
                 break;
             case SEEN:
                 builder = createSearchTermBuilder(createFlagSearchTerm("SEEN", true));
+                break;
+            case TO:
+                builder = createRecipientSearchTermBuilder(Message.RecipientType.TO);
                 break;
             case UNANSWERED:
                 builder = createSearchTermBuilder(createFlagSearchTerm("ANSWERED", false));
@@ -134,6 +138,32 @@ public abstract class SearchTermBuilder {
         };
     }
 
+    private static SearchTermBuilder createRecipientSearchTermBuilder(final Message.RecipientType type) {
+        return new SearchTermBuilder() {
+            @Override
+            public SearchTerm build() {
+                try {
+                    return new RecipientTerm(type, new InternetAddress(getParameters().get(0)));
+                } catch (AddressException e) {
+                    throw new IllegalArgumentException("Address is not correct", e);
+                }
+            }
+        };
+    }
+
+    private static SearchTermBuilder createFromSearchTermBuilder() {
+        return new SearchTermBuilder() {
+            @Override
+            public SearchTerm build() {
+                try {
+                    return new FromTerm(new InternetAddress(getParameters().get(0)));
+                } catch (AddressException e) {
+                    throw new IllegalArgumentException("Address is not correct", e);
+                }
+            }
+        };
+    }
+
     private static SearchTermBuilder createFlagSearchTermBuilder(final String pFlagName, final boolean pValue) {
         return new SearchTermBuilder() {
             @Override
@@ -142,7 +172,6 @@ public abstract class SearchTermBuilder {
             }
         };
     }
-
     private static SearchTermBuilder createKeywordSearchTermBuilder(final SearchKey pKey) {
        return new SearchTermBuilder() {
             @Override
@@ -196,5 +225,15 @@ public abstract class SearchTermBuilder {
                 "key=" + key +
                 ", parameters=" + parameters +
                 '}';
+    }
+
+    /**
+     * Search term that matches all messages
+     */
+    private static class AllSearchTerm extends SearchTerm {
+        @Override
+        public boolean match(Message msg) {
+            return true;
+        }
     }
 }

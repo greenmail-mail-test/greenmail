@@ -5,9 +5,6 @@
 package com.icegreen.greenmail.test;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.store.MailFolder;
-import com.icegreen.greenmail.store.StoredMessage;
-import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
@@ -17,13 +14,8 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.mail.search.FlagTerm;
-import javax.mail.search.HeaderTerm;
 import java.io.ByteArrayOutputStream;
-import java.util.List;
 import java.util.Properties;
 
 import static javax.mail.Flags.Flag.DELETED;
@@ -37,89 +29,6 @@ import static org.junit.Assert.*;
 public class ImapServerTest {
     @Rule
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
-
-    @Test
-    public void testSearch() throws Exception {
-        GreenMailUser user = greenMail.setUser("test@localhost", "pwd");
-        assertNotNull(greenMail.getImap());
-
-        Properties p = new Properties();
-//            p.setProperty("mail.host","localhost");
-//            p.setProperty("mail.debug","true");
-        Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
-        MailFolder folder = greenMail.getManagers().getImapHostManager().getFolder(user, "INBOX");
-
-        MimeMessage message1 = new MimeMessage(session);
-        message1.setSubject("testSearch");
-        message1.setText("content");
-        message1.setRecipients(Message.RecipientType.TO, new Address[]{
-                new InternetAddress("test@localhost")
-        });
-        message1.setFlag(Flags.Flag.ANSWERED, true);
-        Flags fooFlags = new Flags();
-        fooFlags.add("foo");
-        message1.setFlags(fooFlags, true);
-        folder.store(message1);
-
-        MimeMessage message2 = new MimeMessage(session);
-        message2.setSubject("testSearch");
-        message2.setText("content");
-        message2.setRecipients(Message.RecipientType.TO, new Address[]{
-                new InternetAddress("test@localhost")
-        });
-        message2.setFlag(Flags.Flag.ANSWERED, false);
-        folder.store(message2);
-
-        List<StoredMessage> gMsgs = folder.getMessages();
-        for (StoredMessage gMsg : gMsgs) {
-            MimeMessage mm = gMsg.getMimeMessage();
-            for (Flags.Flag f : mm.getFlags().getSystemFlags()) {
-                gMsg.getFlags().add(f);
-            }
-            for (String uf : mm.getFlags().getUserFlags()) {
-                gMsg.getFlags().add(uf);
-            }
-            mm.saveChanges();
-        }
-
-        greenMail.waitForIncomingEmail(2);
-
-        Store store = session.getStore("imap");
-        store.connect("test@localhost", "pwd");
-        Folder imapFolder = store.getFolder("INBOX");
-        imapFolder.open(Folder.READ_WRITE);
-
-        Message[] imapMessages = imapFolder.getMessages();
-        assertTrue(null != imapMessages && imapMessages.length == 2);
-        Message m0 = imapMessages[0];
-        Message m1 = imapMessages[1];
-        assertTrue(m0.getFlags().contains(Flags.Flag.ANSWERED));
-
-        // Search flags
-        imapMessages = imapFolder.search(new FlagTerm(new Flags(Flags.Flag.ANSWERED), true));
-        assertTrue(imapMessages.length == 1);
-        assertTrue(imapMessages[0] == m0);
-
-        imapMessages = imapFolder.search(new FlagTerm(fooFlags, true));
-        assertTrue(imapMessages.length == 1);
-        assertTrue(imapMessages[0].getFlags().contains("foo"));
-
-        imapMessages = imapFolder.search(new FlagTerm(fooFlags, false));
-        assertTrue(imapMessages.length == 1);
-        assertTrue(!imapMessages[0].getFlags().contains(fooFlags));
-
-        // Search header ids
-        String id = m0.getHeader("Message-ID")[0];
-        imapMessages = imapFolder.search(new HeaderTerm("Message-ID", id));
-        assertTrue(imapMessages.length == 1);
-        assertTrue(imapMessages[0] == m0);
-
-        id = m1.getHeader("Message-ID")[0];
-        imapMessages = imapFolder.search(new HeaderTerm("Message-ID", id));
-        assertTrue(imapMessages.length == 1);
-        assertTrue(imapMessages[0] == m1);
-
-    }
 
     @Test
     public void testRetreiveSimple() throws Exception {
