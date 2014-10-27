@@ -39,7 +39,6 @@ public class InMemoryStore
     }
 
     private Map<String, Set<Quota>> quotaMap = new HashMap<String, Set<Quota>>();
-    private static final Quota[] EMPTY_QUOTAS = new Quota[0];
 
     public MailFolder getMailbox(String absoluteMailboxName) {
         StringTokenizer tokens = new StringTokenizer(absoluteMailboxName, HIERARCHY_DELIMITER);
@@ -289,7 +288,7 @@ public class InMemoryStore
         protected String name;
         private boolean isSelectable = false;
 
-        private List<StoredMessage> mailMessages = Collections.synchronizedList(new ArrayList<StoredMessage>());
+        private final List<StoredMessage> mailMessages = Collections.synchronizedList(new ArrayList<StoredMessage>());
         private long nextUid = 1;
         private long uidValidity;
 
@@ -593,7 +592,7 @@ public class InMemoryStore
 
             long[] matchedUids = new long[matchedMessages.size()];
             for (int i = 0; i < matchedUids.length; i++) {
-                StoredMessage storedMessage = (StoredMessage) matchedMessages.get(i);
+                StoredMessage storedMessage = matchedMessages.get(i);
                 long uid = storedMessage.getUid();
                 matchedUids[i] = uid;
             }
