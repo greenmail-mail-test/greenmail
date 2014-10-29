@@ -1,7 +1,6 @@
 <?xml version='1.0'?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <name>== GreenMail ==</name>
   <description>GreenMail - Email Test Servers</description>
@@ -12,7 +11,7 @@
   <artifactId>greenmail-parent</artifactId>
   <packaging>pom</packaging>
   <!-- This version should get inherited to all subprojects. -->
-  <version>1.4-SNAPSHOT</version>
+  <version>1.4.1-SNAPSHOT</version>
 
   <prerequisites>
     <maven>3.0.5</maven>
@@ -36,6 +35,7 @@
     <url>
       https://github.com/greenmail-mail-test/greenmail
     </url>
+    <tag>HEAD</tag>
   </scm>
 
   <issueManagement>
@@ -46,7 +46,7 @@
   <ciManagement>
     <system>Travis</system>
     <url>https://travis-ci.org/greenmail-mail-test/greenmail/</url>
-    <notifiers/>
+    <notifiers />
   </ciManagement>
 
   <!-- details about the organization that 'owns' the project -->
@@ -100,8 +100,8 @@
       <properties>
         <id>zegon</id>
       </properties>
-      <email/>
-      <url/>
+      <email />
+      <url />
     </contributor>
   </contributors>
 
@@ -209,12 +209,12 @@
       <dependency>
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail</artifactId>
-        <version>1.4-SNAPSHOT</version>
+        <version>1.4.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail-webapp</artifactId>
-        <version>1.4-SNAPSHOT</version>
+        <version>1.4.1-SNAPSHOT</version>
       </dependency>
 
       <!-- Compile scope (=default) -->
@@ -389,7 +389,7 @@
             <artifactId>maven-javadoc-plugin</artifactId>
             <version>2.8.1</version>
             <configuration>
-              <quiet/>
+              <quiet />
               <aggregate>true</aggregate>
               <linksource>true</linksource>
               <links>
