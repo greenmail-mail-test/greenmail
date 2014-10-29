@@ -11,7 +11,7 @@
   <artifactId>greenmail-parent</artifactId>
   <packaging>pom</packaging>
   <!-- This version should get inherited to all subprojects. -->
-  <version>1.4.1-SNAPSHOT</version>
+  <version>1.4.0</version>
 
   <prerequisites>
     <maven>3.0.5</maven>
@@ -209,12 +209,12 @@
       <dependency>
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail</artifactId>
-        <version>1.4.1-SNAPSHOT</version>
+        <version>1.4.0</version>
       </dependency>
       <dependency>
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail-webapp</artifactId>
-        <version>1.4.1-SNAPSHOT</version>
+        <version>1.4.0</version>
       </dependency>
 
       <!-- Compile scope (=default) -->
