@@ -100,7 +100,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         if (fetch.internalDate) {
             response.append(" INTERNALDATE \"");
             // TODO format properly
-            response.append(message.getAttributes().getInternalDateAsString());
+            response.append(message.getAttributes().getReceivedDateAsString());
             response.append('\"');
         }
 

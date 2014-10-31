@@ -35,12 +35,12 @@ public interface MailMessageAttributes {
      *
      * @return Date imap internal date
      */
-    Date getInternalDate();
+    Date getReceivedDate();
 
     /**
      * Returns IMAP formatted String representation of Date
      */
-    String getInternalDateAsString();
+    String getReceivedDateAsString();
 
     /**
      * Provides the sizeof the message in octets.

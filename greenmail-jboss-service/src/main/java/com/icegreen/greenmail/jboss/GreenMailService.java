@@ -157,7 +157,7 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
                 builder.append("<td>").append(mimeMessage.getSubject()).append("</td>");
                 builder.append("<td>")
                         .append(null == mimeMessage.getReceivedDate()
-                                ? msg.getInternalDate()
+                                ? msg.getReceivedDate()
                                 : mimeMessage.getReceivedDate())
                         .append("</td>");
 

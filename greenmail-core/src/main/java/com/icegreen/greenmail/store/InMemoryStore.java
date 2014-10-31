@@ -467,7 +467,7 @@ public class InMemoryStore
 
         public long appendMessage(MimeMessage message,
                                   Flags flags,
-                                  Date internalDate) {
+                                  Date receivedDate) {
             long uid = nextUid;
             nextUid++;
 
@@ -478,7 +478,7 @@ public class InMemoryStore
                 throw new IllegalStateException("Can not set flags", e);
             }
             StoredMessage storedMessage = new StoredMessage(message,
-                    internalDate, uid);
+                    receivedDate, uid);
 
             int newMsn;
             synchronized (mailMessages) {
@@ -546,9 +546,9 @@ public class InMemoryStore
 
 
         public void store(MimeMessage message) throws Exception {
-            Date internalDate = new Date();
+            Date receivedDate = new Date();
             Flags flags = new Flags();
-            appendMessage(message, flags, internalDate);
+            appendMessage(message, flags, receivedDate);
         }
 
         public StoredMessage getMessage(long uid) {
@@ -608,9 +608,8 @@ public class InMemoryStore
             } catch (MessagingException e) {
                 throw new FolderException("Can not copy message " + uid + " to folder " + toFolder, e);
             }
-            Date newDate = originalMessage.getInternalDate();
 
-            toFolder.appendMessage(newMime, originalMessage.getFlags(), newDate);
+            toFolder.appendMessage(newMime, originalMessage.getFlags(), originalMessage.getReceivedDate());
         }
 
         public void expunge() throws FolderException {

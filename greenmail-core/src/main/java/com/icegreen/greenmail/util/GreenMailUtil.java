@@ -14,6 +14,7 @@ import javax.activation.DataSource;
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.io.*;
+import java.util.Date;
 import java.util.Properties;
 import java.util.Random;
 
@@ -230,6 +231,7 @@ public class GreenMailUtil {
             Address[] froms = new InternetAddress[]{new InternetAddress(from)};
             MimeMessage mimeMessage = new MimeMessage(session);
             mimeMessage.setSubject(subject);
+            mimeMessage.setSentDate(new Date());
             mimeMessage.setFrom(froms[0]);
             mimeMessage.setRecipients(Message.RecipientType.TO, tos);
 

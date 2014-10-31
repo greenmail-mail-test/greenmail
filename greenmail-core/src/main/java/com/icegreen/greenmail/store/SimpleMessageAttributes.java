@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.internet.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -47,8 +46,7 @@ public class SimpleMessageAttributes
 
     private int uid;
     private int messageSequenceNumber;
-    private Date internalDate;
-    private String internalDateString;
+    private Date receivedDate;
     private String bodyStructure;
     private String envelope;
     private int size;
@@ -69,33 +67,49 @@ public class SimpleMessageAttributes
     private String[] date;
     private String[] messageID;
     private String contentType;
-    private String primaryType = null;   // parsed from contentType
-    private String secondaryType = null; // parsed from contentType
+    private String primaryType;   // parsed from contentType
+    private String secondaryType; // parsed from contentType
     private Set parameters;      // parsed from contentType
-    private String contentID = null;
-    private String contentDesc = null;
-    private String contentEncoding = null;
-    private String interalDateEnvelopeString = null;
-    private Header contentDisposition = null;
+    private String contentID;
+    private String contentDesc;
+    private String contentEncoding;
+    private String receivedDateString;
+    private String sentDateEnvelopeString;
+    private Header contentDisposition;
 
-    SimpleMessageAttributes() {
+    SimpleMessageAttributes(MimeMessage msg, Date receivedDate) throws MessagingException {
+        Date sentDate = getSentDate(msg, receivedDate);
+
+        this.receivedDate = receivedDate;
+        this.receivedDateString = new MailDateFormat().format(receivedDate);
+        this.sentDateEnvelopeString = new MailDateFormat().format(sentDate);
+
+        if(msg != null) {
+            parseMimePart(msg);
+        }
     }
 
-    void setAttributesFor(MimeMessage msg) throws MessagingException {
+    /**
+     * Compute "sent" date
+     *
+     * @param msg        Message to take sent date from. May be null to use default
+     * @param defaultVal Default if sent date is not present
+     * @return Sent date or now if no date could be found
+     */
+    private static Date getSentDate(MimeMessage msg, Date defaultVal) {
+        if(msg == null) {
+            return defaultVal;
+        }
         try {
-            internalDate = msg.getSentDate();
+            Date sentDate = msg.getSentDate();
+            if(sentDate == null) {
+                return defaultVal;
+            } else {
+                return sentDate;
+            }
         } catch (MessagingException me) {
-            internalDate = new Date();
+            return new Date();
         }
-        if (null == internalDate) {
-            internalDate = new Date();
-        }
-
-        internalDateString = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss Z").format(internalDate);
-        interalDateEnvelopeString = new MailDateFormat().format(internalDate);
-        parseMimePart(msg);
-        envelope = null;
-        bodyStructure = null;
     }
 
     void setUID(int thisUID) {
@@ -220,7 +234,7 @@ public class SimpleMessageAttributes
                     BodyPart nextPart = container.getBodyPart(i);
 
                     if (nextPart instanceof MimePart) {
-                        SimpleMessageAttributes partAttrs = new SimpleMessageAttributes();
+                        SimpleMessageAttributes partAttrs = new SimpleMessageAttributes(null, receivedDate);
                         partAttrs.parseMimePart((MimePart) nextPart);
                         parts[i] = partAttrs;
 
@@ -269,7 +283,7 @@ public class SimpleMessageAttributes
     String parseEnvelope() {
         List<String> response = new ArrayList<String>();
         //1. Date ---------------
-        response.add(LB + Q + interalDateEnvelopeString + Q + SP);
+        response.add(LB + Q + sentDateEnvelopeString + Q + SP);
         //2. Subject ---------------
         if (subject != null && (subject.length() != 0)) {
             response.add(Q + subject + Q + SP);
@@ -624,48 +638,27 @@ public class SimpleMessageAttributes
         return uid;
     }
 
-    /**
-     * Provides the date and time at which the message was received. In the
-     * case of delivery by SMTP, this SHOULD be the date and time of final
-     * delivery as defined for SMTP. In the case of messages copied from
-     * another mailbox, it shuld be the internalDate of the source message. In
-     * the case of messages Appended to the mailbox, example drafts,  the
-     * internalDate is either specified in the Append command or is the
-     * current dat and time at the time of the Append.
-     *
-     * @return Date imap internal date
-     */
-    public Date getInternalDate() {
-        return internalDate;
+    @Override
+    public Date getReceivedDate() {
+        return receivedDate;
     }
 
-    public String getInternalDateAsString() {
-        return internalDateString;
+    @Override
+    public String getReceivedDateAsString() {
+        return receivedDateString;
     }
 
-    /**
-     * Provides the sizeof the message in octets.
-     *
-     * @return int number of octets in message.
-     */
+    @Override
     public int getSize() {
         return size;
     }
 
-    /**
-     * Provides the Envelope structure information for this message. This is a parsed representation of the rfc-822 envelope information. This is not to be confused with the SMTP envelope!
-     *
-     * @return String satisfying envelope syntax in rfc 2060.
-     */
+    @Override
     public String getEnvelope() {
         return parseEnvelope();
     }
 
-    /**
-     * Provides the Body Structure information for this message. This is a parsed representtion of the MIME structure of the message.
-     *
-     * @return String satisfying body syntax in rfc 2060.
-     */
+    @Override
     public String getBodyStructure(boolean includeExtensions) {
         return parseBodyStructure(includeExtensions);
     }

@@ -21,15 +21,20 @@ import java.util.Date;
  */
 public class StoredMessage {
     private MimeMessage mimeMessage;
-    private Date internalDate;
+    private Date receivedDate;
     private long uid;
     private SimpleMessageAttributes attributes;
 
     StoredMessage(MimeMessage mimeMessage,
-                  Date internalDate, long uid) {
+                  Date receivedDate, long uid) {
         this.mimeMessage = mimeMessage;
-        this.internalDate = internalDate;
+        this.receivedDate = receivedDate;
         this.uid = uid;
+        try {
+            this.attributes = new SimpleMessageAttributes(mimeMessage, receivedDate);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Could not parse mime message." + e.getMessage());
+        }
     }
 
     public MimeMessage getMimeMessage() {
@@ -68,8 +73,8 @@ public class StoredMessage {
         }
     }
 
-    public Date getInternalDate() {
-        return internalDate;
+    public Date getReceivedDate() {
+        return receivedDate;
     }
 
     public long getUid() {
@@ -77,14 +82,6 @@ public class StoredMessage {
     }
 
     public MailMessageAttributes getAttributes() throws FolderException {
-        if (attributes == null) {
-            attributes = new SimpleMessageAttributes();
-            try {
-                attributes.setAttributesFor(mimeMessage);
-            } catch (MessagingException e) {
-                throw new FolderException("Could not parse mime message." + e.getMessage());
-            }
-        }
         return attributes;
     }
 }

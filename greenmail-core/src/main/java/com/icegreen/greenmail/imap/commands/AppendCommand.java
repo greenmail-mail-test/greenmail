@@ -46,9 +46,9 @@ class AppendCommand extends AuthenticatedStateCommand {
         if (flags == null) {
             flags = new Flags();
         }
-        Date datetime = parser.optionalDateTime(request);
-        if (datetime == null) {
-            datetime = new Date();
+        Date receivedDate = parser.optionalDateTime(request);
+        if (receivedDate == null) {
+            receivedDate = new Date();
         }
         MimeMessage message = parser.mimeMessage(request);
         parser.endLine(request);
@@ -61,7 +61,7 @@ class AppendCommand extends AuthenticatedStateCommand {
             throw e;
         }
 
-        folder.appendMessage(message, flags, datetime);
+        folder.appendMessage(message, flags, receivedDate);
 
         session.unsolicitedResponses(response);
         response.commandComplete(this);

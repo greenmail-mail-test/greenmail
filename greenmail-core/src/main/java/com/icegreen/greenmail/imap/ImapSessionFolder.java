@@ -174,8 +174,8 @@ public class ImapSessionFolder implements MailFolder, FolderListener {
         return _folder.getUnseenCount();
     }
 
-    public long appendMessage(MimeMessage message, Flags flags, Date internalDate) {
-        return _folder.appendMessage(message, flags, internalDate);
+    public long appendMessage(MimeMessage message, Flags flags, Date receivedDate) {
+        return _folder.appendMessage(message, flags, receivedDate);
     }
 
     public void store(MovingMessage mail) throws Exception {
