@@ -286,7 +286,7 @@ public class SimpleMessageAttributes
         response.add(LB + Q + sentDateEnvelopeString + Q + SP);
         //2. Subject ---------------
         if (subject != null && (subject.length() != 0)) {
-            response.add(Q + subject + Q + SP);
+            response.add(Q + StringEscapeUtils.escapeJava(subject) + Q + SP);
         } else {
             response.add(NIL + SP);
         }

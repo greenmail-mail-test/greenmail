@@ -25,7 +25,7 @@ public class EscapingTest {
     @Test
     public void testEscapeSubject() throws MessagingException, IOException {
         String to = "to@localhost";
-        String subject = "Subject";
+        String subject = "Subject?<>/|\\\\.%\\\"*?:{[]}!";
         greenMail.setUser(to, to);
         GreenMailUtil.sendTextEmail(to, "from@localhost", subject, "msg", greenMail.getSmtp().getServerSetup());
         greenMail.waitForIncomingEmail(5000, 1);
