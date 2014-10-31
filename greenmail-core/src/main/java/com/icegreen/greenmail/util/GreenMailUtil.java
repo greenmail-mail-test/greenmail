@@ -223,7 +223,7 @@ public class GreenMailUtil {
         return ret.toString();
     }
 
-    public static void sendTextEmail(String to, String from, String subject, String msg, final ServerSetup setup) {
+    public static MimeMessage createTextEmail(String to, String from, String subject, String msg, final ServerSetup setup) {
         try {
             Session session = getSession(setup);
 
@@ -236,8 +236,19 @@ public class GreenMailUtil {
             mimeMessage.setRecipients(Message.RecipientType.TO, tos);
 
             mimeMessage.setText(msg);
+            return mimeMessage;
+        } catch (AddressException e) {
+            throw new RuntimeException(e);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void sendTextEmail(String to, String from, String subject, String msg, final ServerSetup setup) {
+        try {
+            final MimeMessage mimeMessage = createTextEmail(to, from, subject, msg, setup);
             Transport.send(mimeMessage);
-        } catch (Throwable e) {
+        } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
     }
