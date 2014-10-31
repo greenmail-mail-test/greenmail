@@ -49,7 +49,7 @@ public class ImapServerTest {
     @Test
     public void testImapsReceive() throws Throwable {
         assertNotNull(greenMail.getImaps());
-        final String subject = GreenMailUtil.random();
+        final String subject = "Subject?<>/|\\.%\"*?:";
         final String body = GreenMailUtil.random();
         String to = "test@localhost";
         GreenMailUtil.sendTextEmailSecureTest(to, "from@localhost", subject, body);
@@ -58,7 +58,8 @@ public class ImapServerTest {
         Retriever retriever = new Retriever(greenMail.getImaps());
         Message[] messages = retriever.getMessages(to);
         assertEquals(1, messages.length);
-        assertEquals(subject, messages[0].getSubject());
+        assertTrue(messages[0].getReceivedDate().after(messages[0].getSentDate())); // Issue #21.1
+        assertEquals(subject, messages[0].getSubject()); // Issue #21.2
         assertEquals(body, ((String) messages[0].getContent()).trim());
     }
 
