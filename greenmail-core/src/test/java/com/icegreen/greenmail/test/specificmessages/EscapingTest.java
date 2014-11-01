@@ -4,11 +4,18 @@ import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import com.icegreen.greenmail.test.util.GreenMailMimeMessage;
+
 import org.junit.Rule;
 import org.junit.Test;
 
+import javax.mail.Address;
 import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import javax.mail.MessagingException;
+
 import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -31,6 +38,30 @@ public class EscapingTest {
         greenMail.waitForIncomingEmail(5000, 1);
 
         retrieveAndCheck(new Retriever(greenMail.getPop3()), to, subject);
+        retrieveAndCheck(new Retriever(greenMail.getImap()), to, subject);
+    }
+    
+    @Test
+    public void testEscapeMessageID() throws AddressException,MessagingException,IOException{
+        String to = "foo@localhost";
+        String from = "bar@localhost";
+        String subject = "Bad IMAP Envelope";
+        String body = "Example text";
+        greenMail.setUser(to, to);
+        
+        Session smtpSession = GreenMailUtil.getSession(ServerSetupTest.SMTP);
+        GreenMailMimeMessage mimeMessage = new GreenMailMimeMessage(smtpSession);
+
+        Address[] froms = new InternetAddress[] { new InternetAddress(from) };
+
+        mimeMessage.setRecipients(Message.RecipientType.TO,InternetAddress.parse(to));
+        mimeMessage.setFrom(froms[0]);
+        mimeMessage.setSubject(subject);
+        mimeMessage.setText(body);
+
+        GreenMailUtil.sendMimeMessage(mimeMessage);
+        greenMail.waitForIncomingEmail(5000,1);
+        
         retrieveAndCheck(new Retriever(greenMail.getImap()), to, subject);
     }
 
