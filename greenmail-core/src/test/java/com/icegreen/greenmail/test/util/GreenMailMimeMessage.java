@@ -9,7 +9,7 @@ import javax.mail.internet.MimeMessage;
  * See http://www.oracle.com/technetwork/java/faq-135477.html#msgid for more details
  */
 public class GreenMailMimeMessage extends MimeMessage {
-    
+
     public GreenMailMimeMessage(Session session) throws MessagingException {
         super(session);
     }

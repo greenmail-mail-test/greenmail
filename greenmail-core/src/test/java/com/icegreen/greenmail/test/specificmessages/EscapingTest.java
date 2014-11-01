@@ -48,7 +48,7 @@ public class EscapingTest {
         String subject = "Bad IMAP Envelope";
         String body = "Example text";
         greenMail.setUser(to, to);
-        
+
         Session smtpSession = GreenMailUtil.getSession(ServerSetupTest.SMTP);
         GreenMailMimeMessage mimeMessage = new GreenMailMimeMessage(smtpSession);
 
@@ -61,7 +61,7 @@ public class EscapingTest {
 
         GreenMailUtil.sendMimeMessage(mimeMessage);
         greenMail.waitForIncomingEmail(5000,1);
-        
+
         retrieveAndCheck(new Retriever(greenMail.getImap()), to, subject);
     }
 
