@@ -109,7 +109,7 @@
   <build>
     <defaultGoal>install</defaultGoal>
 
-    <!-- Plugin defaults for all inherited POMs. -->
+    <!-- Plugin defaults for all inherited POMs. Declare the plugin version here, too. -->
     <pluginManagement>
       <plugins>
         <plugin>
@@ -154,7 +154,6 @@
           <version>2.2</version>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
           <version>2.4</version>
         </plugin>
@@ -183,9 +182,34 @@
           <version>2.1.2</version>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
           <version>3.3</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-report-plugin</artifactId>
+          <version>2.15</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>2.7</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>findbugs-maven-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-pmd-plugin</artifactId>
+          <version>3.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-jxr-plugin</artifactId>
+          <version>2.3</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>jdepend-maven-plugin</artifactId>
+          <version>2.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
@@ -453,12 +477,6 @@
               </skin>
             </configuration>
           </plugin>
-
-          <plugin>
-            <artifactId>maven-surefire-report-plugin</artifactId>
-            <version>2.15</version>
-          </plugin>
-
           <plugin>
             <!-- javadoc report -->
             <artifactId>maven-javadoc-plugin</artifactId>
@@ -476,7 +494,6 @@
 
           <plugin>
             <artifactId>maven-jxr-plugin</artifactId>
-            <version>2.3</version>
             <configuration>
               <linkJavadoc>true</linkJavadoc>
               <aggregate>true</aggregate>
@@ -486,13 +503,9 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>jdepend-maven-plugin</artifactId>
-            <version>2.0</version>
           </plugin>
-
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-pmd-plugin</artifactId>
-            <version>3.2</version>
             <configuration>
               <format>html</format>
               <linkXRef>true</linkXRef>
@@ -501,21 +514,16 @@
               <targetJdk>1.6</targetJdk>
             </configuration>
           </plugin>
-
-
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>findbugs-maven-plugin</artifactId>
-            <version>3.0.0</version>
             <configuration>
               <threshold>Normal</threshold>
             </configuration>
           </plugin>
 
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-project-info-reports-plugin</artifactId>
-            <version>2.7</version>
             <reportSets>
               <reportSet>
                 <reports>
