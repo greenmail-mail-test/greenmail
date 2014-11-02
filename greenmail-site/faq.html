@@ -5,7 +5,7 @@ title: GreenMail - Email Test Servers
 <table width="100%">
 <tr><td valign="top">
 <h2 class="faq">Is any mail delivered?</h2>
-No. Further, GreenMail stores all recieved messages in memory.
+No. GreenMail stores all recieved messages in memory and works as a sandbox. Messages are not routed via Internet.
 
 <h2 class="faq">Which versions of JDK does GreenMail run under?</h2>
 JDK 1.6 and above
@@ -25,10 +25,9 @@ By default GreenMail accepts all incoming emails. If there is no corresponding e
   <li>activation.jar</li>
   <li>slf4j-api.jar</li>
   <li>commons-lang3.jar</li>
+  <li>junit.jar</li>
 </ul>
 </div>
-
-These libraries ship with the distribution.
 
 <h2 class="faq">How come I don't need to install any SSL/TLS related certificates?</h2>
 GreenMail is designed to be used out of the box with no need to generate, sign or install any cerificates into your keystore.
