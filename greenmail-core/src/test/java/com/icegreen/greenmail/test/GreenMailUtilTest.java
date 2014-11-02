@@ -75,52 +75,6 @@ public class GreenMailUtilTest {
         }
     }
 
-    @Test
-    public void testImapBadEnvelope() throws Exception {
-        String greenMailUser = "foo@localhost";
-        String from = "bar@localhost";
-        String subject = "Bad IMAP Envelope";
-        String body = "Example text";
-
-        GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
-        greenMail.setUser(greenMailUser, "pwd");
-        greenMail.start();
-        try {
-            Session smtpSession = GreenMailUtil
-                    .getSession(ServerSetupTest.SMTP);
-            GreenMailMimeMessage mimeMessage = new GreenMailMimeMessage(
-                    smtpSession);
-
-            Address[] froms = new InternetAddress[] { new InternetAddress(from) };
-
-            mimeMessage.setRecipients(Message.RecipientType.TO,
-                    InternetAddress.parse(greenMailUser));
-            mimeMessage.setFrom(froms[0]);
-            mimeMessage.setSubject(subject);
-            mimeMessage.setText(body);
-
-            GreenMailUtil.sendMimeMessage(mimeMessage);
-            greenMail.waitForIncomingEmail(1);
-
-            Session imapSession = GreenMailUtil
-                    .getSession(ServerSetupTest.IMAP);
-
-            Store store = imapSession.getStore("imap");
-            store.connect(greenMailUser, "pwd");
-            Folder folder = store.getFolder("INBOX");
-            folder.open(Folder.READ_ONLY);
-            Message[] msgs = folder.getMessages();
-            Message m = msgs[0];
-
-            Address a[] = m.getRecipients(Message.RecipientType.TO);
-            assertEquals(greenMailUser,a[0].toString());
-        } 
-        finally {
-            greenMail.stop();
-        }
-
-    }
-
     final static String SAMPLE_EMAIL = "From - Thu Jan 19 00:30:34 2006\r\n"
             + "X-Account-Key: account245\r\n"
             + "X-UIDL: 11332317636080.2607.mail5,S=833\r\n"
@@ -140,17 +94,4 @@ public class GreenMailUtilTest {
             + "Content-Type: text/plain; charset=ISO-8859-1; format=flowed\r\n"
             + "Content-Transfer-Encoding: 7bit\r\n" + "\r\n"
             + "Yo wassup Bertil\r\n";
-
-    private class GreenMailMimeMessage extends MimeMessage {
-        public GreenMailMimeMessage(Session session) throws MessagingException {
-            super(session);
-        }
-
-        @Override
-        protected void updateMessageID() throws MessagingException {
-            String messageID = "<11111.22222.3333.JavaMail.\"foo.bar\\domain\"@localhost>";
-            setHeader("Message-ID", messageID);
-        }
-
-    }
 }
