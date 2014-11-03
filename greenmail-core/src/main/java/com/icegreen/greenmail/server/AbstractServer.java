@@ -159,7 +159,7 @@ public abstract class AbstractServer extends Service {
     }
 
     public int getPort() {
-        return setup.getPort();
+        return serverSocket.getLocalPort();
     }
 
     public String getProtocol() {
