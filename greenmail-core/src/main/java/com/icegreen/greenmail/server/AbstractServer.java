@@ -75,6 +75,7 @@ public abstract class AbstractServer extends Service {
         return ret;
     }
 
+    @Override
     public void run() {
         try {
             try {
@@ -98,7 +99,7 @@ public abstract class AbstractServer extends Service {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                handler.run();
+                                handler.run(); // NOSONAR
                                  // Make sure to deregister, see https://github.com/greenmail-mail-test/greenmail/issues/18
                                 removeHandler(handler);
                             }
@@ -131,6 +132,7 @@ public abstract class AbstractServer extends Service {
         handlers.remove(handler);
     }
 
+    @Override
     public synchronized void quit() {
         try {
             synchronized (handlers) {

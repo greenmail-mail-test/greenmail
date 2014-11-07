@@ -35,14 +35,13 @@ public class SimpleMessageAttributes
         implements MailMessageAttributes {
     // Logging.
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    private final static String SP = " ";
-    private final static String NIL = "NIL";
-    private final static String Q = "\"";
-    private final static String LB = "(";
-    private final static String RB = ")";
-    private final static boolean DEBUG = false;
-    private final static String MULTIPART = "MULTIPART";
-    private final static String MESSAGE = "MESSAGE";
+    private static final String SP = " ";
+    private static final String NIL = "NIL";
+    private static final String Q = "\"";
+    private static final String LB = "(";
+    private static final String RB = ")";
+    private static final String MULTIPART = "MULTIPART";
+    private static final String MESSAGE = "MESSAGE";
 
     private int uid;
     private int messageSequenceNumber;
@@ -209,18 +208,18 @@ public class SimpleMessageAttributes
 //            contentDisposition = part.getDisposition();
             contentDisposition = Header.create(part.getHeader("Content-Disposition"));
         } catch (MessagingException me) {
-//                getLogger().debug("Messaging Exception for getEncoding(): " + me);
+            if(log.isDebugEnabled()) {
+                log.debug("Can not create content disposition for part "+part, me);
+            }
         }
 
         try {
             // TODO this doesn't work
             lineCount = getLineCount(part);
-        } catch (MessagingException me) {
-            me.printStackTrace();
-//            if (DEBUG) getLogger().debug("Messaging Exception for getLineCount(): " + me);
         } catch (Exception e) {
-            e.printStackTrace();
-//            if (DEBUG) getLogger().debug("Exception for getLineCount(): " + e);
+            if(log.isDebugEnabled()) {
+                log.debug("Can not get line count for part "+part, e);
+            }
         }
 
         // Recurse through any embedded parts
@@ -241,7 +240,9 @@ public class SimpleMessageAttributes
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                if(log.isDebugEnabled()) {
+                    log.debug("Can not recurse through multipart content", e);
+                }
             }
         } else if (primaryType.equalsIgnoreCase("message")) {
             if (secondaryType.equalsIgnoreCase("RFC822")) {
@@ -267,8 +268,11 @@ public class SimpleMessageAttributes
                 //getLogger().error("Error interpreting a message/rfc822: " + e);
                 //e.printStackTrace();
                 //}
+
+                // TODO: Warn till fixed!
+                log.warn("Unknown/unhandled subtype "+secondaryType+" of message encountered.");
             } else {
-                log.warn("Unknown subtype of message encountered.");
+                log.warn("Unknown/unhandled subtype "+secondaryType+" of message encountered.");
             }
         }
     }
@@ -490,7 +494,9 @@ public class SimpleMessageAttributes
             while (it.hasNext()) {
                 buf.append((String) it.next());
                 // Space separated
-                if (it.hasNext()) buf.append(SP);
+                if (it.hasNext()) {
+                    buf.append(SP);
+                }
             }
             buf.append(RB);
         }
@@ -604,9 +610,7 @@ public class SimpleMessageAttributes
             buf.append(RB);
             return buf.toString();
         } catch (Exception e) {
-//            getLogger().error("Exception while parsing BodyStrucuture: " + e);
-            e.printStackTrace();
-            throw new RuntimeException("Exception in parseBodyStructure");
+            throw new RuntimeException("Can not parse body structure", e);
         }
     }
 
@@ -719,7 +723,7 @@ public class SimpleMessageAttributes
                 return null;
             }
             if (header.length > 1) {
-                throw new IllegalArgumentException("Header creation assumes only one occurrence of header");
+                throw new IllegalArgumentException("Header creation assumes only one occurrence of header instead of "+header.length);
             }
             return new Header(header[0]);
         }

@@ -198,7 +198,7 @@ public class GreenMail implements GreenMailOperations {
 
     @Override
     public boolean waitForIncomingEmail(int emailCount) {
-        return waitForIncomingEmail(5000l, emailCount);
+        return waitForIncomingEmail(5000L, emailCount);
     }
 
     @Override

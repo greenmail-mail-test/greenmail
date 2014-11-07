@@ -33,7 +33,7 @@ public class StoredMessage {
         try {
             this.attributes = new SimpleMessageAttributes(mimeMessage, receivedDate);
         } catch (MessagingException e) {
-            throw new RuntimeException("Could not parse mime message." + e.getMessage());
+            throw new IllegalStateException("Could not parse mime message " + mimeMessage + " with uid " + uid, e);
         }
     }
 

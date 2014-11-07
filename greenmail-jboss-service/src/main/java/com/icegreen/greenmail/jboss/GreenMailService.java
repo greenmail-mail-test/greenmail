@@ -120,7 +120,7 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
 
             mimeMessage.setText(theBody);
             Transport.send(mimeMessage, tos);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new RuntimeException("Can not send mail", e);
         }
     }

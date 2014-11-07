@@ -24,13 +24,13 @@ import java.util.Random;
  * @since Jan 29, 2006
  */
 public class GreenMailUtil {
-    private final static Logger log = LoggerFactory.getLogger(GreenMailUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(GreenMailUtil.class);
     /**
      * used internally for {@link #random()}
      */
     private static int generateCount = 0;
-    private static final String generateSet = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPRSTUVWXYZ23456789";
-    private static final int generateSetSize = generateSet.length();
+    private static final String GENERATE_SET = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPRSTUVWXYZ23456789";
+    private static final int GENERATE_SET_SIZE = GENERATE_SET.length();
 
     private static GreenMailUtil instance = new GreenMailUtil();
 
@@ -96,7 +96,7 @@ public class GreenMailUtil {
             } else {
                 return !m.getContentType().trim().toLowerCase().startsWith("text");
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -187,8 +187,8 @@ public class GreenMailUtil {
         Random r = new Random();
         StringBuilder ret = new StringBuilder();
         for (/* empty */; nbrOfLetters > 0; nbrOfLetters--) {
-            int pos = (r.nextInt(generateSetSize) + (++generateCount)) % generateSetSize;
-            ret.append(generateSet.charAt(pos));
+            int pos = (r.nextInt(GENERATE_SET_SIZE) + (++generateCount)) % GENERATE_SET_SIZE;
+            ret.append(GENERATE_SET.charAt(pos));
         }
         return ret.toString();
     }
@@ -196,7 +196,7 @@ public class GreenMailUtil {
     public static void sendTextEmailTest(String to, String from, String subject, String msg) {
         try {
             sendTextEmail(to, from, subject, msg, ServerSetupTest.SMTP);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

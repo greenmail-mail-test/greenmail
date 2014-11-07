@@ -122,23 +122,18 @@ public class SmtpManager {
 
         private void handle(MovingMessage msg, MailAddress mailAddress) {
             try {
-                try {
-                    GreenMailUser user = userManager.getUserByEmail(mailAddress.getEmail());
-                    if (null == user) {
-                        String login = mailAddress.getEmail();
-                        String email = mailAddress.getEmail();
-                        String password = mailAddress.getEmail();
-                        user = userManager.createUser(email, login, password);
-                        log.info("Created user login {} for address {} with password {} because it didn't exist before.", login, email, password);
-                    }
-
-                    user.deliver(msg);
-
-                } catch (UserException e) {
-                    throw new RuntimeException(e);
+                GreenMailUser user = userManager.getUserByEmail(mailAddress.getEmail());
+                if (null == user) {
+                    String login = mailAddress.getEmail();
+                    String email = mailAddress.getEmail();
+                    String password = mailAddress.getEmail();
+                    user = userManager.createUser(email, login, password);
+                    log.info("Created user login {} for address {} with password {} because it didn't exist before.", login, email, password);
                 }
+
+                user.deliver(msg);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("Can not deliver message " + msg + " to " + mailAddress, e);
                 throw new RuntimeException(e);
             }
 

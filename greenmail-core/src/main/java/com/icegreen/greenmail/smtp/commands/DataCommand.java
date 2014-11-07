@@ -34,13 +34,11 @@ public class DataCommand extends SmtpCommand {
 
         if (msg.getReturnPath() == null) {
             conn.send("503 MAIL command required");
-
             return;
         }
 
-        if (msg.getToAddresses().size() == 0) {
+        if (msg.getToAddresses().isEmpty()) {
             conn.send("503 RCPT command(s) required");
-
             return;
         }
 
@@ -66,7 +64,7 @@ public class DataCommand extends SmtpCommand {
             manager.send(state);
             conn.send("250 OK");
         } catch (Exception je) {
-            je.printStackTrace();
+            log.error("Can not send state '250 OK', aborted.", je);
             conn.send("451 Requested action aborted: local error in processing");
         }
 
