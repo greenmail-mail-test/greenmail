@@ -130,7 +130,7 @@ public class InMemoryStore
     }
 
     public Collection<MailFolder> getChildren(MailFolder parent) {
-        Collection children = ((HierarchicalFolder) parent).getChildren();
+        Collection<HierarchicalFolder> children = ((HierarchicalFolder) parent).getChildren();
         return Collections.<MailFolder>unmodifiableCollection(children);
     }
 
@@ -142,7 +142,7 @@ public class InMemoryStore
     /**
      * @see com.icegreen.greenmail.store.Store#listMailboxes
      */
-    public Collection listMailboxes(String searchPattern)
+    public Collection<MailFolder> listMailboxes(String searchPattern)
             throws FolderException {
         int starIndex = searchPattern.indexOf('*');
         int percentIndex = searchPattern.indexOf('%');
@@ -262,7 +262,7 @@ public class InMemoryStore
         quotas.add(quota);
     }
 
-    private void addAllChildren(HierarchicalFolder mailbox, Collection mailboxes) {
+    private void addAllChildren(HierarchicalFolder mailbox, Collection<MailFolder> mailboxes) {
         Collection children = mailbox.getChildren();
         for (Object aChildren : children) {
             HierarchicalFolder child = (HierarchicalFolder) aChildren;

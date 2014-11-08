@@ -62,7 +62,7 @@ public class ImapSessionFolder implements MailFolder, FolderListener {
         return _folder.getMessages();
     }
 
-    public List getNonDeletedMessages() {
+    public List<StoredMessage> getNonDeletedMessages() {
         return _folder.getNonDeletedMessages();
     }
 

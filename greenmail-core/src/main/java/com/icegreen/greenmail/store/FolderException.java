@@ -32,9 +32,8 @@ public class FolderException extends Exception {
     public final static String LOCAL_BUT_DELETED
             = "Was local but has been deleted.";
 
-    protected String status = null;
-    protected String remoteServer = null;
-
+    private String status = null;
+    private String remoteServer = null;
     private String responseCode = null;
 
     /**

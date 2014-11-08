@@ -42,7 +42,7 @@ class ListCommand extends AuthenticatedStateCommand {
         // Should the #user.userName section be removed from names returned?
         boolean removeUserPrefix;
 
-        Collection mailboxes;
+        Collection<MailFolder> mailboxes;
         if (mailboxPattern.length() == 0) {
             // An empty mailboxPattern signifies a request for the hierarchy delimiter
             // and root name of the referenceName argument
@@ -73,7 +73,7 @@ class ListCommand extends AuthenticatedStateCommand {
                 removeUserPrefix = true;
             }
 
-            mailboxes = new ArrayList(1);
+            mailboxes = new ArrayList<MailFolder>(1);
             mailboxes.add(referenceFolder);
         } else {
             String searchPattern;
@@ -129,7 +129,7 @@ class ListCommand extends AuthenticatedStateCommand {
         response.commandComplete(this);
     }
 
-    protected Collection doList(ImapSession session, String searchPattern) throws FolderException {
+    protected Collection<MailFolder> doList(ImapSession session, String searchPattern) throws FolderException {
         return session.getHost().listMailboxes(session.getUser(), searchPattern);
     }
 

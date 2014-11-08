@@ -191,7 +191,7 @@ public interface ImapHostManager {
      *          referenceName and mailbox name resolve to a single mailbox which does
      *          not exist locally.
      */
-    Collection listMailboxes(GreenMailUser user,
+    Collection<MailFolder> listMailboxes(GreenMailUser user,
                              String mailboxPattern)
             throws FolderException;
 
@@ -230,8 +230,8 @@ public interface ImapHostManager {
      *          referenceName and mailbox name resolve to a single mailbox which does
      *          not exist locally.
      */
-    Collection listSubscribedMailboxes(GreenMailUser user,
-                                       String mailboxPattern)
+    Collection<MailFolder> listSubscribedMailboxes(GreenMailUser user,
+                                                   String mailboxPattern)
             throws FolderException;
 
     /**

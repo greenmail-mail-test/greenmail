@@ -185,7 +185,7 @@ public class ImapHostManagerImpl
     /**
      * @see ImapHostManager#listSubscribedMailboxes
      */
-    public Collection listSubscribedMailboxes(GreenMailUser user,
+    public Collection<MailFolder> listSubscribedMailboxes(GreenMailUser user,
                                               String mailboxPattern)
             throws FolderException {
         return listMailboxes(user, mailboxPattern, true);
@@ -194,7 +194,7 @@ public class ImapHostManagerImpl
     /**
      * @see ImapHostManager#listMailboxes
      */
-    public Collection listMailboxes(GreenMailUser user,
+    public Collection<MailFolder> listMailboxes(GreenMailUser user,
                                     String mailboxPattern)
             throws FolderException {
         return listMailboxes(user, mailboxPattern, false);
@@ -207,7 +207,7 @@ public class ImapHostManagerImpl
      *
      * @see com.icegreen.greenmail.imap.ImapHostManager#listMailboxes
      */
-    private Collection listMailboxes(GreenMailUser user,
+    private Collection<MailFolder> listMailboxes(GreenMailUser user,
                                      String mailboxPattern,
                                      boolean subscribedOnly)
             throws FolderException {

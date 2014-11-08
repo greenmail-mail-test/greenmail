@@ -88,7 +88,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             ensureFlagsResponse = true;
         }
 
-        StringBuffer response = new StringBuffer();
+        StringBuilder response = new StringBuilder();
 
         // FLAGS response
         if (fetch.flags || ensureFlagsResponse) {
@@ -168,7 +168,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
     private void handleBodyFetch(MimeMessage mimeMessage,
                                  String sectionSpecifier,
                                  String partial,
-                                 StringBuffer response)
+                                 StringBuilder response)
             throws Exception {
         if (sectionSpecifier.length() == 0) {
             // TODO - need to use an InputStream from the response here.
@@ -226,7 +226,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         }
     }
 
-    private byte[] doPartial(String partial, byte[] bytes, StringBuffer response) {
+    private byte[] doPartial(String partial, byte[] bytes, StringBuilder response) {
         if (null != partial) {
             String[] strs = partial.split("\\.");
             int start = Integer.parseInt(strs[0]);
@@ -248,7 +248,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         return bytes;
     }
 
-    private void addLiteral(byte[] bytes, StringBuffer response) {
+    private void addLiteral(byte[] bytes, StringBuilder response) {
         response.append('{');
         response.append(bytes.length);
         response.append('}');
@@ -281,7 +281,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         return strings.toArray(new String[strings.size()]);
     }
 
-    private void addHeaders(Enumeration inum, StringBuffer response) {
+    private void addHeaders(Enumeration inum, StringBuilder response) {
         List<String> lines = new ArrayList<String>();
         int count = 0;
         while (inum.hasMoreElements()) {

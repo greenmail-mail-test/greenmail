@@ -460,7 +460,7 @@ public class SimpleMessageAttributes
     }
 
     String parseBodyFields() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         getParameters(buf);
         buf.append(SP);
         if (contentID == null) {
@@ -485,7 +485,7 @@ public class SimpleMessageAttributes
         return buf.toString();
     }
 
-    private void getParameters(StringBuffer buf) {
+    private void getParameters(StringBuilder buf) {
         if (parameters == null || parameters.isEmpty()) {
             buf.append(NIL);
         } else {
@@ -509,7 +509,7 @@ public class SimpleMessageAttributes
     String parseBodyStructure(boolean includeExtension) {
         try {
             String fields = parseBodyFields();
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
             buf.append(LB);
             if (primaryType.equalsIgnoreCase("Text")) {
                 buf.append("\"TEXT\" \"");
@@ -682,8 +682,8 @@ public class SimpleMessageAttributes
                     String p = strs[i].trim();
                     int e = p.indexOf('=');
                     String key = p.substring(0, e);
-                    String value = p.substring(e + 1, p.length());
-                    p = Q + strip(key) + Q + SP + Q + strip(value) + Q;
+                    String val = p.substring(e + 1, p.length());
+                    p = Q + strip(key) + Q + SP + Q + strip(val) + Q;
                     params.add(p);
                 }
             }
