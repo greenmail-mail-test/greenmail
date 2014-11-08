@@ -13,24 +13,12 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
-
 
 public class SmtpConnection {
 
     private static final int TIMEOUT_MILLIS = 1000 * 30;
-    private InetAddress serverAddress;
     // Logger.
     protected final static Logger log = LoggerFactory.getLogger(SmtpConnection.class);
-
-    {
-        try {
-            serverAddress = InetAddress.getLocalHost();
-        } catch (UnknownHostException uhe) {
-            log.error("Could not get address of localhost", uhe);
-        }
-    }
-
 
     // networking/io stuff
     Socket sock;
@@ -75,28 +63,22 @@ public class SmtpConnection {
     }
 
     public String getClientAddress() {
-
         return clientAddress.getHostAddress();
     }
 
     public InetAddress getServerAddress() {
-
-        return serverAddress;
+        return sock.getLocalAddress();
     }
 
     public String getServerGreetingsName() {
-        InetAddress serverAddress = getServerAddress();
-
-        if (serverAddress != null)
-
-            return serverAddress.toString();
+        InetAddress address = getServerAddress();
+        if (address != null)
+            return address.toString();
         else
-
             return System.getProperty("user.name");
     }
 
     public String getHeloName() {
-
         return heloName;
     }
 
