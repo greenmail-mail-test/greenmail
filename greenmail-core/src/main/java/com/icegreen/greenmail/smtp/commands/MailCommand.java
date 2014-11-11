@@ -37,18 +37,22 @@ public class MailCommand
             if (m.matches()) {
                 String from = m.group(1);
 
-                MailAddress fromAddr = new MailAddress(from);
-
-                String err = manager.checkSender(state, fromAddr);
-                if (err != null) {
-                    conn.send(err);
-
-                    return;
+                if (!from.isEmpty()) {
+                    MailAddress fromAddr = new MailAddress(from);
+                    String err = manager.checkSender(state, fromAddr);
+                    if (err != null) {
+                        conn.send(err);
+                        return;
+                    }
+                    state.clearMessage();
+                    state.getMessage().setReturnPath(fromAddr);
+                    conn.send("250 OK");
+                } else {
+                	state.clearMessage();
+                	state.getMessage();
+                	conn.send("250 OK");
                 }
 
-                state.clearMessage();
-                state.getMessage().setReturnPath(fromAddr);
-                conn.send("250 OK");
             } else {
                 conn.send("501 Required syntax: 'MAIL FROM:<email@host>'");
             }
