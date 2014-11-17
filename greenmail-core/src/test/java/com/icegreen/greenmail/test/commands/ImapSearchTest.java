@@ -4,6 +4,7 @@
  */
 package com.icegreen.greenmail.test.commands;
 
+import com.icegreen.greenmail.imap.commands.SearchKey;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.StoredMessage;
@@ -17,10 +18,12 @@ import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.*;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * @author Wael Chatila
@@ -129,6 +132,26 @@ public class ImapSearchTest {
         imapMessages = imapFolder.search(new NotTerm(new HeaderTerm("Message-ID", id)));
         assertTrue(imapMessages.length == 1);
         assertTrue(imapMessages[0] == m0);
+
+    }
+
+    // Test an unsupported search term for exception. Should be ignored.
+    @Test
+    public void testUnsupportedSearchWarnsButDoesNotThrowException() throws MessagingException {
+        try {
+            SearchKey.valueOf("SENTDATE");
+            fail("Expected IAE for unimplemented search");
+        } catch (IllegalArgumentException ex) {
+            // Expected
+        }
+
+        greenMail.setUser("to1@localhost", "pwd"); // Create user
+        Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP);
+        Store store = session.getStore("imap");
+        store.connect("to1@localhost", "pwd");
+        Folder imapFolder = store.getFolder("INBOX");
+        imapFolder.open(Folder.READ_WRITE);
+        imapFolder.search(new SentDateTerm(ComparisonTerm.LT, new Date()));
     }
 
     /**

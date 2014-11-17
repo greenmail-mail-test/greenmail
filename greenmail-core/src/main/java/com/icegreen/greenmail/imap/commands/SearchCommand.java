@@ -6,7 +6,9 @@
  */
 package com.icegreen.greenmail.imap.commands;
 
-import javax.mail.search.*;
+import javax.mail.search.AndTerm;
+import javax.mail.search.NotTerm;
+import javax.mail.search.SearchTerm;
 
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ImapResponse;
@@ -115,11 +117,17 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
                     // HEADER Message-ID <747621499.0.1264172476711.JavaMail.tbuchert@dev16.int.consol.de> ALL
                     // FLAG SEEN ALL
                     if (null == b) {
-                        SearchKey key = SearchKey.valueOf(sb.toString());
-                        if (SearchKey.NOT == key) {
-                            negated = true;
-                        } else {
-                            b = SearchTermBuilder.create(key);
+                        try {
+                            SearchKey key = SearchKey.valueOf(sb.toString());
+                            if (SearchKey.NOT == key) {
+                                negated = true;
+                            } else {
+                                b = SearchTermBuilder.create(key);
+                            }
+                        } catch (IllegalArgumentException ex) {
+                            // Ignore for now instead of breaking. See issue#35 .
+                            log.warn("Ignoring not yet implemented search command '" + sb.toString() + "'", ex);
+                            negated = false;
                         }
                     } else if (b.expectsParameter()) {
                         b = b.addParameter(sb.toString());
