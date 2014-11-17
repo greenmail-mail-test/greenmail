@@ -1,13 +1,13 @@
 package com.icegreen.greenmail.imap.commands;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.mail.Flags;
 import javax.mail.Message;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.search.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Builder for search terms.
@@ -175,8 +175,9 @@ public abstract class SearchTermBuilder {
             }
         };
     }
+
     private static SearchTermBuilder createKeywordSearchTermBuilder(final SearchKey pKey) {
-       return new SearchTermBuilder() {
+        return new SearchTermBuilder() {
             @Override
             public SearchTerm build() {
                 return createFlagSearchTerm(getParameter(0), pKey == SearchKey.KEYWORD);
@@ -187,10 +188,9 @@ public abstract class SearchTermBuilder {
     private static SearchTerm createFlagSearchTerm(String pFlagName, boolean pValue) {
         Flags.Flag flag = toFlag(pFlagName);
         Flags flags = new javax.mail.Flags();
-        if(null==flag) { // user flags
+        if (null == flag) { // user flags
             flags.add(pFlagName);
-        }
-        else {
+        } else {
             flags.add(flag);
         }
         return new FlagTerm(flags, pValue);

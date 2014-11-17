@@ -159,7 +159,7 @@ public class CommandParser {
     }
 
     private boolean isWhitespace(char next) {
-        return (next == ' ' || next == '\n' || next == '\r' || next == '\t');
+        return next == ' ' || next == '\n' || next == '\r' || next == '\t';
     }
 
     public long consumeLong(ImapRequestLineReader request) throws ProtocolException {
@@ -280,13 +280,6 @@ public class CommandParser {
     }
 
     /**
-     * Reads a base64 argument from the request.
-     */
-    public byte[] base64(ImapRequestLineReader request) throws ProtocolException {
-        return null;
-    }
-
-    /**
      * Reads a "flags" argument from the request.
      */
     public Flags flagList(ImapRequestLineReader request) throws ProtocolException {
@@ -353,11 +346,11 @@ public class CommandParser {
     }
 
     protected boolean isListWildcard(char chr) {
-        return (chr == '*' || chr == '%');
+        return chr == '*' || chr == '%';
     }
 
     private boolean isQuotedSpecial(char chr) {
-        return (chr == '"' || chr == '\\');
+        return chr == '"' || chr == '\\';
     }
 
     /**
@@ -448,18 +441,18 @@ public class CommandParser {
         }
 
         private boolean isAtomSpecial(char chr) {
-            return (chr == '(' ||
+            return chr == '(' ||
                     chr == ')' ||
                     chr == '{' ||
                     chr == ' ' ||
-                    chr == Character.CONTROL);
+                    chr == Character.CONTROL;
         }
     }
 
     protected static class DigitCharValidator implements CharacterValidator {
         public boolean isValid(char chr) {
-            return ((chr >= '0' && chr <= '9') ||
-                    chr == '*');
+            return (chr >= '0' && chr <= '9') ||
+                    chr == '*';
         }
     }
 
@@ -471,10 +464,10 @@ public class CommandParser {
 
     private static class MessageSetCharValidator implements CharacterValidator {
         public boolean isValid(char chr) {
-            return (isDigit(chr) ||
+            return isDigit(chr) ||
                     chr == ':' ||
                     chr == '*' ||
-                    chr == ',');
+                    chr == ',';
         }
 
         private boolean isDigit(char chr) {

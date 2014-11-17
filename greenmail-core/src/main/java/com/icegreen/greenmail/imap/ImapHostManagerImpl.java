@@ -61,7 +61,7 @@ public class ImapHostManagerImpl
     public MailFolder getFolder(GreenMailUser user, String mailboxName) {
         String name = getQualifiedMailboxName(user, mailboxName);
         MailFolder folder = store.getMailbox(name);
-        return (checkViewable(folder));
+        return checkViewable(folder);
     }
 
     public MailFolder getFolder(GreenMailUser user, String mailboxName, boolean mustExist)
@@ -124,7 +124,7 @@ public class ImapHostManagerImpl
             // Create if neccessary
             if (child == null) {
                 // TODO check permissions.
-                boolean makeSelectable = (!tokens.hasMoreTokens());
+                boolean makeSelectable = !tokens.hasMoreTokens();
                 child = store.createMailbox(folder, childName, makeSelectable);
             }
             folder = child;
