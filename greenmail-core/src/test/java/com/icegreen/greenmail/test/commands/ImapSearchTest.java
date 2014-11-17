@@ -16,10 +16,7 @@ import org.junit.Test;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.mail.search.FlagTerm;
-import javax.mail.search.FromTerm;
-import javax.mail.search.HeaderTerm;
-import javax.mail.search.RecipientTerm;
+import javax.mail.search.*;
 import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
@@ -45,18 +42,6 @@ public class ImapSearchTest {
         Flags fooFlags = new Flags();
         fooFlags.add("foo");
         storeSearchTestMessages(session, folder, fooFlags);
-
-        List<StoredMessage> gMsgs = folder.getMessages();
-        for (StoredMessage gMsg : gMsgs) {
-            MimeMessage mm = gMsg.getMimeMessage();
-            for (Flags.Flag f : mm.getFlags().getSystemFlags()) {
-                gMsg.getFlags().add(f);
-            }
-            for (String uf : mm.getFlags().getUserFlags()) {
-                gMsg.getFlags().add(uf);
-            }
-            mm.saveChanges();
-        }
 
         greenMail.waitForIncomingEmail(2);
 

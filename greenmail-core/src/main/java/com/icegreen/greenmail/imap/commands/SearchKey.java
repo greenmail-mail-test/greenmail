@@ -42,7 +42,7 @@ package com.icegreen.greenmail.imap.commands;
  * NEW Messages that have the \Recent flag set but not the \Seen flag. This is functionally equivalent to "(RECENT
  * UNSEEN)".
  * <p/>
- * TODO: NOT <search-key> Messages that do not match the specified search key.
+ * NOT <search-key> Messages that do not match the specified search key.
  * <p/>
  * OLD Messages that do not have the \Recent flag set.  This is functionally equivalent to "NOT RECENT" (as opposed to
  * "NOT NEW").
@@ -101,6 +101,7 @@ public enum SearchKey {
     HEADER(2),
     KEYWORD(1),
     NEW(),
+    NOT(true),
     OLD(),
     RECENT(),
     SEEN(),
@@ -112,17 +113,23 @@ public enum SearchKey {
     UNKEYWORD(1),
     UNSEEN();
 
-    private int minArgs; // expected additional arguments
+    private int minArgs = 0; // expected additional arguments
+    private boolean operator = false; // Is an operator, such as AND, OR, NOT ...
 
-    SearchKey() {
-        minArgs = 0;
-    }
+    SearchKey() {}
 
     SearchKey(int pMinArgs) {
         minArgs = pMinArgs;
     }
+    SearchKey(boolean pOperator) {
+        operator = pOperator;
+    }
 
     public int getNumberOfParameters() {
         return minArgs;
+    }
+
+    public boolean isOperator() {
+        return operator;
     }
 }

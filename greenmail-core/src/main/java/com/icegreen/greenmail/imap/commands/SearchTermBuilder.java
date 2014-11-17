@@ -19,7 +19,10 @@ public abstract class SearchTermBuilder {
     private List<String> parameters = Collections.<String>emptyList();
 
     public static SearchTermBuilder create(final String pTerm) {
-        SearchKey key = SearchKey.valueOf(pTerm);
+        return create(SearchKey.valueOf(pTerm));
+    }
+
+    public static SearchTermBuilder create(final SearchKey key) {
         SearchTermBuilder builder;
         switch (key) {
             // Non flags first
@@ -88,7 +91,7 @@ public abstract class SearchTermBuilder {
                 builder = createKeywordSearchTermBuilder(key);
                 break;
             default:
-                throw new IllegalStateException("Unsupported search term '" + pTerm + '\'');
+                throw new IllegalStateException("Unsupported search term '" + key + '\'');
         }
         builder.setSearchKey(key);
         return builder;
@@ -120,7 +123,7 @@ public abstract class SearchTermBuilder {
     }
 
     public String getParameter(final int pIdx) {
-        return getParameters().get(0);
+        return getParameters().get(pIdx);
     }
 
     public boolean expectsParameter() {

@@ -85,7 +85,7 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
         /**
          * Parses the request argument into a valid search term. Not yet fully implemented - only flags supported.
          * <p/>
-         * Other searches will return everything for now. TODO implement search!
+         * Other searches will return everything for now.
          */
         public SearchTerm searchTerm(ImapRequestLineReader request)
                 throws ProtocolException {
@@ -109,7 +109,8 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
                     // HEADER Message-ID <747621499.0.1264172476711.JavaMail.tbuchert@dev16.int.consol.de> ALL
                     // FLAG SEEN ALL
                     if (null == b) {
-                        b = SearchTermBuilder.create(sb.toString());
+                        SearchKey key = SearchKey.valueOf(sb.toString());
+                        b = SearchTermBuilder.create(key);
                     } else if (b.expectsParameter()) {
                         b = b.addParameter(sb.toString());
                     }
