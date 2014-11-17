@@ -314,9 +314,6 @@ public class ImapServerTest {
         Message[] messages = inboxFolder.getMessages();
         assertEquals(6, messages.length);
         inboxFolder.setFlags(new int[]{2, 3}, new Flags(DELETED), true); // 1 and 2, offset is not zero-based
-//            for(int i=0;i<messages.length;i++) {
-//                System.out.println(messages[i].getSubject() + " : "+messages[i].isSet(DELETED));
-//            }
 
         assertEquals(false, inboxFolder.getMessage(1).isSet(DELETED));
         assertEquals(true, inboxFolder.getMessage(2).isSet(DELETED));

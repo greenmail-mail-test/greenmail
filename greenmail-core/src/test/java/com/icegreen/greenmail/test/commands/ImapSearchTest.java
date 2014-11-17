@@ -115,6 +115,20 @@ public class ImapSearchTest {
         imapMessages = imapFolder.search(new RecipientTerm(Message.RecipientType.BCC, new InternetAddress("bcc3@localhost")));
         assertTrue(imapMessages.length == 1);
         assertTrue(imapMessages[0] == m1);
+
+        // Search NOT
+        imapMessages = imapFolder.search(new NotTerm(new FromTerm(new InternetAddress("from2@localhost"))));
+        assertTrue(imapMessages.length == 1);
+        assertTrue(imapMessages[0] == m1);
+        imapMessages = imapFolder.search(new NotTerm(new FromTerm(new InternetAddress("from3@localhost"))));
+        assertTrue(imapMessages.length == 1);
+        assertTrue(imapMessages[0] == m0);
+        imapMessages = imapFolder.search(new NotTerm(new FromTerm(new InternetAddress("from_somewhere@localhost"))));
+        assertTrue(imapMessages.length == 2);
+        id = m1.getHeader("Message-ID")[0];
+        imapMessages = imapFolder.search(new NotTerm(new HeaderTerm("Message-ID", id)));
+        assertTrue(imapMessages.length == 1);
+        assertTrue(imapMessages[0] == m0);
     }
 
     /**

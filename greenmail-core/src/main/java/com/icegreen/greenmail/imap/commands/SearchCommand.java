@@ -6,6 +6,8 @@
  */
 package com.icegreen.greenmail.imap.commands;
 
+import javax.mail.search.*;
+
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ImapResponse;
 import com.icegreen.greenmail.imap.ImapSession;
@@ -14,9 +16,6 @@ import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.mail.search.AndTerm;
-import javax.mail.search.SearchTerm;
 
 /**
  * Handles processeing for the SEARCH imap command.
@@ -31,7 +30,9 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
     private SearchCommandParser parser = new SearchCommandParser();
 
-    /** @see CommandTemplate#doProcess */
+    /**
+     * @see CommandTemplate#doProcess
+     */
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session)
@@ -71,19 +72,23 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
         response.commandComplete(this);
     }
 
-    /** @see ImapCommand#getName */
+    /**
+     * @see ImapCommand#getName
+     */
     public String getName() {
         return NAME;
     }
 
-    /** @see CommandTemplate#getArgSyntax */
+    /**
+     * @see CommandTemplate#getArgSyntax
+     */
     public String getArgSyntax() {
         return ARGS;
     }
 
     private class SearchCommandParser extends CommandParser {
         /**
-         * Parses the request argument into a valid search term. Not yet fully implemented - only flags supported.
+         * Parses the request argument into a valid search term. Not yet fully implemented - see SearchKey enum.
          * <p/>
          * Other searches will return everything for now.
          */
@@ -91,6 +96,7 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
                 throws ProtocolException {
             SearchTerm resultTerm = null;
             SearchTermBuilder b = null;
+            boolean negated = false;
             // Dummy implementation
             // Consume to the end of the line.
             char next = request.nextChar();
@@ -110,13 +116,21 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
                     // FLAG SEEN ALL
                     if (null == b) {
                         SearchKey key = SearchKey.valueOf(sb.toString());
-                        b = SearchTermBuilder.create(key);
+                        if (SearchKey.NOT == key) {
+                            negated = true;
+                        } else {
+                            b = SearchTermBuilder.create(key);
+                        }
                     } else if (b.expectsParameter()) {
                         b = b.addParameter(sb.toString());
                     }
 
-                    if (!b.expectsParameter()) {
+                    if (b != null && !b.expectsParameter()) {
                         SearchTerm searchTerm = b.build();
+                        if (negated) {
+                            searchTerm = new NotTerm(searchTerm);
+                            negated = false;
+                        }
                         b = null;
                         resultTerm = (resultTerm == null ? searchTerm : new AndTerm(resultTerm, searchTerm));
                     }
@@ -125,7 +139,6 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
                 }
             }
 
-            // Return a search term that matches everything.
             return resultTerm;
         }
 
