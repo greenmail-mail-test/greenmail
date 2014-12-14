@@ -14,11 +14,14 @@ import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.StoredMessage;
 
 import javax.mail.Flags;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.UIDFolder;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
 import java.util.*;
 
-public class ImapSessionFolder implements MailFolder, FolderListener {
+public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder {
     private MailFolder _folder;
     private ImapSession _session;
     private boolean _readonly;
@@ -232,6 +235,38 @@ public class ImapSessionFolder implements MailFolder, FolderListener {
 
     public void setSizeChanged(boolean sizeChanged) {
         _sizeChanged = sizeChanged;
+    }
+
+    private UIDFolder unwrapUIDFolder() {
+        if (_folder instanceof UIDFolder) {
+            return ((UIDFolder) _folder);
+        }
+        throw new IllegalStateException("No UIDFolder supported by "+_folder.getClass());
+    }
+
+    @Override
+    public long getUIDValidity() throws MessagingException {
+        return unwrapUIDFolder().getUIDValidity();
+    }
+
+    @Override
+    public Message getMessageByUID(long uid) throws MessagingException {
+        return unwrapUIDFolder().getMessageByUID(uid);
+    }
+
+    @Override
+    public Message[] getMessagesByUID(long start, long end) throws MessagingException {
+        return unwrapUIDFolder().getMessagesByUID(start, end);
+    }
+
+    @Override
+    public Message[] getMessagesByUID(long[] uids) throws MessagingException {
+        return unwrapUIDFolder().getMessagesByUID(uids);
+    }
+
+    @Override
+    public long getUID(Message message) throws MessagingException {
+        return unwrapUIDFolder().getUID(message);
     }
 
     static final class FlagUpdate {

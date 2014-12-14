@@ -298,6 +298,34 @@ public class ImapServerTest {
     }
 
     @Test
+    public void testUIDFolder() throws MessagingException {
+        greenMail.setUser("foo@localhost", "pwd");
+
+        GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test UIDFolder",
+                "Test message", ServerSetupTest.SMTP);
+        final Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP);
+        final IMAPStore store = (IMAPStore) session.getStore("imap");
+        store.connect("foo@localhost", "pwd");
+        Folder inboxFolder = store.getFolder("INBOX");
+        inboxFolder.open(Folder.READ_WRITE);
+
+        Message[] messages = inboxFolder.getMessages();
+        assertEquals(1, messages.length);
+        Message message = messages[0];
+
+        assert inboxFolder instanceof UIDFolder;
+        UIDFolder uidFolder = (UIDFolder) inboxFolder;
+        long uid = uidFolder.getUID(message);
+        assertEquals(message, uidFolder.getMessageByUID(uid));
+        Message[] uidMessages = uidFolder.getMessagesByUID(new long[]{uid});
+        assertEquals(1, uidMessages.length);
+        assertEquals(message, uidMessages[0]);
+        uidMessages = uidFolder.getMessagesByUID(uid, uid);
+        assertEquals(1, uidMessages.length);
+        assertEquals(message, uidMessages[0]);
+    }
+
+    @Test
     public void testExpunge() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
 
