@@ -10,9 +10,7 @@ import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import com.icegreen.greenmail.imap.ImapConstants;
 import com.icegreen.greenmail.mail.MovingMessage;
 
-import javax.mail.Flags;
-import javax.mail.MessagingException;
-import javax.mail.Quota;
+import javax.mail.*;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
 import java.util.*;
@@ -281,7 +279,7 @@ public class InMemoryStore
         }
     }
 
-    private class HierarchicalFolder implements MailFolder {
+    private class HierarchicalFolder implements MailFolder, UIDFolder {
         private Collection<HierarchicalFolder> children;
         private HierarchicalFolder parent;
 
@@ -652,6 +650,61 @@ public class InMemoryStore
                     ", parent=" + parent +
                     ", isSelectable=" + isSelectable +
                     '}';
+        }
+
+        @Override
+        public long getUIDValidity() throws MessagingException {
+            return getUidValidity();
+        }
+
+        @Override
+        public Message getMessageByUID(long uid) throws MessagingException {
+            return getMessage(uid).getMimeMessage();
+        }
+
+        @Override
+        public Message[] getMessagesByUID(long start, long end) throws MessagingException {
+            synchronized (mailMessages) {
+                List<Message> messages = new ArrayList<Message>();
+                for (StoredMessage mailMessage : mailMessages) {
+                    final long uid = mailMessage.getUid();
+                    if (uid >= start && uid <= end) {
+                        messages.add(mailMessage.getMimeMessage());
+                    }
+                }
+                return messages.toArray(new Message[messages.size()]);
+            }
+        }
+
+        @Override
+        public Message[] getMessagesByUID(long[] uids) throws MessagingException {
+            synchronized (mailMessages) {
+                List<Message> messages = new ArrayList<Message>(uids.length);
+                Map<Long, StoredMessage> uid2Msg = new HashMap<Long, StoredMessage>(mailMessages.size());
+                for (StoredMessage mailMessage : mailMessages) {
+                    uid2Msg.put(mailMessage.getUid(), mailMessage);
+                }
+                for (long uid : uids) {
+                    final StoredMessage storedMessage = uid2Msg.get(uid);
+                    if (storedMessage != null) {
+                        messages.add(storedMessage.getMimeMessage());
+                    }
+                }
+                return messages.toArray(new Message[messages.size()]);
+            }
+        }
+
+        @Override
+        public long getUID(Message message) throws MessagingException {
+            // Check if we have a message with same object reference ... otherwise, not supported.
+            synchronized (mailMessages) {
+                for (StoredMessage mailMessage : mailMessages) {
+                    if (mailMessage.getMimeMessage() == message) {
+                        return mailMessage.getUid();
+                    }
+                }
+            }
+            throw new IllegalStateException("No match found for " + message);
         }
     }
 
