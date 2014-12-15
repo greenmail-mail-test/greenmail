@@ -1,54 +1,50 @@
 package com.icegreen.greenmail.test.commands;
 
-import static org.junit.Assert.*;
-
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Socket;
-import java.net.UnknownHostException;
-
 import org.junit.Rule;
 import org.junit.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.equalTo;
+
+import java.io.IOException;
+import java.net.Socket;
+
+import com.sun.mail.smtp.SMTPTransport;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import com.icegreen.greenmail.util.GreenMailUtil;
+
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.URLName;
 
 public class SMTPCommandTest {
-	
+
 	@Rule
 	public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
 
 	@Test
-	public void MailSenderEmpty() throws UnknownHostException, IOException {
-		Socket smtpSocket = null;
-		DataOutputStream dos = null; 
-		BufferedReader br = null;
+	public void mailSenderEmpty() throws IOException, MessagingException {
+		Socket smtpSocket;
 		String hostAddress = greenMail.getSmtp().getBindTo();
 		int port = greenMail.getSmtp().getPort();
-		
+
+		Session smtpSession = GreenMailUtil.getSession(ServerSetupTest.SMTP);
+		URLName smtpURL = new URLName(hostAddress);
+		SMTPTransport smtpTransport = new SMTPTransport(smtpSession, smtpURL);
+
+
 		try {
-			smtpSocket = new Socket(hostAddress,port);
-			dos = new DataOutputStream(smtpSocket.getOutputStream());
-			br = new BufferedReader(new InputStreamReader(smtpSocket.getInputStream()));
+			smtpSocket = new Socket(hostAddress, port);
+			smtpTransport.connect(smtpSocket);
+			assertThat(smtpTransport.isConnected(),is(equalTo(true)));
+			smtpTransport.issueCommand("MAIL FROM: <>", -1);
+			assertThat("250 OK", equalToIgnoringWhiteSpace(smtpTransport.getLastServerResponse()));
+
 		} finally {
-			
+			smtpTransport.close();
 		}
-		
-		assertEquals("220 /" + hostAddress + " GreenMail SMTP Service Ready at port " + port,br.readLine());
-		dos.writeBytes("HELO " + hostAddress);
-		dos.writeBytes("\n");
-		assertEquals("250 /" + hostAddress,br.readLine());
-		dos.writeBytes("MAIL FROM: <>");
-		dos.writeBytes("\n");
-		assertEquals("250 OK",br.readLine());
-		dos.flush();
-		br.close();
-		dos.close();
-
-		smtpSocket.close();
-		
 	}
-
 }
