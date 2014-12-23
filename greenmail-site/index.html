@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="GreenMail Project Homepage">
+    <meta name="author" content="GreenMail Project">
+    <link rel="icon" href="images/favicon.ico">
+
+    <title>GreenMail</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Custom styles for this template -->
+    <link href="css/docs.css" rel="stylesheet"/>
+    <link href="css/prism.css" rel="stylesheet"/>
+    <link href="css/greenmail.css" rel="stylesheet"/>
+</head>
+
+<body data-spy="scroll" data-offset="50">
+
+<header id="top" role="banner" class="navbar navbar-fixed-top bs-docs-nav">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">GreenMail</a>
+        </div>
+        <nav id="navbar" class="navbar-collapse collapse bs-navbar-collapse" role="navigation">
+            <ul class="nav navbar-nav">
+                <li><a href="#examples">Examples</a></li>
+                <li><a href="#deployment">Deployment</a></li>
+                <li><a href="#faq">FAQ</a></li>
+                <li><a href="http://www.icegreen.com/greenmail/javadocs/index.html">Javadocs</a></li>
+                <li><a href="#download">Download</a></li>
+                <li><a href="https://github.com/greenmail-mail-test/greenmail">Development</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<div class="bs-docs-header" id="content">
+    <div class="container">
+        <h1>GreenMail</h1>
+
+        <p class="lead">Open Source suite of lightweight and sand boxed email servers supporting SMTP, POP3 and
+                        IMAP.</p>
+
+        <p class="version">Currently <a href="https://github.com/greenmail-mail-test/greenmail/releases">v1.4.0</a></p>
+    </div>
+</div>
+
+<!-- Main content
+================================================== -->
+<main class="container bs-docs-container">
+    <div class="row">
+        <div class="col-md-9">
+
+            <div id="about" class="bs-docs-section anchor">
+                <h1 id="overview" class="page-header">About GreenMail</h1>
+
+                <p>
+                    GreenMail is an open source, intuitive and easy-to-use test suite of email servers for testing
+                    purposes.
+                </p>
+
+                <p>
+                    Typical use cases include mail integration testing or a lightweight sand boxed mail server for
+                    development.
+                </p>
+                <ul>
+                    <li>Supports SMTP, POP3 and IMAP including SSL</li>
+                    <li>Prevents accidental email leaking to real mail servers</li>
+                    <li>Provides different deployment models, such as WAR module or JBoss GreenMail Service</li>
+                    <li>Easily embeddable in JUnit tests for integration testing</li>
+                    <li>Lightweight with few dependencies</li>
+                </ul>
+                <p>
+                    GreenMail is the fist and only library that offers a test framework for both receiving and
+                    retrieving emails from Java.
+                </p>
+
+                <h3 id="scenarios" class="anchor">Scenarios</h3>
+
+                <p>GreenMail is useful in the following scenarios:</p>
+                <h4>Test Your Sending Code</h4>
+
+                <ul>
+                    <li>System testing an application. GreenMail responds like a regular SMTP server but does not
+                        deliver any email, which enables
+                        it to be used in real life applications and real test cases. Messages can easily be
+                        extracted, verified and modified. Support for SMTPS (SSL) is enabled.
+                    </li>
+                    <li>GreenMail is an excellent choice for unit testing code that needs to send email with a
+                        succinct, efficient (non-polling) way
+                        to wait for messages to arrive, retrieve, verify, and modify messages.
+                    </li>
+                    <li>Note that retrieval of emails can be made with a simple java method or through a provided
+                        POP3, IMAP retriever helper class. Alternatively you can use a local client like <a
+                                href="https://www.mozilla.org/thunderbird/">Thunderbird</a>.
+                    </li>
+                </ul>
+        <pre><code class="language-java"><!-- @formatter:off -->
+GreenMail greenMail = new GreenMail(); //Uses test ports by default
+greenMail.start();
+GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "some subject",
+                                "some body"); //replace this with your test message content
+assertEquals("some body", GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
+greenMail.stop();
+        </code></pre><!-- @formatter:on -->
+
+                <h4>Test Your Retrieving Code</h4>
+
+                <ul>
+                    <li>Again GreenMail can be used for system or unit testing an application needing to use POP3 or
+                        IMAP by
+                        responding like a standard compliant POP3 or IMAP server. Support for POP3S and IMAPS (SSL)
+                        is
+                        also
+                        enabled.
+                    </li>
+                    <li>Messages can be placed directly in users mailboxes or by using SMTP.</li>
+                    <li>GreenMail ships with helper classes for sending and retrieving. See the javadocs for the <a
+                            href="http://www.icegreen.com/greenmail/javadocs/com/icegreen/greenmail/util/Retriever.html">Retriever.java</a>
+                        class
+                    </li>
+                </ul>
+        <pre><code class="language-java"><!-- @formatter:off -->
+GreenMail greenMail = new GreenMail(); //Uses test ports by default
+greenMail.start();
+
+MimeMessage message = ... //Construct the message
+
+User user = greenMail.setUser("to@localhost.com", "login-id", "password");
+user.deliver(message);
+GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", subject, body);
+assertEquals(2, greenMail.getReceivedMessages().length);
+
+... // Place your POP3 or IMAP retrieve code here>
+        </code></pre><!-- @formatter:on -->
+
+                <h4>Sending and Retrieving</h4>
+
+                <p>GreenMail can easily be configured to use all or a combination of ports, protocols, and bind
+                   addresses. For
+                   example it's possible to run GreenMail on SMTP, POP3, POP3S and IMAPS ports as easily as only
+                   SMTP.
+                   Many
+                   systems might already be running these servers or don't allow non root users to open the default
+                   ports which
+                   is why GreenMail ships with a special configuration for testing.</p>
+
+                <h4>Mocking a mail server for your development environment</h4>
+
+                <p>GreenMail provides a JBoss GreenMail service for mocking a mail server for development. It safes
+                   you the overhead of either installing a full productive server (like <a
+                            href="http://james.apache.org/">Apache James</a>).
+                </p>
+
+                <p>Check out the possible deployments as <a href="#deploy_webapp">webapp</a> or <a
+                        href="#deploy_jboss_sar">JBoss Service</a>.</p>
+
+                <h4 id="implementation" class="anchor">Implementation</h4>
+
+                <p>The implementation is in 100% Java with only a few library dependencies:
+                </p>
+                <ul>
+                    <li>javamail.jar - <a href="http://java.sun.com/products/javamail/">JavaMail API</a></li>
+                    <li>activation.jar - <a href="http://java.sun.com/products/javabeans/jaf/index.jsp">Java
+                                                                                                        Activation
+                                                                                                        Framework</a>,
+                        required
+                        by JavaMail
+
+                    </li>
+                    <li>slf4j-api.jar - required for logging via <a href="http://www.slf4j.org/">Simple Logging
+                                                                                                 Facade
+                                                                                                 for
+                                                                                                 Java</a></li>
+                    <li>junit.jar - required for easy test setup using Rules</li>
+                    <li>commons-lang3.jar - for handling String escaping</li>
+                </ul>
+
+                <h4 id="sourcecode" class="anchor">Source Code</h4>
+
+                <p>
+                    You find the source on <a href="https://github.com/greenmail-mail-test/greenmail">GitHub</a>
+                    including build instructions.
+                    GreenMail is open source released under <a href="http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        >The Apache 2.0 License</a>.
+                </p>
+
+                <p>
+                    GreenMail's protocol source code is based on a cocktail of <a
+                        href="http://foedus.sourceforge.net"
+                        >Foedus</a> and <a
+                        href="http://james.apache.org">James</a>.
+                </p>
+
+                <h4 id="links" class="anchor">Links</h4>
+
+                <p>The following lists provide helpful links related to GreenMail and email integration testing.</p>
+                <h5>Projects extending/wrapping GreenMail:</h5>
+                <ul>
+                    <li><a href="http://grails.org/plugin/greenmail">Grails Plugin for GreenMail</a> including
+                                                                                                     REST-like
+                                                                                                     GreenMail
+                                                                                                     control
+                                                                                                     interface and
+                                                                                                     UI
+                    </li>
+                    <li><a href="https://github.com/alextir/play-module-greenmail">Play Plugin for GreenMail</a>
+                        including REST-like control interface and UI
+                    </li>
+                    <li><a href="https://github.com/jrbsoft/testmail-jca-adapter">JCA Adapter for GreenMail</a></li>
+                    <li>Deprecated <a href="https://sourceforge.net/projects/greenmail/">SourceForge GreenMail</a>
+                        project location before migration to GitHub in 2014
+                    </li>
+                </ul>
+                <h5>Articles&amp;Blogs:</h5>
+                <ul>
+                    <li>
+                        <a href="http://www.hascode.com/2012/07/integration-testing-imap-smtp-and-pop3-with-greenmail/">Integration
+                                                                                                                        Testing
+                                                                                                                        IMAP,
+                                                                                                                        SMTP
+                                                                                                                        and
+                                                                                                                        POP3
+                                                                                                                        with
+                                                                                                                        GreenMail</a>
+                    </li>
+                    <li>
+                        <a href="http://tanyamadurapperuma.blogspot.de/2014/01/run-your-tests-with-greenmail-simple.html">Run
+                                                                                                                          Your
+                                                                                                                          Tests
+                                                                                                                          With
+                                                                                                                          GreenMail
+                                                                                                                          -
+                                                                                                                          A
+                                                                                                                          simple
+                                                                                                                          Mail
+                                                                                                                          Server</a>
+                    </li>
+                    <li><a href="http://jetlet.blogspot.de/2010/11/integration-testing-mail-function-with.html">Integration
+                                                                                                                Testing
+                                                                                                                Mail
+                                                                                                                function
+                                                                                                                with
+                                                                                                                Greenmail
+                                                                                                                and
+                                                                                                                Spock
+                                                                                                                in
+                                                                                                                Grails</a>
+                    </li>
+                    <li><a href="http://developer.vz.net/2011/11/08/unit-testing-java-mail-code/">Unit testing Java
+                                                                                                  mail
+                                                                                                  code</a></li>
+                    <li><a href="https://weblogs.java.net/blog/garysweaver/archive/2008/08/using_the_green.html">Using
+                                                                                                                 the
+                                                                                                                 GreenMail
+                                                                                                                 Java-based
+                                                                                                                 In-Memory
+                                                                                                                 MailServer
+                                                                                                                 in
+                                                                                                                 Integration
+                                                                                                                 Tests</a>
+                    </li>
+                    <li><a href="http://www.javavillage.in/greenmail-java-mail.php">JavaEmail testing with
+                                                                                    GreenMail</a>
+                    </li>
+                </ul>
+                <h5>Projects using GreenMail include:</h5>
+                <ul>
+                    <li><a href="http://www.alfresco.com/">Alfresco</a></li>
+                    <li><a href="http://www.mulesoft.org/">Mule ESB</a></li>
+                    <li>... and many more. <a href="https://github.com/greenmail-mail-test/greenmail/issues">Tell us</a>
+                        about your project :-)
+                    </li>
+                </ul>
+                <h5>Related projects to <a href="https://java.net/projects/javamail/pages/Home">JavaMail</a> and
+                    testing/development:</h5>
+                <ul>
+                    <li><a href="http://quintanasoft.com/dumbster/">Dumbster</a>, a fake SMTP server</li>
+                    <li><a href="https://code.google.com/p/subethasmtp/wiki/Wiser">Wiser</a> alias Subethasmtp,
+                                                                                             another
+                                                                                             test SMTP server
+                    </li>
+                    <li><a href="http://james.apache.org/">Apache James</a>, a full blown enterprise mail server
+                    </li>
+                    <li><a href="http://www.aboutmyip.com/AboutMyXApp/DevNullSmtp.jsp">DevNullSmtp</a></li>
+                    <li><a href="https://java.net/projects/mock-javamail">Mock-javamail</a></li>
+                    <li><a href="https://github.com/salyh/javamail-mock2">JavaMail Mock2</a></li>
+                </ul>
+            </div>
+
+            <div id="examples" class="bs-docs-section anchor">
+                <h1 class="page-header">Examples</h1>
+
+                <h3 id="ex_send_simple" class="anchor">Testing your sending code (simple)</h3>
+        <pre><code class="language-java"><!-- @formatter:off -->
+GreenMail greenMail = new GreenMail(); //uses test ports by default
+greenMail.start();
+GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "some subject",
+                                "some body"); //replace this with your test message content
+assertEquals("some body", GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
+greenMail.stop();
+        </code></pre><!-- @formatter:on -->
+
+                <h3 id="ex_send_adv" class="anchor">Testing your sending code (advanced)</h3>
+            <pre><code class="language-java"><!-- @formatter:off -->
+GreenMail greenMail = new GreenMail(ServerSetupTest.ALL);
+greenMail.start();
+
+//Use random content to avoid potential residual lingering problems
+final String subject = GreenMailUtil.random();
+final String body = GreenMailUtil.random();
+
+... // PLACE YOUR SEND CODE HERE
+
+//wait for max 5s for 1 email to arrive
+//waitForIncomingEmail() is useful if you're sending stuff asynchronously in a separate thread
+assertTrue(greenMail.waitForIncomingEmail(5000, 1));
+
+//Retrieve using GreenMail API
+Message[] messages = greenMail.getReceivedMessages();
+assertEquals(1, messages.length);
+assertEquals(subject, messages[0].getSubject());
+assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
+
+//if your send content as a 2 part multipart...
+assertTrue(messages[0].getContent() instanceof MimeMultipart);
+MimeMultipart mp = (MimeMultipart) messages[0].getContent();
+assertEquals(2, mp.getCount());
+assertEquals(multipart_body1, GreenMailUtil.getBody(mp.getBodyPart(0)).trim());
+assertEquals(multipart_body2, GreenMailUtil.getBody(mp.getBodyPart(1)).trim());
+        </code></pre><!-- @formatter:on -->
+
+                <h3 id="ex_retrieve" class="anchor">Testing your retrieving code</h3>
+        <pre><code class="language-java"><!-- @formatter:off -->
+//Start all email servers using non-default ports.
+GreenMail greenMail = new GreenMail(ServerSetupTest.ALL);
+greenMail.start();
+
+//Use random content to avoid potential residual lingering problems
+final String subject = GreenMailUtil.random();
+final String body = GreenMailUtil.random();
+MimeMessage message = ... // CONSTRUCT MESSAGE
+User user = greenMail.setUser("wael@localhost.com", "waelc", "soooosecret");
+user.deliver(message);
+assertEquals(1, greenMail.getReceivedMessages().length);
+
+... // PLACE YOUR RETRIEVE AND VERIFICATION CODE HERE
+        </code></pre><!-- @formatter:on -->
+
+                <h3 id="ex_junit_rule" class="anchor">Using JUnit (Rule based setup)</h3>
+        <pre><code class="language-java"><!-- @formatter:off -->
+public class MyAdvancedGreenMailTest {
+    @Rule
+    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
+
+    @Test
+    public void testSomething() {
+        GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", "body");
+        MimeMessage[] emails = greenMail.getReceivedMessages();
+        assertEquals(1, emails.length);
+        assertEquals("subject", emails[0].getSubject());
+        assertEquals("body", GreenMailUtil.getBody(emails[0]));
+        ...
+    }
+}
+        </code></pre><!-- @formatter:on -->
+            </div>
+
+            <div id="deployment" class="bs-docs-section anchor">
+                <h1 class="page-header">Deployment</h1>
+
+                <h3 id="deploy_webapp" class="anchor">Deploy as a webapp (WAR)</h3>
+
+                <p>GreenMail Webapp provides a lightweight Java web application wrapping GreenMail mail server.</p>
+
+                <p>Like the <a href="#deploy_jboss_sar">GreenMail JBoss Service</a>, the usage scenario is a development
+                   or test environment where a
+                   real mail server is too much overhead. The webapp is application server neutral - you should be able
+                   to use it on any JEE application server running und Java 5.</p>
+
+                <p>With the GreenMail mail service each developer has its own local mail server sandbox - so there's no
+                   danger for accidentally leaking test mails into the Internet.</p>
+
+                <h4>Deploy the webapp</h4>
+
+                <p>Simply deploy the webapp like any other Java web application.</p>
+
+                <p>For Tomcat, just drop the webapp into $CATALINA_HOME/webapps directory. Alternatively, you can create
+                   a $CATALINA_HOME/webapps/greenmail, unpack the WAR here and configure the GreenMail service.</p>
+
+                <h4>Configure the webapp</h4>
+
+                <p>You can configure the active mail services and available users by editing WEB-INF/web.xml in the WAR
+                   file and modifying the context params. A ServletContextListener starts and stops the GreenMail
+                   service when deploying/undeploying.</p>
+                <table class="table">
+                    <caption>Context Parameters</caption>
+                    <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>Description</td>
+                    </tr>
+                    </thead>
+                    <tr>
+                        <td>greenmail.defaultHostname</td>
+                        <td>The mail server default hostname (defaults to localhost).</td>
+                    </tr>
+                    <tr>
+                        <td>greenmail.portOffset</td>
+                        <td>Offset added to the standard mail ports. Default is 10000 (so an activated SMTP service
+                            would start up on port 10025).
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>greenmail.&lt;PROTOCOL&gt;</td>
+                        <td>Starts a server for this mail protocol (using defaultHostname, port offset and default
+                            port).
+                            <p>Available protocol names include</p>
+                            <ul>
+                                <li><b>smtp</b></li>
+                                <li><b>smtps</b> (SMTP via SSL)</li>
+                                <li><b>pop3</b></li>
+                                <li><b>pop3s</b> (POP3 via SSL)</li>
+                                <li><b>imap</b></li>
+                                <li><b>imaps</b> (IMAP via SSL)</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>greenmail.&lt;PROTOCOL&gt;.host</td>
+                        <td>Optionally overwrites the default host name (localhost).</td>
+                    </tr>
+                    <tr>
+                        <td>greenmail.&lt;PROTOCOL&gt;.port<</td>
+                        <td>Optionally overwrites the default port and port offset for the given protocol.</td>
+                    </tr>
+                    <tr>
+                        <td>greenmail.users</td>
+                        <td>A whitespace/newline/comma separated list of mail users in the form of USER:PWD@DOMAIN.</td>
+                    </tr>
+                </table>
+
+                <p>Have a look at the default <a
+                        href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-webapp/src/main/webapp/WEB-INF/web.xml">web.xml</a>.
+                </p>
+
+                <h3 id="deploy_jboss_sar" class="anchor">Deploy as a JBoss Service (SAR)</h3>
+
+                <p>GreenMail provides a JBoss Service for easy JBoss integration. The usage scenario is a development or
+                   test environment where a real mail server is too much overhead. With the GreenMail mail service each
+                   developer has its own local mail server sandbox - so there's no danger for accidentally leaking test
+                   mails into the Internet.</p>
+
+                <h4 id="deploy_jboss_sar_deploy" class="anchor">Deploy the service</h4>
+                <ol>
+                    <li><a href="#download">Download</a> the current service which we distribute as a JBoss SAR (Service
+                                                         Archive).
+                    </li>
+                    <li>Unjar the service to your server deploy directory.
+                        <p>This example uses the default server, where the service is deployed in exploded mode for
+                           follow up configuration.</p>
+                        <pre><code class="language-bash"><!-- @formatter:off -->
+cd ${JBOSS_HOME}/server/default/deploy
+mkdir greenmail-jboss-service.sar
+cd greenmail-jboss-service.sar
+jar xvf /path/to/greenmail-jboss-service-XXX.jar
+                        </code></pre><!-- @formatter:on -->
+                    </li>
+                </ol>
+                <p>Starting JBoss will now automatically also start the GreenMail JBoss Service. You can see a startup
+                   message on the console output, including basic configuration data like active protocols and their
+                   ports:
+                </p>
+                <img src="images/greenmail_jboss_sar_console.png" class="img-rounded" alt="JBoss console output when deploying GreenMail SAR"/>
+
+                <p><!-- space --></p>
+
+                <p>
+                    Opening the JBoss Console, you can see the GreenMail Service JMX Bean:
+                </p>
+                <img src="images/greenmail_jboss_jmx_console.png" class="img-rounded" alt="GreenMail JMX Bean"/>
+
+                <p>
+                    You find two entries, of which the second one holds our interest:
+                </p>
+                <ul>
+                    <li>loader=greenmail-jboss-service : A loader for isolated class loading inside the JBoss service
+                        (as to prevent the greenmail JavaMail to conflict with the application server version).
+                    </li>
+                    <li>name=GreenMail,type=service,version=... : The GreenMail service bean for managing GreenMail</li>
+                </ul>
+
+                <h4 id="deploy_jboss_sar_configure_user" class="anchor">Configurable user accounts</h4>
+
+                <p>The GreenMail service is configured by the file <a
+                        href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-jboss-service/src/main/resources/META-INF/jboss-service.xml">META-INF/jboss-service.xml</a>
+                   in the exploded service directory.</p>
+
+                <h4 id="deploy_jboss_sar_send_via_jmx" class="anchor">Send a mail message via JMX</h4>
+                <ol>
+                    <li>Open the JBoss JMX Console in your browser (see the deployment picture).</li>
+                    <li>Select the JMX bean of name GreenMail and type service</li>
+                    <li>Invoke the sendMail operation:</li>
+                </ol>
+                <img src="images/greenmail_jboss_jmx_send.png" class="img-rounded" alt="Sending email using GreenMail JMX Bean"/>
+
+                <p>The mail should now be visible by listing the user mails, if there is no automatic polling of the
+                   mail box.</p>
+
+                <h4 id="deploy_jboss_sar_local_client" class="anchor">Send a mail message using your mail client</h4>
+
+                <p>You can use your favorite mail client if you configure it for GreenMail by setting the outgoing mail
+                   to the GreenMail SMTP port. By default this is localhost:3025. Of course you can also read created
+                   mail by configuring your mail client to use GreenMail POP3 (localhost:3110) or IMAP (localhost:3143).
+                   You will probably have to adjust these settings for your specific configuration.</p>
+
+                <h4 id="deploy_jboss_sar_list" class="anchor">List mails for a user via JMX</h4>
+
+                <p>Instead of using your favourite mail client, you can use the JMX GreenMail service for listing all
+                   current mails in of a user in the GreenMail server sandbox.</p>
+                <ol>
+                    <li>Open your browser with the JMX Console and choose the GreenMail service (see sending mail
+                        paragraph)
+                    </li>
+                    <li>Enter the user email for the listMailsForUserHTML operation:
+                        <img src="images/greenmail_jboss_jmx_list_mail_for_user.png" class="img-rounded" alt="List mails operation for GreenMail JMX Bean"/>
+                    </li>
+                    <li>Click the invoke button. The browser now shows all emails for the specified user:
+                        <img src="images/greenmail_jboss_jmx_list_emails_for_user.png" class="img-rounded" alt="Listing mails for a user using GreenMail JMX Bean"/>
+                    </li>
+                </ol>
+                <div class="alert alert-info" role="alert">Note that displaying mails does not modify the user mail
+                                                           box.
+                </div>
+
+            </div>
+
+            <div id="faq" class="bs-docs-section anchor">
+                <h1 class="page-header">FAQ</h1>
+                <h4>How come I don't have to create any accounts to send/retrieve?</h4>
+
+                <p>By default GreenMail accepts all incoming emails. If there is no corresponding existing email
+                   account, one is automatically created with login and password being the same as the to-address.</p>
+
+                <h4>What other library dependencies are there?</h4>
+
+                <p>Check out the <a
+                        href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-core/pom.xml">Maven
+                                                                                                                   POM</a>.
+                   Dependencies include</p>
+                <ul>
+                    <li>javamail.jar and activation.jar</li>
+                    <li>slf4j-api.jar (for logging)</li>
+                    <li>commons-lang3.jar (for handling encodings)</li>
+                    <li>junit.jar (for test rules)</li>
+                </ul>
+                <h4>How come I don't need to install any SSL/TLS related certificates?</h4>
+
+                <p>GreenMail is designed to be used out of the box with no need to generate, sign or install any
+                   certificates into your keystore.
+                   GreenMail ships with a builtin keystore with a self signed RSA key. Refer to the source code of
+                    <a
+                            href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-core/src/main/java/com/icegreen/greenmail/util/DummySSLSocketFactory.java">DummySSLServerSocketFactory</a>
+                   for details.</p>
+                <h4>How can I use IMAP quotas?</h4>
+
+                <p>GreenMail supports IMAP quota. Quota capbility can be toggled on and off. For details see <a
+                   href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-core/src/test/java/com/icegreen/greenmail/test/ImapServerTest.java">
+                    ImapServerTest.java</a> quota test</p>
+
+            </div>
+
+            <div id="download" class="bs-docs-section anchor">
+                <h1 class="page-header">Download</h1>
+
+                <p>Maven Central contains all <a href="http://repo1.maven.org/maven2/com/icegreen/greenmail/">GreenMail
+                                                                                                              artifacts</a>.
+                </p>
+                <h4 id="download_1_4_0" class="anchor"><a
+                        href="https://github.com/greenmail-mail-test/greenmail/releases" title="1.4.0 Release Notes">1.4.0</a>
+                    - October 29th, 2014</h4>
+
+                <div class="alert alert-info" role="alert">This version requires JDK 1.6+ and JavaMail 1.5+ .</div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>GAV</td>
+                    </tr>
+                    </thead>
+                    <tr>
+                        <td>GreenMail Core</td>
+                        <td>
+                            <a href="http://central.maven.org/maven2/com/icegreen/greenmail/1.4.0/greenmail-1.4.0.jar">com.icegreen:greenmail:1.4.0</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>GreenMail Webapp</td>
+                        <td>
+                            <a href="http://central.maven.org/maven2/com/icegreen/greenmail-webapp/1.4.0/greenmail-webapp-1.4.0.war">com.icegreen:greenmail-webapp:1.4.0:war</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>GreenMail JBoss Service</td>
+                        <td>
+                            <a href="http://central.maven.org/maven2/com/icegreen/greenmail-jboss-service/1.4.0/greenmail-jboss-service-1.4.0.sar">com.icegreen:greenmail-jboss-service:1.4.0:jboss-sar</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>GreenMail Spring</td>
+                        <td>
+                            <a href="http://central.maven.org/maven2/com/icegreen/greenmail-spring/1.4.0/greenmail-spring-1.4.0.jar">com.icegreen:greenmail-spring:1.4.0</a>
+                        </td>
+                    </tr>
+                </table>
+                <p>Latest and recommended version is available via Maven repository or as a <a
+                        href="https://github.com/greenmail-mail-test/greenmail/archive/release-1.4.0.zip">ZIP from
+                                                                                                          GitHub</a>.
+                </p>
+                <h4 id="download_1_3_1b" class="anchor"><a
+                        href="https://github.com/greenmail-mail-test/greenmail/blob/master/src/changes/changes.xml"
+                        title="1.3.1b Release Notes">1.3.1b</a> -
+                                                                June
+                                                                14th
+                                                                2009
+                </h4>
+
+                <div class="alert alert-info">This version runs on JDK 1.4+ and JavaMail 1.4 .</div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>GAV</td>
+                    </tr>
+                    </thead>
+                    <tr>
+                        <td>GreenMail Core</td>
+                        <td>
+                            <a href="http://central.maven.org/maven2/com/icegreen/greenmail/1.3.1b/greenmail-1.3.1b.jar">com.icegreen:greenmail:1.3.1b</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>GreenMail Webapp</td>
+                        <td>
+                            <a href="http://central.maven.org/maven2/com/icegreen/greenmail-webapp/1.3.1b/greenmail-webapp-1.3.1b.war">com.icegreen:greenmail-webapp:1.3.1b:war</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>GreenMail JBoss Service</td>
+                        <td>
+                            <a href="http://central.maven.org/maven2/com/icegreen/greenmail-jboss-service/1.3.1b/greenmail-jboss-service-1.3.1b.sar">com.icegreen:greenmail-jboss-service:1.3.1b:jboss-sar</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>GreenMail Spring</td>
+                        <td>
+                            <a href="http://central.maven.org/maven2/com/icegreen/greenmail-spring/1.3.1b/greenmail-spring-1.3.1b.jar">com.icegreen:greenmail-spring:1.3.1b</a>
+                        </td>
+                    </tr>
+                </table>
+                <h4 id="download_archive" class="anchor">Older versions</h4>
+
+                <p>You can find older version at the old <a
+                        href="https://sourceforge.net/projects/greenmail/files/greenmail/">SourceForge
+                                                                                           download</a>
+                   section</p>
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div id="sidebar" class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" role="complementary">
+                <ul class="nav bs-docs-sidenav">
+
+                    <li>
+                        <a href="#about">About</a>
+                        <ul class="nav">
+                            <li><a href="#scenarios">Scenarios</a></li>
+                            <li><a href="#implementation">Implementation</a></li>
+                            <li><a href="#sourcecode">Source code</a></li>
+                            <li><a href="#links">Links and resources</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#examples">Examples</a>
+                        <ul class="nav">
+                            <li><a href="#ex_send_simple">Testing your sending code (simple)</a></li>
+                            <li><a href="#ex_send_adv">Testing your sending code (advanced)</a></li>
+                            <li><a href="#ex_retrieve">Testing your retrieving code</a></li>
+                            <li><a href="#ex_junit_rule">Using JUnit (rule based setup)</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#deployment">Deployments</a>
+                        <ul class="nav">
+                            <li><a href="#deploy_webapp">Deploy as a webapp (WAR)</a></li>
+                            <li><a href="#deploy_jboss_sar">Deploy as a JBoss Service (SAR)</a>
+                                <ul class="nav">
+                                    <li><a href="#deploy_jboss_sar_deploy">Deploying</a></li>
+                                    <li><a href="#deploy_jboss_sar_configure_user">Configure</a></li>
+                                    <li><a href="#deploy_jboss_sar_send_via_jmx">Send a mail message via JMX</a></li>
+                                    <li><a href="#deploy_jboss_sar_local_client">Send a mail message using your mail
+                                                                                 client</a></li>
+                                    <li><a href="#deploy_jboss_sar_list">List mails for a user via JMX</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#faq">FAQ</a>
+                    </li>
+                    <li>
+                        <a href="#download">Download</a>
+                        <ul class="nav">
+                            <li><a href="#download_1_4_0">1.4.0</a></li>
+                            <li><a href="#download_1_3_1b">1.3.1b</a></li>
+                            <li><a href="#download_archive">Older versions</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <a class="back-to-top" href="#" role="button">
+                    Back to top
+                </a>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<!-- Footer
+================================================== -->
+<footer class="container bs-docs-footer">
+    <p class="pull-right"><a href="#">Back to top</a></p>
+
+    <p>&copy; 2009-2014 <a href="http://www.icegreen.com">Icegreen Technologies</a></p>
+</footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<script src="js/ie10-viewport-bug-workaround.js"></script>
+<script src="js/prism.js"></script>
+<script type="application/javascript">
+    $(document).ready(function () {
+        var $body = $(document.body)
+        $body.scrollspy({
+            target: ''
+        })
+        $body.scrollspy('refresh')
+        var $sideBar = $('.bs-docs-sidebar')
+
+        $sideBar.affix({
+            offset: {
+                top: 200,
+                bottom: 41
+            }
+        })
+    });
+</script>
+</body>
+</html>
