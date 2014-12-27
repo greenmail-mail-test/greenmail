@@ -76,7 +76,7 @@
                 <ul>
                     <li>Supports SMTP, POP3 and IMAP including SSL</li>
                     <li>Prevents accidental email leaking to real mail servers</li>
-                    <li>Provides different deployment models, such as WAR module or JBoss GreenMail Service</li>
+                    <li>Provides different deployment models, such as <a href="#deploy_webapp">WAR module</a> or <a href="#deploy_jboss_sar">JBoss GreenMail Service</a></li>
                     <li>Easily embeddable in JUnit tests for integration testing</li>
                     <li>Lightweight with few dependencies</li>
                 </ul>
@@ -170,13 +170,11 @@ assertEquals(2, greenMail.getReceivedMessages().length);
                 <p>The implementation is in 100% Java with only a few library dependencies:
                 </p>
                 <ul>
-                    <li>javamail.jar - <a href="http://java.sun.com/products/javamail/">JavaMail API</a></li>
-                    <li>activation.jar - <a href="http://java.sun.com/products/javabeans/jaf/index.jsp">Java
+                    <li>javamail.jar - <a href="https://java.net/projects/javamail/">JavaMail API</a></li>
+                    <li>activation.jar - <a href="http://www.oracle.com/technetwork/java/javase/jaf-135115.html">Java
                                                                                                         Activation
                                                                                                         Framework</a>,
-                        required
-                        by JavaMail
-
+                        required by JavaMail (provided by JDK since 1.6+)
                     </li>
                     <li>slf4j-api.jar - required for logging via <a href="http://www.slf4j.org/">Simple Logging
                                                                                                  Facade
