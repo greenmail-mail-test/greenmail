@@ -12,12 +12,10 @@ import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.store.MessageFlags;
 
 import javax.mail.Flags;
-import java.text.DateFormat;
+import javax.mail.internet.MailDateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * @author Darrell DeBoer <darrell@apache.org>
@@ -95,7 +93,6 @@ public class CommandParser {
 
     /**
      * Reads a "date-time" argument from the request.
-     * TODO handle timezones properly
      */
     public Date dateTime(ImapRequestLineReader request) throws ProtocolException {
         char next = request.nextWordChar();
@@ -106,32 +103,11 @@ public class CommandParser {
             throw new ProtocolException("DateTime values must be quoted.");
         }
 
-        DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss zzzz", Locale.US);
+        MailDateFormat rfc2822Format = new MailDateFormat();
         try {
-            return dateFormat.parse(dateString);
+            return rfc2822Format.parse(dateString);
         } catch (ParseException e) {
-            throw new ProtocolException("Invalid date format.");
-        }
-    }
-
-    /**
-     * Reads a "date" argument from the request.
-     * TODO handle timezones properly
-     */
-    public Date date(ImapRequestLineReader request) throws ProtocolException {
-        char next = request.nextWordChar();
-        String dateString;
-        if (next == '"') {
-            dateString = consumeQuoted(request);
-        } else {
-            dateString = atom(request);
-        }
-
-        DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
-        try {
-            return dateFormat.parse(dateString);
-        } catch (ParseException e) {
-            throw new ProtocolException("Invalid date format.");
+            throw new ProtocolException("Invalid date format <"+dateString+">, should be rfc2822 compliant.");
         }
     }
 
