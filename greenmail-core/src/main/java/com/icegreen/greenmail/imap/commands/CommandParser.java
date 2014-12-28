@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -358,7 +359,7 @@ public class CommandParser {
             return new IdRange[]{parseRange(nextWord)};
         }
 
-        ArrayList<IdRange> rangeList = new ArrayList<IdRange>();
+        List<IdRange> rangeList = new ArrayList<IdRange>();
         int pos = 0;
         while (commaPos != -1) {
             String range = nextWord.substring(pos, commaPos);

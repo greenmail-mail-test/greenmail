@@ -579,7 +579,7 @@ public class InMemoryStore
         }
 
         public long[] search(SearchTerm searchTerm) {
-            ArrayList<StoredMessage> matchedMessages = new ArrayList<StoredMessage>();
+            List<StoredMessage> matchedMessages = new ArrayList<StoredMessage>();
 
             synchronized (mailMessages) {
                 for (StoredMessage mailMessage : mailMessages) {
