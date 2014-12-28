@@ -200,23 +200,23 @@ public abstract class SearchTermBuilder {
         if (pFlag == null || pFlag.trim().length() < 1) {
             throw new IllegalArgumentException("Can not convert empty string to mail flag");
         }
-        pFlag = pFlag.trim().toUpperCase();
-        if (pFlag.equals("ANSWERED")) {
+        String flag = pFlag.trim().toUpperCase();
+        if (flag.equals("ANSWERED")) {
             return javax.mail.Flags.Flag.ANSWERED;
         }
-        if (pFlag.equals("DELETED")) {
+        if (flag.equals("DELETED")) {
             return javax.mail.Flags.Flag.DELETED;
         }
-        if (pFlag.equals("DRAFT")) {
+        if (flag.equals("DRAFT")) {
             return javax.mail.Flags.Flag.DRAFT;
         }
-        if (pFlag.equals("FLAGGED")) {
+        if (flag.equals("FLAGGED")) {
             return javax.mail.Flags.Flag.FLAGGED;
         }
-        if (pFlag.equals("RECENT")) {
+        if (flag.equals("RECENT")) {
             return javax.mail.Flags.Flag.RECENT;
         }
-        if (pFlag.equals("SEEN")) {
+        if (flag.equals("SEEN")) {
             return javax.mail.Flags.Flag.SEEN;
         }
         return null;

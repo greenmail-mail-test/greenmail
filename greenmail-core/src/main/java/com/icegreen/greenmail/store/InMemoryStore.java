@@ -121,10 +121,11 @@ public class InMemoryStore
     }
 
     private HierarchicalFolder findParentByName(HierarchicalFolder folder, String parentName) {
-        while (null != folder && !parentName.equals(folder.getName())) {
-            folder = folder.getParent();
+        HierarchicalFolder currentFolder = folder;
+        while (null != currentFolder && !parentName.equals(currentFolder.getName())) {
+            currentFolder = currentFolder.getParent();
         }
-        return folder;
+        return currentFolder;
     }
 
     public Collection<MailFolder> getChildren(MailFolder parent) {
