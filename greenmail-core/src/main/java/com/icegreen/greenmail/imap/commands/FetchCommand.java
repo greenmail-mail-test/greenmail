@@ -151,8 +151,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             try {
                 handleBodyFetch(mimeMessage, sectionSpecifier, fetchElement.getPartial(), response);
             } catch (Exception e) {
-                // TODO  chain exceptions
-                throw new FolderException(e.getMessage());
+                throw new FolderException(e);
             }
         }
 

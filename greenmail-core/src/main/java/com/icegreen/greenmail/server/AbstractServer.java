@@ -107,6 +107,9 @@ public abstract class AbstractServer extends Service {
                     }
                 } catch (IOException ignored) {
                     //ignored
+                    if(log.isTraceEnabled()) {
+                        log.trace("Error while processing socket", ignored);
+                    }
                 }
             }
         } finally {

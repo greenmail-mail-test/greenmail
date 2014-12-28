@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.util.Date;
 
 /**
- * Handles processeing for the APPEND imap command.
+ * Handles processing for the APPEND imap command.
  *
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
@@ -127,10 +127,9 @@ class AppendCommand extends AuthenticatedStateCommand {
             try {
                 return GreenMailUtil.newMimeMessage(new ByteArrayInputStream(mail));
             } catch (Exception e) {
-                throw new ProtocolException("UnexpectedException: " + e.getMessage());
+                throw new ProtocolException("Can not create new mime message", e);
             }
         }
-
 
     }
 
