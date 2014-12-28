@@ -11,12 +11,13 @@ import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.mail.MailAddress;
 import com.icegreen.greenmail.mail.MovingMessage;
 import com.icegreen.greenmail.user.GreenMailUser;
-import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.user.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 public class SmtpManager {
@@ -25,13 +26,13 @@ public class SmtpManager {
     Incoming _incomingQueue;
     UserManager userManager;
     private ImapHostManager imapHostManager;
-    Vector<WaitObject> notifyList;
+    List<WaitObject> notifyList;
 
     public SmtpManager(ImapHostManager imapHostManager, UserManager userManager) {
         this.imapHostManager = imapHostManager;
         this.userManager = userManager;
         _incomingQueue = new Incoming();
-        notifyList = new Vector<WaitObject>();
+        notifyList = Collections.synchronizedList(new ArrayList<WaitObject>());
     }
 
 

@@ -13,7 +13,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Wael Chatila
@@ -26,7 +28,7 @@ public abstract class AbstractServer extends Service {
     protected ServerSocket serverSocket = null;
     protected Managers managers;
     protected ServerSetup setup;
-    private Vector<ProtocolHandler> handlers = new Vector<ProtocolHandler>();
+    private List<ProtocolHandler> handlers = Collections.synchronizedList(new ArrayList<ProtocolHandler>());
 
     protected AbstractServer(ServerSetup setup, Managers managers) {
         this.setup = setup;
