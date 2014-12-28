@@ -12,10 +12,11 @@ import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.store.MessageFlags;
 
 import javax.mail.Flags;
-import javax.mail.internet.MailDateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * @author Darrell DeBoer <darrell@apache.org>
@@ -97,17 +98,21 @@ public class CommandParser {
     public Date dateTime(ImapRequestLineReader request) throws ProtocolException {
         char next = request.nextWordChar();
         String dateString;
+        // From https://tools.ietf.org/html/rfc3501 :
+        // date-time       = DQUOTE date-day-fixed "-" date-month "-" date-year
+        //                   SP time SP zone DQUOTE
+        // zone            = ("+" / "-") 4DIGIT
         if (next == '"') {
             dateString = consumeQuoted(request);
         } else {
             throw new ProtocolException("DateTime values must be quoted.");
         }
 
-        MailDateFormat rfc2822Format = new MailDateFormat();
         try {
-            return rfc2822Format.parse(dateString);
+            // You can use Z or zzzz
+            return new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss Z", Locale.US).parse(dateString);
         } catch (ParseException e) {
-            throw new ProtocolException("Invalid date format <"+dateString+">, should be rfc2822 compliant.");
+            throw new ProtocolException("Invalid date format <" + dateString + ">, should comply to dd-MMM-yyyy hh:mm:ss Z");
         }
     }
 
