@@ -5,7 +5,6 @@
 package com.icegreen.greenmail.util;
 
 import com.icegreen.greenmail.user.GreenMailUser;
-import com.sun.mail.imap.IMAPStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -405,9 +404,9 @@ public class GreenMailUtil {
     public static void setQuota(final GreenMailUser user, final Quota quota) {
         Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP);
         try {
-            IMAPStore store = (IMAPStore) session.getStore("imap");
+            Store store = session.getStore("imap");
             store.connect(user.getEmail(), user.getPassword());
-            store.setQuota(quota);
+            ((QuotaAwareStore)store).setQuota(quota);
         } catch (Exception ex) {
             throw new IllegalStateException("Can not set quota " + quota
                     + " for user " + user, ex);
@@ -419,14 +418,14 @@ public class GreenMailUtil {
      *
      * @param user      the user.
      * @param quotaRoot the quota root, eg 'INBOX.
-     * @return array of current quotas.
+     * @return array of current quotas, or an empty array if not set.
      */
     public static Quota[] getQuota(final GreenMailUser user, final String quotaRoot) {
         Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP);
         try {
-            IMAPStore store = (IMAPStore) session.getStore("imap");
+            Store store = session.getStore("imap");
             store.connect(user.getEmail(), user.getPassword());
-            return store.getQuota(quotaRoot);
+            return ((QuotaAwareStore)store).getQuota(quotaRoot);
         } catch (Exception ex) {
             throw new IllegalStateException("Can not get quota for quota root "
                     + quotaRoot + " for user " + user, ex);

@@ -6,13 +6,13 @@
  */
 package com.icegreen.greenmail.test;
 
+import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Test;
 
 import javax.mail.*;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.util.Properties;
@@ -70,6 +70,34 @@ public class GreenMailUtilTest {
             assertTrue(m.getContentType().toLowerCase()
                     .startsWith("text/plain"));
             assertEquals("Test message", m.getContent());
+        } finally {
+            greenMail.stop();
+        }
+    }
+
+    @Test
+    public void testSetAndGetQuota() throws MessagingException {
+        GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
+        try {
+            greenMail.start();
+
+            final GreenMailUser user = greenMail.setUser("foo@localhost", "pwd");
+
+            Properties p = new Properties();
+            Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
+            Store store = session.getStore("imap");
+            store.connect("foo@localhost", "pwd");
+
+            Quota testQuota = new Quota("INBOX");
+            testQuota.setResourceLimit("STORAGE", 1024L * 42L);
+            testQuota.setResourceLimit("MESSAGES", 5L);
+
+            assertEquals(0, GreenMailUtil.getQuota(user, testQuota.quotaRoot).length);
+            GreenMailUtil.setQuota(user, testQuota);
+
+            final Quota[] quota = GreenMailUtil.getQuota(user, testQuota.quotaRoot);
+            assertEquals(1, quota.length);
+            assertEquals(2, quota[0].resources.length);
         } finally {
             greenMail.stop();
         }
