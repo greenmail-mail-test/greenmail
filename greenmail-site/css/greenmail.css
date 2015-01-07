@@ -1,0 +1,114 @@
+/* Colors
+   'Teal' palette from http://www.google.com/design/spec/style/color.html#color-color-palette
+   #009688
+   Previously: 75BD9A (bad contrast)
+-------------------------------------------------- */
+
+/* Header
+-------------------------------------------------- */
+body {
+    padding-top: 40px;
+    position: relative;
+}
+
+header#top {
+    border-bottom: 3px solid #009688;
+}
+
+.anchor:before {
+    display: block;
+    content: "";
+    height: 20px;
+    margin: -20px 0 0;
+}
+
+h3.anchor:before, h4.anchor:before {
+    display: block;
+    content: "";
+    height: 60px;
+    margin: -60px 0 0;
+}
+
+.bs-docs-header {
+    padding-top: 30px;
+    padding-bottom: 30px;
+    margin-bottom: 20px;
+}
+
+.bs-docs-section {
+    margin-bottom: 20px;
+}
+
+.bs-docs-masthead, .bs-docs-header {
+    background-color: #009688;
+    color: white;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#009688), to(#7AC293));
+    background-image: -webkit-linear-gradient(top, #009688 0%, #7AC293 100%);
+    background-image: -o-linear-gradient(top, #009688 0%, #7AC293 100%);
+    background-image: linear-gradient(to bottom, #009688 0%, #7AC293 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#009688', endColorstr='#7AC293', GradientType=0);
+    /*background-image: none;*/
+}
+
+.bs-docs-nav .navbar-brand, .bs-docs-nav .navbar-nav > li > a {
+    color: black;
+}
+
+.version {
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.bs-docs-sidebar.affix {
+    margin-top: 40px;
+}
+
+.bs-docs-sidebar .nav > .active > a, .bs-docs-sidebar .nav > .active:hover > a, .bs-docs-sidebar .nav > .active:focus > a {
+    color: #009688;
+    border-color: #009688;;
+}
+
+.bs-docs-sidebar .nav > li > a:hover, .bs-docs-sidebar .nav > li > a:focus {
+    color: #009688;
+    border-left: 1px solid #009688;
+}
+
+.back-to-top:hover,
+.bs-docs-theme-toggle:hover {
+    color: #009688;
+}
+
+.bs-docs-footer {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-top: 20px;
+}
+
+.alert-info {
+    color: #004D40;
+    background-color: #E0F2F1;
+    border-color: #B2DFDB;
+}
+
+a {
+    /*color: #80CBC4;*/
+    /*color: #4DB6AC;*/
+    /*color: #26A69A;*/
+    /*color: #009688;*/
+    /*color: #00897B;*/
+    color: #00796B;
+    /*color: #00695C;*/
+    /*color: #004D40;*/
+}
+
+.page-header {
+    border-bottom-color: #009688;
+}
+
+pre[class*="language-"] {
+    -webkit-box-shadow: -1px 0px 0px 0px #009688, 0px 0px 0px 1px #dfdfdf;
+    -moz-box-shadow: -1px 0px 0px 0px #009688, 0px 0px 0px 1px #dfdfdf;
+    box-shadow: -1px 0px 0px 0px #B2DFDB, 0px 0px 0px 1px #dfdfdf;
+    border-left: 10px solid #B2DFDB;
+}
+
