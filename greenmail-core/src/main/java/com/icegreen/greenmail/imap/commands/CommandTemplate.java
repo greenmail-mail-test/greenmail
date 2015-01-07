@@ -37,7 +37,7 @@ abstract class CommandTemplate
      * Template methods for handling command processing. This method reads
      * argument values (validating them), and checks the request for correctness.
      * If correct, the command processing is delegated to the specific command
-     * implemenation.
+     * implementation.
      *
      * @see ImapCommand#process
      */
@@ -47,13 +47,16 @@ abstract class CommandTemplate
         try {
             doProcess(request, response, session);
         } catch (FolderException e) {
+            log.warn("Error processing command", e);
             response.commandFailed(this, e.getResponseCode(), e.getMessage());
         } catch (AuthorizationException e) {
+            log.warn("Error processing command due to authentication", e);
             String msg = "Authorization error: Lacking permissions to perform requested operation.";
             response.commandFailed(this, msg);
         } catch (ProtocolException e) {
             String msg = e.getMessage() + " Command should be '" +
                     getExpectedMessage() + '\'';
+            log.warn("Error processing command: " + msg, e);
             response.commandError(msg);
         }
     }
@@ -108,15 +111,6 @@ abstract class CommandTemplate
                                     boolean mustExist)
             throws FolderException {
         return session.getHost().getFolder(session.getUser(), mailboxName, mustExist);
-    }
-
-    protected MailFolder getMailbox(String mailboxName,
-                                    ImapSession session) {
-        try {
-            return session.getHost().getFolder(session.getUser(), mailboxName, false);
-        } catch (FolderException e) {
-            throw new RuntimeException("Unexpected error in CommandTemplate.java");
-        }
     }
 
     public CommandParser getParser() {

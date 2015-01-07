@@ -12,13 +12,13 @@ import java.io.*;
 public class StringBufferResource
         implements Resource {
     StringWriter _currentWriter;
-    StringBuffer _contentBuffer;
+    StringBuilder _contentBuffer;
 
     public StringBufferResource() {
     }
 
     public StringBufferResource(String initalValue) {
-        _contentBuffer = new StringBuffer(initalValue);
+        _contentBuffer = new StringBuilder(initalValue);
     }
 
     public Writer getWriter()
@@ -45,7 +45,7 @@ public class StringBufferResource
     private void closeInput()
             throws IOException {
         if (_currentWriter != null) {
-            _contentBuffer = _currentWriter.getBuffer();
+            _contentBuffer = new StringBuilder(_currentWriter.getBuffer());
             _currentWriter = null;
         }
 
@@ -54,8 +54,7 @@ public class StringBufferResource
     }
 
     public long getSize() {
-
-        return _contentBuffer.toString().length();
+        return _contentBuffer.length();
     }
 
     public String getAsString() throws IOException {

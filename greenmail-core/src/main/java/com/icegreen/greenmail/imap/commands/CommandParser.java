@@ -12,11 +12,11 @@ import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.store.MessageFlags;
 
 import javax.mail.Flags;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -95,43 +95,25 @@ public class CommandParser {
 
     /**
      * Reads a "date-time" argument from the request.
-     * TODO handle timezones properly
      */
     public Date dateTime(ImapRequestLineReader request) throws ProtocolException {
         char next = request.nextWordChar();
         String dateString;
+        // From https://tools.ietf.org/html/rfc3501 :
+        // date-time       = DQUOTE date-day-fixed "-" date-month "-" date-year
+        //                   SP time SP zone DQUOTE
+        // zone            = ("+" / "-") 4DIGIT
         if (next == '"') {
             dateString = consumeQuoted(request);
         } else {
             throw new ProtocolException("DateTime values must be quoted.");
         }
 
-        DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss zzzz", Locale.US);
         try {
-            return dateFormat.parse(dateString);
+            // You can use Z or zzzz
+            return new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss Z", Locale.US).parse(dateString);
         } catch (ParseException e) {
-            throw new ProtocolException("Invalid date format.");
-        }
-    }
-
-    /**
-     * Reads a "date" argument from the request.
-     * TODO handle timezones properly
-     */
-    public Date date(ImapRequestLineReader request) throws ProtocolException {
-        char next = request.nextWordChar();
-        String dateString;
-        if (next == '"') {
-            dateString = consumeQuoted(request);
-        } else {
-            dateString = atom(request);
-        }
-
-        DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
-        try {
-            return dateFormat.parse(dateString);
-        } catch (ParseException e) {
-            throw new ProtocolException("Invalid date format.");
+            throw new ProtocolException("Invalid date format <" + dateString + ">, should comply to dd-MMM-yyyy hh:mm:ss Z");
         }
     }
 
@@ -377,7 +359,7 @@ public class CommandParser {
             return new IdRange[]{parseRange(nextWord)};
         }
 
-        ArrayList<IdRange> rangeList = new ArrayList<IdRange>();
+        List<IdRange> rangeList = new ArrayList<IdRange>();
         int pos = 0;
         while (commaPos != -1) {
             String range = nextWord.substring(pos, commaPos);

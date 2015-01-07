@@ -130,7 +130,7 @@ public class ImapServerTest {
         Properties p = new Properties();
 //            p.setProperty("mail.debug","true");
         Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
-        IMAPStore store = (IMAPStore) session.getStore("imap");
+        Store store = session.getStore("imap");
         store.connect("foo@localhost", "pwd");
         IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
         folder.open(Folder.READ_ONLY);
@@ -140,9 +140,10 @@ public class ImapServerTest {
         Quota testQuota = new Quota("INBOX");
         testQuota.setResourceLimit("STORAGE", 1024L * 42L);
         testQuota.setResourceLimit("MESSAGES", 5L);
-        store.setQuota(testQuota);
+        final QuotaAwareStore quotaAwareStore = (QuotaAwareStore) store;
+        quotaAwareStore.setQuota(testQuota);
 
-        Quota[] quotas = store.getQuota("INBOX");
+        Quota[] quotas = quotaAwareStore.getQuota("INBOX");
         assertNotNull(quotas);
         assertTrue(quotas.length == 1);
         assertNotNull(quotas[0].resources);
@@ -153,7 +154,7 @@ public class ImapServerTest {
         assertEquals(quotas[0].resources[1].usage, 1);
 //            assertEquals(quotas[0].resources[0].usage, m.getSize());
 
-        quotas = store.getQuota("");
+        quotas = quotaAwareStore.getQuota("");
         assertNotNull(quotas);
         assertTrue(quotas.length == 0);
         // TODO: Quota on ""

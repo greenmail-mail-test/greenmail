@@ -13,7 +13,7 @@ import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
 
-public class AbstractServer_AllocateAvailablePortTest {
+public class AllocateAvailablePortTest {
 
     private static final int AnyFreePort = 0;
 

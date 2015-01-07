@@ -45,16 +45,15 @@ public class UserManager {
     }
 
     public void deleteUser(GreenMailUser user) {
-        user = _users.remove(normalizerUserName(user.getLogin()));
-        if (user != null) {
-            user.delete();
+        GreenMailUser deletedUser = _users.remove(normalizerUserName(user.getLogin()));
+        if (deletedUser != null) {
+            deletedUser.delete();
         }
     }
 
     public boolean test(String userid, String password) {
         GreenMailUser u = getUser(userid);
         return null != u && u.getPassword().equals(password);
-
     }
 
     public ImapHostManager getImapHostManager() {

@@ -214,7 +214,7 @@ public class ImapHostManagerImpl
 //        System.out.println( "Listing for user: '" + user.getUserName() + "'" +
 //                            " pattern:'" + mailboxPattern + "'" );
 
-        ArrayList<MailFolder> mailboxes = new ArrayList<MailFolder>();
+        List<MailFolder> mailboxes = new ArrayList<MailFolder>();
         String qualifiedPattern = getQualifiedMailboxName(user, mailboxPattern);
 
         for (MailFolder folder : store.listMailboxes(qualifiedPattern)) {

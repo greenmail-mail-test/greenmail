@@ -26,6 +26,7 @@ import javax.mail.internet.MimeMultipart;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * Implements the GreenMailServiceMBean.
@@ -37,7 +38,7 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     private Managers managers;
-    private EnumMap<ServiceProtocol, Service> services =
+    private Map<ServiceProtocol, Service> services =
             new EnumMap<ServiceProtocol, Service>(ServiceProtocol.class);
 
     /** Default port offset is {@value}. */

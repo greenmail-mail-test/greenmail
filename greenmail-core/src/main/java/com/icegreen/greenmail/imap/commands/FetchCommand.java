@@ -151,8 +151,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             try {
                 handleBodyFetch(mimeMessage, sectionSpecifier, fetchElement.getPartial(), response);
             } catch (Exception e) {
-                // TODO  chain exceptions
-                throw new FolderException(e.getMessage());
+                throw new FolderException(e);
             }
         }
 
@@ -267,7 +266,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
     }
 
     private String[] split(String value, String delimiter) {
-        ArrayList<String> strings = new ArrayList<String>();
+        List<String> strings = new ArrayList<String>();
         int startPos = 0;
         int delimPos;
         while ((delimPos = value.indexOf(delimiter, startPos)) != -1) {
