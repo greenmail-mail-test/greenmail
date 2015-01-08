@@ -104,14 +104,20 @@
                         POP3, IMAP retriever helper class. Alternatively you can use a local client like <a
                                 href="https://www.mozilla.org/thunderbird/">Thunderbird</a>.
                     </li>
+                    <li>The example below is using the GreenMail JUnit rule. See <a href="#examples">examples</a>
+                        for hints on how to use GreenMail without the rule.
+                    </li>
                 </ul>
         <pre><code class="language-java"><!-- @formatter:off -->
-GreenMail greenMail = new GreenMail(); //Uses test ports by default
-greenMail.start();
-GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "some subject",
-                                "some body"); //replace this with your test message content
-assertEquals("some body", GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
-greenMail.stop();
+@Rule
+public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+
+@Test
+public void testSend() throws MessagingException {
+    GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com",
+        "some subject", "some body"); // --- Place your sending code here instead
+    assertEquals("some body", GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
+}
         </code></pre><!-- @formatter:on -->
 
                 <h4>Test Your Retrieving Code</h4>
@@ -131,17 +137,18 @@ greenMail.stop();
                     </li>
                 </ul>
         <pre><code class="language-java"><!-- @formatter:off -->
-GreenMail greenMail = new GreenMail(); //Uses test ports by default
-greenMail.start();
+@Rule
+public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
 
-MimeMessage message = ... //Construct the message
+@Test
+public void testReceive() throws MessagingException {
+    GreenMailUser user = greenMail.setUser("to@localhost.com", "login-id", "password");
+    user.deliver(createMimeMessage()); // You can either create a more complex message...
+    GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com",
+        "subject", "body"); // ...or use the default messages
 
-User user = greenMail.setUser("to@localhost.com", "login-id", "password");
-user.deliver(message);
-GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", subject, body);
-assertEquals(2, greenMail.getReceivedMessages().length);
-
-... // Place your POP3 or IMAP retrieve code here>
+    assertEquals(2, greenMail.getReceivedMessages().length); // // --- Place your POP3 or IMAP retrieve code here
+}
         </code></pre><!-- @formatter:on -->
 
                 <h4>Sending and Retrieving</h4>
@@ -205,12 +212,8 @@ assertEquals(2, greenMail.getReceivedMessages().length);
                 <p>The following lists provide helpful links related to GreenMail and email integration testing.</p>
                 <h5>Projects extending/wrapping GreenMail:</h5>
                 <ul>
-                    <li><a href="http://grails.org/plugin/greenmail">Grails Plugin for GreenMail</a> including
-                                                                                                     REST-like
-                                                                                                     GreenMail
-                                                                                                     control
-                                                                                                     interface and
-                                                                                                     UI
+                    <li><a href="http://grails.org/plugin/greenmail">Grails Plugin for GreenMail</a>
+                        including REST-like GreenMail control interface and UI
                     </li>
                     <li><a href="https://github.com/alextir/play-module-greenmail">Play Plugin for GreenMail</a>
                         including REST-like control interface and UI
@@ -223,53 +226,23 @@ assertEquals(2, greenMail.getReceivedMessages().length);
                 <h5>Articles&amp;Blogs:</h5>
                 <ul>
                     <li>
-                        <a href="http://www.hascode.com/2012/07/integration-testing-imap-smtp-and-pop3-with-greenmail/">Integration
-                                                                                                                        Testing
-                                                                                                                        IMAP,
-                                                                                                                        SMTP
-                                                                                                                        and
-                                                                                                                        POP3
-                                                                                                                        with
-                                                                                                                        GreenMail</a>
+                        <a href="http://www.hascode.com/2012/07/integration-testing-imap-smtp-and-pop3-with-greenmail/">
+                            Integration Testing IMAP, SMTP and POP3 with GreenMail</a>
                     </li>
                     <li>
-                        <a href="http://tanyamadurapperuma.blogspot.de/2014/01/run-your-tests-with-greenmail-simple.html">Run
-                                                                                                                          Your
-                                                                                                                          Tests
-                                                                                                                          With
-                                                                                                                          GreenMail
-                                                                                                                          -
-                                                                                                                          A
-                                                                                                                          simple
-                                                                                                                          Mail
-                                                                                                                          Server</a>
+                        <a href="http://tanyamadurapperuma.blogspot.de/2014/01/run-your-tests-with-greenmail-simple.html">
+                            Run Your Tests With GreenMail - A simple Mail Server</a>
                     </li>
-                    <li><a href="http://jetlet.blogspot.de/2010/11/integration-testing-mail-function-with.html">Integration
-                                                                                                                Testing
-                                                                                                                Mail
-                                                                                                                function
-                                                                                                                with
-                                                                                                                Greenmail
-                                                                                                                and
-                                                                                                                Spock
-                                                                                                                in
-                                                                                                                Grails</a>
+                    <li><a href="http://jetlet.blogspot.de/2010/11/integration-testing-mail-function-with.html">
+                        Integration Testing Mail function with Greenmail and Spock in Grails</a>
                     </li>
-                    <li><a href="http://developer.vz.net/2011/11/08/unit-testing-java-mail-code/">Unit testing Java
-                                                                                                  mail
-                                                                                                  code</a></li>
-                    <li><a href="https://weblogs.java.net/blog/garysweaver/archive/2008/08/using_the_green.html">Using
-                                                                                                                 the
-                                                                                                                 GreenMail
-                                                                                                                 Java-based
-                                                                                                                 In-Memory
-                                                                                                                 MailServer
-                                                                                                                 in
-                                                                                                                 Integration
-                                                                                                                 Tests</a>
+                    <li><a href="http://developer.vz.net/2011/11/08/unit-testing-java-mail-code/">
+                        Unit testing Java mail code</a></li>
+                    <li><a href="https://weblogs.java.net/blog/garysweaver/archive/2008/08/using_the_green.html">
+                        Using the GreenMail Java-based In-Memory MailServer in Integration Tests</a>
                     </li>
-                    <li><a href="http://www.javavillage.in/greenmail-java-mail.php">JavaEmail testing with
-                                                                                    GreenMail</a>
+                    <li><a href="http://www.javavillage.in/greenmail-java-mail.php">
+                        JavaEmail testing with GreenMail</a>
                     </li>
                 </ul>
                 <h5>Projects using GreenMail include:</h5>
@@ -298,13 +271,30 @@ assertEquals(2, greenMail.getReceivedMessages().length);
 
             <div id="examples" class="bs-docs-section anchor">
                 <h1 class="page-header">Examples</h1>
+                <div>The source code of the examples can be found in the test package of GreenMail
+                    (greenmail-core/src/test/java/com/icegreen/greenmail/examples/).</div>
+        <h3 id="ex_junit_rule" class="anchor">Using JUnit (Rule based setup)</h3>
+        <pre><code class="language-java"><!-- @formatter:off -->
+@Rule
+public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
+
+@Test
+public void testSomething() {
+    GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", "body");
+    MimeMessage[] emails = greenMail.getReceivedMessages();
+    assertEquals(1, emails.length);
+    assertEquals("subject", emails[0].getSubject());
+    assertEquals("body", GreenMailUtil.getBody(emails[0]));
+    // ...
+}
+        </code></pre><!-- @formatter:on -->
 
                 <h3 id="ex_send_simple" class="anchor">Testing your sending code (simple)</h3>
         <pre><code class="language-java"><!-- @formatter:off -->
 GreenMail greenMail = new GreenMail(); //uses test ports by default
 greenMail.start();
 GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "some subject",
-                                "some body"); //replace this with your test message content
+                                "some body"); // --- Place your sending code here
 assertEquals("some body", GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
 greenMail.stop();
         </code></pre><!-- @formatter:on -->
@@ -318,24 +308,28 @@ greenMail.start();
 final String subject = GreenMailUtil.random();
 final String body = GreenMailUtil.random();
 
-... // PLACE YOUR SEND CODE HERE
+sendTestMails(subject, body); // --- Place your sending code here
 
 //wait for max 5s for 1 email to arrive
 //waitForIncomingEmail() is useful if you're sending stuff asynchronously in a separate thread
-assertTrue(greenMail.waitForIncomingEmail(5000, 1));
+assertTrue(greenMail.waitForIncomingEmail(5000, 2));
 
 //Retrieve using GreenMail API
 Message[] messages = greenMail.getReceivedMessages();
-assertEquals(1, messages.length);
+assertEquals(2, messages.length);
+
+// Simple message
 assertEquals(subject, messages[0].getSubject());
 assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
 
-//if your send content as a 2 part multipart...
-assertTrue(messages[0].getContent() instanceof MimeMultipart);
-MimeMultipart mp = (MimeMultipart) messages[0].getContent();
+//if you send content as a 2 part multipart...
+assertTrue(messages[1].getContent() instanceof MimeMultipart);
+MimeMultipart mp = (MimeMultipart) messages[1].getContent();
 assertEquals(2, mp.getCount());
-assertEquals(multipart_body1, GreenMailUtil.getBody(mp.getBodyPart(0)).trim());
-assertEquals(multipart_body2, GreenMailUtil.getBody(mp.getBodyPart(1)).trim());
+assertEquals("body1", GreenMailUtil.getBody(mp.getBodyPart(0)).trim());
+assertEquals("body2", GreenMailUtil.getBody(mp.getBodyPart(1)).trim());
+
+greenMail.stop();
         </code></pre><!-- @formatter:on -->
 
                 <h3 id="ex_retrieve" class="anchor">Testing your retrieving code</h3>
@@ -347,31 +341,16 @@ greenMail.start();
 //Use random content to avoid potential residual lingering problems
 final String subject = GreenMailUtil.random();
 final String body = GreenMailUtil.random();
-MimeMessage message = ... // CONSTRUCT MESSAGE
-User user = greenMail.setUser("wael@localhost.com", "waelc", "soooosecret");
+MimeMessage message = createMimeMessage(subject, body, greenMail); // Construct message
+GreenMailUser user = greenMail.setUser("wael@localhost.com", "waelc", "soooosecret");
 user.deliver(message);
 assertEquals(1, greenMail.getReceivedMessages().length);
 
-... // PLACE YOUR RETRIEVE AND VERIFICATION CODE HERE
+// --- Place your retrieve code here
+greenMail.stop();
         </code></pre><!-- @formatter:on -->
 
-                <h3 id="ex_junit_rule" class="anchor">Using JUnit (Rule based setup)</h3>
-        <pre><code class="language-java"><!-- @formatter:off -->
-public class MyAdvancedGreenMailTest {
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
 
-    @Test
-    public void testSomething() {
-        GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", "body");
-        MimeMessage[] emails = greenMail.getReceivedMessages();
-        assertEquals(1, emails.length);
-        assertEquals("subject", emails[0].getSubject());
-        assertEquals("body", GreenMailUtil.getBody(emails[0]));
-        ...
-    }
-}
-        </code></pre><!-- @formatter:on -->
             </div>
 
             <div id="deployment" class="bs-docs-section anchor">
@@ -750,19 +729,19 @@ jar xvf /path/to/greenmail-jboss-service-XXX.jar
 <script src="js/prism.js"></script>
 <script type="application/javascript">
     $(document).ready(function () {
-        var $body = $(document.body)
+        var $body = $(document.body);
         $body.scrollspy({
             target: ''
-        })
-        $body.scrollspy('refresh')
-        var $sideBar = $('.bs-docs-sidebar')
+        });
+        $body.scrollspy('refresh');
+        var $sideBar = $('.bs-docs-sidebar');
 
         $sideBar.affix({
             offset: {
                 top: 200,
                 bottom: 41
             }
-        })
+        });
     });
 </script>
 </body>
