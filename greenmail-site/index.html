@@ -19,8 +19,8 @@
     <![endif]-->
 
     <!-- Custom styles for this template -->
-    <link href="css/docs.css" rel="stylesheet"/>
-    <link href="css/prism.css" rel="stylesheet"/>
+    <link href="css/docs.min.css" rel="stylesheet"/>
+    <link href="css/prism.min.css" rel="stylesheet"/>
     <link href="css/greenmail.css" rel="stylesheet"/>
 </head>
 
@@ -458,14 +458,14 @@ jar xvf /path/to/greenmail-jboss-service-XXX.jar
                    message on the console output, including basic configuration data like active protocols and their
                    ports:
                 </p>
-                <img src="images/greenmail_jboss_sar_console.png" class="img-rounded" alt="JBoss console output when deploying GreenMail SAR"/>
+                <img src="images/greenmail_jboss_sar_console.png" class="img-rounded" alt="JBoss console output when deploying GreenMail SAR" width="682px" height="199px"/>
 
                 <p><!-- space --></p>
 
                 <p>
                     Opening the JBoss Console, you can see the GreenMail Service JMX Bean:
                 </p>
-                <img src="images/greenmail_jboss_jmx_console.png" class="img-rounded" alt="GreenMail JMX Bean"/>
+                <img src="images/greenmail_jboss_jmx_console.png" class="img-rounded" alt="GreenMail JMX Bean" width="742px" height="611px"/>
 
                 <p>
                     You find two entries, of which the second one holds our interest:
@@ -489,7 +489,7 @@ jar xvf /path/to/greenmail-jboss-service-XXX.jar
                     <li>Select the JMX bean of name GreenMail and type service</li>
                     <li>Invoke the sendMail operation:</li>
                 </ol>
-                <img src="images/greenmail_jboss_jmx_send.png" class="img-rounded" alt="Sending email using GreenMail JMX Bean"/>
+                <img src="images/greenmail_jboss_jmx_send.png" class="img-rounded" alt="Sending email using GreenMail JMX Bean" width="580px" height="238px"/>
 
                 <p>The mail should now be visible by listing the user mails, if there is no automatic polling of the
                    mail box.</p>
@@ -510,10 +510,10 @@ jar xvf /path/to/greenmail-jboss-service-XXX.jar
                         paragraph)
                     </li>
                     <li>Enter the user email for the listMailsForUserHTML operation:
-                        <img src="images/greenmail_jboss_jmx_list_mail_for_user.png" class="img-rounded" alt="List mails operation for GreenMail JMX Bean"/>
+                        <img src="images/greenmail_jboss_jmx_list_mail_for_user.png" class="img-rounded" alt="List mails operation for GreenMail JMX Bean" width="550px" height="163px"/>
                     </li>
                     <li>Click the invoke button. The browser now shows all emails for the specified user:
-                        <img src="images/greenmail_jboss_jmx_list_emails_for_user.png" class="img-rounded" alt="Listing mails for a user using GreenMail JMX Bean"/>
+                        <img src="images/greenmail_jboss_jmx_list_emails_for_user.png" class="img-rounded" alt="Listing mails for a user using GreenMail JMX Bean" width="726px" height="349px"/>
                     </li>
                 </ol>
                 <div class="alert alert-info" role="alert">Note that displaying mails does not modify the user mail
@@ -725,8 +725,31 @@ jar xvf /path/to/greenmail-jboss-service-XXX.jar
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-<script src="js/ie10-viewport-bug-workaround.js"></script>
-<script src="js/prism.js"></script>
+<script src="js/prism.min.js"></script>
+<script>
+/*!
+ * IE10 viewport hack for Surface/desktop Windows 8 bug
+ * Copyright 2014 Twitter, Inc.
+ * Licensed under the Creative Commons Attribution 3.0 Unported License. For
+ * details, see http://creativecommons.org/licenses/by/3.0/.
+ */
+
+// See the Getting Started docs for more information:
+// http://getbootstrap.com/getting-started/#support-ie10-width
+
+(function () {
+  'use strict';
+  if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
+    var msViewportStyle = document.createElement('style')
+    msViewportStyle.appendChild(
+      document.createTextNode(
+        '@-ms-viewport{width:auto!important}'
+      )
+    )
+    document.querySelector('head').appendChild(msViewportStyle)
+  }
+})();
+</script>
 <script type="application/javascript">
     $(document).ready(function () {
         var $body = $(document.body);
