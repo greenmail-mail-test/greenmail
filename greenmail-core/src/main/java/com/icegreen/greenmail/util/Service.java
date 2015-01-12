@@ -19,7 +19,6 @@ abstract public class Service extends Thread {
     private volatile boolean keepRunning = false;
     private volatile boolean running = false;
 
-    //---------
     public void init(Object obj) {
         //empty
     }
@@ -74,7 +73,7 @@ abstract public class Service extends Thread {
                 }
             }
         } catch (InterruptedException e) {
-            //its possible that the thread exits between the lines keepRunning=false and intertupt above
+            //its possible that the thread exits between the lines keepRunning=false and interrupt above
         } finally {
             if (doDestroy) {
                 destroy(obj);
