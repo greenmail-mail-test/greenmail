@@ -80,42 +80,38 @@ public abstract class AbstractServer extends Service {
     @Override
     public void run() {
         try {
-            try {
-                serverSocket = openServerSocket();
-                setRunning(true);
-                synchronized (this) {
-                    this.notifyAll();
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            serverSocket = openServerSocket();
+            setRunning(true);
+            synchronized (this) {
+                this.notifyAll();
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-            while (keepOn()) {
-                try {
-                    Socket clientSocket = serverSocket.accept();
-                    if (!keepOn()) {
-                        clientSocket.close();
-                    } else {
-                        final ProtocolHandler handler = createProtocolHandler(clientSocket);
-                        addHandler(handler);
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                handler.run(); // NOSONAR
-                                 // Make sure to deregister, see https://github.com/greenmail-mail-test/greenmail/issues/18
-                                removeHandler(handler);
-                            }
-                        }).start();
-                    }
-                } catch (IOException ignored) {
-                    //ignored
-                    if(log.isTraceEnabled()) {
-                        log.trace("Error while processing socket", ignored);
-                    }
+        while (keepOn()) {
+            try {
+                Socket clientSocket = serverSocket.accept();
+                if (!keepOn()) {
+                    clientSocket.close();
+                } else {
+                    final ProtocolHandler handler = createProtocolHandler(clientSocket);
+                    addHandler(handler);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            handler.run(); // NOSONAR
+                             // Make sure to deregister, see https://github.com/greenmail-mail-test/greenmail/issues/18
+                            removeHandler(handler);
+                        }
+                    }).start();
+                }
+            } catch (IOException ignored) {
+                //ignored
+                if(log.isTraceEnabled()) {
+                    log.trace("Error while processing socket", ignored);
                 }
             }
-        } finally {
-            quit();
         }
     }
 
@@ -138,7 +134,7 @@ public abstract class AbstractServer extends Service {
     }
 
     @Override
-    public synchronized void quit() {
+    protected synchronized void quit() {
         try {
             synchronized (handlers) {
                 for (ProtocolHandler handler : handlers) {
