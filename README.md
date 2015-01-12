@@ -38,9 +38,16 @@ Development  [![Build Status](https://travis-ci.org/greenmail-mail-test/greenmai
 
 * Build and deploy a release
 
-  For a tagged release and deployment to [Sonatype OpenSource Repository Hosting][ossrh_maven], do
+  For a tagged release and deployment to [Sonatype OpenSource Repository Hosting][ossrh_maven] and later syncing to [Maven Central][maven_repository_release], do
 
   `mvn clean deploy -Prelease,release-ossrh`
+
+* Build and deploy a snapshot
+
+  For a Maven Snapshot deployment to [Sonatype][maven_repository_snapshot], do
+
+  `mvn clean deploy -Prelease-ossrh`
+
 
 [greenmail_project_site]: http://www.icegreen.com/greenmail
 [greenmail_examples]: http://www.icegreen.com/greenmail/examples.html
@@ -52,6 +59,8 @@ Development  [![Build Status](https://travis-ci.org/greenmail-mail-test/greenmai
 [maven_download]: http://maven.apache.org
 [jekyll]: http://jekyllrb.com/
 [ossrh_maven]: http://central.sonatype.org/pages/apache-maven.html
+[maven_repository_snapshot]: https://oss.sonatype.org/content/repositories/snapshots/com/icegreen
+[maven_repository_release]: http://central.maven.org/maven2/com/icegreen/
 
 Contribution guidelines
 -----------------------
