@@ -14,7 +14,7 @@ package com.icegreen.greenmail.util;
 abstract public class Service extends Thread {
     public abstract void run();
 
-    public abstract void quit();
+    protected abstract void quit();
 
     private volatile boolean keepRunning = false;
     private volatile boolean running = false;
