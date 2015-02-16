@@ -239,7 +239,7 @@ public class GreenMail extends ConfiguredGreenMail {
 
     @Override
     public GreenMailUser setUser(String email, String login, String password) {
-        GreenMailUser user = managers.getUserManager().getUser(email);
+        GreenMailUser user = managers.getUserManager().getUser(login);
         if (null == user) {
             try {
                 user = managers.getUserManager().createUser(email, login, password);
