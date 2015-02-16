@@ -1,5 +1,7 @@
 package com.icegreen.greenmail.util;
 
+import com.icegreen.greenmail.base.GreenMailOperations;
+
 import javax.mail.internet.InternetAddress;
 
 /**

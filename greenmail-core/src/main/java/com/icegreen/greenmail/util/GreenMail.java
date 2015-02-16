@@ -5,6 +5,8 @@
 package com.icegreen.greenmail.util;
 
 import com.icegreen.greenmail.Managers;
+import com.icegreen.greenmail.configuration.ConfiguredGreenMail;
+import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.imap.ImapServer;
 import com.icegreen.greenmail.pop3.Pop3Server;
 import com.icegreen.greenmail.smtp.SmtpManager;
@@ -20,7 +22,7 @@ import java.util.*;
 /**
  * Utility class that manages a greenmail server with support for multiple protocols
  */
-public class GreenMail implements GreenMailOperations {
+public class GreenMail extends ConfiguredGreenMail {
     private Managers managers;
     private Map<String, Service> services;
     private ServerSetup[] config;
@@ -36,7 +38,7 @@ public class GreenMail implements GreenMailOperations {
     /**
      * Call this constructor if you want to run one of the email servers only
      *
-     * @param config
+     * @param config  Server setup to use
      */
     public GreenMail(ServerSetup config) {
         this(new ServerSetup[]{config});
@@ -45,7 +47,7 @@ public class GreenMail implements GreenMailOperations {
     /**
      * Call this constructor if you want to run more than one of the email servers
      *
-     * @param config
+     * @param config Server setup to use
      */
     public GreenMail(ServerSetup[] config) {
         this.config = config;
@@ -88,6 +90,7 @@ public class GreenMail implements GreenMailOperations {
         if (!allup) {
             throw new RuntimeException("Couldnt start at least one of the mail services.");
         }
+        doConfigure();
     }
 
     @Override
@@ -261,6 +264,13 @@ public class GreenMail implements GreenMailOperations {
             String password = users.getProperty(email);
             setUser(email, email, password);
         }
+    }
+
+    @Override
+    public GreenMail withConfiguration(GreenMailConfiguration config) {
+        // Just overriding to return more specific type
+        super.withConfiguration(config);
+        return this;
     }
 
     public GreenMailUtil util() {

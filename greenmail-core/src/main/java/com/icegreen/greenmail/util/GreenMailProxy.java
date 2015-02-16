@@ -1,6 +1,7 @@
 package com.icegreen.greenmail.util;
 
 import com.icegreen.greenmail.Managers;
+import com.icegreen.greenmail.configuration.ConfiguredGreenMail;
 import com.icegreen.greenmail.imap.ImapServer;
 import com.icegreen.greenmail.pop3.Pop3Server;
 import com.icegreen.greenmail.smtp.SmtpServer;
@@ -12,7 +13,7 @@ import java.util.Properties;
 /**
  * Proxy that routes all operations to an internal greenmail instance
  */
-public abstract class GreenMailProxy implements GreenMailOperations {
+public abstract class GreenMailProxy extends ConfiguredGreenMail {
     @Override
     public SmtpServer getSmtp() {
         return getGreenMail().getSmtp();
@@ -91,6 +92,8 @@ public abstract class GreenMailProxy implements GreenMailOperations {
     @Override
     public void start() {
         getGreenMail().start();
+        // Apply configuration that we store
+        doConfigure();
     }
 
     @Override
