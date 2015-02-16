@@ -11,6 +11,11 @@
     <title>Changes</title>
   </properties>
   <body>
+  <release version="1.5" date="2014-02-16" description="Changes for 1.5 release">
+    <action type="add">
+      Add GreenMailConfiguration that can be used to configure GreenMail istances (e.g. add users on startup)
+    </action>
+  </release>
   <release version="1.4" date="2014-10-29" description="Changes for 1.4 release">
     <action type="fix" issue="7">
       Do not try to add receiver addresses any more to MIME message. Handling of BCC addresses is now correct. BCC

@@ -1,6 +1,7 @@
-package com.icegreen.greenmail.util;
+package com.icegreen.greenmail.base;
 
 import com.icegreen.greenmail.Managers;
+import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.imap.ImapServer;
 import com.icegreen.greenmail.pop3.Pop3Server;
 import com.icegreen.greenmail.smtp.SmtpServer;
@@ -113,6 +114,13 @@ public interface GreenMailOperations {
      * @param isEnabled true, if quotas should be supported.
      */
     void setQuotaSupported(boolean isEnabled);
+
+    /**
+     * Configure GreenMail instance using the given configuration
+     *
+     * @param config Configuration to use
+     */
+    GreenMailOperations withConfiguration(GreenMailConfiguration config);
 
     /**
      * Start the GreenMail server

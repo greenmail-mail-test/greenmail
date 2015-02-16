@@ -1,5 +1,6 @@
 package com.icegreen.greenmail.junit;
 
+import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailProxy;
 import com.icegreen.greenmail.util.ServerSetup;
@@ -47,15 +48,22 @@ public class GreenMailRule extends GreenMailProxy implements MethodRule, TestRul
             @Override
             public void evaluate() throws Throwable {
                 greenMail = new GreenMail(serverSetups);
-                greenMail.start();
+                start();
                 try {
                     base.evaluate();
                 } finally {
-                    greenMail.stop();
+                    stop();
                 }
             }
 
         };
+    }
+
+    @Override
+    public GreenMailRule withConfiguration(GreenMailConfiguration config) {
+        // Just overriding to return more specific type
+        super.withConfiguration(config);
+        return this;
     }
 
     @Override
