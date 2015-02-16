@@ -1,7 +1,7 @@
 package com.icegreen.greenmail.configuration;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetup;
+import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -12,7 +12,7 @@ import static com.icegreen.greenmail.configuration.GreenMailConfigurationTestBas
  */
 public class GreenMailRuleConfigurationTest {
     @Rule
-    public GreenMailRule greenMail = new GreenMailRule(ServerSetup.IMAP).withConfiguration(
+    public GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.IMAP).withConfiguration(
             testUsersAccessibleConfig()
     );
 
