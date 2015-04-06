@@ -28,15 +28,18 @@ public class UserManagerTest {
     }
 
     @Test
-    public void testFindByEmail() throws UserException {
+    public void testFindByEmailAndLogin() throws UserException {
         ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
         UserManager userManager = new UserManager(imapHostManager);
         GreenMailUser u1 = userManager.createUser("foo@bar.com", "foo", "pwd");
 
         assertEquals(u1, userManager.getUserByEmail(u1.getEmail()));
+        assertEquals(u1, userManager.getUser(u1.getLogin()));
 
         GreenMailUser u2 = userManager.createUser("foo2@bar.com", "foo2", "pwd");
         assertEquals(u1, userManager.getUserByEmail(u1.getEmail()));
         assertEquals(u2, userManager.getUserByEmail(u2.getEmail()));
+        assertEquals(u1, userManager.getUser(u1.getLogin()));
+        assertEquals(u2, userManager.getUser(u2.getLogin()));
     }
 }
