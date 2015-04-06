@@ -29,12 +29,19 @@ public class ServerSetup {
     public static final String PROTOCOL_IMAP = "imap";
     public static final String PROTOCOL_IMAPS = "imaps";
 
-    public static final ServerSetup SMTP = new ServerSetup(25, null, PROTOCOL_SMTP);
-    public static final ServerSetup SMTPS = new ServerSetup(465, null, PROTOCOL_SMTPS);
-    public static final ServerSetup POP3 = new ServerSetup(110, null, PROTOCOL_POP3);
-    public static final ServerSetup POP3S = new ServerSetup(995, null, PROTOCOL_POP3S);
-    public static final ServerSetup IMAP = new ServerSetup(143, null, PROTOCOL_IMAP);
-    public static final ServerSetup IMAPS = new ServerSetup(993, null, PROTOCOL_IMAPS);
+    public static final int PORT_SMTP = 25;
+    public static final int PORT_SMTPS = 465;
+    public static final int PORT_POP3 = 110;
+    public static final int PORT_POP3S = 995;
+    public static final int PORT_IMAP = 143;
+    public static final int PORT_IMAPS = 993;
+
+    public static final ServerSetup SMTP = new ServerSetup(PORT_SMTP, null, PROTOCOL_SMTP);
+    public static final ServerSetup SMTPS = new ServerSetup(PORT_SMTPS, null, PROTOCOL_SMTPS);
+    public static final ServerSetup POP3 = new ServerSetup(PORT_POP3, null, PROTOCOL_POP3);
+    public static final ServerSetup POP3S = new ServerSetup(PORT_POP3S, null, PROTOCOL_POP3S);
+    public static final ServerSetup IMAP = new ServerSetup(PORT_IMAP, null, PROTOCOL_IMAP);
+    public static final ServerSetup IMAPS = new ServerSetup(PORT_IMAPS, null, PROTOCOL_IMAPS);
 
     public static final ServerSetup[] SMTP_POP3 = new ServerSetup[]{SMTP, POP3};
     public static final ServerSetup[] SMTP_IMAP = new ServerSetup[]{SMTP, IMAP};
