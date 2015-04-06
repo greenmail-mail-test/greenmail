@@ -76,6 +76,12 @@ public class Retriever {
             store.connect(host, port, account, password);
             Folder rootFolder = store.getFolder("INBOX");
             final List<Message> messages = getMessages(rootFolder);
+
+            // Fetch all UIDs
+            FetchProfile fp = new FetchProfile();
+            fp.add(UIDFolder.FetchProfileItem.UID);
+            rootFolder.fetch(rootFolder.getMessages(), fp);
+
             return messages.toArray(new Message[messages.size()]);
         } catch (NoSuchProviderException e) {
             throw new RuntimeException(e);

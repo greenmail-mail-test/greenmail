@@ -5,14 +5,20 @@
 package com.icegreen.greenmail.test;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
+import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import com.sun.mail.pop3.POP3Folder;
+import com.sun.mail.pop3.POP3Store;
 import org.junit.Rule;
 import org.junit.Test;
 
 import javax.mail.BodyPart;
 import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 
@@ -28,6 +34,17 @@ public class Pop3ServerTest {
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
 
     @Test
+    public void testPop3Capabillities() throws MessagingException, UserException {
+        final Session session = GreenMailUtil.getSession(greenMail.getPop3().getServerSetup());
+        final POP3Store store = (POP3Store) session.getStore(ServerSetup.PROTOCOL_POP3);
+        greenMail.getManagers().getUserManager().createUser("testPop3Capabillities@localhost.com",
+                "testPop3Capabillities@localhost.com", "pwd");
+        store.connect("testPop3Capabillities@localhost.com", "pwd");
+
+        assertTrue(store.capabilities().containsKey("UIDL"));
+    }
+
+    @Test
     public void testRetrieve() throws Exception {
         assertNotNull(greenMail.getPop3());
         final String subject = GreenMailUtil.random();
@@ -41,6 +58,10 @@ public class Pop3ServerTest {
         assertEquals(1, messages.length);
         assertEquals(subject, messages[0].getSubject());
         assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
+
+        // UID
+        POP3Folder f = (POP3Folder) messages[0].getFolder();
+        assertNotEquals("UNKNOWN", f.getUID(messages[0]));
     }
 
     @Test
