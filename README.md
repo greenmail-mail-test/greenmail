@@ -30,12 +30,6 @@ Development  [![Build Status](https://travis-ci.org/greenmail-mail-test/greenmai
 
   `mvn site -Psite`
 
-  To build the project site using [jekyll][jekyll], run
-
-  `cd greenmail-site`
-
-  `jekyll build`
-
 * Build and deploy a release
 
   For a tagged release and deployment to [Sonatype OpenSource Repository Hosting][ossrh_maven] and later syncing to [Maven Central][maven_repository_release], do
@@ -57,7 +51,6 @@ Development  [![Build Status](https://travis-ci.org/greenmail-mail-test/greenmai
 [greenmail_sf_site]: https://sourceforge.net/p/greenmail
 [maven_repository_com]: http://mvnrepository.com/artifact/com.icegreen/greenmail
 [maven_download]: http://maven.apache.org
-[jekyll]: http://jekyllrb.com/
 [ossrh_maven]: http://central.sonatype.org/pages/apache-maven.html
 [maven_repository_snapshot]: https://oss.sonatype.org/content/repositories/snapshots/com/icegreen
 [maven_repository_release]: http://central.maven.org/maven2/com/icegreen/
