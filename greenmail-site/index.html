@@ -437,6 +437,13 @@ greenMail.stop();
                    test environment where a real mail server is too much overhead. With the GreenMail mail service each
                    developer has its own local mail server sandbox - so there's no danger for accidentally leaking test
                    mails into the Internet.</p>
+                <div class="alert alert-warning" role="alert">
+                   <p>GreenMail SAR works only up to JBoss AS 6!</p>
+                   <p>
+                   JBoss introduced a not backward compatible change to the SAR MBean deployment in JBoss AS 7+.
+                   As alternative, try out the <a href="#deploy_webapp">GreenMail WAR  deployment</a>.
+                   </p>
+                </div>
 
                 <h4 id="deploy_jboss_sar_deploy" class="anchor">Deploy the service</h4>
                 <ol>
