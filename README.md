@@ -44,10 +44,10 @@ Development  [![Build Status](https://travis-ci.org/greenmail-mail-test/greenmai
 
 
 [greenmail_project_site]: http://www.icegreen.com/greenmail
-[greenmail_examples]: http://www.icegreen.com/greenmail/examples.html
-[greenmail_faq]: http://www.icegreen.com/greenmail/faq.html
+[greenmail_examples]: http://www.icegreen.com/greenmail/#examples
+[greenmail_faq]: http://www.icegreen.com/greenmail/#faq
 [greenmail_javadoc]: http://www.icegreen.com/greenmail/javadocs/index.html
-[greenmail_download]: http://www.icegreen.com/greenmail/download.html
+[greenmail_download]: http://www.icegreen.com/greenmail/#download
 [greenmail_sf_site]: https://sourceforge.net/p/greenmail
 [maven_repository_com]: http://mvnrepository.com/artifact/com.icegreen/greenmail
 [maven_download]: http://maven.apache.org
