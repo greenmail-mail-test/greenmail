@@ -34,7 +34,7 @@ public abstract class AbstractServer extends Service {
         this.setup = setup;
         try {
             bindTo = (setup.getBindAddress() == null)
-                    ? InetAddress.getByName("0.0.0.0")
+                    ? InetAddress.getByName(setup.getDefaultBindAddress())
                     : InetAddress.getByName(setup.getBindAddress());
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);

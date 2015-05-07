@@ -75,6 +75,15 @@ public class ServerSetup {
         return "127.0.0.1";
     }
 
+    /**
+     * Gets the public default host address "0.0.0.0" .
+     *
+     * @return the pulic IP host address.
+     */
+    public String getDefaultBindAddress() {
+        return "0.0.0.0";
+    }
+
     public boolean isSecure() {
         return protocol.endsWith("s");
     }
