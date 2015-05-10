@@ -63,19 +63,20 @@ public abstract class AbstractServer extends Thread implements Service {
 
     @Override
     public void run() {
+        // Open server socket ...
         try {
             serverSocket = openServerSocket();
-            setRunning(true);
-            synchronized (this) {
-                this.notifyAll();
-            }
-            synchronized (startupMonitor) {
-                startupMonitor.notifyAll();
-            }
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
+        setRunning(true);
 
+        // Notify everybody that we're ready to accept connections
+        synchronized (startupMonitor) {
+            startupMonitor.notifyAll();
+        }
+
+        // Handle connections
         while (keepOn()) {
             try {
                 Socket clientSocket = serverSocket.accept();
