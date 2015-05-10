@@ -70,26 +70,18 @@ public class GreenMail extends ConfiguredGreenMail {
     public synchronized void start() {
         init();
         for (Service service : services.values()) {
-            service.startService(null);
+            service.startService();
         }
-        //quick hack
-        boolean allup = false;
-        for (int i = 0; i < 200 && !allup; i++) {
-            allup = true;
-            for (Service service : services.values()) {
-                allup = allup && service.isRunning();
-            }
-            if (!allup) {
-                try {
-                    wait(5);
-                } catch (InterruptedException e) {
-                    // We don't care
-                }
+
+        // Wait till all services are up and running
+        for (Service service : services.values()) {
+            try {
+                service.waitTillRunning(100L);
+            } catch (InterruptedException ex) {
+                throw new IllegalStateException("Could not start mail service " + service + " (reached timeout).", ex);
             }
         }
-        if (!allup) {
-            throw new RuntimeException("Couldnt start at least one of the mail services.");
-        }
+
         doConfigure();
     }
 
@@ -98,7 +90,7 @@ public class GreenMail extends ConfiguredGreenMail {
         if (services != null) {
             for (Service service : services.values()) {
                 if (service.isRunning()) {
-                    service.stopService(null);
+                    service.stopService();
                 }
             }
         }

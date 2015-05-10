@@ -22,13 +22,13 @@ import java.util.List;
  * @version $Id: $
  * @since Feb 2, 2006
  */
-public abstract class AbstractServer extends Service {
+public abstract class AbstractServer extends Thread implements Service {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final InetAddress bindTo;
     protected ServerSocket serverSocket = null;
     protected Managers managers;
     protected ServerSetup setup;
-    private List<ProtocolHandler> handlers = Collections.synchronizedList(new ArrayList<ProtocolHandler>());
+    private final List<ProtocolHandler> handlers = Collections.synchronizedList(new ArrayList<ProtocolHandler>());
 
     protected AbstractServer(ServerSetup setup, Managers managers) {
         this.setup = setup;
@@ -63,9 +63,9 @@ public abstract class AbstractServer extends Service {
             } catch (BindException e) {
                 try {
                     retEx = e;
-                    Thread.sleep(10L);
+                    wait(10L);
                 } catch (InterruptedException ignored) {
-                    if(log.isDebugEnabled()) {
+                    if (log.isDebugEnabled()) {
                         log.debug("Can not open port, retrying ...", e);
                     }
                 }
@@ -85,6 +85,9 @@ public abstract class AbstractServer extends Service {
             synchronized (this) {
                 this.notifyAll();
             }
+            synchronized (startupMonitor) {
+                startupMonitor.notifyAll();
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -101,14 +104,14 @@ public abstract class AbstractServer extends Service {
                         @Override
                         public void run() {
                             handler.run(); // NOSONAR
-                             // Make sure to deregister, see https://github.com/greenmail-mail-test/greenmail/issues/18
+                            // Make sure to deregister, see https://github.com/greenmail-mail-test/greenmail/issues/18
                             removeHandler(handler);
                         }
                     }).start();
                 }
             } catch (IOException ignored) {
                 //ignored
-                if(log.isTraceEnabled()) {
+                if (log.isTraceEnabled()) {
                     log.trace("Error while processing socket", ignored);
                 }
             }
@@ -133,7 +136,6 @@ public abstract class AbstractServer extends Service {
         handlers.remove(handler);
     }
 
-    @Override
     protected synchronized void quit() {
         try {
             synchronized (handlers) {
@@ -141,19 +143,14 @@ public abstract class AbstractServer extends Service {
                     handler.close();
                 }
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        try {
-            if (null != serverSocket ) {
-                if(!serverSocket.isClosed()) {
+            if (null != serverSocket) {
+                if (!serverSocket.isClosed()) {
                     serverSocket.close();
                 }
                 serverSocket = null;
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -175,5 +172,71 @@ public abstract class AbstractServer extends Service {
 
     public String toString() {
         return null != setup ? setup.getProtocol() + ':' + setup.getPort() : super.toString();
+    }
+
+    private final Object startupMonitor = new Object();
+    @Override
+    public void waitTillRunning(long timeoutInMs) throws InterruptedException {
+        synchronized (startupMonitor) {
+            startupMonitor.wait(timeoutInMs);
+        }
+    }
+
+    private volatile boolean keepRunning = false;
+    private volatile boolean running = false;
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    protected void setRunning(boolean r) {
+        this.running = r;
+    }
+
+    final protected boolean keepOn() {
+        return keepRunning;
+    }
+
+    @Override
+    public synchronized void startService() {
+        if (!keepRunning) {
+            keepRunning = true;
+            start();
+        }
+    }
+
+
+    /**
+     * Stops the service. If a timeout is given and the service has still not
+     * gracefully been stopped after timeout ms the service is stopped by force.
+     *
+     * @param millis value in ms
+     */
+    @Override
+    public synchronized final void stopService(long millis) {
+        running = false;
+        try {
+            if (keepRunning) {
+                keepRunning = false;
+                interrupt();
+                quit();
+                if (0L == millis) {
+                    join();
+                } else {
+                    join(millis);
+                }
+            }
+        } catch (InterruptedException e) {
+            //its possible that the thread exits between the lines keepRunning=false and interrupt above
+            log.warn("Got interrupted while stopping", e);
+        }
+    }
+
+    /**
+     * Stops the service (without timeout).
+     */
+    @Override
+    public final void stopService() {
+        stopService(0L);
     }
 }

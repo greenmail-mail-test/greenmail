@@ -5,88 +5,54 @@
 package com.icegreen.greenmail.util;
 
 /**
- * A class that facilitate service implementation
+ * Generic lifecycle handling of a service.
+ * <p/>
+ * Used by email protocol specific services, such as SmtpServer.
  *
  * @author Wael Chatila
  * @version $id: $
  * @since 2005
  */
-abstract public class Service extends Thread {
-    public abstract void run();
-
-    protected abstract void quit();
-
-    private volatile boolean keepRunning = false;
-    private volatile boolean running = false;
-
-    public void init(Object obj) {
-        //empty
-    }
-
-    public void destroy(Object obj) {
-        //empty
-    }
-
-    final protected boolean keepOn() {
-        return keepRunning;
-    }
-
-    public synchronized void startService(Object obj) {
-        if (!keepRunning) {
-            keepRunning = true;
-            init(obj);
-            start();
-        }
-    }
-
-    public boolean isRunning() {
-        return running;
-    }
-
-    protected void setRunning(boolean r) {
-        this.running = r;
-    }
-
-    public void wait_for_running(long t) throws InterruptedException {
-        this.wait(t);
-    }
+public interface Service {
+    /**
+     * Starts the service in the background as a new thread.
+     * <p/>
+     * You can use {@link #isRunning()}  and {@link #waitTillRunning(long)} to check if service is up.
+     */
+    void startService();
 
     /**
-     * Stops the service. If a timeout is given and the service has still not
+     * Stops the service.
+     * <p/>
+     * Blocks till the service stopped.
+     */
+    void stopService();
+
+    /**
+     * Stops the service.
+     * <p/>
+     * Blocks till the service stopped.
+     * <p/>
+     * If a timeout is given and the service has still not
      * gracefully been stopped after timeout ms the service is stopped by force.
      *
-     * @param obj
-     * @param millis value in ms
+     * @param timeoutInMs the timeout in milliseconds
      */
-    public synchronized final void stopService(Object obj, Long millis) {
-        boolean doDestroy = keepRunning;
-        running = false;
-        try {
-            if (keepRunning) {
-                keepRunning = false;
-                interrupt();
-                quit();
-                if (null == millis) {
-                    join();
-                } else {
-                    join(millis);
-                }
-            }
-        } catch (InterruptedException e) {
-            //its possible that the thread exits between the lines keepRunning=false and interrupt above
-        } finally {
-            if (doDestroy) {
-                destroy(obj);
-            }
-        }
-    }
+    void stopService(long timeoutInMs);
 
-    public final void stopService(Object obj) {
-        stopService(obj, null);
-    }
+    /**
+     * Checks if service is up and running.
+     *
+     * @return true, if running.
+     */
+    boolean isRunning();
 
-    public final void stopService(Object obj, long millis) {
-        stopService(obj, Long.valueOf(millis));
-    }
+    /**
+     * Waits till service is up or timeout was reached.
+     *
+     * @param timeoutInMs the timeout in milliseconds
+     * @throws InterruptedException
+     */
+    void waitTillRunning(long timeoutInMs) throws InterruptedException;
 }
 

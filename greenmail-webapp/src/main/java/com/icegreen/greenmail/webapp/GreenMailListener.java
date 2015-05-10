@@ -48,7 +48,7 @@ public class GreenMailListener implements ServletContextListener {
         }
         for (Service s : services) {
             log.info("Starting GreenMail service: " + s.toString());
-            s.startService(null);
+            s.startService();
         }
     }
 
@@ -56,7 +56,7 @@ public class GreenMailListener implements ServletContextListener {
         log.info("Destroying GreenMail WebApp");
         for (Service s : services) {
             log.info("Stopping GreenMail service: " + s.toString());
-            s.stopService(null);
+            s.stopService();
         }
     }
 
