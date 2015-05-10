@@ -108,7 +108,9 @@ public class SmtpManager {
             emailCount--;
             if (emailCount <= 0) {
                 setArrived();
-                this.notifyAll();
+                synchronized (this) {
+                    notifyAll();
+                }
             }
         }
     }
