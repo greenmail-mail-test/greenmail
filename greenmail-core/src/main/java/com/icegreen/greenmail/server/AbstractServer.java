@@ -12,7 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,31 +53,12 @@ public abstract class AbstractServer extends Thread implements Service {
      */
     protected abstract ProtocolHandler createProtocolHandler(Socket clientSocket);
 
-    protected synchronized ServerSocket openServerSocket() throws IOException {
-        ServerSocket ret = null;
-        IOException retEx = null;
-        for (int i = 0; i < 25 && (null == ret); i++) {
-            try {
-                if (setup.isSecure()) {
-                    ret = DummySSLServerSocketFactory.getDefault().createServerSocket(setup.getPort(), 0, bindTo);
-                } else {
-                    ret = new ServerSocket(setup.getPort(), 0, bindTo);
-                }
-            } catch (BindException e) {
-                try {
-                    retEx = e;
-                    wait(10L);
-                } catch (InterruptedException ignored) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Can not open port, retrying ...", e);
-                    }
-                }
-            }
+    protected ServerSocket openServerSocket() throws IOException {
+        if (setup.isSecure()) {
+            return DummySSLServerSocketFactory.getDefault().createServerSocket(setup.getPort(), 0, bindTo);
+        } else {
+            return new ServerSocket(setup.getPort(), 0, bindTo);
         }
-        if (null == ret && null != retEx) {
-            throw retEx;
-        }
-        return ret;
     }
 
     @Override
@@ -89,7 +73,7 @@ public abstract class AbstractServer extends Thread implements Service {
                 startupMonitor.notifyAll();
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
 
         while (keepOn()) {
