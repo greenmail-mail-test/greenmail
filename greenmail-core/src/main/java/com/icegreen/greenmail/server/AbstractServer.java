@@ -85,14 +85,18 @@ public abstract class AbstractServer extends Thread implements Service {
                 } else {
                     final ProtocolHandler handler = createProtocolHandler(clientSocket);
                     addHandler(handler);
-                    new Thread(new Runnable() {
+                    final Thread thread = new Thread( new Runnable() {
                         @Override
                         public void run() {
-                            handler.run(); // NOSONAR
-                            // Make sure to deregister, see https://github.com/greenmail-mail-test/greenmail/issues/18
-                            removeHandler(handler);
+                            try {
+                                handler.run(); // NOSONAR
+                            } finally {
+                                // Make sure to deregister, see https://github.com/greenmail-mail-test/greenmail/issues/18
+                                removeHandler(handler);
+                            }
                         }
-                    }).start();
+                    });
+                    thread.start();
                 }
             } catch (IOException ignored) {
                 //ignored
@@ -123,16 +127,18 @@ public abstract class AbstractServer extends Thread implements Service {
 
     protected synchronized void quit() {
         try {
+            // Close server socket, we do not accept new requests anymore.
+            // This also terminates the server thread if blocking on socket.accept.
+            if (null != serverSocket) {
+                serverSocket.close();
+                serverSocket = null;
+            }
+
+            // Close all handlers, handler threads terminate if run loop exits
             synchronized (handlers) {
                 for (ProtocolHandler handler : handlers) {
                     handler.close();
                 }
-            }
-            if (null != serverSocket) {
-                if (!serverSocket.isClosed()) {
-                    serverSocket.close();
-                }
-                serverSocket = null;
             }
         } catch (IOException e) {
             throw new IllegalStateException(e);
@@ -175,7 +181,7 @@ public abstract class AbstractServer extends Thread implements Service {
     }
 
     protected void setRunning(boolean r) {
-        this.running = r;
+        running = r;
     }
 
     final protected boolean keepOn() {
