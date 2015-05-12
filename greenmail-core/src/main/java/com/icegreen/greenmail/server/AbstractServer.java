@@ -91,7 +91,7 @@ public abstract class AbstractServer extends Thread implements Service {
                             try {
                                 handler.run(); // NOSONAR
                             } finally {
-                                // Make sure to deregister, see https://github.com/greenmail-mail-test/greenmail/issues/18
+                                // Make sure to de-register, see https://github.com/greenmail-mail-test/greenmail/issues/18
                                 removeHandler(handler);
                             }
                         }
@@ -117,7 +117,7 @@ public abstract class AbstractServer extends Thread implements Service {
     }
 
     /**
-     * Adds a protocol handler, for eg. shutting down.
+     * Removes protocol handler, eg.  when shutting down.
      *
      * @param handler the handler.
      */
@@ -134,11 +134,12 @@ public abstract class AbstractServer extends Thread implements Service {
                 serverSocket = null;
             }
 
-            // Close all handlers, handler threads terminate if run loop exits
+            // Close all handlers. Handler threads terminate if run loop exits
             synchronized (handlers) {
                 for (ProtocolHandler handler : handlers) {
                     handler.close();
                 }
+                handlers.clear();
             }
         } catch (IOException e) {
             throw new IllegalStateException(e);
@@ -168,8 +169,13 @@ public abstract class AbstractServer extends Thread implements Service {
     private final Object startupMonitor = new Object();
     @Override
     public void waitTillRunning(long timeoutInMs) throws InterruptedException {
+        long t = System.currentTimeMillis();
         synchronized (startupMonitor) {
-            startupMonitor.wait(timeoutInMs);
+            // Loop to avoid spurious wakeups, see
+            // https://www.securecoding.cert.org/confluence/display/java/THI03-J.+Always+invoke+wait%28%29+and+await%28%29+methods+inside+a+loop
+            while(!isRunning() && System.currentTimeMillis()-t < timeoutInMs) {
+                startupMonitor.wait(timeoutInMs);
+            }
         }
     }
 
