@@ -63,7 +63,11 @@ public class ImapRequestLineReader {
     public char nextChar() throws ProtocolException {
         if (!nextSeen) {
             try {
-                nextChar = (char) input.read();
+                final int read = input.read();
+                if(read == -1) {
+                    throw new ProtocolException("End of stream");
+                }
+                nextChar = (char) read;
                 nextSeen = true;
             } catch (IOException e) {
                 throw new ProtocolException("Error reading from stream.", e);
