@@ -78,8 +78,8 @@ public class GreenMail implements GreenMailOperations {
         }
         //quick hack
         boolean allup = false;
-        final int retries = 100;
-        final int timeoutMsec = 100;
+        final int retries = 200;
+        final int timeoutMsec = 50;
         for (int i = 0; i < retries && !allup; i++) {
             allup = true;
             for (Service service : services.values()) {
