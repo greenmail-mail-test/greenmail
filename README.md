@@ -81,3 +81,8 @@ github). That way commits are isolated for one feature.
 ### Tests for your pull request ###
 Please also create a test for every feature you add. We know that currently there aren't many tests but in
 the medium term we want to increase test coverage.
+
+Misc
+----
+Many thanks to [![JProfiler](http://www.ej-technologies.com/images/banners/jprofiler_small.png)](http://www.ej-technologies.com/products/jprofiler/overview.html) and [Jetbrains](https://www.jetbrains.com/) for supporting this project with free OSS licenses
+
