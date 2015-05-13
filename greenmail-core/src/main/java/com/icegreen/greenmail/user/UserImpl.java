@@ -16,12 +16,16 @@ import java.io.Serializable;
 
 public class UserImpl implements GreenMailUser, Serializable {
     String email;
+    final private int cachedHashCode;
+    final private String cachedHashCodeAsString;
     String login;
     String password;
     private ImapHostManager imapHostManager;
 
     public UserImpl(String email, String login, String password, ImapHostManager imapHostManager) {
         this.email = email;
+        cachedHashCode = email.hashCode();
+        cachedHashCodeAsString = String.valueOf(cachedHashCode);
         this.login = login;
         this.password = password;
         this.imapHostManager = imapHostManager;
@@ -41,6 +45,7 @@ public class UserImpl implements GreenMailUser, Serializable {
 //        } catch (MailboxException me) {
 //            throw new UserException(me);
 //        }
+        throw new IllegalStateException("Not implemented");
     }
 
     public void deliver(MovingMessage msg) {
@@ -89,11 +94,11 @@ public class UserImpl implements GreenMailUser, Serializable {
     }
 
     public String getQualifiedMailboxName() {
-        return String.valueOf(email.hashCode());
+        return cachedHashCodeAsString;
     }
 
     public int hashCode() {
-        return email.hashCode();
+        return cachedHashCode;
     }
 
     public boolean equals(Object o) {
