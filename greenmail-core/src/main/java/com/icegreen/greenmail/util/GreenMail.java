@@ -12,6 +12,8 @@ import com.icegreen.greenmail.smtp.SmtpServer;
 import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -21,6 +23,9 @@ import java.util.*;
  * Utility class that manages a greenmail server with support for multiple protocols
  */
 public class GreenMail implements GreenMailOperations {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GreenMail.class);
+
     private Managers managers;
     private Map<String, Service> services;
     private ServerSetup[] config;
@@ -59,7 +64,7 @@ public class GreenMail implements GreenMailOperations {
         if (managers == null) {
             managers = new Managers();
         }
-        if(services == null) {
+        if (services == null) {
             services = createServices(config, managers);
         }
     }
@@ -67,27 +72,37 @@ public class GreenMail implements GreenMailOperations {
     @Override
     public synchronized void start() {
         init();
+        long start = System.currentTimeMillis();
         for (Service service : services.values()) {
             service.startService(null);
         }
         //quick hack
         boolean allup = false;
-        for (int i = 0; i < 200 && !allup; i++) {
+        final int retries = 100;
+        final int timeoutMsec = 100;
+        for (int i = 0; i < retries && !allup; i++) {
             allup = true;
             for (Service service : services.values()) {
                 allup = allup && service.isRunning();
             }
             if (!allup) {
                 try {
-                    wait(5);
+                    wait(timeoutMsec);
                 } catch (InterruptedException e) {
-                    // We don't care
+                    Thread.currentThread().interrupt();
+                    for (Service service : services.values()) {
+                        service.interrupt();
+                    }
+                    return;
                 }
             }
         }
         if (!allup) {
-            throw new RuntimeException("Couldnt start at least one of the mail services.");
+            throw new RuntimeException(String.format("Couldnt start at least one of the mail services %s in %d milliseconds",
+                    services.values(), retries * timeoutMsec));
         }
+
+        LOGGER.debug("Services {} started in {} milliseconds", services.values(), System.currentTimeMillis() - start);
     }
 
     @Override
