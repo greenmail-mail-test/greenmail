@@ -16,8 +16,8 @@ import java.io.Serializable;
 
 public class UserImpl implements GreenMailUser, Serializable {
     String email;
-    final private int cachedHashCode;
-    final private String cachedHashCodeAsString;
+    private final int cachedHashCode;
+    private final String cachedHashCodeAsString;
     String login;
     String password;
     private ImapHostManager imapHostManager;

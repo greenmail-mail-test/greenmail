@@ -32,6 +32,9 @@ public abstract class AbstractServer extends Thread implements Service {
     protected Managers managers;
     protected ServerSetup setup;
     private final List<ProtocolHandler> handlers = Collections.synchronizedList(new ArrayList<ProtocolHandler>());
+    private volatile boolean keepRunning = false;
+    private volatile boolean running = false;
+    private final Object startupMonitor = new Object();
 
     protected AbstractServer(ServerSetup setup, Managers managers) {
         this.setup = setup;
@@ -166,7 +169,6 @@ public abstract class AbstractServer extends Thread implements Service {
         return null != setup ? setup.getProtocol() + ':' + setup.getPort() : super.toString();
     }
 
-    private final Object startupMonitor = new Object();
     @Override
     public void waitTillRunning(long timeoutInMs) throws InterruptedException {
         long t = System.currentTimeMillis();
@@ -179,9 +181,7 @@ public abstract class AbstractServer extends Thread implements Service {
         }
     }
 
-    private volatile boolean keepRunning = false;
-    private volatile boolean running = false;
-
+    @Override
     public boolean isRunning() {
         return running;
     }
@@ -190,7 +190,7 @@ public abstract class AbstractServer extends Thread implements Service {
         running = r;
     }
 
-    final protected boolean keepOn() {
+    protected final boolean keepOn() {
         return keepRunning;
     }
 
@@ -210,7 +210,7 @@ public abstract class AbstractServer extends Thread implements Service {
      * @param millis value in ms
      */
     @Override
-    public synchronized final void stopService(long millis) {
+    public final synchronized void stopService(long millis) {
         running = false;
         try {
             if (keepRunning) {
