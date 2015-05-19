@@ -69,7 +69,7 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
         response.commandResponse(this, idList.toString());
 
-        boolean omitExpunged = (!useUids);
+        boolean omitExpunged = !useUids;
         session.unsolicitedResponses(response, omitExpunged);
         response.commandComplete(this);
     }

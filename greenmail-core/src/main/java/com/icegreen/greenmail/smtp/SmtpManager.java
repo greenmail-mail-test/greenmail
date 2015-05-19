@@ -21,7 +21,7 @@ import java.util.List;
 
 
 public class SmtpManager {
-    protected final static Logger log = LoggerFactory.getLogger(SmtpManager.class);
+    protected static final Logger log = LoggerFactory.getLogger(SmtpManager.class);
 
     Incoming _incomingQueue;
     UserManager userManager;

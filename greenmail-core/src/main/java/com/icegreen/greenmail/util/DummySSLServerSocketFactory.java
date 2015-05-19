@@ -30,7 +30,7 @@ import java.security.KeyStore;
  * @since Feb 2006
  */
 public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
-    private final static Logger log = LoggerFactory.getLogger(DummySSLServerSocketFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(DummySSLServerSocketFactory.class);
     private SSLServerSocketFactory factory;
     private KeyStore ks;
 

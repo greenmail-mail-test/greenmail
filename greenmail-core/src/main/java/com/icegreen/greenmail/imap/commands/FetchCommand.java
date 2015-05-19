@@ -69,12 +69,12 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             }
         }
 
-        boolean omitExpunged = (!useUids);
+        boolean omitExpunged = !useUids;
         session.unsolicitedResponses(response, omitExpunged);
         response.commandComplete(this);
     }
 
-    final static Flags FLAGS_SEEN = new Flags(Flags.Flag.SEEN);
+    static final Flags FLAGS_SEEN = new Flags(Flags.Flag.SEEN);
 
     private String outputMessage(FetchRequest fetch, StoredMessage message,
                                  ImapSessionFolder folder, boolean useUids)
@@ -176,7 +176,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             byte[] bytes = bout.toByteArray();
             bytes = doPartial(partial, bytes, response);
             addLiteral(bytes, response);
-        } else if (sectionSpecifier.equalsIgnoreCase("HEADER")) {
+        } else if ("HEADER".equalsIgnoreCase(sectionSpecifier)) {
             Enumeration inum = mimeMessage.getAllHeaderLines();
             addHeaders(inum, response);
         } else if (sectionSpecifier.startsWith("HEADER.FIELDS.NOT")) {
@@ -194,7 +194,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             byte[] bytes = GreenMailUtil.getHeaderAsBytes(mp.getBodyPart(partNumber));
             bytes = doPartial(partial, bytes, response);
             addLiteral(bytes, response);
-        } else if (sectionSpecifier.equalsIgnoreCase("TEXT")) {
+        } else if ("TEXT".equalsIgnoreCase(sectionSpecifier)) {
             // TODO - need to use an InputStream from the response here.
             // TODO - this is a hack. To get just the body content, I'm using a null
             // input stream to take the headers. Need to have a way of ignoring headers.

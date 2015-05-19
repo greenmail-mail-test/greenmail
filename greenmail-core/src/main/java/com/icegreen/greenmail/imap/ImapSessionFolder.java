@@ -156,7 +156,7 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
     private int correctForExpungedMessages(int absoluteMsn) {
         int correctedMsn = absoluteMsn;
         // Loop throught the expunged list backwards, adjusting the msn as we go.
-        for (int i = (_expungedMsns.size() - 1); i >= 0; i--) {
+        for (int i = _expungedMsns.size() - 1; i >= 0; i--) {
             int expunged = _expungedMsns.get(i);
             if (expunged <= absoluteMsn) {
                 correctedMsn++;
@@ -239,7 +239,7 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
 
     private UIDFolder unwrapUIDFolder() {
         if (_folder instanceof UIDFolder) {
-            return ((UIDFolder) _folder);
+            return (UIDFolder) _folder;
         }
         throw new IllegalStateException("No UIDFolder supported by "+_folder.getClass());
     }

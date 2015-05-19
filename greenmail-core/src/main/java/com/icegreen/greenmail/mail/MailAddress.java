@@ -42,6 +42,7 @@ public class MailAddress {
         return user;
     }
 
+    @Override
     public String toString() {
         return email;
     }

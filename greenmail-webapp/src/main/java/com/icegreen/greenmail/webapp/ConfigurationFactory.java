@@ -23,7 +23,7 @@ public class ConfigurationFactory {
         return conf;
     }
 
-    static private void configure(final Configuration pConf,
+    private static void configure(final Configuration pConf,
                                   final String pParamName, final String pValue) {
         // General configuration
         if ("defaultHostname".equals(pParamName)) {

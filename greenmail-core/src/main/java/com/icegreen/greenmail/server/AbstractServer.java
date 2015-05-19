@@ -86,20 +86,7 @@ public abstract class AbstractServer extends Thread implements Service {
                 if (!keepOn()) {
                     clientSocket.close();
                 } else {
-                    final ProtocolHandler handler = createProtocolHandler(clientSocket);
-                    addHandler(handler);
-                    final Thread thread = new Thread( new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                handler.run(); // NOSONAR
-                            } finally {
-                                // Make sure to de-register, see https://github.com/greenmail-mail-test/greenmail/issues/18
-                                removeHandler(handler);
-                            }
-                        }
-                    });
-                    thread.start();
+                    handleClientSocket(clientSocket);
                 }
             } catch (IOException ignored) {
                 //ignored
@@ -108,6 +95,23 @@ public abstract class AbstractServer extends Thread implements Service {
                 }
             }
         }
+    }
+
+    protected void handleClientSocket(Socket clientSocket) {
+        final ProtocolHandler handler = createProtocolHandler(clientSocket);
+        addHandler(handler);
+        final Thread thread = new Thread( new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    handler.run(); // NOSONAR
+                } finally {
+                    // Make sure to de-register, see https://github.com/greenmail-mail-test/greenmail/issues/18
+                    removeHandler(handler);
+                }
+            }
+        });
+        thread.start();
     }
 
     /**
@@ -165,6 +169,7 @@ public abstract class AbstractServer extends Thread implements Service {
         return setup;
     }
 
+    @Override
     public String toString() {
         return null != setup ? setup.getProtocol() + ':' + setup.getPort() : super.toString();
     }

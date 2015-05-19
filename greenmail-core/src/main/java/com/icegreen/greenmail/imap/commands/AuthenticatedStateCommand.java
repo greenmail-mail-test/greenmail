@@ -20,7 +20,7 @@ abstract class AuthenticatedStateCommand extends CommandTemplate {
      * {@link ImapSessionState#SELECTED}
      */
     public boolean validForState(ImapSessionState state) {
-        return (state == ImapSessionState.AUTHENTICATED
-                || state == ImapSessionState.SELECTED);
+        return state == ImapSessionState.AUTHENTICATED
+                || state == ImapSessionState.SELECTED;
     }
 }

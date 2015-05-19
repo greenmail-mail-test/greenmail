@@ -324,7 +324,7 @@ public class CommandParser {
     }
 
     private boolean isCHAR(char chr) {
-        return (chr >= 0x01 && chr <= 0x7f);
+        return chr >= 0x01 && chr <= 0x7f;
     }
 
     protected boolean isListWildcard(char chr) {
@@ -418,8 +418,8 @@ public class CommandParser {
 
     protected class ATOM_CHARValidator implements CharacterValidator {
         public boolean isValid(char chr) {
-            return (isCHAR(chr) && !isAtomSpecial(chr) &&
-                    !isListWildcard(chr) && !isQuotedSpecial(chr));
+            return isCHAR(chr) && !isAtomSpecial(chr) &&
+                    !isListWildcard(chr) && !isQuotedSpecial(chr);
         }
 
         private boolean isAtomSpecial(char chr) {

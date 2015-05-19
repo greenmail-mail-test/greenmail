@@ -16,8 +16,6 @@ import java.net.Socket;
 
 /**
  * The handler class for IMAP connections.
- * TODO: This is a quick cut-and-paste hack from POP3Handler. This, and the ImapServer
- * should probably be rewritten from scratch.
  *
  * @author Federico Barbieri <scoobie@systemy.it>
  * @author Peter M. Goldstein <farsight@alum.mit.edu>
@@ -49,6 +47,7 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
         close();
     }
 
+    @Override
     public void run() {
         try {
             // Closed automatically when socket is closed via #close()
@@ -84,6 +83,7 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
     /**
      * Resets the handler data to a basic state.
      */
+    @Override
     public void close() {
         // Close and clear streams, sockets etc.
         if (socket != null) {

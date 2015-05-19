@@ -17,8 +17,7 @@ import java.net.Socket;
 public class SmtpConnection {
 
     private static final int TIMEOUT_MILLIS = 1000 * 30;
-    // Logger.
-    protected final static Logger log = LoggerFactory.getLogger(SmtpConnection.class);
+    private static final Logger log = LoggerFactory.getLogger(SmtpConnection.class);
 
     // networking/io stuff
     Socket sock;
