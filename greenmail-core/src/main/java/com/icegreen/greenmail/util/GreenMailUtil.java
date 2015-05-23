@@ -406,7 +406,11 @@ public class GreenMailUtil {
         try {
             Store store = session.getStore("imap");
             store.connect(user.getEmail(), user.getPassword());
-            ((QuotaAwareStore)store).setQuota(quota);
+            try {
+                ((QuotaAwareStore) store).setQuota(quota);
+            } finally {
+                store.close();
+            }
         } catch (Exception ex) {
             throw new IllegalStateException("Can not set quota " + quota
                     + " for user " + user, ex);
@@ -425,7 +429,11 @@ public class GreenMailUtil {
         try {
             Store store = session.getStore("imap");
             store.connect(user.getEmail(), user.getPassword());
-            return ((QuotaAwareStore)store).getQuota(quotaRoot);
+            try {
+                return ((QuotaAwareStore) store).getQuota(quotaRoot);
+            } finally {
+                store.close();
+            }
         } catch (Exception ex) {
             throw new IllegalStateException("Can not get quota for quota root "
                     + quotaRoot + " for user " + user, ex);

@@ -5,7 +5,7 @@ package com.icegreen.greenmail.server;
  */
 public interface ProtocolHandler extends Runnable {
     /**
-     * Close all resources, such as sockets.
+     * Closes all resources, such as sockets.
      */
     void close();
 }

@@ -11,7 +11,7 @@ Go to the [project site][greenmail_project_site] for details:
 * [JavaDoc][greenmail_javadoc]
 * [FAQ][greenmail_faq]
 * [Download][greenmail_download]
-* [Maven coordinates][maven_repository_com]: com.icegreen:greenmail:1.4.0
+* [Maven coordinates][maven_repository_com]: com.icegreen:greenmail:1.4.1
 
 The GreenMail project welcomes any contribution, so go ahead and fork/open a pull request! See the guidelines below.
 
@@ -30,12 +30,6 @@ Development  [![Build Status](https://travis-ci.org/greenmail-mail-test/greenmai
 
   `mvn site -Psite`
 
-  To build the project site using [jekyll][jekyll], run
-
-  `cd greenmail-site`
-
-  `jekyll build`
-
 * Build and deploy a release
 
   For a tagged release and deployment to [Sonatype OpenSource Repository Hosting][ossrh_maven] and later syncing to [Maven Central][maven_repository_release], do
@@ -50,14 +44,13 @@ Development  [![Build Status](https://travis-ci.org/greenmail-mail-test/greenmai
 
 
 [greenmail_project_site]: http://www.icegreen.com/greenmail
-[greenmail_examples]: http://www.icegreen.com/greenmail/examples.html
-[greenmail_faq]: http://www.icegreen.com/greenmail/faq.html
+[greenmail_examples]: http://www.icegreen.com/greenmail/#examples
+[greenmail_faq]: http://www.icegreen.com/greenmail/#faq
 [greenmail_javadoc]: http://www.icegreen.com/greenmail/javadocs/index.html
-[greenmail_download]: http://www.icegreen.com/greenmail/download.html
+[greenmail_download]: http://www.icegreen.com/greenmail/#download
 [greenmail_sf_site]: https://sourceforge.net/p/greenmail
 [maven_repository_com]: http://mvnrepository.com/artifact/com.icegreen/greenmail
 [maven_download]: http://maven.apache.org
-[jekyll]: http://jekyllrb.com/
 [ossrh_maven]: http://central.sonatype.org/pages/apache-maven.html
 [maven_repository_snapshot]: https://oss.sonatype.org/content/repositories/snapshots/com/icegreen
 [maven_repository_release]: http://central.maven.org/maven2/com/icegreen/
@@ -88,3 +81,8 @@ github). That way commits are isolated for one feature.
 ### Tests for your pull request ###
 Please also create a test for every feature you add. We know that currently there aren't many tests but in
 the medium term we want to increase test coverage.
+
+Misc
+----
+Many thanks to [![JProfiler](http://www.ej-technologies.com/images/banners/jprofiler_small.png)](http://www.ej-technologies.com/products/jprofiler/overview.html) and [Jetbrains](https://www.jetbrains.com/) for supporting this project with free OSS licenses
+

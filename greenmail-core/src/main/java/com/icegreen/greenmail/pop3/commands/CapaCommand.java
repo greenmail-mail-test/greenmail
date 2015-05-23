@@ -23,6 +23,7 @@ import com.icegreen.greenmail.pop3.Pop3State;
  * Examples:
  *   C: CAPA
  *   S: +OK
+ *   S: UIDL
  *   S: .
  */
 public class CapaCommand extends Pop3Command {
@@ -33,6 +34,7 @@ public class CapaCommand extends Pop3Command {
     public void execute(Pop3Connection conn, Pop3State state, String cmd) {
         // We don't support any additional capabilities
         conn.println("+OK");
+        conn.println("UIDL");
         conn.println(".");
     }
 }

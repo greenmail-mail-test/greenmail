@@ -12,6 +12,35 @@
   </properties>
   <body>
   <release version="1.5" date="2014-02-16" description="Changes for 1.5 release">
+  </release>
+  <release version="1.4.1" date="2015-04-27" description="Changes for 1.4.1 release">
+    <action type="add" issue="37">
+      Enable UIDL capability for POP3
+    </action>
+    <action type="fix" issue="64">
+      UserManager.getUserByEmail fails
+    </action>
+    <action type="fix" issue="58">
+      UID is not passed with POP3
+    </action>
+    <action type="update" issue="52">
+      Upgrade jboss dependencies to 4.2.2.GA for GreenMail JBoss SAR
+    </action>
+    <action type="add" issue="47">
+      Support UIDFolder 
+    </action>
+    <action type="fix" issue="35">
+      Spring ImapMailReceiver fails (No enum constant com.icegreen.greenmail.imap.commands.SearchKey.NOT) 
+    </action>
+    <action type="fix" issue="29">
+      Read the allocated port from the ServerSocket
+    </action>
+    <action type="fix" issue="28">
+      GreenMail cannot receive bounce messages
+    </action>
+    <action type="fix" issue="21">
+      Received date and subject causes issues with imap interface
+    </action>
     <action type="add">
       Add GreenMailConfiguration that can be used to configure GreenMail istances (e.g. add users on startup)
     </action>

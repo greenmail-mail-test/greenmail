@@ -8,7 +8,6 @@ package com.icegreen.greenmail.imap;
 
 import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.user.UserManager;
-import com.icegreen.greenmail.util.InternetPrintWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,25 +33,7 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
      */
     private Socket socket;
 
-    /**
-     * The reader associated with incoming characters.
-     */
-    private BufferedReader in;
-
-    /**
-     * The socket's input stream.
-     */
-    private InputStream ins;
-
-    /**
-     * The writer to which outgoing messages are written.
-     */
-    private InternetPrintWriter out;
-
-    /**
-     * The socket's output stream
-     */
-    private OutputStream outs;
+    private ImapResponse response;
 
     UserManager userManager;
     private ImapHostManager imapHost;
@@ -64,23 +45,17 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
     }
 
     public void forceConnectionClose(final String message) {
-        ImapResponse response = new ImapResponse(outs);
         response.byeResponse(message);
         close();
     }
 
     public void run() {
         try {
-            ins = socket.getInputStream();
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "ASCII"), 512);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+            // Closed automatically when socket is closed via #close()
+            InputStream ins = new BufferedInputStream(socket.getInputStream(), 512);
+            OutputStream outs = new BufferedOutputStream(socket.getOutputStream(), 1024);
 
-        try {
-            outs = new BufferedOutputStream(socket.getOutputStream(), 1024);
-            out = new InternetPrintWriter(outs, true);
-            ImapResponse response = new ImapResponse(outs);
+            response = new ImapResponse(outs);
 
             // Write welcome message
             String responseBuffer = VERSION +" Server GreenMail ready";
@@ -92,10 +67,15 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
                     socket.getInetAddress().getHostAddress());
 
             while (requestHandler.handleRequest(ins, outs, session)) {
+                // Loop ...
             }
 
         } catch (Exception e) {
-            log.error("Can not handle IMAP connection", e);
+            // Ignore if closed is invoked
+            if (null != socket && !socket.isClosed()) {
+                log.error("Can not handle IMAP connection", e);
+                throw new IllegalStateException("Can not handle IMAP connection", e);
+            }
         } finally {
            close();
         }
@@ -106,49 +86,21 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
      */
     public void close() {
         // Close and clear streams, sockets etc.
-        try {
-            if (socket != null && !socket.isClosed()) {
+        if (socket != null) {
+            try {
+                // Terminates thread blocking on socket read
+                // and automatically closed depending streams
                 socket.close();
+            } catch (IOException e) {
+                log.warn("Can not close socket", e);
+            } finally {
+                socket = null;
             }
-        } catch (IOException e) {
-            log.warn("Can not close socket", e);
-        } finally {
-            socket = null;
-        }
-
-        try {
-            if (in != null) {
-                in.close();
-            }
-        } catch (Exception e) {
-            log.warn("Can not close input stream", e);
-        } finally {
-            in = null;
-        }
-
-        try {
-            if (out != null) {
-                out.close();
-            }
-        } catch (Exception e) {
-            // Ignored
-            log.warn("Can not close writer", e);
-        } finally {
-            out = null;
-        }
-
-        try {
-            if (outs != null) {
-                outs.close();
-            }
-        } catch (Exception e) {
-            log.warn("Can not close output stream", e);
-        } finally {
-            outs = null;
         }
 
         // Clear user data
         session = null;
+        response = null;
     }
 }
 

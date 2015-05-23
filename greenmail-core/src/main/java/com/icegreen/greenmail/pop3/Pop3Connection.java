@@ -95,7 +95,6 @@ public class Pop3Connection {
     }
 
     public String getClientAddress() {
-
         return _clientAddress.toString();
     }
 }

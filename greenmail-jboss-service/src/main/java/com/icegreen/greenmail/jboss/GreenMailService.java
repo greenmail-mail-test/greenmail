@@ -249,14 +249,14 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
         if (log.isDebugEnabled()) {
             log.debug("Starting " + pNewService);
         }
-        pNewService.startService(null);
+        pNewService.startService();
     }
 
     void stopGreenMailServices() {
         if (!services.isEmpty()) {
             for (Service service : services.values()) {
                 if (service.isRunning()) {
-                    service.stopService(null);
+                    service.stopService();
                     if (log.isDebugEnabled()) {
                         log.debug("Stopped " + service);
                     }

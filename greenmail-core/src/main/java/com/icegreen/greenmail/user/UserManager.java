@@ -8,16 +8,14 @@ package com.icegreen.greenmail.user;
 
 import com.icegreen.greenmail.imap.ImapHostManager;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 public class UserManager {
     /**
      * User list by their trimmed, lowercased user names
      */
-    private Map<String, GreenMailUser> _users = Collections.synchronizedMap(new HashMap<String, GreenMailUser>());
+    private Map<String, GreenMailUser> loginToUser = Collections.synchronizedMap(new HashMap<String, GreenMailUser>());
+    private Map<String, GreenMailUser> emailToUser = Collections.synchronizedMap(new HashMap<String, GreenMailUser>());
     private ImapHostManager imapHostManager;
 
     public UserManager(ImapHostManager imapHostManager) {
@@ -25,11 +23,11 @@ public class UserManager {
     }
 
     public GreenMailUser getUser(String login) {
-        return _users.get(normalizerUserName(login));
+        return loginToUser.get(normalizerUserName(login));
     }
 
     public GreenMailUser getUserByEmail(String email) {
-        return getUser(email);
+        return emailToUser.get(normalizerUserName(email));
     }
 
     public GreenMailUser createUser(String email, String login, String password) throws UserException {
@@ -39,16 +37,22 @@ public class UserManager {
         return user;
     }
 
-    private void addUser(GreenMailUser user) {
+    public void addUser(GreenMailUser user) {
         deleteUser(user);
-        _users.put(normalizerUserName(user.getLogin()), user);
+        loginToUser.put(normalizerUserName(user.getLogin()), user);
+        emailToUser.put(normalizerUserName(user.getEmail()), user);
     }
 
     public void deleteUser(GreenMailUser user) {
-        GreenMailUser deletedUser = _users.remove(normalizerUserName(user.getLogin()));
+        GreenMailUser deletedUser = loginToUser.remove(normalizerUserName(user.getLogin()));
         if (deletedUser != null) {
+            emailToUser.remove(normalizerUserName(deletedUser.getEmail()));
             deletedUser.delete();
         }
+    }
+
+    public Collection<GreenMailUser> listUser() {
+        return Collections.unmodifiableCollection(loginToUser.values());
     }
 
     public boolean test(String userid, String password) {
