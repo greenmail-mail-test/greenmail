@@ -1,3 +1,7 @@
+/* -------------------------------------------------------------------
+* This software is released under the Apache license 2.0
+* -------------------------------------------------------------------
+*/
 package com.icegreen.greenmail.store;
 
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
@@ -5,6 +9,9 @@ import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import javax.mail.Flags;
 import java.util.*;
 
+/**
+ * @author Raimund Klein <raimund.klein@gmx.de>
+ */
 public class ListBasedStoredMessageCollection implements StoredMessageCollection {
     private final List<StoredMessage> mailMessages = Collections.synchronizedList(new ArrayList<StoredMessage>());
 

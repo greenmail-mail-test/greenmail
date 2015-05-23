@@ -1,9 +1,13 @@
+/* -------------------------------------------------------------------
+* This software is released under the Apache license 2.0
+* -------------------------------------------------------------------
+*/
 package com.icegreen.greenmail.util;
-
-import org.apache.commons.lang3.Validate;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static java.lang.String.format;
 
 /**
  * A {@link LinkedHashMap} with a maximum size. Adding an {@link java.util.Map.Entry Entry} that would exceed this size
@@ -11,6 +15,8 @@ import java.util.Map;
  *
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
+ *
+ * @author Raimund Klein <raimund.klein@gmx.de>
  */
 public class MaxSizeLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
     private final int maxSize;
@@ -22,7 +28,9 @@ public class MaxSizeLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
      * @throws IllegalArgumentException if {@code maxSize} is not positive.
      */
     public MaxSizeLinkedHashMap(final int maxSize) {
-        Validate.isTrue(maxSize > 0, "The maxSize must be greater than 0: $d", maxSize);
+        if (maxSize <= 0) {
+            throw new IllegalArgumentException(format("The maxSize must be greater than 0: $d", maxSize));
+        }
         this.maxSize = maxSize;
     }
 

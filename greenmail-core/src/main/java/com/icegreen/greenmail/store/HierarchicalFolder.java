@@ -1,3 +1,7 @@
+/* -------------------------------------------------------------------
+* This software is released under the Apache license 2.0
+* -------------------------------------------------------------------
+*/
 package com.icegreen.greenmail.store;
 
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
@@ -12,6 +16,9 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
 import java.util.*;
 
+/**
+ * @author Raimund Klein <raimund.klein@gmx.de>
+ */
 class HierarchicalFolder implements MailFolder, UIDFolder {
     private static final Flags PERMANENT_FLAGS = new Flags();
 
