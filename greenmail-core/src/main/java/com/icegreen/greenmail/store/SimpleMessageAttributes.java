@@ -125,7 +125,7 @@ public class SimpleMessageAttributes
         // Section 1 - Message Headers
         if (part instanceof MimeMessage) {
             try {
-                subject = ((MimeMessage) part).getSubject();
+                subject = part.getHeader("Subject")[0];
             } catch (MessagingException me) {
 //                if (DEBUG) getLogger().debug("Messaging Exception for getSubject: " + me);
             }

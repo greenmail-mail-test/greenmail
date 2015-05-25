@@ -33,7 +33,7 @@ public class ImapServerTest {
     @Test
     public void testRetreiveSimple() throws Exception {
         assertNotNull(greenMail.getImap());
-        final String subject = GreenMailUtil.random();
+        final String subject = GreenMailUtil.random() + " öäü";
         final String body = GreenMailUtil.random() + "\r\n" + GreenMailUtil.random() + "\r\n" + GreenMailUtil.random();
         final String to = "test@localhost";
         GreenMailUtil.sendTextEmailTest(to, "from@localhost", subject, body);
