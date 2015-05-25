@@ -105,8 +105,8 @@ public class DummySSLSocketFactory extends SSLSocketFactory {
      * to try to do a reverse lookup to find out the host name for the host which is really slow.
      * Of course we don't know the host name of the remote machine so we just set a fake host name that is unique.
      * <p/>
-     * This forces the SSL stack to do key negociation every time we connect to a host but is still much faster
-     * than doing the reverse hostname lookup. The negociation is caused by the fact that the SSL stack remembers
+     * This forces the SSL stack to do key negotiation every time we connect to a host but is still much faster
+     * than doing the reverse hostname lookup. The negotiation is caused by the fact that the SSL stack remembers
      * a trust relationship with a host. If we connect to the same host twice this relationship is reused. Since
      * we set the host name to a random value this reuse never happens.
      *
