@@ -70,6 +70,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
      * @throws Exception in the event of misconfiguration (such as failure to set an essential
      *                   property) or if initialization fails.
      */
+    @Override
     public void afterPropertiesSet() throws Exception {
         greenMail = new GreenMail(createServerSetup());
         if (null != users) {
@@ -172,6 +173,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
      * @throws Exception in case of shutdown errors. Exceptions will get logged but not rethrown to
      *                   allow other beans to release their resources too.
      */
+    @Override
     public void destroy() throws Exception {
         greenMail.stop();
     }
@@ -393,6 +395,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
         GreenMailUtil.sendTextEmail(theTo, theFrom, theSubject, theContent, smtpServerSetup);
     }
 
+    @Override
     public void setBeanName(final String pName) {
         name = pName;
     }

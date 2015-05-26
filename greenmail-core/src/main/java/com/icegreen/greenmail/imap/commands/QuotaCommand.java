@@ -71,6 +71,7 @@ public class QuotaCommand extends AuthenticatedStateCommand {
         return "quota-root-arg";
     }
 
+    @Override
     public String getName() {
         return NAME;
     }

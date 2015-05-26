@@ -8,6 +8,7 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  * @author Marcel May (mm)
  */
 public class GreenMailNamespaceHandler extends NamespaceHandlerSupport {
+    @Override
     public void init() {
         registerBeanDefinitionParser("greenmail", new GreenMailBeanDefinitionParser());
     }

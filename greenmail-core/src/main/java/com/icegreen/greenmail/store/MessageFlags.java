@@ -37,6 +37,10 @@ public class MessageFlags {
     public static final String SEEN = "\\SEEN";
     public static final String RECENT = "\\RECENT" ;
 
+    protected MessageFlags() {
+        // Not instantiable
+    }
+
     /**
      * Returns IMAP formatted String of MessageFlags for named user
      */
