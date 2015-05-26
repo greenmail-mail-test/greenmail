@@ -16,7 +16,7 @@ public class ExampleReceiveNoRuleTest {
     @Test
     public void testReceive() throws MessagingException, IOException {
         //Start all email servers using non-default ports.
-        GreenMail greenMail = new GreenMail(ServerSetupTest.ALL);
+        GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
         greenMail.start();
 
         //Use random content to avoid potential residual lingering problems

@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 public class ExampleSendNoRuleAdvTest {
     @Test
     public void testSend() throws MessagingException, IOException {
-        GreenMail greenMail = new GreenMail(ServerSetupTest.ALL);
+        GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
         greenMail.start();
 
         //Use random content to avoid potential residual lingering problems

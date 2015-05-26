@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 
 public class ExampleRuleTest {
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
+    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
 
     @Test
     public void testSomething() throws MessagingException {
