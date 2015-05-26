@@ -12,7 +12,7 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
-public class ExampleReceiveNoRule {
+public class ExampleReceiveNoRuleTest {
     @Test
     public void testReceive() throws MessagingException, IOException {
         //Start all email servers using non-default ports.

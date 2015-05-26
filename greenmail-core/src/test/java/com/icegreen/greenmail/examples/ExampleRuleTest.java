@@ -11,7 +11,7 @@ import javax.mail.internet.MimeMessage;
 
 import static org.junit.Assert.assertEquals;
 
-public class ExampleRule {
+public class ExampleRuleTest {
     @Rule
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
 

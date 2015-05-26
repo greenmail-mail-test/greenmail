@@ -8,7 +8,7 @@ import javax.mail.MessagingException;
 
 import static org.junit.Assert.assertEquals;
 
-public class ExampleSendNoRuleSimple {
+public class ExampleSendNoRuleSimpleTest {
     @Test
     public void testSend() throws MessagingException {
         GreenMail greenMail = new GreenMail(); //uses test ports by default

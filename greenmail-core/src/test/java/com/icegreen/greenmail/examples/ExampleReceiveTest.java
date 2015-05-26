@@ -12,7 +12,7 @@ import javax.mail.internet.MimeMessage;
 
 import static org.junit.Assert.assertEquals;
 
-public class ExampleReceive {
+public class ExampleReceiveTest {
     @Rule
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
 
