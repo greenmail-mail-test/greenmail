@@ -127,10 +127,7 @@ public class ImapServerTest {
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject", "Test message", ServerSetupTest.SMTP);
         greenMail.waitForIncomingEmail(1);
 
-        Properties p = new Properties();
-//            p.setProperty("mail.debug","true");
-        Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
-        Store store = session.getStore("imap");
+        final IMAPStore store = greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
         IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
         folder.open(Folder.READ_ONLY);
@@ -165,8 +162,7 @@ public class ImapServerTest {
         greenMail.setUser("foo@localhost", "pwd");
         greenMail.setQuotaSupported(false);
         try {
-            Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP);
-            IMAPStore store = (IMAPStore) session.getStore("imap");
+            final IMAPStore store = (IMAPStore) greenMail.getImap().createStore();
             store.connect("foo@localhost", "pwd");
 
             Quota testQuota = new Quota("INBOX");
@@ -185,10 +181,7 @@ public class ImapServerTest {
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject", "Test message", ServerSetupTest.SMTP);
         greenMail.waitForIncomingEmail(1);
 
-        Properties p = new Properties();
-//            p.setProperty("mail.debug","true");
-        Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
-        IMAPStore store = (IMAPStore) session.getStore("imap");
+        final IMAPStore store = (IMAPStore) greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
 
         // Set some flags
@@ -231,10 +224,7 @@ public class ImapServerTest {
     @Test
     public void testNestedFolders() throws MessagingException, InterruptedException {
         greenMail.setUser("foo@localhost", "pwd");
-        Properties p = new Properties();
-//            p.setProperty("mail.debug","true");
-        Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
-        IMAPStore store = (IMAPStore) session.getStore("imap");
+        final IMAPStore store = (IMAPStore) greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
 
         // Create some folders
@@ -254,10 +244,7 @@ public class ImapServerTest {
     public void testRenameFolder() throws MessagingException, InterruptedException {
         greenMail.setUser("foo@localhost", "pwd");
 
-        Properties p = new Properties();
-//            p.setProperty("mail.debug","true");
-        Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
-        IMAPStore store = (IMAPStore) session.getStore("imap");
+        final IMAPStore store = greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
 
         // Create some folders
@@ -304,8 +291,7 @@ public class ImapServerTest {
 
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test UIDFolder",
                 "Test message", ServerSetupTest.SMTP);
-        final Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP);
-        final IMAPStore store = (IMAPStore) session.getStore("imap");
+        final IMAPStore store = greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
         Folder inboxFolder = store.getFolder("INBOX");
         inboxFolder.open(Folder.READ_WRITE);
@@ -334,8 +320,7 @@ public class ImapServerTest {
             GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject #" + i,
                     "Test message", ServerSetupTest.SMTP);
         }
-        final Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP);
-        final IMAPStore store = (IMAPStore) session.getStore("imap");
+        final IMAPStore store = greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
         Folder inboxFolder = store.getFolder("INBOX");
         inboxFolder.open(Folder.READ_WRITE);

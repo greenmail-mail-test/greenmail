@@ -6,19 +6,21 @@ package com.icegreen.greenmail.server;
 
 import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.util.DummySSLServerSocketFactory;
+import com.icegreen.greenmail.util.DummySSLSocketFactory;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.mail.NoSuchProviderException;
+import javax.mail.Session;
+import javax.mail.Store;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Wael Chatila
@@ -100,7 +102,7 @@ public abstract class AbstractServer extends Thread implements Service {
     protected void handleClientSocket(Socket clientSocket) {
         final ProtocolHandler handler = createProtocolHandler(clientSocket);
         addHandler(handler);
-        final Thread thread = new Thread( new Runnable() {
+        final Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -180,7 +182,7 @@ public abstract class AbstractServer extends Thread implements Service {
         synchronized (startupMonitor) {
             // Loop to avoid spurious wakeups, see
             // https://www.securecoding.cert.org/confluence/display/java/THI03-J.+Always+invoke+wait%28%29+and+await%28%29+methods+inside+a+loop
-            while(!isRunning() && System.currentTimeMillis()-t < timeoutInMs) {
+            while (!isRunning() && System.currentTimeMillis() - t < timeoutInMs) {
                 startupMonitor.wait(timeoutInMs);
             }
         }
@@ -240,5 +242,94 @@ public abstract class AbstractServer extends Thread implements Service {
     @Override
     public final void stopService() {
         stopService(0L);
+    }
+
+    /**
+     * Creates a session configured for given server (IMAP, SMTP, ...).
+     *
+     * @param properties optional session properties, can be null.
+     * @return the session.
+     */
+    public Session createSession(Properties properties) {
+        Properties props = createProtocolSpecificSessionProperties();
+
+        if (null != properties && !properties.isEmpty()) {
+            props.putAll(properties);
+        }
+
+        if (log.isDebugEnabled()) {
+            StringBuilder buf = new StringBuilder("Server Mail session properties are :");
+            for (Map.Entry entry : props.entrySet()) {
+                if (entry.getKey().toString().contains("imap")) {
+                    buf.append("\n\t").append(entry.getKey()).append("\t : ").append(entry.getValue());
+                }
+            }
+            log.debug(buf.toString());
+        }
+
+        return Session.getInstance(props, null);
+    }
+
+    /**
+     * Creates protocol specific session properties.
+     *
+     * @return the properties.
+     */
+    protected abstract Properties createProtocolSpecificSessionProperties();
+
+    /**
+     * Creates a session configured for given server (IMAP, SMTP, ...).
+     *
+     * @return the session.
+     */
+    public Session createSession() {
+        return createSession(null);
+    }
+
+    /**
+     * Creates default properties for a JavaMail session.
+     * Concrete server implementations can add protocol specific settings.
+     * <p/>
+     * See http://docs.oracle.com/javaee/6/api/javax/mail/package-summary.html for some general settings.
+     *
+     * @return default properties.
+     */
+    protected Properties createDefaultSessionProperties() {
+        Properties props = new Properties();
+
+//        if (log.isDebugEnabled()) {
+//            props.setProperty("mail.debug", "true");
+//            System.setProperty("mail.socket.debug", "true");
+//        }
+
+        // Set local host address (makes tests much faster. If this is not set java mail always looks for the address)
+        props.setProperty("mail." + setup.getProtocol() + ".localaddress", String.valueOf(ServerSetup.getLocalHostAddress()));
+        props.setProperty("mail." + setup.getProtocol() + ".port", String.valueOf(setup.getPort()));
+        props.setProperty("mail." + setup.getProtocol() + ".host", String.valueOf(setup.getBindAddress()));
+
+        if (setup.isSecure()) {
+            props.put("mail." + setup.getProtocol() + ".starttls.enable", Boolean.TRUE);
+            props.setProperty("mail." + setup.getProtocol() + ".socketFactory.class", DummySSLSocketFactory.class.getName());
+            props.setProperty("mail." + setup.getProtocol() + ".socketFactory.fallback", "false");
+        }
+
+        // Timeouts
+        props.setProperty("mail." + setup.getProtocol() + ".connectiontimeout",
+                Long.toString(setup.getConnectionTimeout() < 0L ? ServerSetup.CONNECTION_TIMEOUT : setup.getConnectionTimeout()));
+        props.setProperty("mail." + setup.getProtocol() + ".timeout",
+                Long.toString(setup.getReadTimeout() < 0L ? ServerSetup.READ_TIMEOUT : setup.getReadTimeout()));
+        // Note: "mail." + setup.getProtocol() + ".writetimeout" breaks TLS/SSL Dummy Socket and makes tests run 6x slower!!!
+        //       Therefore we do not configure writetimeout.
+
+        return props;
+    }
+
+    /**
+     * Creates a new JavaMail store.
+     *
+     * @return a new store.
+     */
+    public Store createStore() throws NoSuchProviderException {
+        return createSession().getStore(getProtocol());
     }
 }

@@ -15,7 +15,6 @@ import org.junit.Test;
 import javax.mail.*;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -49,11 +48,7 @@ public class GreenMailUtilTest {
                     "Test subject", "Test message", ServerSetupTest.SMTP);
             greenMail.waitForIncomingEmail(1);
 
-            Properties p = new Properties();
-            // p.setProperty("mail.host","localhost");
-            // p.setProperty("mail.debug","true");
-            Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
-            Store store = session.getStore("imap");
+            Store store = greenMail.getImap().createStore();
             store.connect("foo@localhost", "pwd");
             Folder folder = store.getFolder("INBOX");
             folder.open(Folder.READ_ONLY);
@@ -83,9 +78,7 @@ public class GreenMailUtilTest {
 
             final GreenMailUser user = greenMail.setUser("foo@localhost", "pwd");
 
-            Properties p = new Properties();
-            Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
-            Store store = session.getStore("imap");
+            Store store = greenMail.getImap().createStore();
             store.connect("foo@localhost", "pwd");
 
             Quota testQuota = new Quota("INBOX");

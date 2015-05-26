@@ -39,16 +39,14 @@ public class ImapSearchTest {
         GreenMailUser user = greenMail.setUser("to1@localhost", "pwd");
         assertNotNull(greenMail.getImap());
 
-        Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP);
         MailFolder folder = greenMail.getManagers().getImapHostManager().getFolder(user, "INBOX");
-
         Flags fooFlags = new Flags();
         fooFlags.add("foo");
-        storeSearchTestMessages(session, folder, fooFlags);
+        storeSearchTestMessages(greenMail.getImap().createSession(), folder, fooFlags);
 
         greenMail.waitForIncomingEmail(2);
 
-        Store store = session.getStore("imap");
+        final Store store = greenMail.getImap().createStore();
         store.connect("to1@localhost", "pwd");
         Folder imapFolder = store.getFolder("INBOX");
         imapFolder.open(Folder.READ_WRITE);
@@ -146,8 +144,8 @@ public class ImapSearchTest {
         }
 
         greenMail.setUser("to1@localhost", "pwd"); // Create user
-        Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP);
-        Store store = session.getStore("imap");
+
+        final Store store = greenMail.getImap().createStore();
         store.connect("to1@localhost", "pwd");
         Folder imapFolder = store.getFolder("INBOX");
         imapFolder.open(Folder.READ_WRITE);

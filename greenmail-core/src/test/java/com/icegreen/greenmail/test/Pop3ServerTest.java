@@ -8,7 +8,6 @@ import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
-import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.sun.mail.pop3.POP3Folder;
 import com.sun.mail.pop3.POP3Store;
@@ -18,7 +17,6 @@ import org.junit.Test;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Session;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 
@@ -35,8 +33,7 @@ public class Pop3ServerTest {
 
     @Test
     public void testPop3Capabillities() throws MessagingException, UserException {
-        final Session session = GreenMailUtil.getSession(greenMail.getPop3().getServerSetup());
-        final POP3Store store = (POP3Store) session.getStore(ServerSetup.PROTOCOL_POP3);
+        final POP3Store store = greenMail.getPop3().createStore();
         greenMail.getManagers().getUserManager().createUser("testPop3Capabillities@localhost.com",
                 "testPop3Capabillities@localhost.com", "pwd");
         store.connect("testPop3Capabillities@localhost.com", "pwd");

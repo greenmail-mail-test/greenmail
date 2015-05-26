@@ -54,9 +54,16 @@ public class ServerSetup {
     public static final ServerSetup[] ALL = new ServerSetup[]{SMTP, SMTPS, POP3, POP3S, IMAP, IMAPS};
 
 
+    /** Default socket read timeout. See JavaMail session properties. */
+    public static final long READ_TIMEOUT = 15000L;
+    /** Default socket connection timeout. See JavaMail session properties. */
+    public static final long CONNECTION_TIMEOUT = 15000L;
+
     private final int port;
     private final String bindAddress;
     private final String protocol;
+    private long readTimeout = -1L;
+    private long connectionTimeout = -1L;
 
     public ServerSetup(int port, String bindAddress, String protocol) {
         this.port = port;
@@ -98,5 +105,21 @@ public class ServerSetup {
 
     public int getPort() {
         return port;
+    }
+
+    public long getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    public void setConnectionTimeout(long connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
+    }
+
+    public long getReadTimeout() {
+        return readTimeout;
+    }
+
+    public void setReadTimeout(long readTimeout) {
+        this.readTimeout = readTimeout;
     }
 }

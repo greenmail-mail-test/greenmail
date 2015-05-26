@@ -49,7 +49,7 @@ public class EscapingTest {
         String body = "Example text";
         greenMail.setUser(to, to);
 
-        Session smtpSession = GreenMailUtil.getSession(ServerSetupTest.SMTP);
+        Session smtpSession = greenMail.getSmtp().createSession();
         GreenMailMimeMessage mimeMessage = new GreenMailMimeMessage(smtpSession);
 
         Address[] froms = new InternetAddress[] { new InternetAddress(from) };

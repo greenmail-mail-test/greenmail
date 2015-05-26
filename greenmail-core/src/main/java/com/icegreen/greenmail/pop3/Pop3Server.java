@@ -11,8 +11,11 @@ import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.pop3.commands.Pop3CommandRegistry;
 import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.util.ServerSetup;
+import com.sun.mail.pop3.POP3Store;
 
+import javax.mail.NoSuchProviderException;
 import java.net.Socket;
+import java.util.Properties;
 
 public class Pop3Server extends AbstractServer {
 
@@ -23,5 +26,22 @@ public class Pop3Server extends AbstractServer {
     @Override
     protected ProtocolHandler createProtocolHandler(final Socket clientSocket) {
         return new Pop3Handler(new Pop3CommandRegistry(), managers.getUserManager(), clientSocket);
+    }
+
+    /**
+     * Creates POP3 specific JavaMail session properties.
+     *
+     * See https://javamail.java.net/nonav/docs/api/com/sun/mail/pop3/package-summary.html for valid properties.
+     *
+     * @return the properties.
+     */
+    @Override
+    protected Properties createProtocolSpecificSessionProperties() {
+        return createDefaultSessionProperties();
+    }
+
+    @Override
+    public POP3Store createStore() throws NoSuchProviderException {
+        return (POP3Store) super.createStore();
     }
 }
