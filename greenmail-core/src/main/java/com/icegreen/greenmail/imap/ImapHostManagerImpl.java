@@ -68,7 +68,7 @@ public class ImapHostManagerImpl
             throws FolderException {
         MailFolder folder = getFolder(user, mailboxName);
         if (mustExist && (folder == null)) {
-            throw new FolderException("No such store.");
+            throw new FolderException("No such folder : "+mailboxName);
         }
         return folder;
     }

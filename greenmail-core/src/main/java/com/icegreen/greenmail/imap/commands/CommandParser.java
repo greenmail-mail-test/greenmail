@@ -10,6 +10,7 @@ import com.icegreen.greenmail.imap.ImapConstants;
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.store.MessageFlags;
+import com.sun.mail.imap.protocol.BASE64MailboxDecoder;
 
 import javax.mail.Flags;
 import java.text.ParseException;
@@ -89,7 +90,7 @@ public class CommandParser {
         if (mailbox.equalsIgnoreCase(ImapConstants.INBOX_NAME)) {
             return ImapConstants.INBOX_NAME;
         } else {
-            return mailbox;
+            return BASE64MailboxDecoder.decode(mailbox);
         }
     }
 

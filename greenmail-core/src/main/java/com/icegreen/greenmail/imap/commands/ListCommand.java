@@ -12,6 +12,8 @@ import com.icegreen.greenmail.imap.ImapSession;
 import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
+import com.sun.mail.imap.protocol.BASE64MailboxDecoder;
+import com.sun.mail.imap.protocol.BASE64MailboxEncoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -115,11 +117,10 @@ class ListCommand extends AuthenticatedStateCommand {
                 }
             }
 
-            // TODO: need to check if the mailbox name needs quoting.
             if (mailboxName.length() == 0) {
                 message.append("\"\"");
             } else {
-                message.append(mailboxName);
+                message.append('\"').append(BASE64MailboxEncoder.encode(mailboxName)).append('\"');
             }
 
             response.commandResponse(this, message.toString());
@@ -177,14 +178,18 @@ class ListCommand extends AuthenticatedStateCommand {
          */
         public String listMailbox(ImapRequestLineReader request) throws ProtocolException {
             char next = request.nextWordChar();
+            String name;
             switch (next) {
                 case '"':
-                    return consumeQuoted(request);
+                    name = consumeQuoted(request);
+                    break;
                 case '{':
-                    return consumeLiteral(request);
+                    name = consumeLiteral(request);
+                    break;
                 default:
-                    return consumeWord(request, new ListCharValidator());
+                    name = consumeWord(request, new ListCharValidator());
             }
+            return BASE64MailboxDecoder.decode(name);
         }
 
         private class ListCharValidator extends ATOM_CHARValidator {

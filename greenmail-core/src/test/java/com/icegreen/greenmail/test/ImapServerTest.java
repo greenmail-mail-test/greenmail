@@ -16,7 +16,6 @@ import org.junit.Test;
 import javax.mail.*;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
-import java.util.Properties;
 
 import static javax.mail.Flags.Flag.DELETED;
 import static org.junit.Assert.*;
@@ -283,6 +282,31 @@ public class ImapServerTest {
         renamedFolder2.renameTo(foo3Folder);
         assertTrue(inboxFolder.getFolder("foo2.foo3").exists());
         assertTrue(!inboxFolder.getFolder("foo-folder-renamed-again").exists());
+    }
+
+    @Test
+    public void testFolderRequiringEscaping() throws MessagingException {
+        greenMail.setUser("foo@localhost", "pwd");
+        GreenMailUtil.sendTextEmail("foo@localhost", "foo@localhost", "test subject", "", greenMail.getSmtp().getServerSetup());
+
+        final IMAPStore store = greenMail.getImap().createStore();
+        store.connect("foo@localhost", "pwd");
+
+        // Create some folders
+        Folder inboxFolder = store.getFolder("INBOX");
+        inboxFolder.open(Folder.READ_ONLY);
+
+        final Folder folderRequiringEscaping = inboxFolder.getFolder("requires escaping Ä");
+        assertTrue(folderRequiringEscaping.create(Folder.HOLDS_FOLDERS | Folder.HOLDS_MESSAGES));
+        folderRequiringEscaping.open(Folder.READ_WRITE);
+
+        assertEquals(0, folderRequiringEscaping.getMessageCount());
+        assertEquals(1, inboxFolder.getMessageCount());
+
+        inboxFolder.copyMessages(inboxFolder.getMessages(), folderRequiringEscaping);
+
+        folderRequiringEscaping.expunge(); // invalidates folder cache
+        assertEquals(1, folderRequiringEscaping.getMessageCount());
     }
 
     @Test

@@ -12,6 +12,7 @@ import com.icegreen.greenmail.imap.ImapSession;
 import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
+import com.sun.mail.imap.protocol.BASE64MailboxEncoder;
 
 /**
  * Handles processeing for the STATUS imap command.
@@ -44,7 +45,8 @@ class StatusCommand extends AuthenticatedStateCommand {
 
         MailFolder folder = getMailbox(mailboxName, session, true);
 
-        StringBuilder buffer = new StringBuilder(mailboxName);
+        StringBuilder buffer = new StringBuilder();
+        buffer.append('\"').append(BASE64MailboxEncoder.encode(mailboxName)).append('\"');
         buffer.append(SP);
         buffer.append('(');
 

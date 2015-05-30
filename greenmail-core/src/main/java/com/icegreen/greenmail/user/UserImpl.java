@@ -107,4 +107,12 @@ public class UserImpl implements GreenMailUser {
         UserImpl that = (UserImpl) o;
         return this.email.equals(that.email);
     }
+
+    @Override
+    public String toString() {
+        return "UserImpl{" +
+                "email='" + email + '\'' +
+                ", login='" + login + '\'' +
+                '}';
+    }
 }
