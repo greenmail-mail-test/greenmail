@@ -24,6 +24,7 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private ImapRequestHandler requestHandler = new ImapRequestHandler();
     private ImapSession session;
+    private Object closeMonitor = new Object();
 
     /**
      * The TCP/IP socket over which the IMAP interaction
@@ -85,22 +86,25 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
      */
     @Override
     public void close() {
-        // Close and clear streams, sockets etc.
-        if (socket != null) {
-            try {
-                // Terminates thread blocking on socket read
-                // and automatically closed depending streams
-                socket.close();
-            } catch (IOException e) {
-                log.warn("Can not close socket", e);
-            } finally {
-                socket = null;
+        // Use monitor to avoid race between external close and handler thread run()
+        synchronized (closeMonitor) {
+            // Close and clear streams, sockets etc.
+            if (socket != null) {
+                try {
+                    // Terminates thread blocking on socket read
+                    // and automatically closed depending streams
+                    socket.close();
+                } catch (IOException e) {
+                    log.warn("Can not close socket", e);
+                } finally {
+                    socket = null;
+                }
             }
-        }
 
-        // Clear user data
-        session = null;
-        response = null;
+            // Clear user data
+            session = null;
+            response = null;
+        }
     }
 }
 
