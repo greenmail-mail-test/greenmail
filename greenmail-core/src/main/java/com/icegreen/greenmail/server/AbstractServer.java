@@ -6,7 +6,6 @@ package com.icegreen.greenmail.server;
 
 import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.util.DummySSLServerSocketFactory;
-import com.icegreen.greenmail.util.DummySSLSocketFactory;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.Service;
 import org.slf4j.Logger;
@@ -251,11 +250,18 @@ public abstract class AbstractServer extends Thread implements Service {
      * @return the session.
      */
     public Session createSession(Properties properties) {
-        Properties props = createProtocolSpecificSessionProperties();
+        return createSession(properties, false);
+    }
 
-        if (null != properties && !properties.isEmpty()) {
-            props.putAll(properties);
-        }
+    /**
+     * Creates a session configured for given server (IMAP, SMTP, ...).
+     *
+     * @param properties optional session properties, can be null.
+     * @param debug if true enables JavaMail debug settings
+     * @return the session.
+     */
+    public Session createSession(Properties properties, boolean debug) {
+        Properties props = setup.configureJavaMailSessionProperties(properties, debug);
 
         if (log.isDebugEnabled()) {
             StringBuilder buf = new StringBuilder("Server Mail session properties are :");
@@ -271,57 +277,12 @@ public abstract class AbstractServer extends Thread implements Service {
     }
 
     /**
-     * Creates protocol specific session properties.
-     *
-     * @return the properties.
-     */
-    protected abstract Properties createProtocolSpecificSessionProperties();
-
-    /**
      * Creates a session configured for given server (IMAP, SMTP, ...).
      *
      * @return the session.
      */
     public Session createSession() {
         return createSession(null);
-    }
-
-    /**
-     * Creates default properties for a JavaMail session.
-     * Concrete server implementations can add protocol specific settings.
-     * <p/>
-     * See http://docs.oracle.com/javaee/6/api/javax/mail/package-summary.html for some general settings.
-     *
-     * @return default properties.
-     */
-    protected Properties createDefaultSessionProperties() {
-        Properties props = new Properties();
-
-//        if (log.isDebugEnabled()) {
-//            props.setProperty("mail.debug", "true");
-//            System.setProperty("mail.socket.debug", "true");
-//        }
-
-        // Set local host address (makes tests much faster. If this is not set java mail always looks for the address)
-        props.setProperty("mail." + setup.getProtocol() + ".localaddress", String.valueOf(ServerSetup.getLocalHostAddress()));
-        props.setProperty("mail." + setup.getProtocol() + ".port", String.valueOf(setup.getPort()));
-        props.setProperty("mail." + setup.getProtocol() + ".host", String.valueOf(setup.getBindAddress()));
-
-        if (setup.isSecure()) {
-            props.put("mail." + setup.getProtocol() + ".starttls.enable", Boolean.TRUE);
-            props.setProperty("mail." + setup.getProtocol() + ".socketFactory.class", DummySSLSocketFactory.class.getName());
-            props.setProperty("mail." + setup.getProtocol() + ".socketFactory.fallback", "false");
-        }
-
-        // Timeouts
-        props.setProperty("mail." + setup.getProtocol() + ".connectiontimeout",
-                Long.toString(setup.getConnectionTimeout() < 0L ? ServerSetup.CONNECTION_TIMEOUT : setup.getConnectionTimeout()));
-        props.setProperty("mail." + setup.getProtocol() + ".timeout",
-                Long.toString(setup.getReadTimeout() < 0L ? ServerSetup.READ_TIMEOUT : setup.getReadTimeout()));
-        // Note: "mail." + setup.getProtocol() + ".writetimeout" breaks TLS/SSL Dummy Socket and makes tests run 6x slower!!!
-        //       Therefore we do not configure writetimeout.
-
-        return props;
     }
 
     /**

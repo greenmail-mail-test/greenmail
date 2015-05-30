@@ -362,36 +362,12 @@ public class GreenMailUtil {
      * @return the JavaMail session.
      */
     public static Session getSession(final ServerSetup setup, Properties mailProps) {
-        Properties props = new Properties();
-        props.put("mail.smtps.starttls.enable", Boolean.TRUE);
-        if (setup.isSecure()) {
-            props.setProperty("mail.smtp.socketFactory.class", DummySSLSocketFactory.class.getName());
-        }
+        Properties props = setup.configureJavaMailSessionProperties(mailProps, false);
 
-        props.setProperty("mail.transport.protocol", setup.getProtocol());
-
-        // Should these two props be taken from the setup info?
-        props.setProperty("mail.smtps.port", String.valueOf(setup.getPort()));
-        props.setProperty("mail.smtp.port", String.valueOf(setup.getPort()));
-//        props.setProperty("mail.debug", "true");
-
-        // Set local host address (makes tests much faster. If this is not set java mail always looks for the address)
-        props.setProperty("mail.smtp.localaddress", String.valueOf(ServerSetup.getLocalHostAddress()));
-        props.setProperty("mail.smtps.localaddress", String.valueOf(ServerSetup.getLocalHostAddress()));
-
-        props.setProperty("mail." + setup.getProtocol() + ".port", String.valueOf(setup.getPort()));
-        props.setProperty("mail." + setup.getProtocol() + ".host", String.valueOf(setup.getBindAddress()));
-        // On Mac, somehow we need to set the smtp host for smtps.
-        // Otherwise, JavaMail uses a default host 'localhost'
-        if (setup.isSecure() && "smtps".equals(setup.getProtocol())) {
-            props.setProperty("mail.smtp.host", String.valueOf(setup.getBindAddress()));
-        }
-        if (null != mailProps && !mailProps.isEmpty()) {
-            props.putAll(mailProps);
-        }
         if (log.isDebugEnabled()) {
             log.debug("Mail session properties are " + props);
         }
+
         return Session.getInstance(props, null);
     }
 

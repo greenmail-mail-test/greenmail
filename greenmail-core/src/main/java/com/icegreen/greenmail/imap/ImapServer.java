@@ -14,7 +14,6 @@ import com.sun.mail.imap.IMAPStore;
 
 import javax.mail.NoSuchProviderException;
 import java.net.Socket;
-import java.util.Properties;
 
 public final class ImapServer extends AbstractServer {
 
@@ -25,18 +24,6 @@ public final class ImapServer extends AbstractServer {
     @Override
     protected ProtocolHandler createProtocolHandler(Socket clientSocket) {
         return new ImapHandler(managers.getUserManager(), managers.getImapHostManager(), clientSocket);
-    }
-
-    /**
-     * Creates IMAP specific JavaMail session properties.
-     *
-     * See https://javamail.java.net/nonav/docs/api/com/sun/mail/imap/package-summary.html for valid properties.
-     *
-     * @return the properties.
-     */
-    @Override
-    protected Properties createProtocolSpecificSessionProperties() {
-        return createDefaultSessionProperties();
     }
 
     @Override
