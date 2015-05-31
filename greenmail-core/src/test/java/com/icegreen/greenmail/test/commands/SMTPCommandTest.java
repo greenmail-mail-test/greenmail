@@ -14,7 +14,6 @@ import java.net.Socket;
 import com.sun.mail.smtp.SMTPTransport;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import com.icegreen.greenmail.util.GreenMailUtil;
 
 import javax.mail.MessagingException;
 import javax.mail.Session;

@@ -19,6 +19,7 @@ import java.util.Collection;
 class LsubCommand extends ListCommand {
     public static final String NAME = "LSUB";
 
+    @Override
     protected Collection<MailFolder> doList(ImapSession session, String searchPattern)
             throws FolderException {
         return session.getHost().listSubscribedMailboxes(session.getUser(), searchPattern);

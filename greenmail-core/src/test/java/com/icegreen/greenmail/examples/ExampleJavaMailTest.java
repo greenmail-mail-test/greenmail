@@ -2,7 +2,6 @@ package com.icegreen.greenmail.examples;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.user.UserException;
-import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.sun.mail.imap.IMAPStore;
 import org.junit.Rule;

@@ -42,7 +42,7 @@ public class EscapingTest {
     }
     
     @Test
-    public void testEscapeMessageID() throws AddressException,MessagingException,IOException{
+    public void testEscapeMessageID() throws MessagingException,IOException{
         String to = "foo@localhost";
         String from = "bar@localhost";
         String subject = "Bad IMAP Envelope";
