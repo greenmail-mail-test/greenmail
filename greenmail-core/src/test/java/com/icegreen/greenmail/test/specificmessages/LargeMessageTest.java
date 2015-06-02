@@ -5,7 +5,6 @@ import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -110,7 +109,5 @@ public class LargeMessageTest {
     /**
      * @return approx 100 kb String filled with the letter 'a'
      */
-    private String createLargeString() {
-        return StringUtils.repeat('a', 100000);
-    }
+    private String createLargeString() {return new String(new char[100000]).replace("\0","a");}
 }
