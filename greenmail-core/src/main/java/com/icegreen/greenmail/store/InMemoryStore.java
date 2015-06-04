@@ -21,9 +21,17 @@ import java.util.*;
  */
 public class InMemoryStore
         implements Store, ImapConstants {
+    private final RootFolder rootMailbox;
     boolean quotaSupported = true;
-    private RootFolder rootMailbox = new RootFolder();
     private Map<String, Set<Quota>> quotaMap = new HashMap<String, Set<Quota>>();
+
+    public InMemoryStore() {
+        this(StoredMessageCollectionFactory.LIST_BASED_FACTORY);
+    }
+
+    InMemoryStore(final StoredMessageCollectionFactory storedMessageCollectionFactory) {
+        this.rootMailbox = new RootFolder(storedMessageCollectionFactory);
+    }
 
     public MailFolder getMailbox(String absoluteMailboxName) {
         StringTokenizer tokens = new StringTokenizer(absoluteMailboxName, HIERARCHY_DELIMITER);
