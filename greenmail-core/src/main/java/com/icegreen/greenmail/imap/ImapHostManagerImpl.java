@@ -28,8 +28,7 @@ public class ImapHostManagerImpl
      * Hack constructor which creates an in-memory store, and creates a console logger.
      */
     public ImapHostManagerImpl() {
-        store = new InMemoryStore();
-        subscriptions = new MailboxSubscriptions();
+        this(new InMemoryStore());
     }
 
     public ImapHostManagerImpl(Store store) {
@@ -284,6 +283,10 @@ public class ImapHostManagerImpl
         }
     }
 
+    public Store getStore() {
+        return store;
+    }
+
     /**
      * Handles all user subscriptions.
      * TODO make this a proper class
@@ -337,9 +340,5 @@ public class ImapHostManagerImpl
             }
             return subs;
         }
-    }
-
-    public Store getStore() {
-        return store;
     }
 }
