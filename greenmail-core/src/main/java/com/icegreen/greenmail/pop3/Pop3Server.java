@@ -11,7 +11,9 @@ import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.pop3.commands.Pop3CommandRegistry;
 import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.util.ServerSetup;
+import com.sun.mail.pop3.POP3Store;
 
+import javax.mail.NoSuchProviderException;
 import java.net.Socket;
 
 public class Pop3Server extends AbstractServer {
@@ -23,5 +25,10 @@ public class Pop3Server extends AbstractServer {
     @Override
     protected ProtocolHandler createProtocolHandler(final Socket clientSocket) {
         return new Pop3Handler(new Pop3CommandRegistry(), managers.getUserManager(), clientSocket);
+    }
+
+    @Override
+    public POP3Store createStore() throws NoSuchProviderException {
+        return (POP3Store) super.createStore();
     }
 }

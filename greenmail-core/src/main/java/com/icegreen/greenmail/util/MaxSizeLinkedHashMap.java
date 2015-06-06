@@ -29,7 +29,7 @@ public class MaxSizeLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
      */
     public MaxSizeLinkedHashMap(final int maxSize) {
         if (maxSize <= 0) {
-            throw new IllegalArgumentException(format("The maxSize must be greater than 0: $d", maxSize));
+            throw new IllegalArgumentException(format("The maxSize must be greater than 0: %d", maxSize));
         }
         this.maxSize = maxSize;
     }

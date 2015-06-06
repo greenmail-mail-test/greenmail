@@ -9,7 +9,6 @@ import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
-import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.Service;
 import org.jboss.system.ServiceMBeanSupport;
@@ -111,7 +110,7 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
                 throw new IllegalStateException("No required smtp or smtps service configured!");
             }
 
-            Session session = GreenMailUtil.getSession(smtpOrSmtpsService.getServerSetup());
+            Session session = smtpOrSmtpsService.createSession();
 
             Address[] tos = new InternetAddress[]{new InternetAddress(theTo)};
             Address from = new InternetAddress(theFrom);

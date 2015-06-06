@@ -19,8 +19,9 @@ abstract class AuthenticatedStateCommand extends CommandTemplate {
      * Check that the state is {@link ImapSessionState#AUTHENTICATED } or
      * {@link ImapSessionState#SELECTED}
      */
+    @Override
     public boolean validForState(ImapSessionState state) {
-        return (state == ImapSessionState.AUTHENTICATED
-                || state == ImapSessionState.SELECTED);
+        return state == ImapSessionState.AUTHENTICATED
+                || state == ImapSessionState.SELECTED;
     }
 }

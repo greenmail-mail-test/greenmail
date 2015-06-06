@@ -111,3 +111,8 @@ pre[class*="language-"] {
     border-left: 10px solid #B2DFDB;
 }
 
+/* Prism code highlighting */
+.token a {
+    text-decoration: underline;
+}
+

@@ -24,11 +24,6 @@
       <groupId>com.sun.mail</groupId>
       <artifactId>javax.mail</artifactId>
     </dependency>
-     <dependency>
-      <groupId>org.apache.commons</groupId>
-        <artifactId>commons-lang3</artifactId>
-    </dependency>
-
     <dependency> <!-- SLF4J Core -->
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>

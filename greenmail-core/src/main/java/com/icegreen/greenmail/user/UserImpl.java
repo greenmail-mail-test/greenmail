@@ -11,10 +11,9 @@ import com.icegreen.greenmail.mail.MovingMessage;
 import com.icegreen.greenmail.store.FolderException;
 
 import javax.mail.internet.MimeMessage;
-import java.io.Serializable;
 
 
-public class UserImpl implements GreenMailUser, Serializable {
+public class UserImpl implements GreenMailUser {
     String email;
     private final int cachedHashCode;
     private final String cachedHashCodeAsString;
@@ -107,5 +106,13 @@ public class UserImpl implements GreenMailUser, Serializable {
         }
         UserImpl that = (UserImpl) o;
         return this.email.equals(that.email);
+    }
+
+    @Override
+    public String toString() {
+        return "UserImpl{" +
+                "email='" + email + '\'' +
+                ", login='" + login + '\'' +
+                '}';
     }
 }

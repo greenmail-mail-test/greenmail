@@ -4,6 +4,8 @@
  */
 package com.icegreen.greenmail.util;
 
+import java.util.Properties;
+
 /**
  * Defines the default ports
  * <table>
@@ -54,9 +56,17 @@ public class ServerSetup {
     public static final ServerSetup[] ALL = new ServerSetup[]{SMTP, SMTPS, POP3, POP3S, IMAP, IMAPS};
 
 
+    /** Default socket read timeout. See JavaMail session properties. */
+    public static final long READ_TIMEOUT = 15000L;
+    /** Default socket connection timeout. See JavaMail session properties. */
+    public static final long CONNECTION_TIMEOUT = 15000L;
+
     private final int port;
     private final String bindAddress;
     private final String protocol;
+    private long readTimeout = -1L;
+    private long connectionTimeout = -1L;
+    private long writeTimeout = -1L;
 
     public ServerSetup(int port, String bindAddress, String protocol) {
         this.port = port;
@@ -98,5 +108,87 @@ public class ServerSetup {
 
     public int getPort() {
         return port;
+    }
+
+    public long getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    public void setConnectionTimeout(long connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
+    }
+
+    public long getReadTimeout() {
+        return readTimeout;
+    }
+
+    public void setReadTimeout(long readTimeout) {
+        this.readTimeout = readTimeout;
+    }
+
+    public long getWriteTimeout() {
+        return writeTimeout;
+    }
+
+    public void setWriteTimeout(long writeTimeout) {
+        this.writeTimeout = writeTimeout;
+    }
+
+    /**
+     * Creates default properties for a JavaMail session.
+     * Concrete server implementations can add protocol specific settings.
+     * <p/>
+     * For details see
+     * <ul>
+     *     <li>http://docs.oracle.com/javaee/6/api/javax/mail/package-summary.html for some general settings</li>
+     *     <li>https://javamail.java.net/nonav/docs/api/com/sun/mail/smtp/package-summary.html for valid SMTP properties.</li>
+     *     <li>https://javamail.java.net/nonav/docs/api/com/sun/mail/imap/package-summary.html for valid IMAP properties</li>
+     *     <li>https://javamail.java.net/nonav/docs/api/com/sun/mail/pop3/package-summary.html for valid POP3 properties.</li>
+     * </ul
+     *
+     * @return default properties.
+     */
+    public Properties configureJavaMailSessionProperties(Properties properties, boolean debug) {
+        Properties props = new Properties();
+
+        if (debug) {
+            props.setProperty("mail.debug", "true");
+//            System.setProperty("mail.socket.debug", "true");
+        }
+
+        // Set local host address (makes tests much faster. If this is not set java mail always looks for the address)
+        props.setProperty("mail." + getProtocol() + ".localaddress", String.valueOf(ServerSetup.getLocalHostAddress()));
+        props.setProperty("mail." + getProtocol() + ".port", String.valueOf(getPort()));
+        props.setProperty("mail." + getProtocol() + ".host", String.valueOf(getBindAddress()));
+
+        if (isSecure()) {
+            props.put("mail." + getProtocol() + ".starttls.enable", Boolean.TRUE);
+            props.setProperty("mail." + getProtocol() + ".socketFactory.class", DummySSLSocketFactory.class.getName());
+            props.setProperty("mail." + getProtocol() + ".socketFactory.fallback", "false");
+        }
+
+        // Timeouts
+        props.setProperty("mail." + getProtocol() + ".connectiontimeout",
+                Long.toString(getConnectionTimeout() < 0L ? ServerSetup.CONNECTION_TIMEOUT : getConnectionTimeout()));
+        props.setProperty("mail." + getProtocol() + ".timeout",
+                Long.toString(getReadTimeout() < 0L ? ServerSetup.READ_TIMEOUT : getReadTimeout()));
+        // Note: "mail." + setup.getProtocol() + ".writetimeout" breaks TLS/SSL Dummy Socket and makes tests run 6x slower!!!
+        //       Therefore we do not by default configure writetimeout.
+        if(getWriteTimeout() >= 0L) {
+            props.setProperty("mail." + getProtocol() + ".writetimeout", Long.toString(getWriteTimeout()));
+        }
+
+        // Protocol specifc extensions
+        if(getProtocol().startsWith(PROTOCOL_SMTP)) {
+            props.setProperty("mail.transport.protocol", getProtocol());
+            props.setProperty("mail.transport.protocol.rfc822", getProtocol());
+        }
+
+        // Merge with optional additional properties
+        if (null != properties && !properties.isEmpty()) {
+            props.putAll(properties);
+        }
+
+        return props;
     }
 }

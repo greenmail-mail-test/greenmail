@@ -61,7 +61,7 @@ public class SenderRecipientTest {
         UserUtil.createUsers(greenMail, CC_ADDRESSES);
         UserUtil.createUsers(greenMail, BCC_ADDRESSES);
 
-        MimeMessage msg = new MimeMessage(GreenMailUtil.getSession(greenMail.getSmtp().getServerSetup()));
+        MimeMessage msg = new MimeMessage(greenMail.getSmtp().createSession());
         msg.setRecipients(Message.RecipientType.TO, TO_ADDRESSES);
         msg.setRecipients(Message.RecipientType.CC, CC_ADDRESSES);
         msg.setRecipients(Message.RecipientType.BCC, BCC_ADDRESSES);

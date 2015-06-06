@@ -42,14 +42,14 @@ public class EscapingTest {
     }
     
     @Test
-    public void testEscapeMessageID() throws AddressException,MessagingException,IOException{
+    public void testEscapeMessageID() throws MessagingException,IOException{
         String to = "foo@localhost";
         String from = "bar@localhost";
         String subject = "Bad IMAP Envelope";
         String body = "Example text";
         greenMail.setUser(to, to);
 
-        Session smtpSession = GreenMailUtil.getSession(ServerSetupTest.SMTP);
+        Session smtpSession = greenMail.getSmtp().createSession();
         GreenMailMimeMessage mimeMessage = new GreenMailMimeMessage(smtpSession);
 
         Address[] froms = new InternetAddress[] { new InternetAddress(from) };

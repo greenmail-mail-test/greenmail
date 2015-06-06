@@ -32,7 +32,7 @@ class SelectCommand extends AuthenticatedStateCommand {
 
         session.deselect();
 
-        final boolean isExamine = (this instanceof ExamineCommand);
+        final boolean isExamine = this instanceof ExamineCommand;
         selectMailbox(mailboxName, session, isExamine);
 
         ImapSessionFolder mailbox = session.getSelected();

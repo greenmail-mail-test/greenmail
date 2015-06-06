@@ -10,8 +10,12 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 
-
 public class StreamUtils {
+
+    protected StreamUtils() {
+        // No instantiations
+    }
+
     public static String toString(Reader in)
             throws IOException {
         StringBuilder sbuf = new StringBuilder();

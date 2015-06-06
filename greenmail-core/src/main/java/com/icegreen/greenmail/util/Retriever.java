@@ -7,10 +7,7 @@ package com.icegreen.greenmail.util;
 import com.icegreen.greenmail.server.AbstractServer;
 
 import javax.mail.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @author Wael Chatila
@@ -18,10 +15,8 @@ import java.util.Properties;
  * @since Apr 16, 2005
  */
 public class Retriever {
-    private String protocol;
-    private int port;
-    private String host;
-    private Store store = null;
+    private AbstractServer server;
+    private Store store;
 
     /**
      * Creates a retriever object for a particular server<br>
@@ -37,9 +32,7 @@ public class Retriever {
      * @param server
      */
     public Retriever(AbstractServer server) {
-        this.protocol = server.getProtocol();
-        port = server.getPort();
-        host = server.getBindTo();
+        this.server = server;
     }
 
     public Message[] getMessages(String account) {
@@ -47,33 +40,10 @@ public class Retriever {
     }
 
     public Message[] getMessages(String account, String password) {
-        Properties props = new Properties();
-        if (protocol.endsWith("s")) {
-            props.put("mail.pop3.starttls.enable", Boolean.TRUE);
-            props.put("mail.imap.starttls.enable", Boolean.TRUE);
-        }
-        props.setProperty("mail.imaps.socketFactory.class", DummySSLSocketFactory.class.getName());
-        props.setProperty("mail.pop3s.socketFactory.class", DummySSLSocketFactory.class.getName());
-        props.setProperty("mail.imap.socketFactory.fallback", "false");
-        props.setProperty("mail.imaps.socketFactory.fallback", "false");
-        props.setProperty("mail.pop3s.socketFactory.fallback", "false");
-
-        final String timeout = "15000";
-//        final String timeout = "150000";
-        props.setProperty("mail.imap.connectiontimeout", timeout);
-        props.setProperty("mail.imaps.connectiontimeout", timeout);
-        props.setProperty("mail.pop3.connectiontimeout", timeout);
-        props.setProperty("mail.pop3s.connectiontimeout", timeout);
-        props.setProperty("mail.imap.timeout", timeout);
-        props.setProperty("mail.imaps.timeout", timeout);
-        props.setProperty("mail.pop3.timeout", timeout);
-        props.setProperty("mail.pop3s.timeout", timeout);
-
-        Session session = Session.getInstance(props, null);
-//        session.setDebug(true);
         try {
-            store = session.getStore(protocol);
-            store.connect(host, port, account, password);
+            store = server.createStore();
+
+            store.connect(server.getBindTo(), server.getPort(), account, password);
             Folder rootFolder = store.getFolder("INBOX");
             final List<Message> messages = getMessages(rootFolder);
 

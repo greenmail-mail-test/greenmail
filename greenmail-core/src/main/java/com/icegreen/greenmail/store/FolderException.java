@@ -19,17 +19,17 @@ package com.icegreen.greenmail.store;
  */
 public class FolderException extends Exception {
 
-    public final static String ALREADY_EXISTS_LOCALLY
+    public static final String ALREADY_EXISTS_LOCALLY
             = "Already exists locally";
-    public final static String ALREADY_EXISTS_REMOTELY
+    public static final String ALREADY_EXISTS_REMOTELY
             = "Already exists remotely";
-    public final static String IF_CREATED_LOCAL
+    public static final String IF_CREATED_LOCAL
             = "If created, mailbox would be local";
-    public final static String IF_CREATED_REMOTE
+    public static final String IF_CREATED_REMOTE
             = "If created, mailbox would be remote";
-    public final static String NOT_LOCAL
+    public static final String NOT_LOCAL
             = "Does not exist locally, no further information available";
-    public final static String LOCAL_BUT_DELETED
+    public static final String LOCAL_BUT_DELETED
             = "Was local but has been deleted.";
 
     private String status = null;
@@ -97,8 +97,8 @@ public class FolderException extends Exception {
     }
 
     public boolean isRemote() {
-        return (status.equals(ALREADY_EXISTS_REMOTELY)
-                || status.equals(IF_CREATED_REMOTE));
+        return status.equals(ALREADY_EXISTS_REMOTELY)
+                || status.equals(IF_CREATED_REMOTE);
     }
 
     public String getResponseCode() {

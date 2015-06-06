@@ -16,7 +16,6 @@ import org.junit.Test;
 import javax.mail.*;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
-import java.util.Properties;
 
 import static javax.mail.Flags.Flag.DELETED;
 import static org.junit.Assert.*;
@@ -33,7 +32,7 @@ public class ImapServerTest {
     @Test
     public void testRetreiveSimple() throws Exception {
         assertNotNull(greenMail.getImap());
-        final String subject = GreenMailUtil.random();
+        final String subject = GreenMailUtil.random() + " öäü";
         final String body = GreenMailUtil.random() + "\r\n" + GreenMailUtil.random() + "\r\n" + GreenMailUtil.random();
         final String to = "test@localhost";
         GreenMailUtil.sendTextEmailTest(to, "from@localhost", subject, body);
@@ -127,10 +126,7 @@ public class ImapServerTest {
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject", "Test message", ServerSetupTest.SMTP);
         greenMail.waitForIncomingEmail(1);
 
-        Properties p = new Properties();
-//            p.setProperty("mail.debug","true");
-        Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
-        Store store = session.getStore("imap");
+        final IMAPStore store = greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
         IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
         folder.open(Folder.READ_ONLY);
@@ -165,8 +161,7 @@ public class ImapServerTest {
         greenMail.setUser("foo@localhost", "pwd");
         greenMail.setQuotaSupported(false);
         try {
-            Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP);
-            IMAPStore store = (IMAPStore) session.getStore("imap");
+            final IMAPStore store = (IMAPStore) greenMail.getImap().createStore();
             store.connect("foo@localhost", "pwd");
 
             Quota testQuota = new Quota("INBOX");
@@ -185,10 +180,7 @@ public class ImapServerTest {
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject", "Test message", ServerSetupTest.SMTP);
         greenMail.waitForIncomingEmail(1);
 
-        Properties p = new Properties();
-//            p.setProperty("mail.debug","true");
-        Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
-        IMAPStore store = (IMAPStore) session.getStore("imap");
+        final IMAPStore store = (IMAPStore) greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
 
         // Set some flags
@@ -231,10 +223,7 @@ public class ImapServerTest {
     @Test
     public void testNestedFolders() throws MessagingException, InterruptedException {
         greenMail.setUser("foo@localhost", "pwd");
-        Properties p = new Properties();
-//            p.setProperty("mail.debug","true");
-        Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
-        IMAPStore store = (IMAPStore) session.getStore("imap");
+        final IMAPStore store = (IMAPStore) greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
 
         // Create some folders
@@ -254,10 +243,7 @@ public class ImapServerTest {
     public void testRenameFolder() throws MessagingException, InterruptedException {
         greenMail.setUser("foo@localhost", "pwd");
 
-        Properties p = new Properties();
-//            p.setProperty("mail.debug","true");
-        Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP, p);
-        IMAPStore store = (IMAPStore) session.getStore("imap");
+        final IMAPStore store = greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
 
         // Create some folders
@@ -299,13 +285,37 @@ public class ImapServerTest {
     }
 
     @Test
+    public void testFolderRequiringEscaping() throws MessagingException {
+        greenMail.setUser("foo@localhost", "pwd");
+        GreenMailUtil.sendTextEmail("foo@localhost", "foo@localhost", "test subject", "", greenMail.getSmtp().getServerSetup());
+
+        final IMAPStore store = greenMail.getImap().createStore();
+        store.connect("foo@localhost", "pwd");
+
+        // Create some folders
+        Folder inboxFolder = store.getFolder("INBOX");
+        inboxFolder.open(Folder.READ_ONLY);
+
+        final Folder folderRequiringEscaping = inboxFolder.getFolder("requires escaping Ä");
+        assertTrue(folderRequiringEscaping.create(Folder.HOLDS_FOLDERS | Folder.HOLDS_MESSAGES));
+        folderRequiringEscaping.open(Folder.READ_WRITE);
+
+        assertEquals(0, folderRequiringEscaping.getMessageCount());
+        assertEquals(1, inboxFolder.getMessageCount());
+
+        inboxFolder.copyMessages(inboxFolder.getMessages(), folderRequiringEscaping);
+
+        folderRequiringEscaping.expunge(); // invalidates folder cache
+        assertEquals(1, folderRequiringEscaping.getMessageCount());
+    }
+
+    @Test
     public void testUIDFolder() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
 
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test UIDFolder",
                 "Test message", ServerSetupTest.SMTP);
-        final Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP);
-        final IMAPStore store = (IMAPStore) session.getStore("imap");
+        final IMAPStore store = greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
         Folder inboxFolder = store.getFolder("INBOX");
         inboxFolder.open(Folder.READ_WRITE);
@@ -334,8 +344,7 @@ public class ImapServerTest {
             GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject #" + i,
                     "Test message", ServerSetupTest.SMTP);
         }
-        final Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP);
-        final IMAPStore store = (IMAPStore) session.getStore("imap");
+        final IMAPStore store = greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
         Folder inboxFolder = store.getFolder("INBOX");
         inboxFolder.open(Folder.READ_WRITE);

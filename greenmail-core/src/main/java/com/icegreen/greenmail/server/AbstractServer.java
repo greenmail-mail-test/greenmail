@@ -11,14 +11,15 @@ import com.icegreen.greenmail.util.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.mail.NoSuchProviderException;
+import javax.mail.Session;
+import javax.mail.Store;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Wael Chatila
@@ -86,20 +87,7 @@ public abstract class AbstractServer extends Thread implements Service {
                 if (!keepOn()) {
                     clientSocket.close();
                 } else {
-                    final ProtocolHandler handler = createProtocolHandler(clientSocket);
-                    addHandler(handler);
-                    final Thread thread = new Thread( new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                handler.run(); // NOSONAR
-                            } finally {
-                                // Make sure to de-register, see https://github.com/greenmail-mail-test/greenmail/issues/18
-                                removeHandler(handler);
-                            }
-                        }
-                    });
-                    thread.start();
+                    handleClientSocket(clientSocket);
                 }
             } catch (IOException ignored) {
                 //ignored
@@ -108,6 +96,23 @@ public abstract class AbstractServer extends Thread implements Service {
                 }
             }
         }
+    }
+
+    protected void handleClientSocket(Socket clientSocket) {
+        final ProtocolHandler handler = createProtocolHandler(clientSocket);
+        addHandler(handler);
+        final Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    handler.run(); // NOSONAR
+                } finally {
+                    // Make sure to de-register, see https://github.com/greenmail-mail-test/greenmail/issues/18
+                    removeHandler(handler);
+                }
+            }
+        });
+        thread.start();
     }
 
     /**
@@ -165,6 +170,7 @@ public abstract class AbstractServer extends Thread implements Service {
         return setup;
     }
 
+    @Override
     public String toString() {
         return null != setup ? setup.getProtocol() + ':' + setup.getPort() : super.toString();
     }
@@ -175,7 +181,7 @@ public abstract class AbstractServer extends Thread implements Service {
         synchronized (startupMonitor) {
             // Loop to avoid spurious wakeups, see
             // https://www.securecoding.cert.org/confluence/display/java/THI03-J.+Always+invoke+wait%28%29+and+await%28%29+methods+inside+a+loop
-            while(!isRunning() && System.currentTimeMillis()-t < timeoutInMs) {
+            while (!isRunning() && System.currentTimeMillis() - t < timeoutInMs) {
                 startupMonitor.wait(timeoutInMs);
             }
         }
@@ -235,5 +241,56 @@ public abstract class AbstractServer extends Thread implements Service {
     @Override
     public final void stopService() {
         stopService(0L);
+    }
+
+    /**
+     * Creates a session configured for given server (IMAP, SMTP, ...).
+     *
+     * @param properties optional session properties, can be null.
+     * @return the session.
+     */
+    public Session createSession(Properties properties) {
+        return createSession(properties, false);
+    }
+
+    /**
+     * Creates a session configured for given server (IMAP, SMTP, ...).
+     *
+     * @param properties optional session properties, can be null.
+     * @param debug if true enables JavaMail debug settings
+     * @return the session.
+     */
+    public Session createSession(Properties properties, boolean debug) {
+        Properties props = setup.configureJavaMailSessionProperties(properties, debug);
+
+        if (log.isDebugEnabled()) {
+            StringBuilder buf = new StringBuilder("Server Mail session properties are :");
+            for (Map.Entry entry : props.entrySet()) {
+                if (entry.getKey().toString().contains("imap")) {
+                    buf.append("\n\t").append(entry.getKey()).append("\t : ").append(entry.getValue());
+                }
+            }
+            log.debug(buf.toString());
+        }
+
+        return Session.getInstance(props, null);
+    }
+
+    /**
+     * Creates a session configured for given server (IMAP, SMTP, ...).
+     *
+     * @return the session.
+     */
+    public Session createSession() {
+        return createSession(null);
+    }
+
+    /**
+     * Creates a new JavaMail store.
+     *
+     * @return a new store.
+     */
+    public Store createStore() throws NoSuchProviderException {
+        return createSession().getStore(getProtocol());
     }
 }

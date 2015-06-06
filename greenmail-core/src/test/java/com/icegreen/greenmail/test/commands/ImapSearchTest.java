@@ -7,9 +7,7 @@ package com.icegreen.greenmail.test.commands;
 import com.icegreen.greenmail.imap.commands.SearchKey;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.store.MailFolder;
-import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.user.GreenMailUser;
-import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,7 +17,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.*;
 import java.util.Date;
-import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -39,16 +36,14 @@ public class ImapSearchTest {
         GreenMailUser user = greenMail.setUser("to1@localhost", "pwd");
         assertNotNull(greenMail.getImap());
 
-        Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP);
         MailFolder folder = greenMail.getManagers().getImapHostManager().getFolder(user, "INBOX");
-
         Flags fooFlags = new Flags();
         fooFlags.add("foo");
-        storeSearchTestMessages(session, folder, fooFlags);
+        storeSearchTestMessages(greenMail.getImap().createSession(), folder, fooFlags);
 
         greenMail.waitForIncomingEmail(2);
 
-        Store store = session.getStore("imap");
+        final Store store = greenMail.getImap().createStore();
         store.connect("to1@localhost", "pwd");
         Folder imapFolder = store.getFolder("INBOX");
         imapFolder.open(Folder.READ_WRITE);
@@ -146,8 +141,8 @@ public class ImapSearchTest {
         }
 
         greenMail.setUser("to1@localhost", "pwd"); // Create user
-        Session session = GreenMailUtil.getSession(ServerSetupTest.IMAP);
-        Store store = session.getStore("imap");
+
+        final Store store = greenMail.getImap().createStore();
         store.connect("to1@localhost", "pwd");
         Folder imapFolder = store.getFolder("INBOX");
         imapFolder.open(Folder.READ_WRITE);

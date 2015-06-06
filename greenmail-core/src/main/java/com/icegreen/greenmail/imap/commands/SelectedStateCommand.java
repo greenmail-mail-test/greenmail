@@ -20,7 +20,7 @@ abstract class SelectedStateCommand extends CommandTemplate {
      * {@link ImapSessionState#SELECTED} state.
      */
     public boolean validForState(ImapSessionState state) {
-        return (state == ImapSessionState.SELECTED);
+        return state == ImapSessionState.SELECTED;
     }
 
     protected boolean includes(IdRange[] idSet, long id) {

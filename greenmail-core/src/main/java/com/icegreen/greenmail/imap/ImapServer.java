@@ -10,7 +10,9 @@ import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.util.ServerSetup;
+import com.sun.mail.imap.IMAPStore;
 
+import javax.mail.NoSuchProviderException;
 import java.net.Socket;
 
 public final class ImapServer extends AbstractServer {
@@ -22,5 +24,10 @@ public final class ImapServer extends AbstractServer {
     @Override
     protected ProtocolHandler createProtocolHandler(Socket clientSocket) {
         return new ImapHandler(managers.getUserManager(), managers.getImapHostManager(), clientSocket);
+    }
+
+    @Override
+    public IMAPStore createStore() throws NoSuchProviderException {
+        return (IMAPStore) super.createStore();
     }
 }

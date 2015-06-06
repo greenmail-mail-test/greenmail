@@ -86,7 +86,7 @@ class StoreCommand extends SelectedStateCommand implements UidEnabledCommand {
             }
         }
 
-        boolean omitExpunged = (!useUids);
+        boolean omitExpunged = !useUids;
         session.unsolicitedResponses(response, omitExpunged);
         response.commandComplete(this);
     }

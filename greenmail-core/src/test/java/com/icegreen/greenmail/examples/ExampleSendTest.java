@@ -10,7 +10,7 @@ import javax.mail.MessagingException;
 
 import static org.junit.Assert.assertEquals;
 
-public class ExampleSend {
+public class ExampleSendTest {
     @Rule
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
 

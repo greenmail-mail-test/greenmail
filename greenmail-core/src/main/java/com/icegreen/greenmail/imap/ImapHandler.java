@@ -16,8 +16,6 @@ import java.net.Socket;
 
 /**
  * The handler class for IMAP connections.
- * TODO: This is a quick cut-and-paste hack from POP3Handler. This, and the ImapServer
- * should probably be rewritten from scratch.
  *
  * @author Federico Barbieri <scoobie@systemy.it>
  * @author Peter M. Goldstein <farsight@alum.mit.edu>
@@ -26,6 +24,7 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private ImapRequestHandler requestHandler = new ImapRequestHandler();
     private ImapSession session;
+    private Object closeMonitor = new Object();
 
     /**
      * The TCP/IP socket over which the IMAP interaction
@@ -49,6 +48,7 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
         close();
     }
 
+    @Override
     public void run() {
         try {
             // Closed automatically when socket is closed via #close()
@@ -84,23 +84,27 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
     /**
      * Resets the handler data to a basic state.
      */
+    @Override
     public void close() {
-        // Close and clear streams, sockets etc.
-        if (socket != null) {
-            try {
-                // Terminates thread blocking on socket read
-                // and automatically closed depending streams
-                socket.close();
-            } catch (IOException e) {
-                log.warn("Can not close socket", e);
-            } finally {
-                socket = null;
+        // Use monitor to avoid race between external close and handler thread run()
+        synchronized (closeMonitor) {
+            // Close and clear streams, sockets etc.
+            if (socket != null) {
+                try {
+                    // Terminates thread blocking on socket read
+                    // and automatically closed depending streams
+                    socket.close();
+                } catch (IOException e) {
+                    log.warn("Can not close socket", e);
+                } finally {
+                    socket = null;
+                }
             }
-        }
 
-        // Clear user data
-        session = null;
-        response = null;
+            // Clear user data
+            session = null;
+            response = null;
+        }
     }
 }
 

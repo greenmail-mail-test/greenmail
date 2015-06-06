@@ -24,7 +24,7 @@
     <link href="css/greenmail.css" rel="stylesheet"/>
 </head>
 
-<body data-spy="scroll" data-offset="50">
+<body data-spy="scroll" data-offset="80">
 
 <a href="https://github.com/greenmail-mail-test/greenmail"><img style="z-index:9999999;position: fixed; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
 
@@ -190,7 +190,6 @@ public void testReceive() throws MessagingException {
                                                                                                  for
                                                                                                  Java</a></li>
                     <li>junit.jar - required for easy test setup using Rules</li>
-                    <li>commons-lang3.jar - for handling String escaping</li>
                 </ul>
 
                 <h4 id="sourcecode" class="anchor">Source Code</h4>
@@ -268,6 +267,7 @@ public void testReceive() throws MessagingException {
                     <li><a href="http://www.aboutmyip.com/AboutMyXApp/DevNullSmtp.jsp">DevNullSmtp</a></li>
                     <li><a href="https://java.net/projects/mock-javamail">Mock-javamail</a></li>
                     <li><a href="https://github.com/salyh/javamail-mock2">JavaMail Mock2</a></li>
+                    <li><a href="http://www.imapwiki.org/ImapRFCList">Collection of IMAP related RFCs</a></li>
                 </ul>
                 <h4 id="thanks" class="anchor">Thanks</h4>
                 <p>Special thanks to all contributors for feedback and <a href="https://github.com/greenmail-mail-test/greenmail/graphs/contributors">patches</a>!</p>
@@ -278,9 +278,10 @@ public void testReceive() throws MessagingException {
             <div id="examples" class="bs-docs-section anchor">
                 <h1 class="page-header">Examples</h1>
                 <div>The source code of the examples can be found in the test package of GreenMail
-                    (greenmail-core/src/test/java/com/icegreen/greenmail/examples/).</div>
+                    (<a href="https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-core/src/test/java/com/icegreen/greenmail/examples">greenmail-core/src/test/java/com/icegreen/greenmail/examples/</a>).</div>
         <h3 id="ex_junit_rule" class="anchor">Using JUnit (Rule based setup)</h3>
         <pre><code class="language-java"><!-- @formatter:off -->
+/** [See code on GitHub](https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-core/src/test/java/com/icegreen/greenmail/examples/ExampleRuleTest.java) */
 @Rule
 public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
 
@@ -297,6 +298,7 @@ public void testSomething() {
 
                 <h3 id="ex_send_simple" class="anchor">Testing your sending code (simple)</h3>
         <pre><code class="language-java"><!-- @formatter:off -->
+/** [See code on GitHub](https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-core/src/test/java/com/icegreen/greenmail/examples/ExampleSendTest.java) */
 GreenMail greenMail = new GreenMail(); //uses test ports by default
 greenMail.start();
 GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "some subject",
@@ -307,6 +309,7 @@ greenMail.stop();
 
                 <h3 id="ex_send_adv" class="anchor">Testing your sending code (advanced)</h3>
             <pre><code class="language-java"><!-- @formatter:off -->
+/** [See code on GitHub](https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-core/src/test/java/com/icegreen/greenmail/examples/ExampleSendNoRuleAdvTest.java) */
 GreenMail greenMail = new GreenMail(ServerSetupTest.ALL);
 greenMail.start();
 
@@ -340,6 +343,7 @@ greenMail.stop();
 
                 <h3 id="ex_retrieve" class="anchor">Testing your retrieving code</h3>
         <pre><code class="language-java"><!-- @formatter:off -->
+/** [See code on GitHub](https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-core/src/test/java/com/icegreen/greenmail/examples/ExampleReceiveTest.java) */
 //Start all email servers using non-default ports.
 GreenMail greenMail = new GreenMail(ServerSetupTest.ALL);
 greenMail.start();
@@ -356,6 +360,51 @@ assertEquals(1, greenMail.getReceivedMessages().length);
 greenMail.stop();
         </code></pre><!-- @formatter:on -->
 
+                <h3 id="ex_javamail_send_retrieve" class="anchor">Testing using plain JavaMail for sending/retrieving code</h3>
+        <pre><code class="language-java"><!-- @formatter:off -->
+/** [See code on GitHub](https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-core/src/test/java/com/icegreen/greenmail/examples/ExampleJavaMailTest.java) */
+@Rule
+public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
+
+@Test
+public void testSendAndReceive() throws MessagingException, ... {
+    Session smtpSession = greenMail.getSmtp().createSession();
+
+    Message msg = new MimeMessage(smtpSession);
+    msg.setFrom(new InternetAddress("foo@example.com"));
+    msg.addRecipient(Message.RecipientType.TO,
+            new InternetAddress("bar@example.com"));
+    msg.setSubject("Email sent to GreenMail via plain JavaMail");
+    msg.setText("Fetch me via IMAP");
+    Transport.send(msg);
+
+    // Create user, as connect verifies pwd
+    greenMail.setUser("bar@example.com", "bar@example.com", "secret-pwd");
+
+    // Alternative 1: Create session and store or ...
+    Session imapSession = greenMail.getImap().createSession();
+    Store store = imapSession.getStore("imap");
+    store.connect("bar@example.com", "secret-pwd");
+    Folder inbox = store.getFolder("INBOX");
+    inbox.open(Folder.READ_ONLY);
+    Message msgReceived = inbox.getMessage(1);
+    assertEquals(msg.getSubject(), msgReceived.getSubject());
+    ...
+
+    // Alternative 2: ... let GreenMail create and configure a store:
+    IMAPStore imapStore = greenMail.getImap().createStore();
+    imapStore.connect("bar@example.com", "secret-pwd");
+    inbox = imapStore.getFolder("INBOX");
+    inbox.open(Folder.READ_ONLY);
+    msgReceived = inbox.getMessage(1);
+    ...
+
+    // Alternative 3: ... directly fetch sent message using GreenMail API
+    assertEquals(1, greenMail.getReceviedMessagesForDomain("bar@example.com").length);
+    msgReceived = greenMail.getReceviedMessagesForDomain("bar@example.com")[0];
+    ...
+}
+        </code></pre><!-- @formatter:on -->
 
             </div>
 
@@ -551,7 +600,6 @@ jar xvf /path/to/greenmail-jboss-service-XXX.jar
                 <ul>
                     <li>javamail.jar and activation.jar</li>
                     <li>slf4j-api.jar (for logging)</li>
-                    <li>commons-lang3.jar (for handling encodings)</li>
                     <li>junit.jar (for test rules)</li>
                 </ul>
                 <h4>How come I don't need to install any SSL/TLS related certificates?</h4>
@@ -731,6 +779,7 @@ jar xvf /path/to/greenmail-jboss-service-XXX.jar
                             <li><a href="#ex_send_simple">Testing your sending code (simple)</a></li>
                             <li><a href="#ex_send_adv">Testing your sending code (advanced)</a></li>
                             <li><a href="#ex_retrieve">Testing your retrieving code</a></li>
+                            <li><a href="#ex_javamail_send_retrieve">Testing using plain JavaMail for sending/retrieving code</a></li>
                         </ul>
                     </li>
                     <li>

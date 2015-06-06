@@ -20,6 +20,6 @@ abstract class NonAuthenticatedStateCommand extends CommandTemplate {
      * Ensure that state is {@link ImapSessionState#NON_AUTHENTICATED}.
      */
     public boolean validForState(ImapSessionState state) {
-        return (state == ImapSessionState.NON_AUTHENTICATED);
+        return state == ImapSessionState.NON_AUTHENTICATED;
     }
 }

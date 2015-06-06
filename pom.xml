@@ -1,7 +1,6 @@
 <?xml version='1.0'?>
 
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <name>== GreenMail ==</name>
   <description>GreenMail - Email Test Servers</description>
@@ -241,10 +240,10 @@
   </build>
 
   <properties>
-    <slf4j.version>1.7.7</slf4j.version>
+    <slf4j.version>1.7.12</slf4j.version>
     <hamcrest.version>1.3</hamcrest.version>
     <powermock.version>1.6.2</powermock.version>
-    <spring.version>4.1.1.RELEASE</spring.version>
+    <spring.version>4.1.6.RELEASE</spring.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <argLine>-Xmx512m -enableassertions</argLine> <!-- Allow JaCoCo agent modifications for Surefire -->
@@ -263,27 +262,22 @@
         <artifactId>greenmail-webapp</artifactId>
         <version>1.4.2-SNAPSHOT</version>
       </dependency>
+      <dependency>
+        <groupId>com.icegreen</groupId>
+        <artifactId>greenmail-spring</artifactId>
+        <version>1.4.2-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.icegreen</groupId>
+        <artifactId>greenmail-jboss-service</artifactId>
+        <version>1.4.2-SNAPSHOT</version>
+      </dependency>
 
       <!-- Compile scope (=default) -->
       <dependency>
         <groupId>com.sun.mail</groupId>
         <artifactId>javax.mail</artifactId>
-        <version>1.5.2</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-lang3</artifactId>
-        <version>3.3.2</version>
-        <exclusions>
-          <exclusion>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymock</artifactId>
-          </exclusion>
-        </exclusions>
+        <version>1.5.3</version>
       </dependency>
       <dependency>
         <groupId>commons-io</groupId>
@@ -345,13 +339,13 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.11</version>
+        <version>4.12</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.easymock</groupId>
         <artifactId>easymock</artifactId>
-        <version>3.2</version>
+        <version>3.3.1</version>
         <scope>test</scope>
       </dependency>
       <dependency>

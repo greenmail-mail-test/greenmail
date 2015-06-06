@@ -6,9 +6,9 @@
  */
 package com.icegreen.greenmail.smtp;
 
-import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.foedus.util.InMemoryWorkspace;
+import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.smtp.commands.SmtpCommandRegistry;
 import com.icegreen.greenmail.util.ServerSetup;

@@ -9,7 +9,7 @@ package com.icegreen.greenmail.store;
 
 import com.icegreen.greenmail.mail.MailAddress;
 import com.icegreen.greenmail.util.GreenMailUtil;
-import org.apache.commons.lang3.StringEscapeUtils;
+import com.icegreen.greenmail.util.strings.JavaEscape;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,7 +125,7 @@ public class SimpleMessageAttributes
         // Section 1 - Message Headers
         if (part instanceof MimeMessage) {
             try {
-                subject = ((MimeMessage) part).getSubject();
+                subject = part.getHeader("Subject")[0];
             } catch (MessagingException me) {
 //                if (DEBUG) getLogger().debug("Messaging Exception for getSubject: " + me);
             }
@@ -290,7 +290,7 @@ public class SimpleMessageAttributes
         response.add(LB + Q + sentDateEnvelopeString + Q + SP);
         //2. Subject ---------------
         if (subject != null && (subject.length() != 0)) {
-            response.add(Q + StringEscapeUtils.escapeJava(subject) + Q + SP);
+            response.add(Q + JavaEscape.escapeJava(subject) + Q + SP);
         } else {
             response.add(NIL + SP);
         }
@@ -381,7 +381,7 @@ public class SimpleMessageAttributes
         }
         response.add(SP);
         if (messageID != null && messageID.length > 0) {
-            messageID[0] = StringEscapeUtils.escapeJava(messageID[0]);
+            messageID[0] = JavaEscape.escapeJava(messageID[0]);
             response.add(Q + messageID[0] + Q);
         } else {
             response.add(NIL);

@@ -54,6 +54,8 @@ Development  [![Build Status](https://travis-ci.org/greenmail-mail-test/greenmai
 [ossrh_maven]: http://central.sonatype.org/pages/apache-maven.html
 [maven_repository_snapshot]: https://oss.sonatype.org/content/repositories/snapshots/com/icegreen
 [maven_repository_release]: http://central.maven.org/maven2/com/icegreen/
+[github_fork]: https://help.github.com/articles/fork-a-repo/
+[github_pull_request]: https://help.github.com/articles/creating-a-pull-request/
 
 Contribution guidelines
 -----------------------
@@ -67,7 +69,7 @@ We have the pom.xml in the root where we set the versions of all dependencies to
 among subprojects. Please do not add any version tags into the child pom.xml files.
 
 ### Starting your pull request ###
-The best strategy for opening a pull request is to add the this repository ( https://github.com/greenmail-mail-test/greenmail )
+The best strategy for opening a [pull request][github_pull_request] after a [fork][github_fork] is to add the this repository ( https://github.com/greenmail-mail-test/greenmail )
 as the "upstream" to your .git/config such as:
 
     [remote "upstream"]
