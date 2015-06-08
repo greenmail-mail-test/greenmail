@@ -4,4 +4,4 @@ machine:
 
 dependencies:
  override:
- - mvn install -DskipTests
+  - mvn install -DskipTests
