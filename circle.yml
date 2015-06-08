@@ -1,9 +1,9 @@
 machine:
  java:
   version: 
-  - oraclejdk6
-  - oraclejdk7
-  - oraclejdk8
+   oraclejdk6
+   oraclejdk7
+   oraclejdk8
 
 dependencies:
  override:
