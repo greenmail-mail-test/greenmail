@@ -1,10 +1,10 @@
 machine:
-	java:
-	version: 
-	- oraclejdk6
-	- oraclejdk7
-	- oraclejdk8
+ java:
+  version: 
+  - oraclejdk6
+  - oraclejdk7
+  - oraclejdk8
 	
 dependencies:
-	override:
-	- mvn install -DskipTests
+ override:
+ - mvn install -DskipTests
