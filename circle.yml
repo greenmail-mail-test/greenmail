@@ -1,6 +1,7 @@
 machine:
  java:
   version: oraclejdk6 
+ java:
   version: oraclejdk7 
   version: oraclejdk8
   version: openjdk6  
