@@ -1,11 +1,6 @@
 machine:
  java:
-  version: 
-   - oraclejdk6
-   - oraclejdk7
-   - oraclejdk8
-   - openjdk6
-   - openjdk7
+  version: oraclejdk6 oraclejdk7 oraclejdk8 openjdk6  openjdk7
 
 dependencies:
  override:
