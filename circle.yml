@@ -1,12 +1,13 @@
 machine:
  pre:
+  - update-alternatives --set java "/usr/lib/jvm/jdk1.6.0/bin/java"
+  - update-alternatives --set javac "/usr/lib/jvm/jdk1.6.0/bin/javac"
   - update-alternatives --set java "/usr/lib/jvm/jdk1.7.0/bin/java"
   - update-alternatives --set javac "/usr/lib/jvm/jdk1.7.0/bin/javac"
-  - update-alternatives --set java "/usr/lib/jvm/jdk1.8.0/bin/java"
-  - update-alternatives --set javac "/usr/lib/jvm/jdk1.8.0/bin/javac"
-
+  - update-alternatives --set java "/usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java"
+  - update-alternatives --set javac "/usr/lib/jvm/java-7-openjdk-amd64/bin/javac"
  java:
-  version: oraclejdk6 
+  version: oraclejdk8 
 
 dependencies:
  override:
