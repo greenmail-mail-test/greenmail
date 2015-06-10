@@ -1,12 +1,13 @@
-machine:
- pre:
-  - sudo update-alternatives --set java "/usr/lib/jvm/jdk1.7.0/bin/java"
-  - sudo update-alternatives --set javac "/usr/lib/jvm/jdk1.7.0/bin/javac"
-  - sudo update-alternatives --set java "/usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java"
-  - sudo update-alternatives --set javac "/usr/lib/jvm/java-7-openjdk-amd64/bin/javac"
- java:
-  version: oraclejdk6
+general:
+ build_dir: ./
 
-dependencies:
+test: 
  override:
-  - mvn install -DskipTests
+ - sudo update-alternatives --set java "/usr/lib/jvm/jdk1.7.0/bin/java"
+ - sudo update-alternatives --set javac "/usr/lib/jvm/jdk1.7.0/bin/javac"
+ - mvn install -DskipTests
+ - mvn test
+ - sudo update-alternatives --set java "/usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java"
+ - sudo update-alternatives --set javac "/usr/lib/jvm/java-7-openjdk-amd64/bin/javac"
+ - mvn clean install -DskipTests
+ - mvn test
