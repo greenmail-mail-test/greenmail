@@ -110,6 +110,8 @@ public class MovingMessage {
                 dataWriter.close();
 
                 break;
+            } else if (line.startsWith(".")) {
+                dataWriter.println(line.substring(1));
             } else {
                 dataWriter.println(line);
             }
