@@ -128,4 +128,14 @@ public class SmtpServerTest {
             assertEquals(i, gif[i]);
         }
     }
+
+    @Test
+    public void testSmtpServerLeadingPeriods() throws MessagingException {
+        String body = ". body with leading period";
+        GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", body);
+        MimeMessage[] emails = greenMail.getReceivedMessages();
+        assertEquals(1, emails.length);
+        assertEquals("subject", emails[0].getSubject());
+        assertEquals(body, GreenMailUtil.getBody(emails[0]));
+    }
 }
