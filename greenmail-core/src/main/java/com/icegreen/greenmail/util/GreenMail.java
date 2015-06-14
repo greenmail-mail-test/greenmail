@@ -9,11 +9,14 @@ import com.icegreen.greenmail.configuration.ConfiguredGreenMail;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.imap.ImapServer;
 import com.icegreen.greenmail.pop3.Pop3Server;
+import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpServer;
 import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -23,8 +26,9 @@ import java.util.*;
  * Utility class that manages a greenmail server with support for multiple protocols
  */
 public class GreenMail extends ConfiguredGreenMail {
+    final Logger log = LoggerFactory.getLogger(GreenMail.class);
     private Managers managers;
-    private Map<String, Service> services;
+    private Map<String, AbstractServer> services;
     private ServerSetup[] config;
 
     /**
@@ -69,16 +73,31 @@ public class GreenMail extends ConfiguredGreenMail {
     @Override
     public synchronized void start() {
         init();
-        for (Service service : services.values()) {
+
+        final Collection<AbstractServer> servers = services.values();
+        for (AbstractServer service : servers) {
             service.startService();
         }
 
         // Wait till all services are up and running
-        for (Service service : services.values()) {
+        for (AbstractServer service : servers) {
             try {
-                service.waitTillRunning(100L);
+                service.waitTillRunning(service.getServerSetup().getServerStartupTimeout());
             } catch (InterruptedException ex) {
-                throw new IllegalStateException("Could not start mail service " + service + " (reached timeout).", ex);
+                throw new IllegalStateException("Could not start mail service " + service, ex);
+            }
+
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Started services, performing check if all up");
+        }
+        // Make sure if all services are up in a second loop, giving slow services more time.
+        for (AbstractServer service : servers) {
+            if (!service.isRunning()) {
+                throw new IllegalStateException("Could not start mail server " + service
+                        + ", try to set server startup timeout > " + service.getServerSetup().getServerStartupTimeout()
+                        + " via " + ServerSetup.class.getSimpleName() + ".setServerStartupTimeout(timeoutInMs)");
             }
         }
 
@@ -115,8 +134,8 @@ public class GreenMail extends ConfiguredGreenMail {
      * @param config Service configuration
      * @return Services map
      */
-    private static Map<String, Service> createServices(ServerSetup[] config, Managers mgr) {
-        Map<String, Service> srvc = new HashMap<String, Service>();
+    private static Map<String, AbstractServer> createServices(ServerSetup[] config, Managers mgr) {
+        Map<String, AbstractServer> srvc = new HashMap<String, AbstractServer>();
         for (ServerSetup setup : config) {
             if (srvc.containsKey(setup.getProtocol())) {
                 throw new IllegalArgumentException("Server '" + setup.getProtocol() + "' was found at least twice in the array");

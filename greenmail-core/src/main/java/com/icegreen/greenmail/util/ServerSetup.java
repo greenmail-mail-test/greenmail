@@ -67,6 +67,8 @@ public class ServerSetup {
     private long readTimeout = -1L;
     private long connectionTimeout = -1L;
     private long writeTimeout = -1L;
+    /** Timeout when GreenMail starts a server, in milliseconds. */
+    private long serverStartupTimeout = 200L;
 
     public ServerSetup(int port, String bindAddress, String protocol) {
         this.port = port;
@@ -132,6 +134,19 @@ public class ServerSetup {
 
     public void setWriteTimeout(long writeTimeout) {
         this.writeTimeout = writeTimeout;
+    }
+
+    public long getServerStartupTimeout() {
+        return serverStartupTimeout;
+    }
+
+    /**
+     * Sets the server startup timeout in milliseconds.
+     *
+     * @param timeoutInMs timeout in milliseconds.
+     */
+    public void setServerStartupTimeout(long timeoutInMs) {
+        this.serverStartupTimeout = timeoutInMs;
     }
 
     /**
