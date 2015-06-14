@@ -19,11 +19,7 @@ test:
  - sudo update-alternatives --set javac "/usr/lib/jvm/java-6-openjdk-amd64/bin/javac"
  - mvn clean install -DskipTests
  - mvn test
- - sudo update-alternatives --set java "/usr/lib/jvm/java-7-openjdk-amd74/jre/bin/java"
- - sudo update-alternatives --set javac "/usr/lib/jvm/java-7-openjdk-amd74/bin/javac"
+ - sudo update-alternatives --set java "/usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java"
+ - sudo update-alternatives --set javac "/usr/lib/jvm/java-7-openjdk-amd64/bin/javac"
  - mvn clean install -DskipTests
- - mvn test
- - sudo update-alternatives --set java "/usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java"
- - sudo update-alternatives --set javac "/usr/lib/jvm/java-8-openjdk-amd64/bin/javac"
- - mvn clean install -DskipTests
- - mvn test
+ - mvn test 
