@@ -67,17 +67,15 @@ public abstract class AbstractServer extends Thread implements Service {
 
     @Override
     public void run() {
-        // Open server socket ...
-        try {
-            serverSocket = openServerSocket();
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-        setRunning(true);
+        initServerSocket();
 
         // Notify everybody that we're ready to accept connections
         synchronized (startupMonitor) {
             startupMonitor.notifyAll();
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Started "+toString());
         }
 
         // Handle connections
@@ -92,10 +90,19 @@ public abstract class AbstractServer extends Thread implements Service {
             } catch (IOException ignored) {
                 //ignored
                 if (log.isTraceEnabled()) {
-                    log.trace("Error while processing socket", ignored);
+                    log.trace("Error while processing client socket for "+toString(), ignored);
                 }
             }
         }
+    }
+
+    protected synchronized void initServerSocket() {
+        try {
+            serverSocket = openServerSocket();
+        } catch (IOException e) {
+            throw new IllegalStateException("Can not open server socket for " + toString(), e);
+        }
+        setRunning(true);
     }
 
     protected void handleClientSocket(Socket clientSocket) {
@@ -134,6 +141,9 @@ public abstract class AbstractServer extends Thread implements Service {
     }
 
     protected synchronized void quit() {
+        if (log.isDebugEnabled()) {
+            log.debug("Stopping "+toString());
+        }
         try {
             // Close server socket, we do not accept new requests anymore.
             // This also terminates the server thread if blocking on socket.accept.
@@ -176,7 +186,7 @@ public abstract class AbstractServer extends Thread implements Service {
     }
 
     @Override
-    public void waitTillRunning(long timeoutInMs) throws InterruptedException {
+    public boolean waitTillRunning(long timeoutInMs) throws InterruptedException {
         long t = System.currentTimeMillis();
         synchronized (startupMonitor) {
             // Loop to avoid spurious wakeups, see
@@ -185,6 +195,8 @@ public abstract class AbstractServer extends Thread implements Service {
                 startupMonitor.wait(timeoutInMs);
             }
         }
+
+        return isRunning();
     }
 
     @Override
@@ -231,7 +243,7 @@ public abstract class AbstractServer extends Thread implements Service {
             }
         } catch (InterruptedException e) {
             //its possible that the thread exits between the lines keepRunning=false and interrupt above
-            log.warn("Got interrupted while stopping", e);
+            log.warn("Got interrupted while stopping "+toString(), e);
         }
     }
 

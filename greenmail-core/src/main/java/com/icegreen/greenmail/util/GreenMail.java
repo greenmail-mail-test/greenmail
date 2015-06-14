@@ -87,11 +87,16 @@ public class GreenMail extends ConfiguredGreenMail {
 
     @Override
     public synchronized void stop() {
+        if (log.isDebugEnabled()) {
+            log.debug("Stopping GreenMail ...");
+        }
+
         if (services != null) {
             for (Service service : services.values()) {
-                if (service.isRunning()) {
-                    service.stopService();
+                if (log.isDebugEnabled()) {
+                    log.debug("Stopping service " + service.toString());
                 }
+                service.stopService();
             }
         }
         managers = new Managers();
