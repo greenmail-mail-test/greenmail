@@ -1,0 +1,36 @@
+general:
+ build_dir: ./
+
+machine:
+ timezone:
+  UTC
+
+dependencies:
+ override:
+
+test: 
+ override:
+ - sudo update-alternatives --set java "/usr/lib/jvm/jdk1.6.0/bin/java"
+ - sudo update-alternatives --set javac "/usr/lib/jvm/jdk1.6.0/bin/javac"
+ - mvn install -DskipTests
+ - mvn test
+ - sudo update-alternatives --set java "/usr/lib/jvm/jdk1.7.0/bin/java"
+ - sudo update-alternatives --set javac "/usr/lib/jvm/jdk1.7.0/bin/javac"
+ - mvn install -DskipTests
+ - mvn test
+ - sudo update-alternatives --set java "/usr/lib/jvm/jdk1.8.0/bin/java"
+ - sudo update-alternatives --set javac "/usr/lib/jvm/jdk1.8.0/bin/javac"
+ - mvn install -DskipTests
+ - mvn test
+ - sudo update-alternatives --set java "/usr/lib/jvm/java-6-openjdk-amd64/jre/bin/java"
+ - sudo update-alternatives --set javac "/usr/lib/jvm/java-6-openjdk-amd64/bin/javac"
+ - mvn clean install -DskipTests
+ - mvn test
+ - sudo update-alternatives --set java "/usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java"
+ - sudo update-alternatives --set javac "/usr/lib/jvm/java-7-openjdk-amd64/bin/javac"
+ - mvn clean install -DskipTests
+ - mvn test 
+
+ post:
+  - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+  - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
