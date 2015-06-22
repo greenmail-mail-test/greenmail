@@ -100,7 +100,9 @@ public abstract class AbstractServer extends Thread implements Service {
         try {
             serverSocket = openServerSocket();
         } catch (IOException e) {
-            throw new IllegalStateException("Can not open server socket for " + toString(), e);
+            final String msg = "Can not open server socket for " + toString();
+            log.error(msg, e);
+            throw new IllegalStateException(msg, e);
         }
         setRunning(true);
     }
