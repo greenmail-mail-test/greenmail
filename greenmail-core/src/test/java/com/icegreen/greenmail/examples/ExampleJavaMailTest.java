@@ -4,6 +4,7 @@ import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.sun.mail.imap.IMAPStore;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -22,6 +23,7 @@ public class ExampleJavaMailTest {
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
 
     @Test
+    @Ignore
     public void testSendAndReceive() throws UnsupportedEncodingException, MessagingException, UserException {
         Session smtpSession = greenMail.getSmtp().createSession();
 

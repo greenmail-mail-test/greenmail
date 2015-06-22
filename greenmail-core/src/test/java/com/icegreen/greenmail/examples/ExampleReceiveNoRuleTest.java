@@ -4,6 +4,7 @@ import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.mail.MessagingException;
@@ -14,6 +15,7 @@ import static org.junit.Assert.assertEquals;
 
 public class ExampleReceiveNoRuleTest {
     @Test
+    @Ignore
     public void testReceive() throws MessagingException, IOException {
         //Start all email servers using non-default ports.
         GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);

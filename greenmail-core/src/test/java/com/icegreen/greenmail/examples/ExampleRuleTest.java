@@ -3,6 +3,7 @@ package com.icegreen.greenmail.examples;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -16,6 +17,7 @@ public class ExampleRuleTest {
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
 
     @Test
+    @Ignore
     public void testSomething() throws MessagingException {
         GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", "body");
         MimeMessage[] emails = greenMail.getReceivedMessages();

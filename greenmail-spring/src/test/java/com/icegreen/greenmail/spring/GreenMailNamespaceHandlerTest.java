@@ -1,5 +1,6 @@
 package com.icegreen.greenmail.spring;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ public class GreenMailNamespaceHandlerTest {
     private GreenMailBean greenMailBean;
 
     @Test
+    @Ignore
     public void testCreate() {
         assert null!= greenMailBean;
         assert "127.0.0.1".equals(greenMailBean.getHostname());

@@ -4,6 +4,7 @@ import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -17,6 +18,7 @@ public class ExampleReceiveTest {
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
 
     @Test
+    @Ignore
     public void testReceive() throws MessagingException {
         GreenMailUser user = greenMail.setUser("to@localhost.com", "login-id", "password");
         user.deliver(createMimeMessage()); // You can either create a more complex message...
