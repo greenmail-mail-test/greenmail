@@ -2,7 +2,6 @@ package com.icegreen.greenmail.configuration;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -18,7 +17,6 @@ public class GreenMailRuleConfigurationTest {
     );
 
     @Test
-    @Ignore
     public void testUsersAccessible() {
         GreenMailConfigurationTestBase.testUsersAccessible(greenMail);
     }
