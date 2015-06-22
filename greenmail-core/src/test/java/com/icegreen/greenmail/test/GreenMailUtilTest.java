@@ -41,9 +41,9 @@ public class GreenMailUtilTest {
     @Test
     public void testSendTextEmailTest() throws Exception {
         GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
-        greenMail.setUser("foo@localhost", "pwd");
-        greenMail.start();
         try {
+            greenMail.setUser("foo@localhost", "pwd");
+            greenMail.start();
             GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost",
                     "Test subject", "Test message", ServerSetupTest.SMTP);
             greenMail.waitForIncomingEmail(1);

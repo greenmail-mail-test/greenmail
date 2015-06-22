@@ -18,34 +18,36 @@ public class ExampleSendNoRuleAdvTest {
     @Test
     public void testSend() throws MessagingException, IOException {
         GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
-        greenMail.start();
+        try {
+            greenMail.start();
 
-        //Use random content to avoid potential residual lingering problems
-        final String subject = GreenMailUtil.random();
-        final String body = GreenMailUtil.random();
+            //Use random content to avoid potential residual lingering problems
+            final String subject = GreenMailUtil.random();
+            final String body = GreenMailUtil.random();
 
-        sendTestMails(subject, body); // Place your sending code here
+            sendTestMails(subject, body); // Place your sending code here
 
-        //wait for max 5s for 1 email to arrive
-        //waitForIncomingEmail() is useful if you're sending stuff asynchronously in a separate thread
-        assertTrue(greenMail.waitForIncomingEmail(5000, 2));
+            //wait for max 5s for 1 email to arrive
+            //waitForIncomingEmail() is useful if you're sending stuff asynchronously in a separate thread
+            assertTrue(greenMail.waitForIncomingEmail(5000, 2));
 
-        //Retrieve using GreenMail API
-        Message[] messages = greenMail.getReceivedMessages();
-        assertEquals(2, messages.length);
+            //Retrieve using GreenMail API
+            Message[] messages = greenMail.getReceivedMessages();
+            assertEquals(2, messages.length);
 
-        // Simple message
-        assertEquals(subject, messages[0].getSubject());
-        assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
+            // Simple message
+            assertEquals(subject, messages[0].getSubject());
+            assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
 
-        //if you send content as a 2 part multipart...
-        assertTrue(messages[1].getContent() instanceof MimeMultipart);
-        MimeMultipart mp = (MimeMultipart) messages[1].getContent();
-        assertEquals(2, mp.getCount());
-        assertEquals("body1", GreenMailUtil.getBody(mp.getBodyPart(0)).trim());
-        assertEquals("body2", GreenMailUtil.getBody(mp.getBodyPart(1)).trim());
-
-        greenMail.stop();
+            //if you send content as a 2 part multipart...
+            assertTrue(messages[1].getContent() instanceof MimeMultipart);
+            MimeMultipart mp = (MimeMultipart) messages[1].getContent();
+            assertEquals(2, mp.getCount());
+            assertEquals("body1", GreenMailUtil.getBody(mp.getBodyPart(0)).trim());
+            assertEquals("body2", GreenMailUtil.getBody(mp.getBodyPart(1)).trim());
+        } finally {
+            greenMail.stop();
+        }
     }
 
     private void sendTestMails(String subject, String body) throws MessagingException {
