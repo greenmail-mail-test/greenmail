@@ -26,6 +26,7 @@
   </appender>
 
   <root>
+    <level value="TRACE" />
     <appender-ref ref="CONSOLE"/>
     <appender-ref ref="FILE"/>
   </root>
