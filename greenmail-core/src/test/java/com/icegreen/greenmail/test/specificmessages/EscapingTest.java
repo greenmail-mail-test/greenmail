@@ -5,7 +5,6 @@ import com.icegreen.greenmail.test.util.GreenMailMimeMessage;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -28,7 +27,6 @@ public class EscapingTest {
     public GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_POP3_IMAP);
 
     @Test
-    @Ignore
     public void testEscapeSubject() throws MessagingException, IOException {
         String to = "to@localhost";
         String subject = "Subject?<>/|\\\\.%\\\"*?:{[]}!";
@@ -41,8 +39,7 @@ public class EscapingTest {
     }
     
     @Test
-    @Ignore
-    public void testEscapeMessageID() throws MessagingException,IOException{
+    public void testEscapeMessageID() throws MessagingException, IOException {
         String to = "foo@localhost";
         String from = "bar@localhost";
         String subject = "Bad IMAP Envelope";

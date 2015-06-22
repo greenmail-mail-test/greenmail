@@ -10,7 +10,6 @@ import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.imap.IMAPStore;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -31,7 +30,6 @@ public class ImapServerTest {
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
 
     @Test
-    @Ignore
     public void testRetreiveSimple() throws Exception {
         assertNotNull(greenMail.getImap());
         final String subject = GreenMailUtil.random() + " öäü";
@@ -48,7 +46,6 @@ public class ImapServerTest {
     }
 
     @Test
-    @Ignore
     public void testImapsReceive() throws Throwable {
         assertNotNull(greenMail.getImaps());
         final String subject = GreenMailUtil.random();
@@ -65,7 +62,6 @@ public class ImapServerTest {
     }
 
     @Test
-    @Ignore
     public void testRetreiveSimpleWithNonDefaultPassword() throws Exception {
         assertNotNull(greenMail.getImap());
         final String to = "test@localhost.com";
@@ -92,7 +88,6 @@ public class ImapServerTest {
     }
 
     @Test
-    @Ignore
     public void testRetriveMultipart() throws Exception {
         assertNotNull(greenMail.getImap());
 
@@ -126,7 +121,6 @@ public class ImapServerTest {
     }
 
     @Test
-    @Ignore
     public void testQuota() throws Exception {
         greenMail.setUser("foo@localhost", "pwd");
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject", "Test message", ServerSetupTest.SMTP);
@@ -163,7 +157,6 @@ public class ImapServerTest {
     }
 
     @Test
-    @Ignore
     public void testQuotaCapability() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
         greenMail.setQuotaSupported(false);
@@ -182,7 +175,6 @@ public class ImapServerTest {
     }
 
     @Test
-    @Ignore
     public void testSetGetFlags() throws MessagingException, InterruptedException {
         greenMail.setUser("foo@localhost", "pwd");
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject", "Test message", ServerSetupTest.SMTP);
@@ -229,7 +221,6 @@ public class ImapServerTest {
     }
 
     @Test
-    @Ignore
     public void testNestedFolders() throws MessagingException, InterruptedException {
         greenMail.setUser("foo@localhost", "pwd");
         final IMAPStore store = (IMAPStore) greenMail.getImap().createStore();
@@ -249,7 +240,6 @@ public class ImapServerTest {
     }
 
     @Test
-    @Ignore
     public void testRenameFolder() throws MessagingException, InterruptedException {
         greenMail.setUser("foo@localhost", "pwd");
 
@@ -295,7 +285,6 @@ public class ImapServerTest {
     }
 
     @Test
-    @Ignore
     public void testFolderRequiringEscaping() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
         GreenMailUtil.sendTextEmail("foo@localhost", "foo@localhost", "test subject", "", greenMail.getSmtp().getServerSetup());
@@ -321,7 +310,6 @@ public class ImapServerTest {
     }
 
     @Test
-    @Ignore
     public void testUIDFolder() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
 
@@ -349,7 +337,6 @@ public class ImapServerTest {
     }
 
     @Test
-    @Ignore
     public void testExpunge() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
 

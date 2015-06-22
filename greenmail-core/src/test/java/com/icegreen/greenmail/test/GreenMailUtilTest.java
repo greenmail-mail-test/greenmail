@@ -10,7 +10,6 @@ import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.mail.*;
@@ -27,14 +26,12 @@ import static org.junit.Assert.assertTrue;
  */
 public class GreenMailUtilTest {
     @Test
-    @Ignore
     public void testMimeMessageLoading() throws MessagingException {
         MimeMessage message = GreenMailUtil.newMimeMessage(SAMPLE_EMAIL);
         assertEquals("wassup", message.getSubject());
     }
 
     @Test
-    @Ignore
     public void testGetBody() throws MessagingException, IOException {
         MimeMessage message = GreenMailUtil.newMimeMessage(SAMPLE_EMAIL);
         String body = GreenMailUtil.getBody(message);
@@ -42,7 +39,6 @@ public class GreenMailUtilTest {
     }
 
     @Test
-    @Ignore
     public void testSendTextEmailTest() throws Exception {
         GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
         try {
@@ -75,7 +71,6 @@ public class GreenMailUtilTest {
     }
 
     @Test
-    @Ignore
     public void testSetAndGetQuota() throws MessagingException {
         GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
         try {

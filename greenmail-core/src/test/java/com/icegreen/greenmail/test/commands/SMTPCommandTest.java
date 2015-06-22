@@ -3,7 +3,6 @@ package com.icegreen.greenmail.test.commands;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.sun.mail.smtp.SMTPTransport;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -24,7 +23,6 @@ public class SMTPCommandTest {
 	public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
 
 	@Test
-	@Ignore
 	public void mailSenderEmpty() throws IOException, MessagingException {
 		Socket smtpSocket;
 		String hostAddress = greenMail.getSmtp().getBindTo();

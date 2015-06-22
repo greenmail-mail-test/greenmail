@@ -4,7 +4,6 @@ import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -27,7 +26,6 @@ public class DateTest {
     public GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_POP3_IMAP);
 
     @Test
-    @Ignore
     public void testDatesCorrect() throws MessagingException, IOException {
         String to = "to@localhost";
         greenMail.setUser(to, to);
