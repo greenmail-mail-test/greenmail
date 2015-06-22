@@ -8,7 +8,6 @@ import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -41,7 +40,6 @@ public class SmtpServerTest {
     }
 
     @Test
-    @Ignore
     public void testSmtpServerTimeout() throws Throwable {
         assertEquals(0, greenMail.getReceivedMessages().length);
         long t0 = System.currentTimeMillis();
@@ -52,7 +50,6 @@ public class SmtpServerTest {
     }
 
     @Test
-
     public void testSmtpServerReceiveWithSetup() throws Throwable {
         assertEquals(0, greenMail.getReceivedMessages().length);
 
@@ -67,7 +64,6 @@ public class SmtpServerTest {
     }
 
     @Test
-
     public void testSmtpsServerReceive() throws Throwable {
         assertEquals(0, greenMail.getReceivedMessages().length);
 
@@ -82,7 +78,6 @@ public class SmtpServerTest {
     }
 
     @Test
-
     public void testSmtpServerReceiveInThread() throws Throwable {
         assertEquals(0, greenMail.getReceivedMessages().length);
 
@@ -104,7 +99,6 @@ public class SmtpServerTest {
     }
 
     @Test
-
     public void testSmtpServerReceiveMultipart() throws Exception {
         assertEquals(0, greenMail.getReceivedMessages().length);
 
@@ -136,7 +130,6 @@ public class SmtpServerTest {
     }
 
     @Test
-
     public void testSmtpServerLeadingPeriods() throws MessagingException {
         String body = ". body with leading period";
         GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", body);
