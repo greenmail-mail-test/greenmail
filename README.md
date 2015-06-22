@@ -17,7 +17,7 @@ The GreenMail project welcomes any contribution, so go ahead and fork/open a pul
 
 ***Note***: GreenMail recently moved to Github and was previously hosted on [SF][greenmail_sf_site].
 
-Development  [![Build Status](https://travis-ci.org/greenmail-mail-test/greenmail.svg?branch=master)](https://travis-ci.org/greenmail-mail-test/greenmail)
+Development  [![Build status](https://circleci.com/gh/greenmail-mail-test/greenmail/tree/master.svg?style=svg)](https://circleci.com/gh/greenmail-mail-test/greenmail/tree/master)
 -----------
 
 * Build GreenMail from source 
