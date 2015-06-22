@@ -7,7 +7,7 @@ machine:
 
 dependencies:
  override:
-  - true
+  - echo "Not using dependency resolution, multi-module project"
 
 test: 
  override:
