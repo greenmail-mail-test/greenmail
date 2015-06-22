@@ -52,7 +52,7 @@ public class SmtpServerTest {
     }
 
     @Test
-    @Ignore
+
     public void testSmtpServerReceiveWithSetup() throws Throwable {
         assertEquals(0, greenMail.getReceivedMessages().length);
 
@@ -67,7 +67,7 @@ public class SmtpServerTest {
     }
 
     @Test
-    @Ignore
+
     public void testSmtpsServerReceive() throws Throwable {
         assertEquals(0, greenMail.getReceivedMessages().length);
 
@@ -82,7 +82,7 @@ public class SmtpServerTest {
     }
 
     @Test
-    @Ignore
+
     public void testSmtpServerReceiveInThread() throws Throwable {
         assertEquals(0, greenMail.getReceivedMessages().length);
 
@@ -104,7 +104,7 @@ public class SmtpServerTest {
     }
 
     @Test
-    @Ignore
+
     public void testSmtpServerReceiveMultipart() throws Exception {
         assertEquals(0, greenMail.getReceivedMessages().length);
 
@@ -136,7 +136,7 @@ public class SmtpServerTest {
     }
 
     @Test
-    @Ignore
+
     public void testSmtpServerLeadingPeriods() throws MessagingException {
         String body = ". body with leading period";
         GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", body);
