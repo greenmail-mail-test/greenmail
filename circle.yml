@@ -16,7 +16,7 @@ test:
  - sudo update-alternatives --set java "/usr/lib/jvm/jdk1.6.0/bin/java"
  - sudo update-alternatives --set javac "/usr/lib/jvm/jdk1.6.0/bin/javac"
  - mvn install -DskipTests
- - mvn test -X
+ - mvn test
  - sudo update-alternatives --set java "/usr/lib/jvm/jdk1.7.0/bin/java"
  - sudo update-alternatives --set javac "/usr/lib/jvm/jdk1.7.0/bin/javac"
  - mvn install -DskipTests
