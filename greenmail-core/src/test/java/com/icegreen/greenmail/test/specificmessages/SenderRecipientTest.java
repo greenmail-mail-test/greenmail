@@ -5,6 +5,7 @@ import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.icegreen.greenmail.util.UserUtil;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -56,6 +57,7 @@ public class SenderRecipientTest {
     }
 
     @Test
+    @Ignore
     public void testSendersAndRecipients() throws MessagingException, IOException {
         UserUtil.createUsers(greenMail, TO_ADDRESSES);
         UserUtil.createUsers(greenMail, CC_ADDRESSES);

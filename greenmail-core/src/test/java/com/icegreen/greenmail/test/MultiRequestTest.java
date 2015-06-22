@@ -9,6 +9,7 @@ import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -86,6 +87,7 @@ public class MultiRequestTest {
     //~ END INNER CLASSES -----------------------------------------------
 
     @Test
+    @Ignore
     public void test20Senders() throws InterruptedException {
         final int num = 20;
         addUsers(num);
@@ -97,6 +99,7 @@ public class MultiRequestTest {
     }
 
     @Test
+    @Ignore
     public void test20Senders20x4Retrievers() throws InterruptedException {
         final int num = 20;
         addUsers(num);
@@ -120,6 +123,7 @@ public class MultiRequestTest {
     }
 
     @Test
+    @Ignore
     public void test20Senders20x4RetrieversAtTheSameTime() throws InterruptedException {
         final int num = 20;
         addUsers(num);

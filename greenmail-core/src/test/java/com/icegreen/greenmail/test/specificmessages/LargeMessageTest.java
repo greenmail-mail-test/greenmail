@@ -5,6 +5,7 @@ import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -27,6 +28,7 @@ public class LargeMessageTest {
     public GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_POP3_IMAP);
 
     @Test
+    @Ignore
     public void testLargeMessageTextAndAttachment() throws MessagingException, IOException {
         String to = "to@localhost";
         GreenMailUtil.sendAttachmentEmail(to, "from@localhost", "Subject", createLargeString(),
@@ -39,6 +41,7 @@ public class LargeMessageTest {
     }
 
     @Test
+    @Ignore
     public void testLargeMessageBody() throws MessagingException, IOException {
         String to = "to@localhost";
         GreenMailUtil.sendMessageBody(to, "from@localhost", "Subject", createLargeByteArray(), "application/blubb",

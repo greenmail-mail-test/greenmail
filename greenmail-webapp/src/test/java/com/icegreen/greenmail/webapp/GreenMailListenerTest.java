@@ -1,6 +1,7 @@
 package com.icegreen.greenmail.webapp;
 
 import org.easymock.EasyMock;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.servlet.ServletContext;
@@ -18,6 +19,7 @@ import java.util.Map;
 public class GreenMailListenerTest {
 
     @Test
+    @Ignore
     public void testStart() {
         Map<String, String> paramValues = new HashMap<String, String>();
         paramValues.put("greenmail.defaultHostname", "127.0.0.1");

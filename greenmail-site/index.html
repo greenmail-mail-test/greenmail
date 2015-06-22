@@ -115,6 +115,7 @@
 public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
 
 @Test
+            @Ignore
 public void testSend() throws MessagingException {
     GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com",
         "some subject", "some body"); // --- Place your sending code here instead
@@ -143,6 +144,7 @@ public void testSend() throws MessagingException {
 public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
 
 @Test
+            @Ignore
 public void testReceive() throws MessagingException {
     GreenMailUser user = greenMail.setUser("to@localhost.com", "login-id", "password");
     user.deliver(createMimeMessage()); // You can either create a more complex message...
@@ -286,6 +288,7 @@ public void testReceive() throws MessagingException {
 public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
 
 @Test
+            @Ignore
 public void testSomething() {
     GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", "body");
     MimeMessage[] emails = greenMail.getReceivedMessages();
@@ -367,6 +370,7 @@ greenMail.stop();
 public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
 
 @Test
+            @Ignore
 public void testSendAndReceive() throws MessagingException, ... {
     Session smtpSession = greenMail.getSmtp().createSession();
 

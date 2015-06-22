@@ -3,6 +3,7 @@ package com.icegreen.greenmail.test;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -20,6 +21,7 @@ public class CatchAllTest {
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
 
     @Test
+    @Ignore
     public void testSmtpServerBasic() throws MessagingException {
         GreenMailUtil.sendTextEmailTest("to11@domain1.com", "from@localhost.com", "subject", "body");
         GreenMailUtil.sendTextEmailTest("to12@domain1.com", "from@localhost.com", "subject", "body");

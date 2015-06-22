@@ -3,6 +3,7 @@ package com.icegreen.greenmail.examples;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.mail.Message;
@@ -16,6 +17,7 @@ import static org.junit.Assert.assertTrue;
 
 public class ExampleSendNoRuleAdvTest {
     @Test
+    @Ignore
     public void testSend() throws MessagingException, IOException {
         GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
         try {

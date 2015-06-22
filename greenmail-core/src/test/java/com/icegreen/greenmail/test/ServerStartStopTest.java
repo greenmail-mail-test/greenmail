@@ -3,6 +3,7 @@ package com.icegreen.greenmail.test;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -13,6 +14,7 @@ import static org.junit.Assert.fail;
  */
 public class ServerStartStopTest {
     @Test
+    @Ignore
     public void testStartStop() {
         GreenMail service = new GreenMail(ServerSetupTest.ALL);
         try {
@@ -31,6 +33,7 @@ public class ServerStartStopTest {
     }
 
     @Test
+    @Ignore
     public void testServerStartupTimeout() {
         // Create a few setups
         ServerSetup setups[] = ServerSetupTest.ALL;
