@@ -2,7 +2,6 @@ package com.icegreen.greenmail.configuration;
 
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.icegreen.greenmail.configuration.GreenMailConfigurationTestBase.testUsersAccessibleConfig;
@@ -12,7 +11,6 @@ import static com.icegreen.greenmail.configuration.GreenMailConfigurationTestBas
  */
 public class GreenMailConfigurationTest {
     @Test
-    @Ignore
     public void testUsersAccessible() {
         GreenMail greenMail = new GreenMail(ServerSetupTest.IMAP).withConfiguration(
                 testUsersAccessibleConfig()

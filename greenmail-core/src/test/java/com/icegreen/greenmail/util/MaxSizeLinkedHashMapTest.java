@@ -1,6 +1,5 @@
 package com.icegreen.greenmail.util;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Random;
@@ -15,19 +14,16 @@ public class MaxSizeLinkedHashMapTest {
     private MaxSizeLinkedHashMap<Integer, Integer> map = new MaxSizeLinkedHashMap<Integer, Integer>(TEST_MAX_SIZE);
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore
     public void shouldRejectNegativeMaxSize() {
         new MaxSizeLinkedHashMap<Object, Object>(-1 * Math.abs(new Random().nextInt(Integer.MAX_VALUE - 1) + 1));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore
     public void shouldRejectZeroMaxSize() {
         new MaxSizeLinkedHashMap<Object, Object>(0);
     }
 
     @Test
-    @Ignore
     public void shouldRejectLessThanZeroMaxSize() {
         try {
             new MaxSizeLinkedHashMap<Object, Object>(-1);
@@ -37,7 +33,6 @@ public class MaxSizeLinkedHashMapTest {
     }
 
     @Test
-    @Ignore
     public void shouldNotExceedMaxSize() {
         // When
         for (int i = 0; i < TEST_MAX_SIZE * 2; i++) {

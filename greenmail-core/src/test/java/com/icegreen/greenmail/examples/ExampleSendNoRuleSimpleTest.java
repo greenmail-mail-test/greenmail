@@ -3,7 +3,6 @@ package com.icegreen.greenmail.examples;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.mail.MessagingException;
@@ -12,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 
 public class ExampleSendNoRuleSimpleTest {
     @Test
-    @Ignore
     public void testSend() throws MessagingException {
         GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP); //uses test ports by default
         try {

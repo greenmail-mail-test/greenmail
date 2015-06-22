@@ -1,7 +1,6 @@
 package com.icegreen.greenmail.spring;
 
 import com.icegreen.greenmail.util.GreenMail;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,6 @@ public class GreenMailBeanTest {
     private GreenMailBean greenMailBean;
 
     @Test
-    @Ignore
     public void testCreate() {
         GreenMail greenMail = greenMailBean.getGreenMail();
 
