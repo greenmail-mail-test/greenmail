@@ -75,7 +75,7 @@ public abstract class AbstractServer extends Thread implements Service {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Started "+toString());
+            log.debug("Started " + toString());
         }
 
         // Handle connections
@@ -90,7 +90,7 @@ public abstract class AbstractServer extends Thread implements Service {
             } catch (IOException ignored) {
                 //ignored
                 if (log.isTraceEnabled()) {
-                    log.trace("Error while processing client socket for "+toString(), ignored);
+                    log.trace("Error while processing client socket for " + toString(), ignored);
                 }
             }
         }
@@ -144,7 +144,7 @@ public abstract class AbstractServer extends Thread implements Service {
 
     protected synchronized void quit() {
         if (log.isDebugEnabled()) {
-            log.debug("Stopping "+toString());
+            log.debug("Stopping " + toString());
         }
         try {
             // Close server socket, we do not accept new requests anymore.
@@ -160,6 +160,9 @@ public abstract class AbstractServer extends Thread implements Service {
                     handler.close();
                 }
                 handlers.clear();
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("Stopped " + toString());
             }
         } catch (IOException e) {
             throw new IllegalStateException(e);
@@ -245,7 +248,7 @@ public abstract class AbstractServer extends Thread implements Service {
             }
         } catch (InterruptedException e) {
             //its possible that the thread exits between the lines keepRunning=false and interrupt above
-            log.warn("Got interrupted while stopping "+toString(), e);
+            log.warn("Got interrupted while stopping " + toString(), e);
         }
     }
 
@@ -271,7 +274,7 @@ public abstract class AbstractServer extends Thread implements Service {
      * Creates a session configured for given server (IMAP, SMTP, ...).
      *
      * @param properties optional session properties, can be null.
-     * @param debug if true enables JavaMail debug settings
+     * @param debug      if true enables JavaMail debug settings
      * @return the session.
      */
     public Session createSession(Properties properties, boolean debug) {
