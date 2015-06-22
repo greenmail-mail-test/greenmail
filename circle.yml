@@ -7,7 +7,9 @@ machine:
 
 dependencies:
  override:
-  - echo "Not using dependency resolution, multi-module project"
+  - mvn install -DskipTests
+ cache_directories:
+  - "~/.m2/repository"
 
 test: 
  override:
