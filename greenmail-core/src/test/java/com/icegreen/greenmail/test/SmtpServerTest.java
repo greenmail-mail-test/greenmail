@@ -6,6 +6,7 @@ package com.icegreen.greenmail.test;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,7 +28,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class SmtpServerTest {
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
+    public final GreenMailRule greenMail = new GreenMailRule(new ServerSetup[]{ServerSetupTest.SMTP, ServerSetupTest.SMTPS});
 
     @Test
     public void testSmtpServerBasic() throws MessagingException {
@@ -126,5 +127,15 @@ public class SmtpServerTest {
         for (int i = 0; i < gif.length; i++) {
             assertEquals(i, gif[i]);
         }
+    }
+
+    @Test
+    public void testSmtpServerLeadingPeriods() throws MessagingException {
+        String body = ". body with leading period";
+        GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", body);
+        MimeMessage[] emails = greenMail.getReceivedMessages();
+        assertEquals(1, emails.length);
+        assertEquals("subject", emails[0].getSubject());
+        assertEquals(body, GreenMailUtil.getBody(emails[0]));
     }
 }

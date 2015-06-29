@@ -10,12 +10,15 @@ import com.icegreen.greenmail.foedus.util.Workspace;
 import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.smtp.commands.SmtpCommand;
 import com.icegreen.greenmail.smtp.commands.SmtpCommandRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
 class SmtpHandler implements ProtocolHandler {
+    private static final Logger log = LoggerFactory.getLogger(SmtpHandler.class);
 
     // protocol and configuration global stuff
     SmtpCommandRegistry _registry;
@@ -121,6 +124,14 @@ class SmtpHandler implements ProtocolHandler {
     }
 
     public void close() {
+        if (log.isTraceEnabled()) {
+            final StringBuilder msg = new StringBuilder("Closing SMTP(s) handler connection");
+            if (null != _socket) {
+                msg.append(' ').append(_socket.getInetAddress()).append(':')
+                        .append(_socket.getPort());
+            }
+            log.trace(msg.toString());
+        }
         _quitting = true;
         try {
             if (_socket != null && !_socket.isClosed()) {

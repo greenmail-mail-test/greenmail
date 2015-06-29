@@ -42,4 +42,18 @@ public class UserManagerTest {
         assertEquals(u1, userManager.getUser(u1.getLogin()));
         assertEquals(u2, userManager.getUser(u2.getLogin()));
     }
+
+    @Test
+    public void testCreateAndDeleteUser() throws UserException {
+        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
+        UserManager userManager = new UserManager(imapHostManager);
+
+        assertTrue(userManager.listUser().isEmpty());
+
+        GreenMailUser user = userManager.createUser("foo@bar.com", "foo", "pwd");
+        assertEquals(1, userManager.listUser().size());
+
+        userManager.deleteUser(user);
+        assertTrue(userManager.listUser().isEmpty());
+    }
 }

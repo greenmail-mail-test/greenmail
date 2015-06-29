@@ -22,13 +22,12 @@ public class GreenMailConfiguration {
     /**
      * The given {@link com.icegreen.greenmail.user.GreenMailUser} will be created when servers will start
      *
-     * @param login User id and email addres
+     * @param login User id and email address
      * @param password Password of user that belongs to login name
      * @return Modified configuration
      */
     public GreenMailConfiguration withUser(final String login, final String password) {
-        this.usersToCreate.add(new UserBean(login, login, password));
-        return this;
+        return withUser(login, login, password);
     }
 
     /**

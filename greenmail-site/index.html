@@ -286,7 +286,7 @@ public void testReceive() throws MessagingException {
 public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
 
 @Test
-public void testSomething() {
+            public void testSomething() {
     GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", "body");
     MimeMessage[] emails = greenMail.getReceivedMessages();
     assertEquals(1, emails.length);
@@ -367,7 +367,7 @@ greenMail.stop();
 public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
 
 @Test
-public void testSendAndReceive() throws MessagingException, ... {
+            public void testSendAndReceive() throws MessagingException, ... {
     Session smtpSession = greenMail.getSmtp().createSession();
 
     Message msg = new MimeMessage(smtpSession);
@@ -615,6 +615,21 @@ jar xvf /path/to/greenmail-jboss-service-XXX.jar
                 <p>GreenMail supports IMAP quota. Quota capbility can be toggled on and off. For details see <a
                    href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-core/src/test/java/com/icegreen/greenmail/test/ImapServerTest.java">
                     ImapServerTest.java</a> quota test</p>
+
+                <h4>How can I create or delete a mail user?</h4>
+
+                <p>
+<pre><code class="language-java"><!-- @formatter:off -->
+                GreenMail greenMail = ...
+                // Create user with login id equals email
+                GreenMailUser user1 = greenMail.setUser("foo@localhost", "some secret pwd");
+                // Create user with login id different than email
+                GreenMailUser user2 = greenMail.setUser("foo@localhost", "login-id", "some secret pwd");
+                ...
+                greenMail.getManagers().getUserManager().deleteUser(user1); // Delete user
+            </code></pre>
+                <!-- @formatter:on -->
+                </p>
 
             </div>
 
