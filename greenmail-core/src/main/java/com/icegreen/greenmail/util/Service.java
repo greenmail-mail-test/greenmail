@@ -51,8 +51,9 @@ public interface Service {
      * Waits till service is up or timeout was reached.
      *
      * @param timeoutInMs the timeout in milliseconds
-     * @throws InterruptedException
+     * @throws InterruptedException if interrupted while waiting.
+     * @return true, if running otherwise false if timeout was reached.
      */
-    void waitTillRunning(long timeoutInMs) throws InterruptedException;
+    boolean waitTillRunning(long timeoutInMs) throws InterruptedException;
 }
 

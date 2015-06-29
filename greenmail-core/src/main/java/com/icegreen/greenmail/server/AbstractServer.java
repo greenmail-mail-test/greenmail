@@ -29,13 +29,13 @@ import java.util.*;
 public abstract class AbstractServer extends Thread implements Service {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final InetAddress bindTo;
+    private final List<ProtocolHandler> handlers = Collections.synchronizedList(new ArrayList<ProtocolHandler>());
+    private final Object startupMonitor = new Object();
     protected ServerSocket serverSocket = null;
     protected Managers managers;
     protected ServerSetup setup;
-    private final List<ProtocolHandler> handlers = Collections.synchronizedList(new ArrayList<ProtocolHandler>());
     private volatile boolean keepRunning = false;
     private volatile boolean running = false;
-    private final Object startupMonitor = new Object();
 
     protected AbstractServer(ServerSetup setup, Managers managers) {
         this.setup = setup;
@@ -67,17 +67,15 @@ public abstract class AbstractServer extends Thread implements Service {
 
     @Override
     public void run() {
-        // Open server socket ...
-        try {
-            serverSocket = openServerSocket();
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-        setRunning(true);
+        initServerSocket();
 
         // Notify everybody that we're ready to accept connections
         synchronized (startupMonitor) {
             startupMonitor.notifyAll();
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Started " + toString());
         }
 
         // Handle connections
@@ -92,10 +90,21 @@ public abstract class AbstractServer extends Thread implements Service {
             } catch (IOException ignored) {
                 //ignored
                 if (log.isTraceEnabled()) {
-                    log.trace("Error while processing socket", ignored);
+                    log.trace("Error while processing client socket for " + toString(), ignored);
                 }
             }
         }
+    }
+
+    protected synchronized void initServerSocket() {
+        try {
+            serverSocket = openServerSocket();
+        } catch (IOException e) {
+            final String msg = "Can not open server socket for " + toString();
+            log.error(msg, e);
+            throw new IllegalStateException(msg, e);
+        }
+        setRunning(true);
     }
 
     protected void handleClientSocket(Socket clientSocket) {
@@ -134,6 +143,9 @@ public abstract class AbstractServer extends Thread implements Service {
     }
 
     protected synchronized void quit() {
+        if (log.isDebugEnabled()) {
+            log.debug("Stopping " + toString());
+        }
         try {
             // Close server socket, we do not accept new requests anymore.
             // This also terminates the server thread if blocking on socket.accept.
@@ -148,6 +160,9 @@ public abstract class AbstractServer extends Thread implements Service {
                     handler.close();
                 }
                 handlers.clear();
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("Stopped " + toString());
             }
         } catch (IOException e) {
             throw new IllegalStateException(e);
@@ -176,7 +191,7 @@ public abstract class AbstractServer extends Thread implements Service {
     }
 
     @Override
-    public void waitTillRunning(long timeoutInMs) throws InterruptedException {
+    public boolean waitTillRunning(long timeoutInMs) throws InterruptedException {
         long t = System.currentTimeMillis();
         synchronized (startupMonitor) {
             // Loop to avoid spurious wakeups, see
@@ -185,6 +200,8 @@ public abstract class AbstractServer extends Thread implements Service {
                 startupMonitor.wait(timeoutInMs);
             }
         }
+
+        return isRunning();
     }
 
     @Override
@@ -231,7 +248,7 @@ public abstract class AbstractServer extends Thread implements Service {
             }
         } catch (InterruptedException e) {
             //its possible that the thread exits between the lines keepRunning=false and interrupt above
-            log.warn("Got interrupted while stopping", e);
+            log.warn("Got interrupted while stopping " + toString(), e);
         }
     }
 
@@ -257,7 +274,7 @@ public abstract class AbstractServer extends Thread implements Service {
      * Creates a session configured for given server (IMAP, SMTP, ...).
      *
      * @param properties optional session properties, can be null.
-     * @param debug if true enables JavaMail debug settings
+     * @param debug      if true enables JavaMail debug settings
      * @return the session.
      */
     public Session createSession(Properties properties, boolean debug) {

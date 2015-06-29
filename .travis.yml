@@ -1,6 +1,0 @@
-language: java
-jdk:
-  - openjdk7
-  - oraclejdk7
-  - oraclejdk8
-script: set -o pipefail; mvn clean install | egrep -v 'Download.*|Generating .*\.html\.\.\.'

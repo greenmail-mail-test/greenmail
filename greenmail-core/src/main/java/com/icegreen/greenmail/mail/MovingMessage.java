@@ -37,12 +37,12 @@ public class MovingMessage {
     private MimeMessage message;
     private int _references = 0;
 
-    public List<MailAddress> getToAddresses() {
-        return toAddresses;
-    }
-
     public MovingMessage(Workspace workspace) {
         _workspace = workspace;
+    }
+
+    public List<MailAddress> getToAddresses() {
+        return toAddresses;
     }
 
     public MimeMessage getMessage() {
@@ -110,6 +110,8 @@ public class MovingMessage {
                 dataWriter.close();
 
                 break;
+            } else if (line.startsWith(".")) {
+                dataWriter.println(line.substring(1));
             } else {
                 dataWriter.println(line);
             }

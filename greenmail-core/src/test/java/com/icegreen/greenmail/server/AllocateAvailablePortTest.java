@@ -1,17 +1,16 @@
 package com.icegreen.greenmail.server;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
-
-import javax.mail.internet.MimeMessage;
-
-import org.junit.Rule;
-import org.junit.Test;
-
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
+import org.junit.Rule;
+import org.junit.Test;
+
+import javax.mail.internet.MimeMessage;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class AllocateAvailablePortTest {
 

@@ -1,21 +1,18 @@
 package com.icegreen.greenmail.test.specificmessages;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.test.util.GreenMailMimeMessage;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import com.icegreen.greenmail.test.util.GreenMailMimeMessage;
-
 import org.junit.Rule;
 import org.junit.Test;
 
 import javax.mail.Address;
 import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 import javax.mail.MessagingException;
-
+import javax.mail.Session;
+import javax.mail.internet.InternetAddress;
 import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -42,7 +39,7 @@ public class EscapingTest {
     }
     
     @Test
-    public void testEscapeMessageID() throws MessagingException,IOException{
+    public void testEscapeMessageID() throws MessagingException, IOException {
         String to = "foo@localhost";
         String from = "bar@localhost";
         String subject = "Bad IMAP Envelope";
