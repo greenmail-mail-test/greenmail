@@ -29,7 +29,7 @@ public class InMemoryStore
         this(StoredMessageCollectionFactory.LIST_BASED_FACTORY);
     }
 
-    InMemoryStore(final StoredMessageCollectionFactory storedMessageCollectionFactory) {
+    public InMemoryStore(final StoredMessageCollectionFactory storedMessageCollectionFactory) {
         this.rootMailbox = new RootFolder(storedMessageCollectionFactory);
     }
 

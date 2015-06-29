@@ -8,6 +8,7 @@ import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.imap.ImapHostManagerImpl;
 import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.store.InMemoryStore;
+import com.icegreen.greenmail.store.Store;
 import com.icegreen.greenmail.user.UserManager;
 
 /**
@@ -16,19 +17,39 @@ import com.icegreen.greenmail.user.UserManager;
  * @since Jan 27, 2006
  */
 public class Managers {
-    private ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
-    private UserManager userManager = new UserManager(imapHostManager);
-    private SmtpManager smtpManager = new SmtpManager(imapHostManager, userManager);
+    private ImapHostManager imapHostManager;
+    private UserManager userManager;
+    private SmtpManager smtpManager;
 
-    public SmtpManager getSmtpManager() {
+    public Managers() {
+        this(new InMemoryStore());
+    }
+
+    protected Managers(final Store imapHostManagerStore) {
+        imapHostManager = new ImapHostManagerImpl(imapHostManagerStore);
+        userManager = new UserManager(imapHostManager);
+        smtpManager = new SmtpManager(imapHostManager, userManager);
+    }
+
+    public final SmtpManager getSmtpManager() {
         return smtpManager;
     }
 
-    public UserManager getUserManager() {
+    public final UserManager getUserManager() {
         return userManager;
     }
 
-    public ImapHostManager getImapHostManager() {
+    public final ImapHostManager getImapHostManager() {
         return imapHostManager;
+    }
+
+    public final void reset() {
+        imapHostManager = new ImapHostManagerImpl(createNewStore());
+        userManager = new UserManager(imapHostManager);
+        smtpManager = new SmtpManager(imapHostManager, userManager);
+    }
+
+    protected Store createNewStore() {
+        return new InMemoryStore();
     }
 }

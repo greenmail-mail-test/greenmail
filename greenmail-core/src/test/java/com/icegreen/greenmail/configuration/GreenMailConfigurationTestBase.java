@@ -1,5 +1,6 @@
 package com.icegreen.greenmail.configuration;
 
+import com.icegreen.greenmail.MemorySafeManagers;
 import com.icegreen.greenmail.base.GreenMailOperations;
 import com.icegreen.greenmail.util.Retriever;
 
@@ -40,5 +41,12 @@ public final class GreenMailConfigurationTestBase {
         return aConfig()
                 .withUser("user@localhost", "password")
                 .withUser("secondUser@localhost", "secondUserLogin", "password2");
+    }
+
+    /**
+     * @return A {@link GreenMailConfiguration} with {@link MemorySafeManagers} as Managers class.
+     */
+    public static GreenMailConfiguration testConfigWithMemorySafeManagers() {
+        return aConfig().withManagersClass(MemorySafeManagers.class);
     }
 }

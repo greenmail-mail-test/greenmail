@@ -7,7 +7,7 @@ package com.icegreen.greenmail.store;
 /**
  * @author Raimund Klein <raimund.klein@gmx.de>
  */
-enum StoredMessageCollectionFactory {
+public enum StoredMessageCollectionFactory {
     LIST_BASED_FACTORY {
         @Override
         StoredMessageCollection createCollection() {
