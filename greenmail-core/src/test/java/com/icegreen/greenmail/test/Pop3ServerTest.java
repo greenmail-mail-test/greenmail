@@ -37,8 +37,11 @@ public class Pop3ServerTest {
         greenMail.getManagers().getUserManager().createUser("testPop3Capabillities@localhost.com",
                 "testPop3Capabillities@localhost.com", "pwd");
         store.connect("testPop3Capabillities@localhost.com", "pwd");
-
-        assertTrue(store.capabilities().containsKey("UIDL"));
+        try {
+            assertTrue(store.capabilities().containsKey("UIDL"));
+        } finally {
+            store.close();
+        }
     }
 
     @Test

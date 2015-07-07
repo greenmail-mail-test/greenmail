@@ -50,21 +50,25 @@ public class GreenMailUtilTest {
 
             Store store = greenMail.getImap().createStore();
             store.connect("foo@localhost", "pwd");
-            Folder folder = store.getFolder("INBOX");
-            folder.open(Folder.READ_ONLY);
-            Message[] msgs = folder.getMessages();
-            assertTrue(null != msgs && msgs.length == 1);
-            Message m = msgs[0];
-            assertEquals("Test subject", m.getSubject());
-            Address a[] = m.getRecipients(Message.RecipientType.TO);
-            assertTrue(null != a && a.length == 1
-                    && a[0].toString().equals("foo@localhost"));
-            a = m.getFrom();
-            assertTrue(null != a && a.length == 1
-                    && a[0].toString().equals("bar@localhost"));
-            assertTrue(m.getContentType().toLowerCase()
-                    .startsWith("text/plain"));
-            assertEquals("Test message", m.getContent());
+            try {
+                Folder folder = store.getFolder("INBOX");
+                folder.open(Folder.READ_ONLY);
+                Message[] msgs = folder.getMessages();
+                assertTrue(null != msgs && msgs.length == 1);
+                Message m = msgs[0];
+                assertEquals("Test subject", m.getSubject());
+                Address a[] = m.getRecipients(Message.RecipientType.TO);
+                assertTrue(null != a && a.length == 1
+                        && a[0].toString().equals("foo@localhost"));
+                a = m.getFrom();
+                assertTrue(null != a && a.length == 1
+                        && a[0].toString().equals("bar@localhost"));
+                assertTrue(m.getContentType().toLowerCase()
+                        .startsWith("text/plain"));
+                assertEquals("Test message", m.getContent());
+            } finally {
+                store.close();
+            }
         } finally {
             greenMail.stop();
         }
