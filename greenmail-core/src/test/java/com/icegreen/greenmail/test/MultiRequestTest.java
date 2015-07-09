@@ -6,6 +6,7 @@
 package com.icegreen.greenmail.test;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
@@ -51,13 +52,13 @@ public class MultiRequestTest {
     private static class RetrieverThread extends Thread {
         String to;
         int count;
-        Retriever r;
         private int expectedCount;
+        private AbstractServer server;
 
-        RetrieverThread(String to, Retriever r, ThreadGroup group, int expectedCount) {
+        RetrieverThread(String to, AbstractServer server, ThreadGroup group, int expectedCount) {
             super(group, RetrieverThread.class.getName());
             this.to = to;
-            this.r = r;
+            this.server = server;
             this.expectedCount = expectedCount;
         }
 
@@ -66,16 +67,21 @@ public class MultiRequestTest {
             // If message is not sent after timeout period we abort
             int timeout = 10000;//ms
             int increment = timeout / 50;
-            for (int time = 0; time < timeout; time += increment) {
-                try {
-                    count = r.getMessages(to, to).length;
-                    if (count == expectedCount) {
-                        return;
+            Retriever r = new Retriever(server);
+            try {
+                for (int time = 0; time < timeout; time += increment) {
+                    try {
+                        count = r.getMessages(to, to).length;
+                        if (count == expectedCount) {
+                            return;
+                        }
+                        sleep(increment);
+                    } catch (Exception e) {
+                        log.error("Error retrieving messages", e);
                     }
-                    sleep(increment);
-                } catch (Exception e) {
-                    log.error("Error retrieving messages", e);
                 }
+            } finally {
+                r.close();
             }
         }
 
@@ -180,22 +186,22 @@ public class MultiRequestTest {
      */
     private void startRetrieverThreads(int n, ThreadGroup group, List<RetrieverThread> retrieverThreads) {
         for (int i = 1; i <= n; i++) {
-            RetrieverThread r = new RetrieverThread("to" + i, new Retriever(greenMail.getPop3()), group, i);
+            RetrieverThread r = new RetrieverThread("to" + i, greenMail.getPop3(), group, i);
             retrieverThreads.add(r);
             r.start();
         }
         for (int i = 1; i <= n; i++) {
-            RetrieverThread r = new RetrieverThread("to" + i, new Retriever(greenMail.getImap()), group, i);
+            RetrieverThread r = new RetrieverThread("to" + i, greenMail.getImap(), group, i);
             retrieverThreads.add(r);
             r.start();
         }
         for (int i = 1; i <= n; i++) {
-            RetrieverThread r = new RetrieverThread("to" + i, new Retriever(greenMail.getPop3s()), group, i);
+            RetrieverThread r = new RetrieverThread("to" + i, greenMail.getPop3s(), group, i);
             retrieverThreads.add(r);
             r.start();
         }
         for (int i = 1; i <= n; i++) {
-            RetrieverThread r = new RetrieverThread("to" + i, new Retriever(greenMail.getImaps()), group, i);
+            RetrieverThread r = new RetrieverThread("to" + i, greenMail.getImaps(), group, i);
             retrieverThreads.add(r);
             r.start();
         }

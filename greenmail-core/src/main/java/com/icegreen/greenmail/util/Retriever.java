@@ -60,7 +60,24 @@ public class Retriever {
         }
     }
 
+    /**
+     * Closes the underlying store.
+     * Make sure you finished processing any fetched messages before closing!
+     *
+     * @deprecated use {@link #close()} instead.
+     * @since 1.5
+     */
+    @Deprecated
     public void logout() {
+        close();
+    }
+
+    /**
+     * Closes the underlying store.
+     *
+     * @since 1.5
+     */
+    public void close() {
         try {
             store.close();
         } catch (MessagingException e) {
