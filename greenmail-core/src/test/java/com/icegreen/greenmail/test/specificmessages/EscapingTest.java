@@ -1,6 +1,7 @@
 package com.icegreen.greenmail.test.specificmessages;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.test.util.GreenMailMimeMessage;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
@@ -34,8 +35,8 @@ public class EscapingTest {
         GreenMailUtil.sendTextEmail(to, "from@localhost", subject, "msg", greenMail.getSmtp().getServerSetup());
         greenMail.waitForIncomingEmail(5000, 1);
 
-        retrieveAndCheck(new Retriever(greenMail.getPop3()), to, subject);
-        retrieveAndCheck(new Retriever(greenMail.getImap()), to, subject);
+        retrieveAndCheck(greenMail.getPop3(), to, subject);
+        retrieveAndCheck(greenMail.getImap(), to, subject);
     }
     
     @Test
@@ -59,22 +60,27 @@ public class EscapingTest {
         GreenMailUtil.sendMimeMessage(mimeMessage);
         greenMail.waitForIncomingEmail(5000,1);
 
-        retrieveAndCheck(new Retriever(greenMail.getImap()), to, subject);
+        retrieveAndCheck(greenMail.getImap(), to, subject);
     }
 
     /**
      * Retrieve message from retriever and check content
      *
-     * @param retriever Retriever to read from
+     * @param server    Server to read from
      * @param to        Account to retrieve
      * @param subject   Subject of message
      */
-    private void retrieveAndCheck(Retriever retriever, String to, String subject) throws MessagingException, IOException {
-        Message[] messages = retriever.getMessages(to);
-        assertEquals(1, messages.length);
-        Message message = messages[0];
+    private void retrieveAndCheck(AbstractServer server, String to, String subject) throws MessagingException, IOException {
+        Retriever retriever = new Retriever(server);
+        try {
+            Message[] messages = retriever.getMessages(to);
+            assertEquals(1, messages.length);
+            Message message = messages[0];
 
-        // Message subject
-        assertThat(message.getSubject(), is(subject));
+            // Message subject
+            assertThat(message.getSubject(), is(subject));
+        } finally {
+            retriever.close();
+        }
     }
 }

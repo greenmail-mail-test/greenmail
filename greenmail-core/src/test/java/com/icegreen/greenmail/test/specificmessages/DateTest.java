@@ -1,6 +1,7 @@
 package com.icegreen.greenmail.test.specificmessages;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
@@ -38,26 +39,31 @@ public class DateTest {
 
         greenMail.waitForIncomingEmail(5000, 1);
 
-        retrieveAndCheck(new Retriever(greenMail.getPop3()), to, sentDate, false);
-        retrieveAndCheck(new Retriever(greenMail.getImap()), to, sentDate, true);
+        retrieveAndCheck(greenMail.getPop3(), to, sentDate, false);
+        retrieveAndCheck(greenMail.getImap(), to, sentDate, true);
     }
 
     /**
      * Retrieve message from retriever and check content
      *
-     * @param retriever         Retriever to read from
+     * @param server            Server to read from
      * @param to                Account to retrieve
      * @param sentDate          Desired 'sent' date of message
      * @param checkReceivedDate True if received date should be checked. POP3 does not provide a received date
      */
-    private void retrieveAndCheck(Retriever retriever, String to, Date sentDate, boolean checkReceivedDate)
+    private void retrieveAndCheck(AbstractServer server, String to, Date sentDate, boolean checkReceivedDate)
             throws MessagingException, IOException {
-        Message[] messages = retriever.getMessages(to);
-        assertThat(messages.length, is(1));
-        Message message = messages[0];
-        assertThat(milliSecondDateDiff(message.getSentDate(), sentDate), lessThan(3000L));
-        if (checkReceivedDate) {
-            assertThat(milliSecondDateDiff(message.getReceivedDate(), new Date()), lessThan(3000L));
+        Retriever retriever = new Retriever(server);
+        try {
+            Message[] messages = retriever.getMessages(to);
+            assertThat(messages.length, is(1));
+            Message message = messages[0];
+            assertThat(milliSecondDateDiff(message.getSentDate(), sentDate), lessThan(3000L));
+            if (checkReceivedDate) {
+                assertThat(milliSecondDateDiff(message.getReceivedDate(), new Date()), lessThan(3000L));
+            }
+        } finally {
+            retriever.close();
         }
     }
 
