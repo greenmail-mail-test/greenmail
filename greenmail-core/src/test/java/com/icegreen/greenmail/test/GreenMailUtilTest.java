@@ -95,6 +95,8 @@ public class GreenMailUtilTest {
             final Quota[] quota = GreenMailUtil.getQuota(user, testQuota.quotaRoot);
             assertEquals(1, quota.length);
             assertEquals(2, quota[0].resources.length);
+
+            store.close();
         } finally {
             greenMail.stop();
         }

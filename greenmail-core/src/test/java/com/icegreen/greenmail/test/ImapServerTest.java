@@ -43,6 +43,7 @@ public class ImapServerTest {
         assertEquals(1, messages.length);
         assertEquals(subject, messages[0].getSubject());
         assertEquals(body, ((String) messages[0].getContent()).trim());
+        retriever.close();
     }
 
     @Test
@@ -59,6 +60,7 @@ public class ImapServerTest {
         assertEquals(1, messages.length);
         assertEquals(subject, messages[0].getSubject());
         assertEquals(body, ((String) messages[0].getContent()).trim());
+        retriever.close();
     }
 
     @Test
@@ -78,6 +80,8 @@ public class ImapServerTest {
             retriever.getMessages(to, "wrongpassword");
         } catch (Throwable e) {
             login_failed = true;
+        } finally {
+            retriever.close();
         }
         assertTrue(login_failed);
 
@@ -117,7 +121,7 @@ public class ImapServerTest {
         for (int i = 0; i < gif.length; i++) {
             assertEquals(i, gif[i]);
         }
-        retriever.logout();
+        retriever.close();
     }
 
     @Test

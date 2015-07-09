@@ -74,6 +74,7 @@ public class Retriever {
 
     /**
      * Closes the underlying store.
+     * Make sure you finished processing any fetched messages before closing!
      *
      * @since 1.5
      */

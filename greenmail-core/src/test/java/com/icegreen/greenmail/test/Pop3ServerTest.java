@@ -62,6 +62,8 @@ public class Pop3ServerTest {
         // UID
         POP3Folder f = (POP3Folder) messages[0].getFolder();
         assertNotEquals("UNKNOWN", f.getUID(messages[0]));
+
+        retriever.close();
     }
 
     @Test
@@ -78,6 +80,8 @@ public class Pop3ServerTest {
         assertEquals(1, messages.length);
         assertEquals(subject, messages[0].getSubject());
         assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
+
+        retriever.close();
     }
 
     @Test
@@ -104,6 +108,8 @@ public class Pop3ServerTest {
         assertEquals(1, messages.length);
         assertEquals(subject, messages[0].getSubject());
         assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
+
+        retriever.close();
     }
 
     @Test
@@ -136,5 +142,7 @@ public class Pop3ServerTest {
         for (int i = 0; i < gif.length; i++) {
             assertEquals(i, gif[i]);
         }
+
+        retriever.close();
     }
 }

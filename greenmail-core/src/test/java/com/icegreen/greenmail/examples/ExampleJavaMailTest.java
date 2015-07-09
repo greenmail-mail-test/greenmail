@@ -57,5 +57,8 @@ public class ExampleJavaMailTest {
         assertEquals(1, greenMail.getReceviedMessagesForDomain("bar@example.com").length);
         msgReceived = greenMail.getReceviedMessagesForDomain("bar@example.com")[0];
         assertEquals(msg.getSubject(), msgReceived.getSubject());
+
+        store.close();
+        imapStore.close();
     }
 }
