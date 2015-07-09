@@ -7,7 +7,7 @@ machine:
 
 dependencies:
  override:
-  - mvn install -DskipTests
+  - mvn clean install -DskipTests
  cache_directories:
   - "~/.m2/repository"
 
