@@ -5,6 +5,7 @@
 package com.icegreen.greenmail.store;
 
 import org.hamcrest.Matchers;
+import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -12,6 +13,7 @@ import org.junit.runner.RunWith;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * @author Raimund Klein <raimund.klein@gmx.de>
@@ -41,6 +43,18 @@ public class StoredMessageCollectionFactoryTest {
         private FactoryWithMatchingClass(StoredMessageCollectionFactory factory, Class<? extends StoredMessageCollection> collectionClass) {
             this.factory = factory;
             this.collectionClass = collectionClass;
+        }
+    }
+
+    @Test
+    public void shouldRejectUnknownProperty() {
+        for (final StoredMessageCollectionFactory factory : StoredMessageCollectionFactory.values()) {
+            try {
+                factory.withConfigurationValue("foo", "bar");
+                fail("Should have thrown exception");
+            } catch (IllegalArgumentException e) {
+                // This is expected.
+            }
         }
     }
 }
