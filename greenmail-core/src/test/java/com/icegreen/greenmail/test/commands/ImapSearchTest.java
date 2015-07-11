@@ -43,89 +43,92 @@ public class ImapSearchTest {
 
         final Store store = greenMail.getImap().createStore();
         store.connect("to1@localhost", "pwd");
-        Folder imapFolder = store.getFolder("INBOX");
-        imapFolder.open(Folder.READ_WRITE);
+        try {
+            Folder imapFolder = store.getFolder("INBOX");
+            imapFolder.open(Folder.READ_WRITE);
 
-        Message[] imapMessages = imapFolder.getMessages();
-        assertTrue(null != imapMessages && imapMessages.length == 2);
-        Message m0 = imapMessages[0];
-        Message m1 = imapMessages[1];
-        assertTrue(m0.getFlags().contains(Flags.Flag.ANSWERED));
+            Message[] imapMessages = imapFolder.getMessages();
+            assertTrue(null != imapMessages && imapMessages.length == 2);
+            Message m0 = imapMessages[0];
+            Message m1 = imapMessages[1];
+            assertTrue(m0.getFlags().contains(Flags.Flag.ANSWERED));
 
-        // Search flags
-        imapMessages = imapFolder.search(new FlagTerm(new Flags(Flags.Flag.ANSWERED), true));
-        assertTrue(imapMessages.length == 1);
-        assertTrue(imapMessages[0] == m0);
+            // Search flags
+            imapMessages = imapFolder.search(new FlagTerm(new Flags(Flags.Flag.ANSWERED), true));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m0);
 
-        imapMessages = imapFolder.search(new FlagTerm(fooFlags, true));
-        assertTrue(imapMessages.length == 1);
-        assertTrue(imapMessages[0].getFlags().contains("foo"));
+            imapMessages = imapFolder.search(new FlagTerm(fooFlags, true));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0].getFlags().contains("foo"));
 
-        imapMessages = imapFolder.search(new FlagTerm(fooFlags, false));
-        assertTrue(imapMessages.length == 1);
-        assertTrue(!imapMessages[0].getFlags().contains(fooFlags));
+            imapMessages = imapFolder.search(new FlagTerm(fooFlags, false));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(!imapMessages[0].getFlags().contains(fooFlags));
 
-        // Search header ids
-        String id = m0.getHeader("Message-ID")[0];
-        imapMessages = imapFolder.search(new HeaderTerm("Message-ID", id));
-        assertTrue(imapMessages.length == 1);
-        assertTrue(imapMessages[0] == m0);
+            // Search header ids
+            String id = m0.getHeader("Message-ID")[0];
+            imapMessages = imapFolder.search(new HeaderTerm("Message-ID", id));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m0);
 
-        id = m1.getHeader("Message-ID")[0];
-        imapMessages = imapFolder.search(new HeaderTerm("Message-ID", id));
-        assertTrue(imapMessages.length == 1);
-        assertTrue(imapMessages[0] == m1);
+            id = m1.getHeader("Message-ID")[0];
+            imapMessages = imapFolder.search(new HeaderTerm("Message-ID", id));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m1);
 
-        // Search FROM
-        imapMessages = imapFolder.search(new FromTerm(new InternetAddress("from2@localhost")));
-        assertTrue(imapMessages.length == 1);
-        assertTrue(imapMessages[0] == m0);
+            // Search FROM
+            imapMessages = imapFolder.search(new FromTerm(new InternetAddress("from2@localhost")));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m0);
 
-        imapMessages = imapFolder.search(new FromTerm(new InternetAddress("from3@localhost")));
-        assertTrue(imapMessages.length == 1);
-        assertTrue(imapMessages[0] == m1);
+            imapMessages = imapFolder.search(new FromTerm(new InternetAddress("from3@localhost")));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m1);
 
-        // Search TO
-        imapMessages = imapFolder.search(new RecipientTerm(Message.RecipientType.TO, new InternetAddress("to2@localhost")));
-        assertTrue(imapMessages.length == 1);
-        assertTrue(imapMessages[0] == m0);
+            // Search TO
+            imapMessages = imapFolder.search(new RecipientTerm(Message.RecipientType.TO, new InternetAddress("to2@localhost")));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m0);
 
-        imapMessages = imapFolder.search(new RecipientTerm(Message.RecipientType.TO, new InternetAddress("to3@localhost")));
-        assertTrue(imapMessages.length == 1);
-        assertTrue(imapMessages[0] == m1);
+            imapMessages = imapFolder.search(new RecipientTerm(Message.RecipientType.TO, new InternetAddress("to3@localhost")));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m1);
 
-        // Search CC
-        imapMessages = imapFolder.search(new RecipientTerm(Message.RecipientType.CC, new InternetAddress("cc2@localhost")));
-        assertTrue(imapMessages.length == 1);
-        assertTrue(imapMessages[0] == m0);
+            // Search CC
+            imapMessages = imapFolder.search(new RecipientTerm(Message.RecipientType.CC, new InternetAddress("cc2@localhost")));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m0);
 
-        imapMessages = imapFolder.search(new RecipientTerm(Message.RecipientType.CC, new InternetAddress("cc3@localhost")));
-        assertTrue(imapMessages.length == 1);
-        assertTrue(imapMessages[0] == m1);
+            imapMessages = imapFolder.search(new RecipientTerm(Message.RecipientType.CC, new InternetAddress("cc3@localhost")));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m1);
 
-        // Search BCC
-        imapMessages = imapFolder.search(new RecipientTerm(Message.RecipientType.BCC, new InternetAddress("bcc2@localhost")));
-        assertTrue(imapMessages.length == 1);
-        assertTrue(imapMessages[0] == m0);
+            // Search BCC
+            imapMessages = imapFolder.search(new RecipientTerm(Message.RecipientType.BCC, new InternetAddress("bcc2@localhost")));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m0);
 
-        imapMessages = imapFolder.search(new RecipientTerm(Message.RecipientType.BCC, new InternetAddress("bcc3@localhost")));
-        assertTrue(imapMessages.length == 1);
-        assertTrue(imapMessages[0] == m1);
+            imapMessages = imapFolder.search(new RecipientTerm(Message.RecipientType.BCC, new InternetAddress("bcc3@localhost")));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m1);
 
-        // Search NOT
-        imapMessages = imapFolder.search(new NotTerm(new FromTerm(new InternetAddress("from2@localhost"))));
-        assertTrue(imapMessages.length == 1);
-        assertTrue(imapMessages[0] == m1);
-        imapMessages = imapFolder.search(new NotTerm(new FromTerm(new InternetAddress("from3@localhost"))));
-        assertTrue(imapMessages.length == 1);
-        assertTrue(imapMessages[0] == m0);
-        imapMessages = imapFolder.search(new NotTerm(new FromTerm(new InternetAddress("from_somewhere@localhost"))));
-        assertTrue(imapMessages.length == 2);
-        id = m1.getHeader("Message-ID")[0];
-        imapMessages = imapFolder.search(new NotTerm(new HeaderTerm("Message-ID", id)));
-        assertTrue(imapMessages.length == 1);
-        assertTrue(imapMessages[0] == m0);
-
+            // Search NOT
+            imapMessages = imapFolder.search(new NotTerm(new FromTerm(new InternetAddress("from2@localhost"))));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m1);
+            imapMessages = imapFolder.search(new NotTerm(new FromTerm(new InternetAddress("from3@localhost"))));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m0);
+            imapMessages = imapFolder.search(new NotTerm(new FromTerm(new InternetAddress("from_somewhere@localhost"))));
+            assertTrue(imapMessages.length == 2);
+            id = m1.getHeader("Message-ID")[0];
+            imapMessages = imapFolder.search(new NotTerm(new HeaderTerm("Message-ID", id)));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m0);
+        } finally {
+            store.close();
+        }
     }
 
     // Test an unsupported search term for exception. Should be ignored.
@@ -142,9 +145,13 @@ public class ImapSearchTest {
 
         final Store store = greenMail.getImap().createStore();
         store.connect("to1@localhost", "pwd");
-        Folder imapFolder = store.getFolder("INBOX");
-        imapFolder.open(Folder.READ_WRITE);
-        imapFolder.search(new SentDateTerm(ComparisonTerm.LT, new Date()));
+        try {
+            Folder imapFolder = store.getFolder("INBOX");
+            imapFolder.open(Folder.READ_WRITE);
+            imapFolder.search(new SentDateTerm(ComparisonTerm.LT, new Date()));
+        } finally {
+            store.close();
+        }
     }
 
     /**

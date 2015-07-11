@@ -1,6 +1,7 @@
 package com.icegreen.greenmail.test.specificmessages;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
@@ -34,8 +35,8 @@ public class LargeMessageTest {
                 greenMail.getSmtp().getServerSetup());
         greenMail.waitForIncomingEmail(5000, 1);
 
-        retrieveAndCheck(new Retriever(greenMail.getPop3()), to);
-        retrieveAndCheck(new Retriever(greenMail.getImap()), to);
+        retrieveAndCheck(greenMail.getPop3(), to);
+        retrieveAndCheck(greenMail.getImap(), to);
     }
 
     @Test
@@ -45,56 +46,66 @@ public class LargeMessageTest {
                 greenMail.getSmtp().getServerSetup());
         greenMail.waitForIncomingEmail(5000, 1);
 
-        retrieveAndCheckBody(new Retriever(greenMail.getPop3()), to);
-        retrieveAndCheckBody(new Retriever(greenMail.getImap()), to);
+        retrieveAndCheckBody(greenMail.getPop3(), to);
+        retrieveAndCheckBody(greenMail.getImap(), to);
     }
 
     /**
      * Retrieve message from retriever and check the attachment and text content
      *
-     * @param retriever Retriever to read from
+     * @param server    Server to read from
      * @param to        Account to retrieve
      */
-    private void retrieveAndCheck(Retriever retriever, String to) throws MessagingException, IOException {
-        Message[] messages = retriever.getMessages(to);
-        assertEquals(1, messages.length);
-        Message message = messages[0];
-        assertTrue(message.getContentType().startsWith("multipart/mixed"));
-        MimeMultipart body = (MimeMultipart) message.getContent();
-        assertTrue(body.getContentType().startsWith("multipart/mixed"));
-        assertEquals(2, body.getCount());
+    private void retrieveAndCheck(AbstractServer server, String to) throws MessagingException, IOException {
+        Retriever retriever = new Retriever(server);
+        try {
+            Message[] messages = retriever.getMessages(to);
+            assertEquals(1, messages.length);
+            Message message = messages[0];
+            assertTrue(message.getContentType().startsWith("multipart/mixed"));
+            MimeMultipart body = (MimeMultipart) message.getContent();
+            assertTrue(body.getContentType().startsWith("multipart/mixed"));
+            assertEquals(2, body.getCount());
 
-        // Message text
-        final BodyPart textPart = body.getBodyPart(0);
-        String text = (String) textPart.getContent();
-        assertEquals(createLargeString(), text);
+            // Message text
+            final BodyPart textPart = body.getBodyPart(0);
+            String text = (String) textPart.getContent();
+            assertEquals(createLargeString(), text);
 
-        final BodyPart attachment = body.getBodyPart(1);
-        assertTrue(attachment.getContentType().equalsIgnoreCase("application/blubb; name=file"));
-        InputStream attachmentStream = (InputStream) attachment.getContent();
-        byte[] bytes = IOUtils.toByteArray(attachmentStream);
-        assertArrayEquals(createLargeByteArray(), bytes);
+            final BodyPart attachment = body.getBodyPart(1);
+            assertTrue(attachment.getContentType().equalsIgnoreCase("application/blubb; name=file"));
+            InputStream attachmentStream = (InputStream) attachment.getContent();
+            byte[] bytes = IOUtils.toByteArray(attachmentStream);
+            assertArrayEquals(createLargeByteArray(), bytes);
+        } finally {
+            retriever.close();
+        }
     }
 
     /**
      * Retrieve message from retriever and check the body content
      *
-     * @param retriever Retriever to read from
+     * @param server    Server to read from
      * @param to        Account to retrieve
      */
-    private void retrieveAndCheckBody(Retriever retriever, String to) throws MessagingException, IOException {
-        Message[] messages = retriever.getMessages(to);
-        assertEquals(1, messages.length);
-        Message message = messages[0];
-        assertTrue(message.getContentType().equalsIgnoreCase("application/blubb"));
+    private void retrieveAndCheckBody(AbstractServer server, String to) throws MessagingException, IOException {
+        Retriever retriever = new Retriever(server);
+        try {
+            Message[] messages = retriever.getMessages(to);
+            assertEquals(1, messages.length);
+            Message message = messages[0];
+            assertTrue(message.getContentType().equalsIgnoreCase("application/blubb"));
 
-        // Check content
-        InputStream contentStream = (InputStream) message.getContent();
-        byte[] bytes = IOUtils.toByteArray(contentStream);
-        assertArrayEquals(createLargeByteArray(), bytes);
+            // Check content
+            InputStream contentStream = (InputStream) message.getContent();
+            byte[] bytes = IOUtils.toByteArray(contentStream);
+            assertArrayEquals(createLargeByteArray(), bytes);
 
-        // Dump complete mail message. This leads to a FETCH command without section or "len" specified.
-        message.writeTo(new ByteArrayOutputStream());
+            // Dump complete mail message. This leads to a FETCH command without section or "len" specified.
+            message.writeTo(new ByteArrayOutputStream());
+        } finally {
+            retriever.close();
+        }
     }
 
     /**

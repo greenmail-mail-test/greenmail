@@ -1,6 +1,7 @@
 package com.icegreen.greenmail.test.specificmessages;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
@@ -91,26 +92,31 @@ public class SenderRecipientTest {
      */
     private void retrieveAndCheck(GreenMailRule greenMail, InternetAddress addr) throws IOException, MessagingException {
         String address = addr.getAddress();
-        retrieveAndCheck(new Retriever(greenMail.getPop3()), address);
-        retrieveAndCheck(new Retriever(greenMail.getImap()), address);
+        retrieveAndCheck(greenMail.getPop3(), address);
+        retrieveAndCheck(greenMail.getImap(), address);
     }
 
     /**
      * Retrieve message from retriever and check the sender and receivers
      *
-     * @param retriever Retriever to read from
+     * @param server    Server to read from
      * @param login     Account to retrieve
      */
-    private void retrieveAndCheck(Retriever retriever, String login) throws MessagingException, IOException {
-        Message[] messages = retriever.getMessages(login);
-        assertEquals(1, messages.length);
-        Message message = messages[0];
+    private void retrieveAndCheck(AbstractServer server, String login) throws MessagingException, IOException {
+        Retriever retriever = new Retriever(server);
+        try {
+            Message[] messages = retriever.getMessages(login);
+            assertEquals(1, messages.length);
+            Message message = messages[0];
 
-        assertThat(toInetAddr(message.getRecipients(Message.RecipientType.TO)), is(TO_ADDRESSES));
-        assertThat(toInetAddr(message.getRecipients(Message.RecipientType.CC)), is(CC_ADDRESSES));
-        // BCC addresses are not contained in the message since other receivers are not allowed to know the list of
-        // BCC recipients
-        assertThat(toInetAddr(message.getRecipients(Message.RecipientType.BCC)), nullValue());
+            assertThat(toInetAddr(message.getRecipients(Message.RecipientType.TO)), is(TO_ADDRESSES));
+            assertThat(toInetAddr(message.getRecipients(Message.RecipientType.CC)), is(CC_ADDRESSES));
+            // BCC addresses are not contained in the message since other receivers are not allowed to know the list of
+            // BCC recipients
+            assertThat(toInetAddr(message.getRecipients(Message.RecipientType.BCC)), nullValue());
+        } finally {
+            retriever.close();
+        }
     }
 
     /**
