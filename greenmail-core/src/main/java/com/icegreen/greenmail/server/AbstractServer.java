@@ -99,6 +99,7 @@ public abstract class AbstractServer extends Thread implements Service {
     protected synchronized void initServerSocket() {
         try {
             serverSocket = openServerSocket();
+            serverSocket.setReuseAddress(true); // Try to fix TIME_WAIT on Linux when quickly starting/stopping server
         } catch (IOException e) {
             final String msg = "Can not open server socket for " + toString();
             log.error(msg, e);
