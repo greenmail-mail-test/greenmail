@@ -13,26 +13,36 @@ dependencies:
 
 test: 
  override:
+ # JDK 6
  - sudo update-alternatives --set java "/usr/lib/jvm/jdk1.6.0/bin/java"
  - sudo update-alternatives --set javac "/usr/lib/jvm/jdk1.6.0/bin/javac"
  - mvn clean install -DskipTests
  - mvn test
+ - .circleci/save_artifacts.sh "jdk1.6.0" 
+ # JDK 7
  - sudo update-alternatives --set java "/usr/lib/jvm/jdk1.7.0/bin/java"
  - sudo update-alternatives --set javac "/usr/lib/jvm/jdk1.7.0/bin/javac"
  - mvn clean install -DskipTests
  - mvn test
+ - .circleci/save_artifacts.sh "jdk1.7.0" 
+ # JDK 8
  - sudo update-alternatives --set java "/usr/lib/jvm/jdk1.8.0/bin/java"
  - sudo update-alternatives --set javac "/usr/lib/jvm/jdk1.8.0/bin/javac"
  - mvn clean install -DskipTests
  - mvn test
+ - .circleci/save_artifacts.sh "jdk1.8.0" 
+ # OpenJDK 6
  - sudo update-alternatives --set java "/usr/lib/jvm/java-6-openjdk-amd64/jre/bin/java"
  - sudo update-alternatives --set javac "/usr/lib/jvm/java-6-openjdk-amd64/bin/javac"
  - mvn clean install -DskipTests
  - mvn test
+ - .circleci/save_artifacts.sh "java-6-openjdk-amd64"
+ # OpenJDK 7
  - sudo update-alternatives --set java "/usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java"
  - sudo update-alternatives --set javac "/usr/lib/jvm/java-7-openjdk-amd64/bin/javac"
  - mvn clean install -DskipTests
  - mvn test 
+ - .circleci/save_artifacts.sh "java-7-openjdk-amd64"
 
  post:
   - mkdir -p $CIRCLE_TEST_REPORTS/junit/
