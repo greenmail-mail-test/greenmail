@@ -140,7 +140,7 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
                             negated = false;
                         }
                         b = null;
-                        resultTerm = (resultTerm == null ? searchTerm : new AndTerm(resultTerm, searchTerm));
+                        resultTerm = resultTerm == null ? searchTerm : new AndTerm(resultTerm, searchTerm);
                     }
                     sb = new StringBuilder();
                     next = request.nextChar();

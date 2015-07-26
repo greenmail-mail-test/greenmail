@@ -37,6 +37,7 @@ public class ImapHostManagerImpl
         subscriptions = new MailboxSubscriptions();
     }
 
+    @Override
     public List<StoredMessage> getAllMessages() {
         List<StoredMessage> ret = new ArrayList<StoredMessage>();
         try {
@@ -46,11 +47,12 @@ public class ImapHostManagerImpl
                 ret.addAll(folder.getMessages());
             }
         } catch (FolderException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
         return ret;
     }
 
+    @Override
     public char getHierarchyDelimiter() {
         return HIERARCHY_DELIMITER_CHAR;
     }
@@ -58,12 +60,14 @@ public class ImapHostManagerImpl
     /**
      * @see ImapHostManager#getFolder
      */
+    @Override
     public MailFolder getFolder(GreenMailUser user, String mailboxName) {
         String name = getQualifiedMailboxName(user, mailboxName);
         MailFolder folder = store.getMailbox(name);
         return checkViewable(folder);
     }
 
+    @Override
     public MailFolder getFolder(GreenMailUser user, String mailboxName, boolean mustExist)
             throws FolderException {
         MailFolder folder = getFolder(user, mailboxName);
@@ -81,6 +85,7 @@ public class ImapHostManagerImpl
     /**
      * @see ImapHostManager#getInbox
      */
+    @Override
     public MailFolder getInbox(GreenMailUser user) throws FolderException {
         return getFolder(user, INBOX_NAME);
     }
@@ -88,6 +93,7 @@ public class ImapHostManagerImpl
     /**
      * @see ImapHostManager#createPrivateMailAccount
      */
+    @Override
     public void createPrivateMailAccount(GreenMailUser user) throws FolderException {
         MailFolder root = store.getMailbox(USER_NAMESPACE);
         MailFolder userRoot = store.createMailbox(root, user.getQualifiedMailboxName(), false);
@@ -97,6 +103,7 @@ public class ImapHostManagerImpl
     /**
      * @see ImapHostManager#createMailbox
      */
+    @Override
     public MailFolder createMailbox(GreenMailUser user, String mailboxName)
             throws AuthorizationException, FolderException {
         String qualifiedName = getQualifiedMailboxName(user, mailboxName);
@@ -136,6 +143,7 @@ public class ImapHostManagerImpl
     /**
      * @see ImapHostManager#deleteMailbox
      */
+    @Override
     public void deleteMailbox(GreenMailUser user, String mailboxName)
             throws FolderException, AuthorizationException {
         MailFolder toDelete = getFolder(user, mailboxName, true);
@@ -156,6 +164,7 @@ public class ImapHostManagerImpl
     /**
      * @see ImapHostManager#renameMailbox
      */
+    @Override
     public void renameMailbox(GreenMailUser user,
                               String oldMailboxName,
                               String newMailboxName)
@@ -185,6 +194,7 @@ public class ImapHostManagerImpl
     /**
      * @see ImapHostManager#listSubscribedMailboxes
      */
+    @Override
     public Collection<MailFolder> listSubscribedMailboxes(GreenMailUser user,
                                               String mailboxPattern)
             throws FolderException {
@@ -194,6 +204,7 @@ public class ImapHostManagerImpl
     /**
      * @see ImapHostManager#listMailboxes
      */
+    @Override
     public Collection<MailFolder> listMailboxes(GreenMailUser user,
                                     String mailboxPattern)
             throws FolderException {
@@ -238,6 +249,7 @@ public class ImapHostManagerImpl
     /**
      * @see ImapHostManager#subscribe
      */
+    @Override
     public void subscribe(GreenMailUser user, String mailboxName)
             throws FolderException {
         MailFolder folder = getFolder(user, mailboxName, true);
@@ -247,6 +259,7 @@ public class ImapHostManagerImpl
     /**
      * @see ImapHostManager#unsubscribe
      */
+    @Override
     public void unsubscribe(GreenMailUser user, String mailboxName)
             throws FolderException {
         MailFolder folder = getFolder(user, mailboxName, true);
@@ -339,6 +352,7 @@ public class ImapHostManagerImpl
         }
     }
 
+    @Override
     public Store getStore() {
         return store;
     }

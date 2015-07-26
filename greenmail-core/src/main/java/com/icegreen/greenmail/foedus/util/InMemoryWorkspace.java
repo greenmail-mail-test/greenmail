@@ -11,12 +11,15 @@ import java.io.IOException;
 
 public class InMemoryWorkspace
         implements Workspace {
+    @Override
     public Resource getTmpFile()
             throws IOException {
 
         return new StringBufferResource();
     }
 
+    @Override
     public void release(Resource tmpFile) {
+        // Nothing todo
     }
 }

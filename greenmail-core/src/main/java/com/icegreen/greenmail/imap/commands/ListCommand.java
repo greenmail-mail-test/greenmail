@@ -89,7 +89,7 @@ class ListCommand extends AuthenticatedStateCommand {
             }
 
             // If the search pattern is relative, need to remove user prefix from results.
-            removeUserPrefix = (searchPattern.charAt(0) != NAMESPACE_PREFIX_CHAR);
+            removeUserPrefix = searchPattern.charAt(0) != NAMESPACE_PREFIX_CHAR;
 
             mailboxes = doList(session, searchPattern);
         }

@@ -22,6 +22,7 @@ import com.icegreen.greenmail.smtp.SmtpState;
  */
 public class QuitCommand
         extends SmtpCommand {
+    @Override
     public void execute(SmtpConnection conn, SmtpState state,
                         SmtpManager manager, String commandLine) {
         state.clearMessage();

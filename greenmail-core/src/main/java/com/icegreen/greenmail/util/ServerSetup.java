@@ -90,7 +90,7 @@ public class ServerSetup {
     /**
      * Gets the public default host address "0.0.0.0" .
      *
-     * @return the pulic IP host address.
+     * @return the public IP host address.
      */
     public String getDefaultBindAddress() {
         return "0.0.0.0";

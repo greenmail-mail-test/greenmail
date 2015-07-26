@@ -26,6 +26,7 @@ public class GreenMailListener implements ServletContextListener {
     private List<Service> services;
     private Configuration configuration;
 
+    @Override
     public void contextInitialized(final ServletContextEvent sce) {
         log.info("Initializing GreenMail");
 
@@ -42,7 +43,7 @@ public class GreenMailListener implements ServletContextListener {
                             user.email, user.login, user.password);
                     greenMailUser.setPassword(user.password);
                 } catch (UserException e) {
-                    throw new RuntimeException(e);
+                    throw new IllegalStateException(e);
                 }
             }
         }
@@ -52,6 +53,7 @@ public class GreenMailListener implements ServletContextListener {
         }
     }
 
+    @Override
     public void contextDestroyed(final ServletContextEvent sce) {
         log.info("Destroying GreenMail WebApp");
         for (Service s : services) {

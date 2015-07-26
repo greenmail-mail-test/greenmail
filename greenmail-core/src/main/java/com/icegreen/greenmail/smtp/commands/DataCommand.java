@@ -27,6 +27,7 @@ import java.io.StringReader;
  * </p>
  */
 public class DataCommand extends SmtpCommand {
+    @Override
     public void execute(SmtpConnection conn, SmtpState state,
                         SmtpManager manager, String commandLine)
             throws IOException {

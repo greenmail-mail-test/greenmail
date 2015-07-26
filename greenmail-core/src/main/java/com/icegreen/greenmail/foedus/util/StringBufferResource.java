@@ -21,6 +21,7 @@ public class StringBufferResource
         _contentBuffer = new StringBuilder(initalValue);
     }
 
+    @Override
     public Writer getWriter()
             throws IOException {
         _currentWriter = new StringWriter();
@@ -28,6 +29,7 @@ public class StringBufferResource
         return _currentWriter;
     }
 
+    @Override
     public InputStream getInputStream()
             throws IOException {
         closeInput();
@@ -35,6 +37,7 @@ public class StringBufferResource
         return new ByteArrayInputStream(_contentBuffer.toString().getBytes());
     }
 
+    @Override
     public Reader getReader()
             throws IOException {
         closeInput();
@@ -53,15 +56,18 @@ public class StringBufferResource
             throw new IOException("No content has been written");
     }
 
+    @Override
     public long getSize() {
         return _contentBuffer.length();
     }
 
+    @Override
     public String getAsString() throws IOException {
         closeInput();
         return _contentBuffer.toString();
     }
 
+    @Override
     public void delete() {
         _contentBuffer = null;
         _currentWriter = null;

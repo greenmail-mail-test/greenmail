@@ -41,14 +41,17 @@ public final class ImapSessionImpl implements ImapSession {
         this.clientAddress = clientAddress;
     }
 
+    @Override
     public ImapHostManager getHost() {
         return imapHost;
     }
 
+    @Override
     public void unsolicitedResponses(ImapResponse request) throws FolderException {
         unsolicitedResponses(request, false);
     }
 
+    @Override
     public void unsolicitedResponses(ImapResponse response, boolean omitExpunged) throws FolderException {
         ImapSessionFolder selected = getSelected();
         if (selected != null) {
@@ -83,31 +86,38 @@ public final class ImapSessionImpl implements ImapSession {
         }
     }
 
+    @Override
     public void closeConnection(String byeMessage) {
         handler.forceConnectionClose(byeMessage);
     }
 
+    @Override
     public void closeConnection() {
         handler.close();
     }
 
+    @Override
     public UserManager getUserManager() {
         return users;
     }
 
+    @Override
     public String getClientIP() {
         return clientAddress;
     }
 
+    @Override
     public void setAuthenticated(GreenMailUser user) {
         this.state = ImapSessionState.AUTHENTICATED;
         this.user = user;
     }
 
+    @Override
     public GreenMailUser getUser() {
         return this.user;
     }
 
+    @Override
     public void deselect() {
         this.state = ImapSessionState.AUTHENTICATED;
         if (selectedMailbox != null) {
@@ -117,22 +127,20 @@ public final class ImapSessionImpl implements ImapSession {
         }
     }
 
+    @Override
     public void setSelected(MailFolder folder, boolean readOnly) {
         ImapSessionFolder sessionMailbox = new ImapSessionFolder(folder, this, readOnly);
         this.state = ImapSessionState.SELECTED;
         this.selectedMailbox = sessionMailbox;
     }
 
+    @Override
     public ImapSessionFolder getSelected() {
         return this.selectedMailbox;
     }
 
-    public boolean selectedIsReadOnly() {
-        return selectedMailbox.isReadonly();
-    }
-
+    @Override
     public ImapSessionState getState() {
         return this.state;
     }
-
 }

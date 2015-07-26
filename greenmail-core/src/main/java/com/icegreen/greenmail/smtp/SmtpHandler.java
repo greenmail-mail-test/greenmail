@@ -42,6 +42,7 @@ class SmtpHandler implements ProtocolHandler {
         _socket = socket;
     }
 
+    @Override
     public void run() {
         try {
             _conn = new SmtpConnection(this, _socket);
@@ -58,7 +59,7 @@ class SmtpHandler implements ProtocolHandler {
             _conn.send("421 Service shutting down and closing transmission channel");
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         } finally {
             if (null != _state) {
                 _state.clearMessage();
@@ -123,6 +124,7 @@ class SmtpHandler implements ProtocolHandler {
         return true;
     }
 
+    @Override
     public void close() {
         if (log.isTraceEnabled()) {
             final StringBuilder msg = new StringBuilder("Closing SMTP(s) handler connection");

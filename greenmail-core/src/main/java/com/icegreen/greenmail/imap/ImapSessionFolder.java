@@ -42,6 +42,7 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
         _folder = null;
     }
 
+    @Override
     public int getMsn(long uid) throws FolderException {
         long[] uids = _folder.getMessageUids();
         for (int i = 0; i < uids.length; i++) {
@@ -53,18 +54,22 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
         throw new FolderException("No such message.");
     }
 
+    @Override
     public void signalDeletion() {
         _folder.signalDeletion();
     }
 
+    @Override
     public List getMessages(MsgRangeFilter msgRangeFilter) {
         return _folder.getMessages(msgRangeFilter);
     }
 
+    @Override
     public List<StoredMessage> getMessages() {
         return _folder.getMessages();
     }
 
+    @Override
     public List<StoredMessage> getNonDeletedMessages() {
         return _folder.getNonDeletedMessages();
     }
@@ -101,49 +106,60 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
         return retVal;
     }
 
+    @Override
     public void expunged(int msn) {
         synchronized (_expungedMsns) {
             _expungedMsns.add(msn);
         }
     }
 
+    @Override
     public void added(int msn) {
         _sizeChanged = true;
     }
 
+    @Override
     public void flagsUpdated(int msn, Flags flags, Long uid) {
         // This will overwrite any earlier changes
         _modifiedFlags.put(msn, new FlagUpdate(msn, uid, flags));
     }
 
+    @Override
     public void mailboxDeleted() {
         _session.closeConnection("Mailbox " + _folder.getName() + " has been deleted");
     }
 
+    @Override
     public String getName() {
         return _folder.getName();
     }
 
+    @Override
     public String getFullName() {
         return _folder.getFullName();
     }
 
+    @Override
     public Flags getPermanentFlags() {
         return _folder.getPermanentFlags();
     }
 
+    @Override
     public int getMessageCount() {
         return _folder.getMessageCount();
     }
 
+    @Override
     public int getRecentCount(boolean reset) {
         return _folder.getRecentCount(reset);
     }
 
+    @Override
     public long getUidValidity() {
         return _folder.getUidValidity();
     }
 
+    @Override
     public int getFirstUnseen() {
         return correctForExpungedMessages(_folder.getFirstUnseen());
     }
@@ -165,66 +181,82 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
         return correctedMsn;
     }
 
+    @Override
     public boolean isSelectable() {
         return _folder.isSelectable();
     }
 
+    @Override
     public long getUidNext() {
         return _folder.getUidNext();
     }
 
+    @Override
     public int getUnseenCount() {
         return _folder.getUnseenCount();
     }
 
+    @Override
     public long appendMessage(MimeMessage message, Flags flags, Date receivedDate) {
         return _folder.appendMessage(message, flags, receivedDate);
     }
 
+    @Override
     public void store(MovingMessage mail) throws Exception {
         _folder.store(mail);
     }
 
+    @Override
     public void store(MimeMessage mail) throws Exception {
         _folder.store(mail);
     }
 
+    @Override
     public StoredMessage getMessage(long uid) {
         return _folder.getMessage(uid);
     }
 
+    @Override
     public long[] getMessageUids() {
         return _folder.getMessageUids();
     }
 
+    @Override
     public void expunge() throws FolderException {
         _folder.expunge();
     }
 
+    @Override
     public long[] search(SearchTerm searchTerm) {
         return _folder.search(searchTerm);
     }
 
+    @Override
     public void copyMessage(long uid, MailFolder toFolder) throws FolderException {
         _folder.copyMessage(uid, toFolder);
     }
 
+    @Override
     public void addListener(FolderListener listener) {
         _folder.addListener(listener);
     }
 
+    @Override
     public void removeListener(FolderListener listener) {
         _folder.removeListener(listener);
     }
 
+    @Override
     public void setFlags(Flags flags, boolean value, long uid, FolderListener silentListener, boolean addUid) throws FolderException {
         _folder.setFlags(flags, value, uid, silentListener, addUid);
     }
 
+    @Override
     public void replaceFlags(Flags flags, long uid, FolderListener silentListener, boolean addUid) throws FolderException {
         _folder.replaceFlags(flags, uid, silentListener, addUid);
     }
 
+    @Override
     public void deleteAllMessages() {
         _folder.deleteAllMessages();
     }
