@@ -62,6 +62,7 @@ public abstract class AbstractServer extends Thread implements Service {
         } else {
             socket = new ServerSocket();
         }
+
         socket.setReuseAddress(true); // Try to fix TIME_WAIT on Linux when quickly starting/stopping server
         try {
             socket.bind(new InetSocketAddress(bindTo, setup.getPort()));
@@ -81,15 +82,6 @@ public abstract class AbstractServer extends Thread implements Service {
     @Override
     public void run() {
         initServerSocket();
-
-        // Notify everybody that we're ready to accept connections
-        synchronized (startupMonitor) {
-            startupMonitor.notifyAll();
-        }
-
-        if (log.isDebugEnabled()) {
-            log.debug("Started " + getName());
-        }
 
         // Handle connections
         while (keepOn()) {
@@ -112,12 +104,22 @@ public abstract class AbstractServer extends Thread implements Service {
     protected synchronized void initServerSocket() {
         try {
             serverSocket = openServerSocket();
+            setRunning(true);
         } catch (IOException e) {
             final String msg = "Can not open server socket for " + getName();
             log.error(msg, e);
             throw new IllegalStateException(msg, e);
+        } finally {
+            // Notify everybody that we're ready to accept connections or failed to start.
+            // Otherwise will run into startup timeout, see #waitTillRunning(long).
+            synchronized (startupMonitor) {
+                startupMonitor.notifyAll();
+            }
         }
-        setRunning(true);
+
+        if (log.isDebugEnabled()) {
+            log.debug("Started " + getName());
+        }
     }
 
     protected void handleClientSocket(Socket clientSocket) {
