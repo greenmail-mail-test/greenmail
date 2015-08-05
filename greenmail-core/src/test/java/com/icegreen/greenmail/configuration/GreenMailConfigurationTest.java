@@ -16,8 +16,11 @@ public class GreenMailConfigurationTest {
                 testUsersAccessibleConfig()
         );
         greenMail.start();
-        GreenMailConfigurationTestBase.testUsersAccessible(greenMail);
-        greenMail.stop();
+        try {
+            GreenMailConfigurationTestBase.testUsersAccessible(greenMail);
+        } finally {
+            greenMail.stop();
+        }
     }
 
 }

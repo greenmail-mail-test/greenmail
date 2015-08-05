@@ -12,7 +12,7 @@ import com.icegreen.greenmail.imap.ImapSession;
 import com.icegreen.greenmail.imap.ProtocolException;
 
 /**
- * Handles processeing for the AUTHENTICATE imap command.
+ * Handles processing for the AUTHENTICATE imap command.
  *
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
