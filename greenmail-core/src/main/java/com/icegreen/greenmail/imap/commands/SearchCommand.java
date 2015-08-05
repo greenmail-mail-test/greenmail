@@ -74,6 +74,7 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
         response.commandComplete(this);
     }
 
+
     /**
      * @see ImapCommand#getName
      */
@@ -118,7 +119,13 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
                     // FLAG SEEN ALL
                     if (null == b) {
                         try {
-                            SearchKey key = SearchKey.valueOf(sb.toString());
+                            String keyValue = sb.toString();
+                            // Parentheses?
+                            if(keyValue.charAt(0)=='('
+                                    && keyValue.charAt(keyValue.length()-1)==')' ) {
+                                keyValue = keyValue.substring(1,keyValue.length()-1);
+                            }
+                            SearchKey key = SearchKey.valueOf(keyValue);
                             if (SearchKey.NOT == key) {
                                 negated = true;
                             } else {
