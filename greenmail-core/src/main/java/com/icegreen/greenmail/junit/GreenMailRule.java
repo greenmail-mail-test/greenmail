@@ -48,8 +48,8 @@ public class GreenMailRule extends GreenMailProxy implements MethodRule, TestRul
             @Override
             public void evaluate() throws Throwable {
                 greenMail = new GreenMail(serverSetups);
-                start();
                 try {
+                    start();
                     base.evaluate();
                 } finally {
                     stop();
