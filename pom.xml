@@ -137,6 +137,9 @@
             <reuseForks>true</reuseForks>
             <!-- cli -->
             <workingDirectory>target</workingDirectory>
+            <configuration>
+              <argLine>-Dfile.encoding=UTF-8</argLine>
+            </configuration>
           </configuration>
         </plugin>
         <plugin>
@@ -164,7 +167,7 @@
         <plugin>
           <!-- http://maven.apache.org/plugins/maven-eclipse-plugin/plugin-info.html -->
           <artifactId>maven-eclipse-plugin</artifactId>
-          <version>2.9</version>
+          <version>2.10</version>
           <configuration>
             <downloadSources>true</downloadSources>
             <downloadJavadocs>true</downloadJavadocs>
@@ -199,7 +202,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-pmd-plugin</artifactId>
-          <version>3.4</version>
+          <version>3.5</version>
         </plugin>
         <plugin>
           <artifactId>maven-jxr-plugin</artifactId>
@@ -370,26 +373,6 @@
   </dependencyManagement>
 
   <profiles>
-    <profile>
-      <id>repository-dev-java-net</id>
-      <repositories>
-        <repository>
-          <id>java.net-m2-repository</id>
-          <url>http://download.java.net/maven/2</url>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-        </repository>
-      </repositories>
-      <activation>
-        <file>
-          <missing>always.missing</missing>
-        </file>
-      </activation>
-    </profile>
     <profile>
       <!--
         Release profile, activating ossrh specific release settings.
