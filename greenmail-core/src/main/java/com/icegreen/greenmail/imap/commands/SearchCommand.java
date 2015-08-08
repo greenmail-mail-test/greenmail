@@ -20,10 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Handles processeing for the SEARCH imap command.
+ * Handles processing for the SEARCH imap command.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
     protected final Logger log = LoggerFactory.getLogger(getClass());
