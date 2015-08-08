@@ -17,9 +17,6 @@ import com.icegreen.greenmail.util.GreenMailUtil;
 import javax.mail.Flags;
 import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayInputStream;
-import java.io.FilterInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Date;
 
 /**
@@ -32,26 +29,27 @@ class AppendCommand extends AuthenticatedStateCommand {
     public static final String NAME = "APPEND";
     public static final String ARGS = "<mailbox> [<flag_list>] [<date_time>] literal";
 
-    private AppendCommandParser parser = new AppendCommandParser();
+    private AppendCommandParser appendCommandParser = new AppendCommandParser();
 
     /**
      * @see CommandTemplate#doProcess
      */
+    @Override
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session)
             throws ProtocolException, FolderException {
-        String mailboxName = parser.mailbox(request);
-        Flags flags = parser.optionalAppendFlags(request);
+        String mailboxName = appendCommandParser.mailbox(request);
+        Flags flags = appendCommandParser.optionalAppendFlags(request);
         if (flags == null) {
             flags = new Flags();
         }
-        Date receivedDate = parser.optionalDateTime(request);
+        Date receivedDate = appendCommandParser.optionalDateTime(request);
         if (receivedDate == null) {
             receivedDate = new Date();
         }
-        MimeMessage message = parser.mimeMessage(request);
-        parser.endLine(request);
+        MimeMessage message = appendCommandParser.mimeMessage(request);
+        appendCommandParser.endLine(request);
 
         MailFolder folder;
         try {
@@ -70,6 +68,7 @@ class AppendCommand extends AuthenticatedStateCommand {
     /**
      * @see ImapCommand#getName
      */
+    @Override
     public String getName() {
         return NAME;
     }
@@ -77,6 +76,7 @@ class AppendCommand extends AuthenticatedStateCommand {
     /**
      * @see CommandTemplate#getArgSyntax
      */
+    @Override
     public String getArgSyntax() {
         return ARGS;
     }
@@ -131,72 +131,6 @@ class AppendCommand extends AuthenticatedStateCommand {
             }
         }
 
-    }
-
-    /**
-     * This class is not yet used in the AppendCommand.
-     * <p/>
-     * An input stream which reads a fixed number of bytes from the underlying
-     * input stream. Once the number of bytes has been read, the FixedLengthInputStream
-     * will act as thought the end of stream has been reached, even if more bytes are
-     * present in the underlying input stream.
-     */
-    static class FixedLengthInputStream extends FilterInputStream {
-        private long pos = 0;
-        private long length;
-
-        public FixedLengthInputStream(InputStream in, long length) {
-            super(in);
-            this.length = length;
-        }
-
-        public int read() throws IOException {
-            if (pos >= length) {
-                return -1;
-            }
-            pos++;
-            return super.read();
-        }
-
-        public int read(byte b[]) throws IOException {
-            if (pos >= length) {
-                return -1;
-            }
-
-            if (pos + b.length >= length) {
-                pos = length;
-                return super.read(b, 0, (int) (length - pos));
-            }
-
-            pos += b.length;
-            return super.read(b);
-        }
-
-        public int read(byte b[], int off, int len) throws IOException {
-            throw new IOException("Not implemented");
-//            return super.read( b, off, len );
-        }
-
-        public long skip(long n) throws IOException {
-            throw new IOException("Not implemented");
-//            return super.skip( n );
-        }
-
-        public void close() throws IOException {
-            // Don't do anything to the underlying stream.
-        }
-
-        public synchronized void mark(int readlimit) {
-            // Don't do anything.
-        }
-
-        public synchronized void reset() throws IOException {
-            throw new IOException("mark not supported");
-        }
-
-        public boolean markSupported() {
-            return false;
-        }
     }
 }
 
