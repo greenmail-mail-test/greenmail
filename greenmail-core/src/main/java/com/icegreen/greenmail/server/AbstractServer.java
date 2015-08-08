@@ -36,14 +36,14 @@ public abstract class AbstractServer extends Thread implements Service {
 
     protected AbstractServer(ServerSetup setup, Managers managers) {
         this.setup = setup;
+        setName(setup.getProtocol() + ':' + setup.getPort());
         try {
             bindTo = (setup.getBindAddress() == null)
                     ? InetAddress.getByName(setup.getDefaultBindAddress())
                     : InetAddress.getByName(setup.getBindAddress());
         } catch (UnknownHostException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to setup bind address for " + getName(), e);
         }
-        setName(setup.getProtocol() + ':' + setup.getPort());
         this.managers = managers;
     }
 
@@ -180,7 +180,7 @@ public abstract class AbstractServer extends Thread implements Service {
                 log.debug("Stopped " + getName());
             }
         } catch (IOException e) {
-            throw new IllegalStateException(e);
+            throw new IllegalStateException("Failed to successfully quit server " + getName(), e);
         }
     }
 
