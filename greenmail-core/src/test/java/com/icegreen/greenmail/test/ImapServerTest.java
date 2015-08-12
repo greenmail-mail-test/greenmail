@@ -367,6 +367,40 @@ public class ImapServerTest {
     }
 
     @Test
+    public void testUIDFetchWithWildcard() throws MessagingException {
+        greenMail.setUser("foo@localhost", "pwd");
+
+        GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test UIDFolder",
+                "Test message", ServerSetupTest.SMTP);
+
+        GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test UIDFolder 2",
+                "Test message 2", ServerSetupTest.SMTP);
+        final IMAPStore store = greenMail.getImap().createStore();
+        store.connect("foo@localhost", "pwd");
+        try {
+            Folder inboxFolder = store.getFolder("INBOX");
+            inboxFolder.open(Folder.READ_WRITE);
+
+            Message[] messages = inboxFolder.getMessages();
+            assertEquals(2, messages.length);
+            Message message = messages[1];
+
+            assert inboxFolder instanceof UIDFolder;
+            UIDFolder uidFolder = (UIDFolder) inboxFolder;
+            long uid = uidFolder.getUID(message);
+            assertEquals(message, uidFolder.getMessageByUID(uid));
+            Message[] uidMessages = uidFolder.getMessagesByUID(uid, UIDFolder.LASTUID);
+            assertEquals(1, uidMessages.length);
+            assertEquals(message, uidMessages[0]);
+            uidMessages = uidFolder.getMessagesByUID(uid + 1, UIDFolder.LASTUID);
+            assertEquals(1, uidMessages.length);
+            assertEquals(message, uidMessages[0]);
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
     public void testExpunge() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
 
