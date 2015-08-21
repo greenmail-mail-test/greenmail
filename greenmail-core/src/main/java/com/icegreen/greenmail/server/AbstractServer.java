@@ -99,6 +99,9 @@ public abstract class AbstractServer extends Thread implements Service {
                 }
             }
         }
+        if(log.isDebugEnabled()) {
+            log.debug("Leaving run loop for " + getName());
+        }
     }
 
     protected synchronized void initServerSocket() {
