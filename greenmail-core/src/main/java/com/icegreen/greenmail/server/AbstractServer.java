@@ -81,7 +81,13 @@ public abstract class AbstractServer extends Thread implements Service {
 
     @Override
     public void run() {
+        if(log.isTraceEnabled()) {
+            log.trace("Entering run loop for "+getName());
+        }
         initServerSocket();
+        if(log.isTraceEnabled()) {
+            log.trace("Server socket bound for "+getName());
+        }
 
         // Handle connections
         while (keepOn()) {
