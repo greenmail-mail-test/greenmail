@@ -20,10 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Handles processeing for the SEARCH imap command.
+ * Handles processing for the SEARCH imap command.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -74,6 +73,7 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
         response.commandComplete(this);
     }
 
+
     /**
      * @see ImapCommand#getName
      */
@@ -118,7 +118,13 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
                     // FLAG SEEN ALL
                     if (null == b) {
                         try {
-                            SearchKey key = SearchKey.valueOf(sb.toString());
+                            String keyValue = sb.toString();
+                            // Parentheses?
+                            if(keyValue.charAt(0)=='('
+                                    && keyValue.charAt(keyValue.length()-1)==')' ) {
+                                keyValue = keyValue.substring(1,keyValue.length()-1);
+                            }
+                            SearchKey key = SearchKey.valueOf(keyValue);
                             if (SearchKey.NOT == key) {
                                 negated = true;
                             } else {
@@ -140,7 +146,7 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
                             negated = false;
                         }
                         b = null;
-                        resultTerm = (resultTerm == null ? searchTerm : new AndTerm(resultTerm, searchTerm));
+                        resultTerm = resultTerm == null ? searchTerm : new AndTerm(resultTerm, searchTerm);
                     }
                     sb = new StringBuilder();
                     next = request.nextChar();

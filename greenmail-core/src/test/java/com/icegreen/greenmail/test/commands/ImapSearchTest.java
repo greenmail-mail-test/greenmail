@@ -126,6 +126,17 @@ public class ImapSearchTest {
             imapMessages = imapFolder.search(new NotTerm(new HeaderTerm("Message-ID", id)));
             assertTrue(imapMessages.length == 1);
             assertTrue(imapMessages[0] == m0);
+
+            // Search
+            NotTerm notAnswered = new NotTerm(new FlagTerm(new Flags(Flags.Flag.ANSWERED), true));
+            NotTerm notDeleted = new NotTerm(new FlagTerm(new Flags(Flags.Flag.DELETED), true));
+            NotTerm notSeen = new NotTerm(new FlagTerm(new Flags(Flags.Flag.SEEN), true));
+            SearchTerm searchTerm = new AndTerm(new AndTerm(new AndTerm(notAnswered, notDeleted), notSeen),
+                    new NotTerm(new FromTerm(new InternetAddress("from2@localhost"))));
+            imapMessages = imapFolder.search(searchTerm);
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m1);
+
         } finally {
             store.close();
         }

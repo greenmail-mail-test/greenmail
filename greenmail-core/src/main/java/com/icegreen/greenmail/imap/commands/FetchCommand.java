@@ -63,15 +63,27 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
             if ((useUids && includes(idSet, uid)) ||
                     (!useUids && includes(idSet, msn))) {
-                StoredMessage storedMessage = mailbox.getMessage(uid);
-                String msgData = outputMessage(fetch, storedMessage, mailbox, useUids);
+                String msgData = getMessageData(useUids, fetch, mailbox, uid);
                 response.fetchResponse(msn, msgData);
             }
+        }
+
+        // a wildcard search must include the last message if the folder is not empty,
+        // as per https://tools.ietf.org/html/rfc3501#section-6.4.8
+        long lastMessageUid = uids[uids.length - 1];
+        if (mailbox.getMessageCount() > 0 && includes(idSet, Long.MAX_VALUE) && !includes(idSet, lastMessageUid)) {
+            String msgData = getMessageData(useUids, fetch, mailbox, lastMessageUid);
+            response.fetchResponse(mailbox.getMsn(lastMessageUid), msgData);
         }
 
         boolean omitExpunged = !useUids;
         session.unsolicitedResponses(response, omitExpunged);
         response.commandComplete(this);
+    }
+
+    private String getMessageData(boolean useUids, FetchRequest fetch, ImapSessionFolder mailbox, long uid) throws FolderException, ProtocolException {
+        StoredMessage storedMessage = mailbox.getMessage(uid);
+        return outputMessage(fetch, storedMessage, mailbox, useUids);
     }
 
     static final Flags FLAGS_SEEN = new Flags(Flags.Flag.SEEN);

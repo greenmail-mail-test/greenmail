@@ -18,7 +18,7 @@ public class InternetPrintWriter
     /**
      * The line separator to use.
      */
-    private static String lineSeparator = "\r\n";
+    private static final String LINE_SEPARATOR = "\r\n";
 
     /**
      * Whether the Writer autoflushes on line feeds
@@ -70,9 +70,10 @@ public class InternetPrintWriter
     /**
      * Print a line separator.
      */
+    @Override
     public void println() {
         synchronized (lock) {
-            write(lineSeparator);
+            write(LINE_SEPARATOR);
             if (autoFlush) {
                 flush();
             }
@@ -84,6 +85,7 @@ public class InternetPrintWriter
      *
      * @param x the boolean to print
      */
+    @Override
     public void println(boolean x) {
         synchronized (lock) {
             print(x);
@@ -96,6 +98,7 @@ public class InternetPrintWriter
      *
      * @param x the char to print
      */
+    @Override
     public void println(char x) {
         synchronized (lock) {
             print(x);
@@ -108,6 +111,7 @@ public class InternetPrintWriter
      *
      * @param x the int to print
      */
+    @Override
     public void println(int x) {
         synchronized (lock) {
             print(x);
@@ -120,6 +124,7 @@ public class InternetPrintWriter
      *
      * @param x the long to print
      */
+    @Override
     public void println(long x) {
         synchronized (lock) {
             print(x);
@@ -132,6 +137,7 @@ public class InternetPrintWriter
      *
      * @param x the float to print
      */
+    @Override
     public void println(float x) {
         synchronized (lock) {
             print(x);
@@ -144,6 +150,7 @@ public class InternetPrintWriter
      *
      * @param x the double to print
      */
+    @Override
     public void println(double x) {
         synchronized (lock) {
             print(x);
@@ -156,6 +163,7 @@ public class InternetPrintWriter
      *
      * @param x the character array to print
      */
+    @Override
     public void println(char[] x) {
         synchronized (lock) {
             print(x);
@@ -168,6 +176,7 @@ public class InternetPrintWriter
      *
      * @param x the String to print
      */
+    @Override
     public void println(String x) {
         synchronized (lock) {
             print(x);
@@ -180,6 +189,7 @@ public class InternetPrintWriter
      *
      * @param x the Object to print
      */
+    @Override
     public void println(Object x) {
         synchronized (lock) {
             print(x);

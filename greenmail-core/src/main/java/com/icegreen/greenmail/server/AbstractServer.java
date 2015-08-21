@@ -15,10 +15,7 @@ import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
 import javax.mail.Store;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.*;
 
 /**
@@ -39,12 +36,13 @@ public abstract class AbstractServer extends Thread implements Service {
 
     protected AbstractServer(ServerSetup setup, Managers managers) {
         this.setup = setup;
+        setName(setup.getProtocol() + ':' + setup.getPort());
         try {
             bindTo = (setup.getBindAddress() == null)
                     ? InetAddress.getByName(setup.getDefaultBindAddress())
                     : InetAddress.getByName(setup.getBindAddress());
         } catch (UnknownHostException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to setup bind address for " + getName(), e);
         }
         this.managers = managers;
     }
@@ -58,11 +56,26 @@ public abstract class AbstractServer extends Thread implements Service {
     protected abstract ProtocolHandler createProtocolHandler(Socket clientSocket);
 
     protected ServerSocket openServerSocket() throws IOException {
+        final ServerSocket socket;
         if (setup.isSecure()) {
-            return DummySSLServerSocketFactory.getDefault().createServerSocket(setup.getPort(), 0, bindTo);
+            socket = DummySSLServerSocketFactory.getDefault().createServerSocket();
         } else {
-            return new ServerSocket(setup.getPort(), 0, bindTo);
+            socket = new ServerSocket();
         }
+        socket.setReuseAddress(true); // Try to fix TIME_WAIT on Linux when quickly starting/stopping server
+        try {
+            socket.bind(new InetSocketAddress(bindTo, setup.getPort()));
+        } catch (IOException ex) {
+            try {
+                socket.close(); // Do close if bind failed!
+            } catch (IOException nested) {
+                if(log.isTraceEnabled()) {
+                    log.trace("Ignoring attempt to close connection", nested);
+                }
+            }
+            throw ex;
+        }
+        return socket;
     }
 
     @Override
@@ -75,7 +88,7 @@ public abstract class AbstractServer extends Thread implements Service {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Started " + toString());
+            log.debug("Started " + getName());
         }
 
         // Handle connections
@@ -90,7 +103,7 @@ public abstract class AbstractServer extends Thread implements Service {
             } catch (IOException ignored) {
                 //ignored
                 if (log.isTraceEnabled()) {
-                    log.trace("Error while processing client socket for " + toString(), ignored);
+                    log.trace("Error while processing client socket for " + getName(), ignored);
                 }
             }
         }
@@ -100,7 +113,7 @@ public abstract class AbstractServer extends Thread implements Service {
         try {
             serverSocket = openServerSocket();
         } catch (IOException e) {
-            final String msg = "Can not open server socket for " + toString();
+            final String msg = "Can not open server socket for " + getName();
             log.error(msg, e);
             throw new IllegalStateException(msg, e);
         }
@@ -110,6 +123,7 @@ public abstract class AbstractServer extends Thread implements Service {
     protected void handleClientSocket(Socket clientSocket) {
         final ProtocolHandler handler = createProtocolHandler(clientSocket);
         addHandler(handler);
+        String threadName = getName() + "<-" + clientSocket.getInetAddress() + ":" + clientSocket.getPort();
         final Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -121,6 +135,7 @@ public abstract class AbstractServer extends Thread implements Service {
                 }
             }
         });
+        thread.setName(threadName);
         thread.start();
     }
 
@@ -144,7 +159,7 @@ public abstract class AbstractServer extends Thread implements Service {
 
     protected synchronized void quit() {
         if (log.isDebugEnabled()) {
-            log.debug("Stopping " + toString());
+            log.debug("Stopping " + getName());
         }
         try {
             // Close server socket, we do not accept new requests anymore.
@@ -162,10 +177,10 @@ public abstract class AbstractServer extends Thread implements Service {
                 handlers.clear();
             }
             if (log.isDebugEnabled()) {
-                log.debug("Stopped " + toString());
+                log.debug("Stopped " + getName());
             }
         } catch (IOException e) {
-            throw new IllegalStateException(e);
+            throw new IllegalStateException("Failed to successfully quit server " + getName(), e);
         }
     }
 
@@ -187,7 +202,7 @@ public abstract class AbstractServer extends Thread implements Service {
 
     @Override
     public String toString() {
-        return null != setup ? setup.getProtocol() + ':' + setup.getPort() : super.toString();
+        return getName();
     }
 
     @Override

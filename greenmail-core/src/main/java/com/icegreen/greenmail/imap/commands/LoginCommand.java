@@ -39,7 +39,7 @@ class LoginCommand extends NonAuthenticatedStateCommand {
             response.commandComplete(this);
 
         } else {
-            response.commandFailed(this, "Invalid login/password");
+            response.commandFailed(this, "Invalid login/password for user id "+userid);
         }
     }
 

@@ -91,7 +91,7 @@ package com.icegreen.greenmail.imap.commands;
  */
 public enum SearchKey {
     ALL(),
-    ANSWERED,
+    ANSWERED(),
     BCC(1),
     CC(1),
     DELETED(),

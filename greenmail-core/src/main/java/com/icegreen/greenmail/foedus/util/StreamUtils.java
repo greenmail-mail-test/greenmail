@@ -63,6 +63,7 @@ public class StreamUtils {
             _two = two;
         }
 
+        @Override
         public void close()
                 throws IOException {
             _one.close();
@@ -70,6 +71,7 @@ public class StreamUtils {
             _two.close();
         }
 
+        @Override
         public int read()
                 throws IOException {
             while (true) {
@@ -88,6 +90,7 @@ public class StreamUtils {
             }
         }
 
+        @Override
         public int read(char[] buf, int start, int len)
                 throws IOException {
             while (true) {
@@ -106,6 +109,7 @@ public class StreamUtils {
             }
         }
 
+        @Override
         public int read(char[] buf)
                 throws IOException {
             while (true) {
@@ -135,11 +139,13 @@ public class StreamUtils {
             _maxLen = len;
         }
 
+        @Override
         public void close() {
 
             // don't close the original stream
         }
 
+        @Override
         public int read()
                 throws IOException {
             if (_lenRead < _maxLen) {
@@ -152,6 +158,7 @@ public class StreamUtils {
             }
         }
 
+        @Override
         public int read(char[] buf, int start, int len)
                 throws IOException {
             if (_lenRead < _maxLen) {
@@ -167,6 +174,7 @@ public class StreamUtils {
             }
         }
 
+        @Override
         public int read(char[] buf)
                 throws IOException {
 

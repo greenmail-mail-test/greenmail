@@ -30,6 +30,7 @@ public class MailCommand
     static final Pattern param = Pattern.compile("MAIL FROM:\\s?<(.*)>",
             Pattern.CASE_INSENSITIVE);
 
+    @Override
     public void execute(SmtpConnection conn, SmtpState state,
                         SmtpManager manager, String commandLine) {
         Matcher m = param.matcher(commandLine);
