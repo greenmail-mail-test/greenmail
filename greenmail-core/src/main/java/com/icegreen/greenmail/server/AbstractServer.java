@@ -171,11 +171,16 @@ public abstract class AbstractServer extends Thread implements Service {
             // This also terminates the server thread if blocking on socket.accept.
             if (null != serverSocket) {
                 serverSocket.close();
-                serverSocket = null;
+                if(log.isTraceEnabled()) {
+                    log.trace("Closed server socket for "+getName());
+                }
             }
 
             // Close all handlers. Handler threads terminate if run loop exits
             synchronized (handlers) {
+                if(log.isTraceEnabled()) {
+                    log.trace("Closing "+handlers +" for "+getName());
+                }
                 for (ProtocolHandler handler : handlers) {
                     handler.close();
                 }
