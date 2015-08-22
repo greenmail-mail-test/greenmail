@@ -7,7 +7,7 @@ machine:
 
 dependencies:
  override:
-  - mvn clean install -DskipTests
+  - mvn dependency:go-offline
  cache_directories:
   - "~/.m2/repository"
 
