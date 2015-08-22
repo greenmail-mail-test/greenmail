@@ -72,6 +72,7 @@ public class GreenMail extends ConfiguredGreenMail {
 
     @Override
     public synchronized void start() {
+        log.debug("Starting GreenMail ...");
         init();
 
         final Collection<AbstractServer> servers = services.values();
@@ -124,6 +125,9 @@ public class GreenMail extends ConfiguredGreenMail {
 
     @Override
     public void reset() {
+        if(log.isDebugEnabled()) {
+            log.debug("Reset with starting/stopping GreenMail ...");
+        }
         stop();
         start();
     }

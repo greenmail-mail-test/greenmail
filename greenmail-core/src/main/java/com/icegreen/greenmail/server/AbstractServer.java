@@ -127,7 +127,8 @@ public abstract class AbstractServer extends Thread implements Service {
         }
 
         if (log.isTraceEnabled()) {
-            log.trace("Initialized server socket " + serverSocket+"/"+System.identityHashCode(serverSocket)
+            log.trace("Initialized server socket " + serverSocket+"/ref="
+                    + Integer.toHexString(System.identityHashCode(serverSocket))
                     + " for " + getName());
         }
         if (log.isDebugEnabled()) {
@@ -182,15 +183,16 @@ public abstract class AbstractServer extends Thread implements Service {
             if (null != serverSocket) {
                 serverSocket.close();
                 if (log.isTraceEnabled()) {
-                    log.trace("Closed server socket " + serverSocket + "/"
-                            + System.identityHashCode(serverSocket) + " for " + getName());
+                    log.trace("Closed server socket " + serverSocket + "/ref="
+                            + Integer.toHexString(System.identityHashCode(serverSocket))
+                            + " for " + getName());
                 }
             }
 
             // Close all handlers. Handler threads terminate if run loop exits
             synchronized (handlers) {
                 if(log.isTraceEnabled()) {
-                    log.trace("Closing "+handlers +" for "+getName());
+                    log.trace("Closing handlers "+handlers +" for "+getName());
                 }
                 for (ProtocolHandler handler : handlers) {
                     handler.close();
