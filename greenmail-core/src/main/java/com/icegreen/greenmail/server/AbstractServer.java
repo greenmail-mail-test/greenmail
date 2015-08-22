@@ -127,7 +127,8 @@ public abstract class AbstractServer extends Thread implements Service {
         }
 
         if (log.isTraceEnabled()) {
-            log.trace("Initialized server socket " + serverSocket + " for " + getName());
+            log.trace("Initialized server socket " + serverSocket+"/"+System.identityHashCode(serverSocket)
+                    + " for " + getName());
         }
         if (log.isDebugEnabled()) {
             log.debug("Started " + getName());
@@ -180,8 +181,9 @@ public abstract class AbstractServer extends Thread implements Service {
             // This also terminates the server thread if blocking on socket.accept.
             if (null != serverSocket) {
                 serverSocket.close();
-                if(log.isTraceEnabled()) {
-                    log.trace("Closed server socket "+serverSocket+" for "+getName());
+                if (log.isTraceEnabled()) {
+                    log.trace("Closed server socket " + serverSocket + "/"
+                            + System.identityHashCode(serverSocket) + " for " + getName());
                 }
             }
 
