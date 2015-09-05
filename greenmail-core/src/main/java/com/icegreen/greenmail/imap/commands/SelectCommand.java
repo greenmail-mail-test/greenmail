@@ -20,9 +20,15 @@ class SelectCommand extends AuthenticatedStateCommand {
     public static final String NAME = "SELECT";
     public static final String ARGS = "mailbox";
 
-    /**
-     * @see com.icegreen.greenmail.imap.commands.CommandTemplate#doProcess
-     */
+    SelectCommand() {
+        super(NAME, ARGS);
+    }
+
+    SelectCommand(String name) {
+        super(name, null);
+    }
+
+    @Override
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session)
@@ -68,20 +74,6 @@ class SelectCommand extends AuthenticatedStateCommand {
 
         session.setSelected(folder, readOnly);
         return readOnly;
-    }
-
-    /**
-     * @see ImapCommand#getName
-     */
-    public String getName() {
-        return NAME;
-    }
-
-    /**
-     * @see CommandTemplate#getArgSyntax
-     */
-    public String getArgSyntax() {
-        return ARGS;
     }
 }
 

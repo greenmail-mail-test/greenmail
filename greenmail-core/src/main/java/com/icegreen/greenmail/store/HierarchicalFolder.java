@@ -71,6 +71,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         return null;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -79,28 +80,34 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         this.name = name;
     }
 
+    @Override
     public String getFullName() {
         return parent.getFullName() + ImapConstants.HIERARCHY_DELIMITER_CHAR + name;
     }
 
+    @Override
     public Flags getPermanentFlags() {
         return PERMANENT_FLAGS;
     }
 
+    @Override
     public int getMessageCount() {
         synchronized (mailMessages) {
             return mailMessages.size();
         }
     }
 
+    @Override
     public long getUidValidity() {
         return uidValidity;
     }
 
+    @Override
     public long getUidNext() {
         return nextUid;
     }
 
+    @Override
     public int getUnseenCount() {
         int count = 0;
         synchronized (mailMessages) {
@@ -118,10 +125,12 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
      * expunge responses in the ImapSessionMailbox, this will correspond to the MSN for
      * the first unseen.
      */
+    @Override
     public int getFirstUnseen() {
         return mailMessages.getFirstUnseen();
     }
 
+    @Override
     public int getRecentCount(boolean reset) {
         int count = 0;
         synchronized (mailMessages) {
@@ -137,6 +146,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         return count;
     }
 
+    @Override
     public int getMsn(long uid) throws FolderException {
         return mailMessages.getMsn(uid);
     }
@@ -151,14 +161,17 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
 
     }
 
+    @Override
     public List getMessages(MsgRangeFilter range) {
         return mailMessages.getMessages(range);
     }
 
+    @Override
     public List<StoredMessage> getMessages() {
         return mailMessages.getMessages();
     }
 
+    @Override
     public List<StoredMessage> getNonDeletedMessages() {
         List<StoredMessage> ret = new ArrayList<StoredMessage>();
 
@@ -173,6 +186,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         return ret;
     }
 
+    @Override
     public boolean isSelectable() {
         return isSelectable;
     }
@@ -181,6 +195,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         isSelectable = selectable;
     }
 
+    @Override
     public long appendMessage(MimeMessage message,
                               Flags flags,
                               Date receivedDate) {
@@ -212,6 +227,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         return uid;
     }
 
+    @Override
     public void setFlags(Flags flags, boolean value, long uid, FolderListener silentListener, boolean addUid) throws FolderException {
         int msn = getMsn(uid);
         StoredMessage message = mailMessages.get(msn - 1);
@@ -225,6 +241,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         notifyFlagUpdate(msn, message.getFlags(), uidNotification, silentListener);
     }
 
+    @Override
     public void replaceFlags(Flags flags, long uid, FolderListener silentListener, boolean addUid) throws FolderException {
         int msn = getMsn(uid);
         StoredMessage message = mailMessages.get(msn - 1);
@@ -250,23 +267,27 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         }
     }
 
+    @Override
     public void deleteAllMessages() {
         synchronized (mailMessages) {
             mailMessages.clear();
         }
     }
 
+    @Override
     public void store(MovingMessage mail) throws Exception {
         store(mail.getMessage());
     }
 
 
+    @Override
     public void store(MimeMessage message) throws Exception {
         Date receivedDate = new Date();
         Flags flags = new Flags();
         appendMessage(message, flags, receivedDate);
     }
 
+    @Override
     public StoredMessage getMessage(long uid) {
         synchronized (mailMessages) {
             for (StoredMessage mailMessage : mailMessages) {
@@ -278,10 +299,12 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         return null;
     }
 
+    @Override
     public long[] getMessageUids() {
         return mailMessages.getMessageUids();
     }
 
+    @Override
     public long[] search(SearchTerm searchTerm) {
         List<StoredMessage> matchedMessages = new ArrayList<StoredMessage>();
 
@@ -302,6 +325,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         return matchedUids;
     }
 
+    @Override
     public void copyMessage(long uid, MailFolder toFolder)
             throws FolderException {
         StoredMessage originalMessage = getMessage(uid);
@@ -315,16 +339,19 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         toFolder.appendMessage(newMime, originalMessage.getFlags(), originalMessage.getReceivedDate());
     }
 
+    @Override
     public void expunge() throws FolderException {
         mailMessages.expunge(_mailboxListeners);
     }
 
+    @Override
     public void addListener(FolderListener listener) {
         synchronized (_mailboxListeners) {
             _mailboxListeners.add(listener);
         }
     }
 
+    @Override
     public void removeListener(FolderListener listener) {
         synchronized (_mailboxListeners) {
             _mailboxListeners.remove(listener);

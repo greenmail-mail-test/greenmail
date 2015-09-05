@@ -12,7 +12,7 @@ import com.icegreen.greenmail.imap.ImapSession;
 import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
-import com.sun.mail.imap.protocol.BASE64MailboxEncoder;
+import com.sun.mail.imap.protocol.BASE64MailboxEncoder; // NOSONAR
 
 /**
  * Handles processeing for the STATUS imap command.
@@ -32,9 +32,14 @@ class StatusCommand extends AuthenticatedStateCommand {
 
     private StatusCommandParser parser = new StatusCommandParser();
 
+    StatusCommand() {
+        super(NAME, ARGS);
+    }
+
     /**
      * @see CommandTemplate#doProcess
      */
+    @Override
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session)
@@ -92,20 +97,6 @@ class StatusCommand extends AuthenticatedStateCommand {
 
         session.unsolicitedResponses(response);
         response.commandComplete(this);
-    }
-
-    /**
-     * @see ImapCommand#getName
-     */
-    public String getName() {
-        return NAME;
-    }
-
-    /**
-     * @see CommandTemplate#getArgSyntax
-     */
-    public String getArgSyntax() {
-        return ARGS;
     }
 
     private static class StatusCommandParser extends CommandParser {

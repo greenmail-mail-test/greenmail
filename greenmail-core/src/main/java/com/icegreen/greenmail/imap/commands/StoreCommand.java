@@ -9,8 +9,6 @@ package com.icegreen.greenmail.imap.commands;
 import com.icegreen.greenmail.imap.*;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.FolderListener;
-import com.icegreen.greenmail.store.MessageFlags;
-import com.icegreen.greenmail.store.StoredMessage;
 
 import javax.mail.Flags;
 
@@ -27,9 +25,11 @@ class StoreCommand extends SelectedStateCommand implements UidEnabledCommand {
 
     private final StoreCommandParser parser = new StoreCommandParser();
 
-    /**
-     * @see CommandTemplate#doProcess
-     */
+    StoreCommand() {
+        super(NAME, ARGS);
+    }
+
+    @Override
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session)
@@ -37,6 +37,7 @@ class StoreCommand extends SelectedStateCommand implements UidEnabledCommand {
         doProcess(request, response, session, false);
     }
 
+    @Override
     public void doProcess(ImapRequestLineReader request,
                           ImapResponse response,
                           ImapSession session,
@@ -89,31 +90,6 @@ class StoreCommand extends SelectedStateCommand implements UidEnabledCommand {
         boolean omitExpunged = !useUids;
         session.unsolicitedResponses(response, omitExpunged);
         response.commandComplete(this);
-    }
-
-    private void storeFlags(StoredMessage storedMessage, StoreDirective directive, Flags newFlags) {
-        if (directive.getSign() == 0) {
-            storedMessage.setFlags(MessageFlags.ALL_FLAGS, false);
-            storedMessage.setFlags(newFlags, true);
-        } else if (directive.getSign() < 0) {
-            storedMessage.setFlags(newFlags, false);
-        } else if (directive.getSign() > 0) {
-            storedMessage.setFlags(newFlags, true);
-        }
-    }
-
-    /**
-     * @see ImapCommand#getName
-     */
-    public String getName() {
-        return NAME;
-    }
-
-    /**
-     * @see CommandTemplate#getArgSyntax
-     */
-    public String getArgSyntax() {
-        return ARGS;
     }
 
     private static class StoreCommandParser extends CommandParser {

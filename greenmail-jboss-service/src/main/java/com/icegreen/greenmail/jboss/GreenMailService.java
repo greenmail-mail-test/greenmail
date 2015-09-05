@@ -66,16 +66,19 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
 
 
     /** {@inheritDoc} */
+    @Override
     public void setHostname(final String pHostname) {
         mHostname = pHostname;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getHostname() {
         return mHostname;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setUsers(final String[] theUsers) {
         mUsers = theUsers;
         // Cleanup new line and ws
@@ -84,16 +87,14 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
         }
     }
 
-    /**
-     * Getter for property 'users'.
-     *
-     * @return Value for property 'users'.
-     */
+    /** {@inheritDoc} */
+    @Override
     public String[] getUsers() {
         return mUsers;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void sendMail(final String theTo,
                          final String theFrom,
                          final String theSubject,
@@ -126,6 +127,7 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
     }
 
     /** {@inheritDoc} */
+    @Override
     public String listUsersHTML() {
         StringBuilder buf = new StringBuilder();
         buf.append("Format: username:pwd@dns-resolvable-domain<br/><ul>");
@@ -137,6 +139,7 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
     }
 
     /** {@inheritDoc} */
+    @Override
     public String listMailsForUserHTML(String pEmail) {
         GreenMailUser user = managers.getUserManager().getUserByEmail(pEmail);
         if (null == user) {
@@ -307,88 +310,86 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
                                pServerSetup.getProtocol());
     }
 
-    /**
-     * Setter for property 'smtpsProtocol'.
-     *
-     * @param theSmtpsProtocol Value to set for property 'smtpsProtocol'.
-     */
+    /** {@inheritDoc} */
+    @Override
     public void setSmtpsProtocol(final boolean theSmtpsProtocol) {
         mSmtpsProtocol = theSmtpsProtocol;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isSmtpsProtocol() {
         return mSmtpsProtocol;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setSmtpProtocol(final boolean theSmtpProtocol) {
         mSmtpProtocol = theSmtpProtocol;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isSmtpProtocol() {
         return mSmtpProtocol;
     }
 
-    /**
-     * Setter for property 'pop3sProtocol'.
-     *
-     * @param thePop3sProtocol Value to set for property 'pop3sProtocol'.
-     */
+    /** {@inheritDoc} */
+    @Override
     public void setPop3sProtocol(final boolean thePop3sProtocol) {
         mPop3sProtocol = thePop3sProtocol;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isPop3sProtocol() {
         return mPop3sProtocol;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isImapsProtocol() {
         return mImapsProtocol;
     }
 
-    /**
-     * Setter for property 'imapsProtocol'.
-     *
-     * @param theImapsProtocol Value to set for property 'imapsProtocol'.
-     */
+    /** {@inheritDoc} */
+    @Override
     public void setImapsProtocol(final boolean theImapsProtocol) {
         mImapsProtocol = theImapsProtocol;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setPop3Protocol(final boolean thePop3Protocol) {
         mPop3Protocol = thePop3Protocol;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isPop3Protocol() {
         return mPop3Protocol;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setImapProtocol(final boolean theImapFlag) {
         mImapProtocol = theImapFlag;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isImapProtocol() {
         return mImapProtocol;
     }
 
-    /**
-     * Setter for property 'portOffset'.
-     *
-     * @param thePortOffset Value to set for property 'portOffset'.
-     */
+    /** {@inheritDoc} */
+    @Override
     public void setPortOffset(final int thePortOffset) {
         mPortOffset = thePortOffset;
     }
 
     /** {@inheritDoc} */
+    @Override
     public int getPortOffset() {
         return mPortOffset;
     }

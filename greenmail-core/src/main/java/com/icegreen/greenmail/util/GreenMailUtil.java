@@ -323,20 +323,24 @@ public class GreenMailUtil {
             multiPart.addBodyPart(binaryPart);
 
             DataSource ds = new DataSource() {
+                @Override
                 public InputStream getInputStream() throws IOException {
                     return new ByteArrayInputStream(attachment);
                 }
 
+                @Override
                 public OutputStream getOutputStream() throws IOException {
                     ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
                     byteStream.write(attachment);
                     return byteStream;
                 }
 
+                @Override
                 public String getContentType() {
                     return contentType;
                 }
 
+                @Override
                 public String getName() {
                     return filename;
                 }

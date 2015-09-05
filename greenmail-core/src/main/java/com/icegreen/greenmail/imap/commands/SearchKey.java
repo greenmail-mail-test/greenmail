@@ -116,7 +116,9 @@ public enum SearchKey {
     private int minArgs = 0; // expected additional arguments
     private boolean operator = false; // Is an operator, such as AND, OR, NOT ...
 
-    SearchKey() {}
+    SearchKey() {
+        // Nothing
+    }
 
     SearchKey(int pMinArgs) {
         minArgs = pMinArgs;

@@ -21,11 +21,15 @@ import com.icegreen.greenmail.store.MailFolder;
  */
 class CloseCommand extends SelectedStateCommand {
     public static final String NAME = "CLOSE";
-    public static final String ARGS = null;
+
+    CloseCommand() {
+        super(NAME, null);
+    }
 
     /**
      * @see CommandTemplate#doProcess
      */
+    @Override
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session)
@@ -38,24 +42,9 @@ class CloseCommand extends SelectedStateCommand {
         }
         session.deselect();
         
-//      Don't send unsolicited responses on close.
+        // Don't send unsolicited responses on close.
         session.unsolicitedResponses(response);
         response.commandComplete(this);
-    }
-
-
-    /**
-     * @see ImapCommand#getName
-     */
-    public String getName() {
-        return NAME;
-    }
-
-    /**
-     * @see CommandTemplate#getArgSyntax
-     */
-    public String getArgSyntax() {
-        return ARGS;
     }
 }
 

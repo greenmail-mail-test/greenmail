@@ -20,31 +20,21 @@ import com.icegreen.greenmail.store.FolderException;
  */
 class NoopCommand extends CommandTemplate {
     public static final String NAME = "NOOP";
-    public static final String ARGS = null;
+
+    NoopCommand() {
+        super(NAME, null);
+    }
 
     /**
      * @see com.icegreen.greenmail.imap.commands.CommandTemplate#doProcess
      */
+    @Override
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session) throws ProtocolException, FolderException {
         parser.endLine(request);
         session.unsolicitedResponses(response);
         response.commandComplete(this);
-    }
-
-    /**
-     * @see ImapCommand#getName
-     */
-    public String getName() {
-        return NAME;
-    }
-
-    /**
-     * @see CommandTemplate#getArgSyntax
-     */
-    public String getArgSyntax() {
-        return ARGS;
     }
 }
 

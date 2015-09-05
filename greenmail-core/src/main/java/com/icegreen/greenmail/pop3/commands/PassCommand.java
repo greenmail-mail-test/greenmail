@@ -13,11 +13,13 @@ import com.icegreen.greenmail.user.GreenMailUser;
 
 public class PassCommand
         extends Pop3Command {
+    @Override
     public boolean isValidForState(Pop3State state) {
 
         return !state.isAuthenticated();
     }
 
+    @Override
     public void execute(Pop3Connection conn, Pop3State state,
                         String cmd) {
         GreenMailUser user = state.getUser();

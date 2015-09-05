@@ -32,6 +32,7 @@ public class UserImpl implements GreenMailUser {
         this.imapHostManager = imapHostManager;
     }
 
+    @Override
     public void create() {
         try {
             imapHostManager.createPrivateMailAccount(this);
@@ -40,6 +41,7 @@ public class UserImpl implements GreenMailUser {
         }
     }
 
+    @Override
     public void delete() {
         try {
             imapHostManager.deleteMailbox(this, ImapConstants.INBOX_NAME);
@@ -50,6 +52,7 @@ public class UserImpl implements GreenMailUser {
         }
     }
 
+    @Override
     public void deliver(MovingMessage msg) {
         try {
             imapHostManager.getInbox(this).store(msg);
@@ -60,6 +63,7 @@ public class UserImpl implements GreenMailUser {
         }
     }
 
+    @Override
     public void deliver(MimeMessage msg)  {
         try {
             imapHostManager.getInbox(this).store(msg);
@@ -70,10 +74,12 @@ public class UserImpl implements GreenMailUser {
         }
     }
 
+    @Override
     public String getEmail() {
         return email;
     }
 
+    @Override
     public String getLogin() {
         if (null == login) {
             return email;
@@ -81,28 +87,34 @@ public class UserImpl implements GreenMailUser {
         return login;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
+    @Override
     public void setPassword(String password) {
         this.password = password;
     }
 
+    @Override
     public void authenticate(String pass) throws UserException {
         if (!password.equals(pass)) {
             throw new UserException("Invalid password");
         }
     }
 
+    @Override
     public String getQualifiedMailboxName() {
         return cachedHashCodeAsString;
     }
 
+    @Override
     public int hashCode() {
         return cachedHashCode;
     }
 
+    @Override
     public boolean equals(Object o) {
         if ((null == o) || !(o instanceof UserImpl)) {
             return false;

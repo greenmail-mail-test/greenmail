@@ -31,6 +31,10 @@ class AppendCommand extends AuthenticatedStateCommand {
 
     private AppendCommandParser appendCommandParser = new AppendCommandParser();
 
+    AppendCommand() {
+        super(NAME, ARGS);
+    }
+
     /**
      * @see CommandTemplate#doProcess
      */
@@ -63,22 +67,6 @@ class AppendCommand extends AuthenticatedStateCommand {
 
         session.unsolicitedResponses(response);
         response.commandComplete(this);
-    }
-
-    /**
-     * @see ImapCommand#getName
-     */
-    @Override
-    public String getName() {
-        return NAME;
-    }
-
-    /**
-     * @see CommandTemplate#getArgSyntax
-     */
-    @Override
-    public String getArgSyntax() {
-        return ARGS;
     }
 
     private static class AppendCommandParser extends CommandParser {

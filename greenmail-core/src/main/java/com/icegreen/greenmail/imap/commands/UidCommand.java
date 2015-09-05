@@ -20,13 +20,14 @@ import com.icegreen.greenmail.store.FolderException;
  */
 class UidCommand extends SelectedStateCommand {
     public static final String NAME = "UID";
-    public static final String ARGS = "<fetch-command>|<store-command>|<copy-command>|<search-command>";
 
     private ImapCommandFactory commandFactory;
 
-    /**
-     * @see CommandTemplate#doProcess
-     */
+    UidCommand() {
+        super(NAME, "<fetch-command>|<store-command>|<copy-command>|<search-command>");
+    }
+
+    @Override
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session)
@@ -39,20 +40,6 @@ class UidCommand extends SelectedStateCommand {
         }
 
         ((UidEnabledCommand) command).doProcess(request, response, session, true);
-    }
-
-    /**
-     * @see ImapCommand#getName
-     */
-    public String getName() {
-        return NAME;
-    }
-
-    /**
-     * @see CommandTemplate#getArgSyntax
-     */
-    public String getArgSyntax() {
-        return ARGS;
     }
 
     public void setCommandFactory(ImapCommandFactory imapCommandFactory) {

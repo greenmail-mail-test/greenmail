@@ -33,9 +33,11 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
     private FetchCommandParser parser = new FetchCommandParser();
 
-    /**
-     * @see CommandTemplate#doProcess
-     */
+    FetchCommand() {
+        super(NAME, ARGS);
+    }
+
+    @Override
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session)
@@ -43,6 +45,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         doProcess(request, response, session, false);
     }
 
+    @Override
     public void doProcess(ImapRequestLineReader request,
                           ImapResponse response,
                           ImapSession session,
@@ -311,20 +314,6 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             response.append("\r\n");
         }
         response.append("\r\n");
-    }
-
-    /**
-     * @see ImapCommand#getName
-     */
-    public String getName() {
-        return NAME;
-    }
-
-    /**
-     * @see CommandTemplate#getArgSyntax
-     */
-    public String getArgSyntax() {
-        return ARGS;
     }
 
     private static class FetchCommandParser extends CommandParser {

@@ -35,10 +35,12 @@ import java.util.List;
  * @since Dec 21, 2006
  */
 public class RsetCommand extends Pop3Command {
+    @Override
     public boolean isValidForState(Pop3State state) {
         return true;
     }
 
+    @Override
     public void execute(Pop3Connection conn, Pop3State state, String cmd) {
         conn.println("+OK");
         try {

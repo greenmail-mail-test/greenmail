@@ -15,10 +15,12 @@ import com.icegreen.greenmail.pop3.Pop3State;
  * @since Jan 28, 2006
  */
 public class NoopCommand extends Pop3Command {
+    @Override
     public boolean isValidForState(Pop3State state) {
         return true;
     }
 
+    @Override
     public void execute(Pop3Connection conn, Pop3State state, String cmd) {
         conn.println("+OK noop rimes with poop");
     }

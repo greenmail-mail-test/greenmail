@@ -10,7 +10,7 @@ import com.icegreen.greenmail.imap.ImapConstants;
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.store.MessageFlags;
-import com.sun.mail.imap.protocol.BASE64MailboxDecoder;
+import com.sun.mail.imap.protocol.BASE64MailboxDecoder; // NOSONAR
 
 import javax.mail.Flags;
 import java.text.ParseException;
@@ -412,12 +412,14 @@ public class CommandParser {
     }
 
     protected static class NoopCharValidator implements CharacterValidator {
+        @Override
         public boolean isValid(char chr) {
             return true;
         }
     }
 
     protected class ATOM_CHARValidator implements CharacterValidator {
+        @Override
         public boolean isValid(char chr) {
             return isCHAR(chr) && !isAtomSpecial(chr) &&
                     !isListWildcard(chr) && !isQuotedSpecial(chr);
@@ -433,6 +435,7 @@ public class CommandParser {
     }
 
     protected static class DigitCharValidator implements CharacterValidator {
+        @Override
         public boolean isValid(char chr) {
             return (chr >= '0' && chr <= '9') ||
                     chr == '*';
@@ -440,12 +443,14 @@ public class CommandParser {
     }
 
     private class TagCharValidator extends ATOM_CHARValidator {
+        @Override
         public boolean isValid(char chr) {
             return chr != '+' && super.isValid(chr);
         }
     }
 
     private static class MessageSetCharValidator implements CharacterValidator {
+        @Override
         public boolean isValid(char chr) {
             return isDigit(chr) ||
                     chr == ':' ||

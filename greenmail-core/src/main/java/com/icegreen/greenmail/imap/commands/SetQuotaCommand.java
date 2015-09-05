@@ -17,6 +17,10 @@ import com.icegreen.greenmail.imap.ProtocolException;
 public class SetQuotaCommand extends AuthenticatedStateCommand {
     public static final String NAME = "SETQUOTA";
 
+    SetQuotaCommand() {
+        super(NAME, null);
+    }
+
     @Override
     protected void doProcess(final ImapRequestLineReader request, final ImapResponse response,
                              final ImapSession session) {
@@ -41,16 +45,8 @@ public class SetQuotaCommand extends AuthenticatedStateCommand {
             response.commandFailed(this, "Can not parse command"+e.getMessage());
         }
     }
-
-    @Override
-    protected String getArgSyntax() {
-        return "quota-root-arg (STORAGE 43008 MESSAGES 10)";
-    }
-
-    public String getName() {
-        return NAME;
-    }
 }
+
 /*
 4.1. SETQUOTA Command
 

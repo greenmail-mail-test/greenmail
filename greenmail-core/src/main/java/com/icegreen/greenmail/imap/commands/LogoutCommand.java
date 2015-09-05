@@ -19,12 +19,16 @@ import com.icegreen.greenmail.imap.ProtocolException;
  */
 class LogoutCommand extends CommandTemplate {
     public static final String NAME = "LOGOUT";
-    public static final String ARGS = null;
     public static final String BYE_MESSAGE = VERSION + SP + "Server logging out";
+
+    LogoutCommand() {
+        super(NAME, null);
+    }
 
     /**
      * @see CommandTemplate#doProcess
      */
+    @Override
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session) throws ProtocolException {
@@ -33,20 +37,6 @@ class LogoutCommand extends CommandTemplate {
         response.byeResponse(BYE_MESSAGE);
         response.commandComplete(this);
         session.closeConnection();
-    }
-
-    /**
-     * @see ImapCommand#getName
-     */
-    public String getName() {
-        return NAME;
-    }
-
-    /**
-     * @see CommandTemplate#getArgSyntax
-     */
-    public String getArgSyntax() {
-        return ARGS;
     }
 }
 
