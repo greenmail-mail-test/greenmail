@@ -69,7 +69,7 @@ public abstract class AbstractServer extends Thread implements Service {
             try {
                 socket.close(); // Do close if bind failed!
             } catch (IOException nested) {
-                if(log.isTraceEnabled()) {
+                if (log.isTraceEnabled()) {
                     log.trace("Ignoring attempt to close connection", nested);
                 }
             }
@@ -80,44 +80,71 @@ public abstract class AbstractServer extends Thread implements Service {
 
     @Override
     public void run() {
-        initServerSocket();
+        try {
+            initServerSocket();
 
-        // Notify everybody that we're ready to accept connections
-        synchronized (startupMonitor) {
-            startupMonitor.notifyAll();
-        }
+            if (log.isDebugEnabled()) {
+                log.debug("Started " + getName());
+            }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Started " + getName());
-        }
-
-        // Handle connections
-        while (keepOn()) {
-            try {
-                Socket clientSocket = serverSocket.accept();
-                if (!keepOn()) {
-                    clientSocket.close();
-                } else {
-                    handleClientSocket(clientSocket);
-                }
-            } catch (IOException ignored) {
-                //ignored
-                if (log.isTraceEnabled()) {
-                    log.trace("Error while processing client socket for " + getName(), ignored);
+            // Handle connections
+            while (keepOn()) {
+                try {
+                    Socket clientSocket = serverSocket.accept();
+                    if (!keepOn()) {
+                        clientSocket.close();
+                    } else {
+                        handleClientSocket(clientSocket);
+                    }
+                } catch (IOException ignored) {
+                    //ignored
+                    if (log.isTraceEnabled()) {
+                        log.trace("Error while processing client socket for " + getName(), ignored);
+                    }
                 }
             }
+        } finally {
+            closeServerSocket();
         }
     }
 
     protected synchronized void initServerSocket() {
         try {
             serverSocket = openServerSocket();
+            setRunning(true);
         } catch (IOException e) {
             final String msg = "Can not open server socket for " + getName();
             log.error(msg, e);
             throw new IllegalStateException(msg, e);
+        } finally {
+            // Notify everybody that we're ready to accept connections or failed to start.
+            // Otherwise will run into startup timeout, see #waitTillRunning(long).
+            synchronized (startupMonitor) {
+                startupMonitor.notifyAll();
+            }
         }
-        setRunning(true);
+    }
+
+    /**
+     * Closes the server socket.
+     */
+    protected void closeServerSocket() {
+        // Close server socket, we do not accept new requests anymore.
+        // This also terminates the server thread if blocking on socket.accept.
+        if (null != serverSocket) {
+            try {
+                if (!serverSocket.isClosed()) {
+                    serverSocket.close();
+                    if (log.isTraceEnabled()) {
+                        log.trace("Closed server socket " + serverSocket + "/ref="
+                                + Integer.toHexString(System.identityHashCode(serverSocket))
+                                + " for " + getName());
+                    }
+                }
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed to successfully quit server " + getName(), e);
+            }
+        }
     }
 
     protected void handleClientSocket(Socket clientSocket) {
@@ -157,30 +184,24 @@ public abstract class AbstractServer extends Thread implements Service {
         handlers.remove(handler);
     }
 
+    /**
+     * Quits server by closing server socket and closing client socket handlers.
+     */
     protected synchronized void quit() {
         if (log.isDebugEnabled()) {
             log.debug("Stopping " + getName());
         }
-        try {
-            // Close server socket, we do not accept new requests anymore.
-            // This also terminates the server thread if blocking on socket.accept.
-            if (null != serverSocket) {
-                serverSocket.close();
-                serverSocket = null;
-            }
+        closeServerSocket();
 
-            // Close all handlers. Handler threads terminate if run loop exits
-            synchronized (handlers) {
-                for (ProtocolHandler handler : handlers) {
-                    handler.close();
-                }
-                handlers.clear();
+        // Close all handlers. Handler threads terminate if run loop exits
+        synchronized (handlers) {
+            for (ProtocolHandler handler : handlers) {
+                handler.close();
             }
-            if (log.isDebugEnabled()) {
-                log.debug("Stopped " + getName());
-            }
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to successfully quit server " + getName(), e);
+            handlers.clear();
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Stopped " + getName());
         }
     }
 
