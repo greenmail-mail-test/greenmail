@@ -7,7 +7,7 @@ machine:
 
 dependencies:
  override:
-  - mvn dependency:go-offline
+  - mvn clean package -Dtest -DfailIfNoTests=false dependency\:go-offline
  cache_directories:
   - "~/.m2/repository"
 
