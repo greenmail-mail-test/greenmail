@@ -70,7 +70,7 @@ public abstract class AbstractServer extends Thread implements Service {
             try {
                 socket.close(); // Do close if bind failed!
             } catch (IOException nested) {
-                if(log.isTraceEnabled()) {
+                if (log.isTraceEnabled()) {
                     log.trace("Ignoring attempt to close connection", nested);
                 }
             }
@@ -81,31 +81,35 @@ public abstract class AbstractServer extends Thread implements Service {
 
     @Override
     public void run() {
-        if(log.isTraceEnabled()) {
-            log.trace("Entering run loop for "+getName());
+        if (log.isTraceEnabled()) {
+            log.trace("Entering run loop for " + getName());
         }
-        initServerSocket();
-        if(log.isTraceEnabled()) {
-            log.trace("Server socket bound for "+getName());
-        }
+        try {
+            initServerSocket();
+            if (log.isTraceEnabled()) {
+                log.trace("Server socket bound for " + getName());
+            }
 
-        // Handle connections
-        while (keepOn()) {
-            try {
-                Socket clientSocket = serverSocket.accept();
-                if (!keepOn()) {
-                    clientSocket.close();
-                } else {
-                    handleClientSocket(clientSocket);
-                }
-            } catch (IOException ignored) {
-                //ignored
-                if (log.isTraceEnabled()) {
-                    log.trace("Error while processing client socket for " + getName(), ignored);
+            // Handle connections
+            while (keepOn()) {
+                try {
+                    Socket clientSocket = serverSocket.accept();
+                    if (!keepOn()) {
+                        clientSocket.close();
+                    } else {
+                        handleClientSocket(clientSocket);
+                    }
+                } catch (IOException ignored) {
+                    //ignored
+                    if (log.isTraceEnabled()) {
+                        log.trace("Error while processing client socket for " + getName(), ignored);
+                    }
                 }
             }
+        } finally {
+            closeServerSocket();
         }
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug("Leaving run loop for " + getName());
         }
     }
@@ -127,7 +131,7 @@ public abstract class AbstractServer extends Thread implements Service {
         }
 
         if (log.isTraceEnabled()) {
-            log.trace("Initialized server socket " + serverSocket+"/ref="
+            log.trace("Initialized server socket " + serverSocket + "/ref="
                     + Integer.toHexString(System.identityHashCode(serverSocket))
                     + " for " + getName());
         }
@@ -173,38 +177,50 @@ public abstract class AbstractServer extends Thread implements Service {
         handlers.remove(handler);
     }
 
+    /**
+     * Closes the server socket.
+     */
+    protected void closeServerSocket() {
+        // Close server socket, we do not accept new requests anymore.
+        // This also terminates the server thread if blocking on socket.accept.
+        if (null != serverSocket) {
+            try {
+                if (!serverSocket.isClosed()) {
+                    serverSocket.close();
+                    if (log.isTraceEnabled()) {
+                        log.trace("Closed server socket " + serverSocket + "/ref="
+                                + Integer.toHexString(System.identityHashCode(serverSocket))
+                                + " for " + getName());
+                    }
+                }
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed to successfully quit server " + getName(), e);
+            }
+        } else {
+            log.trace("Ignore closing null server socket");
+        }
+    }
+
     protected synchronized void quit() {
         if (log.isDebugEnabled()) {
             log.debug("Stopping " + getName());
         }
-        try {
-            // Close server socket, we do not accept new requests anymore.
-            // This also terminates the server thread if blocking on socket.accept.
-            if (null != serverSocket) {
-                serverSocket.close();
-                if (log.isTraceEnabled()) {
-                    log.trace("Closed server socket " + serverSocket + "/ref="
-                            + Integer.toHexString(System.identityHashCode(serverSocket))
-                            + " for " + getName());
-                }
-            }
+        closeServerSocket();
 
-            // Close all handlers. Handler threads terminate if run loop exits
-            synchronized (handlers) {
-                if(log.isTraceEnabled()) {
-                    log.trace("Closing handlers "+handlers +" for "+getName());
-                }
-                for (ProtocolHandler handler : handlers) {
-                    handler.close();
-                }
-                handlers.clear();
+        // Close all handlers. Handler threads terminate if run loop exits
+        synchronized (handlers) {
+            if (log.isTraceEnabled()) {
+                log.trace("Closing handlers " + handlers + " for " + getName());
             }
-            if (log.isDebugEnabled()) {
-                log.debug("Stopped " + getName());
+            for (ProtocolHandler handler : handlers) {
+                handler.close();
             }
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to successfully quit server " + getName(), e);
+            handlers.clear();
         }
+        if (log.isDebugEnabled()) {
+            log.debug("Stopped " + getName());
+        }
+
     }
 
     public String getBindTo() {
