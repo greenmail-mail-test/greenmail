@@ -103,6 +103,7 @@ public class GreenMail extends ConfiguredGreenMail {
         }
 
         doConfigure();
+        log.debug("Finished starting GreenMail.");
     }
 
     @Override
@@ -121,6 +122,7 @@ public class GreenMail extends ConfiguredGreenMail {
         }
         managers = new Managers();
         services = null;
+        log.debug("Finished stopping GreenMail.");
     }
 
     @Override
