@@ -172,7 +172,7 @@ public void testReceive() throws MessagingException {
                 </p>
 
                 <p>Check out the possible deployments as <a href="#deploy_webapp">webapp</a> or <a
-                        href="#deploy_jboss_sar">JBoss Service</a>.</p>
+                        href="#deploy_jboss_sar">JBoss Service</a> or <a href="#deploy_standalone">standalone</a>.</p>
 
                 <h4 id="implementation" class="anchor">Implementation</h4>
 
@@ -410,6 +410,91 @@ public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IM
 
             <div id="deployment" class="bs-docs-section anchor">
                 <h1 class="page-header">Deployment</h1>
+
+                <h3 id="deploy_standalone" class="anchor">Run GreenMail as standalone java application</h3>
+                <p>Running GreenMail as a standalone process is useful if you want a simple sand boxed mail server.</p>
+                <p>All you require is a compatible JRE and the standalone JAR. The standalone JAR already
+                   contains all dependencies and a default logging. You can configure GreenMail by setting system properties</p>
+
+                <h4>Starting GreenMail standalone</h4>
+                <pre><code class="language-bash"><!-- @formatter:off -->
+java [OPTIONS] -jar greenmail-standalone.jar
+                </code></pre><!-- @formatter:on -->
+
+                <table class="table">
+                    <caption>GreenMail standalone configuration options</caption>
+                    <thead>
+                    <tr>
+                        <td>Option</td>
+                        <td>Description</td>
+                    </tr>
+                    </thead>
+                    <tr>
+                        <td class="text-nowrap">-Dgreenmail.setup.all</td>
+                        <td>Uses <a href="http://www.icegreen.com/greenmail/javadocs/com/icegreen/greenmail/util/ServerSetup.html">ServerSetup.ALL</a>
+                            configuration to start all default mail services using default ports:
+                            <ul>
+                                <li>SMTP : 25</li><li>SMTPS : 465</li><li>IMAP : 143</li><li>IMAPS : 993</li><li>POP3 : 110</li><li>POP3S : 995</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-nowrap">-Dgreenmail.setup.test.all</td>
+                        <td>Uses <a href="http://www.icegreen.com/greenmail/javadocs/com/icegreen/greenmail/util/ServerSetupTest.html">ServerSetupTest.ALL</a>
+                            configuration to start all default mail services using default ports including offset of 3000:
+                            <ul>
+                                <li>SMTP : 3025</li><li>SMTPS : 3465</li><li>IMAP : 3143</li><li>IMAPS : 3993</li><li>POP3 : 3110</li><li>POP3S : 3995</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-nowrap">-Dgreenmail.PROTOCOL.hostname</td>
+                        <td>Configures the hostname (or IP bind address) and activates a server for given protocol. Protocol can be one of
+                            <ul>
+                                <li>smtp</li>
+                                <li>smtps</li>
+                                <li>imap</li>
+                                <li>imaps</li>
+                                <li>pop3</li>
+                                <li>pop3s</li>
+                            </ul>
+                            <div class="alert alert-warning" role="alert">
+                            Note: Requires -Dgreenmail.PROTOCOL.port option!
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-nowrap">-Dgreenmail.PROTOCOL.port</td>
+                        <td>Configures the port for given protocol. Protocol can be one of
+                            <ul>
+                                <li>smtp</li>
+                                <li>smtps</li>
+                                <li>imap</li>
+                                <li>imaps</li>
+                                <li>pop3</li>
+                                <li>pop3s</li>
+                            </ul>
+                            <div class="alert alert-warning" role="alert">
+                            Note: Requires -Dgreenmail.PROTOCOL.hostname option!
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+                <h4>GreenMail standalone examples</h4>
+                Starts GreenMail for SMTP (test port 3025) and IMAP (test port 3143) using localhost/127.0.0.1 :
+                <pre><code class="language-bash"><!-- @formatter:off -->
+java -Dgreenmail.setup.test.smtp -Dgreenmail.setup.test.imap -jar greenmail-standalone.jar
+                </code></pre><!-- @formatter:on -->
+                Starts GreenMail for SMTP (test port 3025), SMTPS (test port 3465), IMAP (test port 3143), IMAPS (test port 3993), POP3 (test port 3110) and POP3S (test port 3995) using localhost/127.0.0.1 :
+                <pre><code class="language-bash"><!-- @formatter:off -->
+java -Dgreenmail.setup.test.all -jar greenmail-standalone.jar
+                </code></pre><!-- @formatter:on -->
+                Starts GreenMail with directly configured SMTP on 127.0.0.1:4025
+                <pre><code class="language-bash"><!-- @formatter:off -->
+java -Dgreenmail.smtp.hostname=127.0.0.1 -Dgreenmail.smtp.port=4025 -jar greenmail-standalone.jar
+                </code></pre><!-- @formatter:on -->
+
 
                 <h3 id="deploy_webapp" class="anchor">Deploy as a webapp (WAR)</h3>
 
@@ -798,6 +883,7 @@ greenMail.getManagers().getUserManager().deleteUser(user1); // Delete user
                     <li>
                         <a href="#deployment">Deployments</a>
                         <ul class="nav">
+                            <li><a href="#deploy_standalone">Run as a standalone Java process</a></li>
                             <li><a href="#deploy_webapp">Deploy as a webapp (WAR)</a></li>
                             <li><a href="#deploy_jboss_sar">Deploy as a JBoss Service (SAR)</a>
                                 <ul class="nav">

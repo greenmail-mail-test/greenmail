@@ -30,6 +30,7 @@ public class ServerSetup {
     public static final String PROTOCOL_POP3S = "pop3s";
     public static final String PROTOCOL_IMAP = "imap";
     public static final String PROTOCOL_IMAPS = "imaps";
+    public static final String[] PROTOCOLS = {PROTOCOL_SMTP, PROTOCOL_SMTPS, PROTOCOL_IMAP, PROTOCOL_IMAPS, PROTOCOL_POP3, PROTOCOL_POP3S};
 
     public static final int PORT_SMTP = 25;
     public static final int PORT_SMTPS = 465;
@@ -56,9 +57,13 @@ public class ServerSetup {
     public static final ServerSetup[] ALL = new ServerSetup[]{SMTP, SMTPS, POP3, POP3S, IMAP, IMAPS};
 
 
-    /** Default socket read timeout. See JavaMail session properties. */
+    /**
+     * Default socket read timeout. See JavaMail session properties.
+     */
     public static final long READ_TIMEOUT = 15000L;
-    /** Default socket connection timeout. See JavaMail session properties. */
+    /**
+     * Default socket connection timeout. See JavaMail session properties.
+     */
     public static final long CONNECTION_TIMEOUT = 15000L;
 
     private final int port;
@@ -67,7 +72,9 @@ public class ServerSetup {
     private long readTimeout = -1L;
     private long connectionTimeout = -1L;
     private long writeTimeout = -1L;
-    /** Timeout when GreenMail starts a server, in milliseconds. */
+    /**
+     * Timeout when GreenMail starts a server, in milliseconds.
+     */
     private long serverStartupTimeout = 1000L;
 
     public ServerSetup(int port, String bindAddress, String protocol) {
@@ -155,10 +162,10 @@ public class ServerSetup {
      * <p/>
      * For details see
      * <ul>
-     *     <li>http://docs.oracle.com/javaee/6/api/javax/mail/package-summary.html for some general settings</li>
-     *     <li>https://javamail.java.net/nonav/docs/api/com/sun/mail/smtp/package-summary.html for valid SMTP properties.</li>
-     *     <li>https://javamail.java.net/nonav/docs/api/com/sun/mail/imap/package-summary.html for valid IMAP properties</li>
-     *     <li>https://javamail.java.net/nonav/docs/api/com/sun/mail/pop3/package-summary.html for valid POP3 properties.</li>
+     * <li>http://docs.oracle.com/javaee/6/api/javax/mail/package-summary.html for some general settings</li>
+     * <li>https://javamail.java.net/nonav/docs/api/com/sun/mail/smtp/package-summary.html for valid SMTP properties.</li>
+     * <li>https://javamail.java.net/nonav/docs/api/com/sun/mail/imap/package-summary.html for valid IMAP properties</li>
+     * <li>https://javamail.java.net/nonav/docs/api/com/sun/mail/pop3/package-summary.html for valid POP3 properties.</li>
      * </ul
      *
      * @return default properties.
@@ -189,12 +196,12 @@ public class ServerSetup {
                 Long.toString(getReadTimeout() < 0L ? ServerSetup.READ_TIMEOUT : getReadTimeout()));
         // Note: "mail." + setup.getProtocol() + ".writetimeout" breaks TLS/SSL Dummy Socket and makes tests run 6x slower!!!
         //       Therefore we do not by default configure writetimeout.
-        if(getWriteTimeout() >= 0L) {
+        if (getWriteTimeout() >= 0L) {
             props.setProperty("mail." + getProtocol() + ".writetimeout", Long.toString(getWriteTimeout()));
         }
 
         // Protocol specifc extensions
-        if(getProtocol().startsWith(PROTOCOL_SMTP)) {
+        if (getProtocol().startsWith(PROTOCOL_SMTP)) {
             props.setProperty("mail.transport.protocol", getProtocol());
             props.setProperty("mail.transport.protocol.rfc822", getProtocol());
         }
@@ -205,5 +212,59 @@ public class ServerSetup {
         }
 
         return props;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ServerSetup)) return false;
+
+        ServerSetup that = (ServerSetup) o;
+
+        if (port != that.port) return false;
+        if (readTimeout != that.readTimeout) return false;
+        if (connectionTimeout != that.connectionTimeout) return false;
+        if (writeTimeout != that.writeTimeout) return false;
+        if (serverStartupTimeout != that.serverStartupTimeout) return false;
+        if (bindAddress != null ? !bindAddress.equals(that.bindAddress) : that.bindAddress != null) return false;
+        return !(protocol != null ? !protocol.equals(that.protocol) : that.protocol != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = port;
+        result = 31 * result + (bindAddress != null ? bindAddress.hashCode() : 0);
+        result = 31 * result + (protocol != null ? protocol.hashCode() : 0);
+        result = 31 * result + (int) (readTimeout ^ (readTimeout >>> 32));
+        result = 31 * result + (int) (connectionTimeout ^ (connectionTimeout >>> 32));
+        result = 31 * result + (int) (writeTimeout ^ (writeTimeout >>> 32));
+        result = 31 * result + (int) (serverStartupTimeout ^ (serverStartupTimeout >>> 32));
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "ServerSetup{" +
+                "port=" + port +
+                ", bindAddress='" + bindAddress + '\'' +
+                ", protocol='" + protocol + '\'' +
+                ", readTimeout=" + readTimeout +
+                ", connectionTimeout=" + connectionTimeout +
+                ", writeTimeout=" + writeTimeout +
+                ", serverStartupTimeout=" + serverStartupTimeout +
+                '}';
+    }
+
+    public ServerSetup createCopy() {
+        ServerSetup setup = new ServerSetup(getPort(), getBindAddress(), getProtocol());
+        setup.setServerStartupTimeout(getServerStartupTimeout());
+        setup.setConnectionTimeout(getConnectionTimeout());
+        setup.setReadTimeout(getReadTimeout());
+        setup.setWriteTimeout(getWriteTimeout());
+
+        assert setup.equals(this);
+
+        return setup;
     }
 }
