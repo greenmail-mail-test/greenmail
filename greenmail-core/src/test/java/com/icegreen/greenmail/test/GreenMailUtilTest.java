@@ -9,6 +9,7 @@ package com.icegreen.greenmail.test;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Test;
 
@@ -100,6 +101,42 @@ public class GreenMailUtilTest {
         } finally {
             greenMail.stop();
         }
+    }
+
+    @Test
+    public void testRemoveAllMessagesInPop3Mailbox() {
+        final GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_POP3);
+        try{
+            greenMail.setUser("foo@localhost", "pwd");
+            greenMail.start();
+            GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost",
+                    "Test subject", "Test message", ServerSetupTest.SMTP);
+            greenMail.waitForIncomingEmail(1);
+            GreenMailUtil.removeAllMessagesInPop3Mailbox(greenMail);
+            Retriever retriever = new Retriever(greenMail.getPop3());
+            Message[] messages = retriever.getMessages("foo@localhost");
+            assertEquals(0,messages.length);
+        }   finally {
+            greenMail.stop();
+        }
+
+
+
+    }
+
+    @Test
+    public void testremoveAllMessagesInImapMailbox() {
+        GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
+        try{
+            greenMail.setUser("foo@localhost", "pwd");
+            greenMail.start();
+            GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost",
+                    "Test subject", "Test message", ServerSetupTest.SMTP);
+            greenMail.waitForIncomingEmail(1);
+        }   finally {
+            greenMail.stop();
+        }
+
     }
 
     final static String SAMPLE_EMAIL = "From - Thu Jan 19 00:30:34 2006\r\n"

@@ -4,7 +4,16 @@
  */
 package com.icegreen.greenmail.util;
 
+import com.icegreen.greenmail.pop3.Pop3Handler;
+import com.icegreen.greenmail.pop3.Pop3State;
+import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.user.GreenMailUser;
+import com.icegreen.greenmail.Managers;
+import com.icegreen.greenmail.imap.ImapHostManager;
+import com.icegreen.greenmail.store.InMemoryStore;
+import com.icegreen.greenmail.store.MailFolder;
+import com.icegreen.greenmail.user.UserManager;
+import com.icegreen.greenmail.util.ServerSetupTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +22,7 @@ import javax.activation.DataSource;
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.io.*;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Random;
@@ -417,6 +427,24 @@ public class GreenMailUtil {
         } catch (Exception ex) {
             throw new IllegalStateException("Can not get quota for quota root "
                     + quotaRoot + " for user " + user, ex);
+        }
+    }
+
+
+    public static void removeAllMessagesInPop3Mailbox(final GreenMail greenmail) {
+        UserManager manager = greenmail.getManagers().getUserManager();
+        Pop3State pop3State = new Pop3State(manager);
+        MailFolder folder = pop3State.getFolder();
+        folder.deleteAllMessages();
+    }
+
+    public static void removeAllMessagesInImapMailbox(final GreenMail greenMail) throws FolderException {
+        Managers managers = greenMail.getManagers();
+        ImapHostManager imaphost = managers.getImapHostManager();
+        InMemoryStore store = (InMemoryStore) imaphost.getStore();
+        Collection<MailFolder> mailboxes = store.listMailboxes("*");
+        for (MailFolder folder : mailboxes) {
+            folder.deleteAllMessages();
         }
     }
 }
