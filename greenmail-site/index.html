@@ -436,6 +436,9 @@ java [OPTIONS] -jar greenmail-standalone.jar
                             <ul>
                                 <li>SMTP : 25</li><li>SMTPS : 465</li><li>IMAP : 143</li><li>IMAPS : 993</li><li>POP3 : 110</li><li>POP3S : 995</li>
                             </ul>
+                            <p>
+                            Example: -Dgreenmail.setup.all
+                            </p>
                         </td>
                     </tr>
                     <tr>
@@ -445,6 +448,9 @@ java [OPTIONS] -jar greenmail-standalone.jar
                             <ul>
                                 <li>SMTP : 3025</li><li>SMTPS : 3465</li><li>IMAP : 3143</li><li>IMAPS : 3993</li><li>POP3 : 3110</li><li>POP3S : 3995</li>
                             </ul>
+                            <p>
+                            Example: -Dgreenmail.setup.test.all
+                            </p>
                         </td>
                     </tr>
                     <tr>
@@ -461,6 +467,9 @@ java [OPTIONS] -jar greenmail-standalone.jar
                             <div class="alert alert-warning" role="alert">
                             Note: Requires -Dgreenmail.PROTOCOL.port option!
                             </div>
+                            <p>
+                            Example: -Dgreenmail.smtp.hostname=127.0.0.1 -Dgreenmail.smtp.port=3025
+                            </p>
                         </td>
                     </tr>
                     <tr>
@@ -477,6 +486,21 @@ java [OPTIONS] -jar greenmail-standalone.jar
                             <div class="alert alert-warning" role="alert">
                             Note: Requires -Dgreenmail.PROTOCOL.hostname option!
                             </div>
+                            <p>
+                            Example: -Dgreenmail.smtp.port=3025 -Dgreenmail.smtp.hostname=127.0.0.1
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-nowrap">-Dlog4j.configuration</td>
+                        <td><p>Configures log4j using given configuration file.</p>
+                            <p>
+                            By default, GreenMail standalone runner uses a provided log4j configuration packed into the standalone ueber JAR.
+                            This options allows you to override the default log4j configuration by providing your own log4j configuration file.
+                            </p>
+                            <p>
+                            Example: -Dlog4j.configuration=file:///tmp/log4j.xml
+                            </p>
                         </td>
                     </tr>
                 </table>
