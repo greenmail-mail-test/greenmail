@@ -492,6 +492,19 @@ java [OPTIONS] -jar greenmail-standalone.jar
                         </td>
                     </tr>
                     <tr>
+                        <td class="text-nowrap">-Dgreenmail.users=user1[, ..., userN]</td>
+                        <td>Configures the user mail boxes including password.
+                            <p>The list of users is comma separated.</p>
+                            <p>A single user is of format <i>logon</i>:<i>password</i>[@<i>domain</i>] , where the <i>domain</i> part is optional.</p>
+                            <div class="alert alert-warning" role="alert">
+                            Note: Domain must be DNS resolvable!
+                            </div>
+                            <p>
+                            Example: -Dgreenmail.users=foo:pwd@bar.com,jabber:wocky@monster.local,foo1:bar
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
                         <td class="text-nowrap">-Dlog4j.configuration</td>
                         <td><p>Configures log4j using given configuration file.</p>
                             <p>
@@ -506,17 +519,23 @@ java [OPTIONS] -jar greenmail-standalone.jar
                 </table>
 
                 <h4>GreenMail standalone examples</h4>
-                Starts GreenMail for SMTP (test port 3025) and IMAP (test port 3143) using localhost/127.0.0.1 :
+                <h5>Test setup for SMTP/IMAP and one user</h5>
+                Starts GreenMail for SMTP (test port 3025) and IMAP (test port 3143) using localhost/127.0.0.1 and a single user <i>test1</i> with password <i>pwd1</i> and email <i>test1@localhost</i> :
                 <pre><code class="language-bash"><!-- @formatter:off -->
-java -Dgreenmail.setup.test.smtp -Dgreenmail.setup.test.imap -jar greenmail-standalone.jar
+java -Dgreenmail.setup.test.smtp -Dgreenmail.setup.test.imap \
+     -Dgreenmail.users=test1:pwd1 -jar greenmail-standalone.jar
                 </code></pre><!-- @formatter:on -->
+                <h5>Test setup for SMTP(S)/IMAP(S)/POP3(S) and two user</h5>
                 Starts GreenMail for SMTP (test port 3025), SMTPS (test port 3465), IMAP (test port 3143), IMAPS (test port 3993), POP3 (test port 3110) and POP3S (test port 3995) using localhost/127.0.0.1 :
                 <pre><code class="language-bash"><!-- @formatter:off -->
-java -Dgreenmail.setup.test.all -jar greenmail-standalone.jar
+java -Dgreenmail.setup.test.all -Dgreenmail.users=test1:pwd1,test2:pwd2@example.com \
+     -jar greenmail-standalone.jar
                 </code></pre><!-- @formatter:on -->
+                <h5>SMTP only</h5>
                 Starts GreenMail with directly configured SMTP on 127.0.0.1:4025
                 <pre><code class="language-bash"><!-- @formatter:off -->
-java -Dgreenmail.smtp.hostname=127.0.0.1 -Dgreenmail.smtp.port=4025 -jar greenmail-standalone.jar
+java -Dgreenmail.smtp.hostname=127.0.0.1 -Dgreenmail.smtp.port=4025 \
+     -jar greenmail-standalone.jar
                 </code></pre><!-- @formatter:on -->
 
 

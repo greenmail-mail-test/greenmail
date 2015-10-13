@@ -37,7 +37,7 @@ import java.util.Properties;
  * <li>greenmail.PROTOCOL.hostname (defaults to {@link ServerSetup#getLocalHostAddress()}</li>
  * </ul>
  */
-public class PropertyServerSetupBuilder {
+public class PropertiesBasedServerSetupBuilder {
 
     /**
      * Creates a server setup based on provided properties.
@@ -45,7 +45,7 @@ public class PropertyServerSetupBuilder {
      * @param properties the properties.
      * @return the server setup, or an empty array.
      */
-    public ServerSetup[] create(Properties properties) {
+    public ServerSetup[] build(Properties properties) {
         List<ServerSetup> serverSetups = new ArrayList<ServerSetup>();
 
         // Default setups
