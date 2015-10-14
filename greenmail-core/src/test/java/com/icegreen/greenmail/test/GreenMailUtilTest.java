@@ -6,6 +6,7 @@
  */
 package com.icegreen.greenmail.test;
 
+import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
@@ -104,7 +105,7 @@ public class GreenMailUtilTest {
     }
 
     @Test
-    public void testRemoveAllMessagesInPop3Mailbox() {
+    public void testRemoveAllMessagesInPop3Mailbox() throws FolderException {
         final GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_POP3);
         try{
             greenMail.setUser("foo@localhost", "pwd");
@@ -112,27 +113,29 @@ public class GreenMailUtilTest {
             GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost",
                     "Test subject", "Test message", ServerSetupTest.SMTP);
             greenMail.waitForIncomingEmail(1);
-            GreenMailUtil.removeAllMessagesInPop3Mailbox(greenMail);
+            GreenMailUtil.purgeEmailFromAllMailboxes(greenMail);
             Retriever retriever = new Retriever(greenMail.getPop3());
-            Message[] messages = retriever.getMessages("foo@localhost");
+            Message[] messages = retriever.getMessages("foo@localhost","pwd");
             assertEquals(0,messages.length);
         }   finally {
             greenMail.stop();
         }
 
-
-
     }
 
     @Test
-    public void testremoveAllMessagesInImapMailbox() {
+    public void testremoveAllMessagesInImapMailbox() throws FolderException {
         GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
         try{
             greenMail.setUser("foo@localhost", "pwd");
             greenMail.start();
             GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost",
                     "Test subject", "Test message", ServerSetupTest.SMTP);
-            greenMail.waitForIncomingEmail(1);
+            assertTrue(greenMail.waitForIncomingEmail(1));
+            GreenMailUtil.purgeEmailFromAllMailboxes(greenMail);
+            Retriever retriever = new Retriever(greenMail.getImap());
+            Message[] messages = retriever.getMessages("foo@localhost", "pwd");
+            assertEquals(0, messages.length);
         }   finally {
             greenMail.stop();
         }

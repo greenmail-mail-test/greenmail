@@ -14,6 +14,7 @@ import com.icegreen.greenmail.store.InMemoryStore;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.user.UserManager;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import com.sun.mail.pop3.POP3Store;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -430,15 +431,12 @@ public class GreenMailUtil {
         }
     }
 
-
-    public static void removeAllMessagesInPop3Mailbox(final GreenMail greenmail) {
-        UserManager manager = greenmail.getManagers().getUserManager();
-        Pop3State pop3State = new Pop3State(manager);
-        MailFolder folder = pop3State.getFolder();
-        folder.deleteAllMessages();
-    }
-
-    public static void removeAllMessagesInImapMailbox(final GreenMail greenMail) throws FolderException {
+    /**
+     * Helper method designed to remove/purge all emails from either POP3 or IMAP mailboxes.
+     * @param greenMail
+     * @throws FolderException
+     */
+    public static void purgeEmailFromAllMailboxes(final GreenMail greenMail) throws FolderException {
         Managers managers = greenMail.getManagers();
         ImapHostManager imaphost = managers.getImapHostManager();
         InMemoryStore store = (InMemoryStore) imaphost.getStore();
