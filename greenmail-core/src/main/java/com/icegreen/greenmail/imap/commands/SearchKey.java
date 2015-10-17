@@ -71,7 +71,7 @@ package com.icegreen.greenmail.imap.commands;
  * <p/>
  * TO <string> Messages that contain the specified string in the envelope structure's TO field.
  * <p/>
- * TODO: UID <sequence set> Messages with unique identifiers corresponding to the specified unique identifier set. Sequence set ranges are permitted.
+ * UID <sequence set> Messages with unique identifiers corresponding to the specified unique identifier set. Sequence set ranges are permitted.
  * <p/>
  * UNANSWERED Messages that do not have the \Answered flag set.
  * <p/>
@@ -106,6 +106,7 @@ public enum SearchKey {
     RECENT(),
     SEEN(),
     TO(1),
+    UID(1),
     UNANSWERED(),
     UNDELETED(),
     UNDRAFT(),
@@ -123,6 +124,7 @@ public enum SearchKey {
     SearchKey(int pMinArgs) {
         minArgs = pMinArgs;
     }
+
     SearchKey(boolean pOperator) {
         operator = pOperator;
     }

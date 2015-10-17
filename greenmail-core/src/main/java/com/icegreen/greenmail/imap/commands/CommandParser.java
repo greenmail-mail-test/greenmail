@@ -357,45 +357,22 @@ public class CommandParser {
 
         int commaPos = nextWord.indexOf(',');
         if (commaPos == -1) {
-            return new IdRange[]{parseRange(nextWord)};
+            return new IdRange[]{IdRange.parseRange(nextWord)};
         }
 
         List<IdRange> rangeList = new ArrayList<IdRange>();
         int pos = 0;
         while (commaPos != -1) {
             String range = nextWord.substring(pos, commaPos);
-            IdRange set = parseRange(range);
+            IdRange set = IdRange.parseRange(range);
             rangeList.add(set);
 
             pos = commaPos + 1;
             commaPos = nextWord.indexOf(',', pos);
         }
         String range = nextWord.substring(pos);
-        rangeList.add(parseRange(range));
+        rangeList.add(IdRange.parseRange(range));
         return rangeList.toArray(new IdRange[rangeList.size()]);
-    }
-
-    private IdRange parseRange(String range) throws ProtocolException {
-        int pos = range.indexOf(':');
-        try {
-            if (pos == -1) {
-                long value = parseLong(range);
-                return new IdRange(value);
-            } else {
-                long lowVal = parseLong(range.substring(0, pos));
-                long highVal = parseLong(range.substring(pos + 1));
-                return new IdRange(lowVal, highVal);
-            }
-        } catch (NumberFormatException e) {
-            throw new ProtocolException("Invalid message set.");
-        }
-    }
-
-    private long parseLong(String value) {
-        if (value.length() == 1 && value.charAt(0) == '*') {
-            return Long.MAX_VALUE;
-        }
-        return Long.parseLong(value);
     }
 
     /**
