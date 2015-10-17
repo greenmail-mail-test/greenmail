@@ -5,6 +5,7 @@ import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.PropertiesBasedServerSetupBuilder;
 import com.icegreen.greenmail.util.ServerSetup;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.xml.DOMConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +60,7 @@ public class GreenMailStandaloneRunner {
                 {"Note: domain must be DNS resolvable!"},
         };
         for (String[] opt : options) {
-            if(opt.length==1) {
+            if (opt.length == 1) {
                 out.println(String.format("%1$44s %2$s", " ", opt[0]));
             } else {
                 out.println(String.format("%1$-42s : %2$s", opt));
@@ -83,7 +84,13 @@ public class GreenMailStandaloneRunner {
         // provided logging configuration
         String log4jConfig = System.getProperty("log4j.configuration");
         if (null == log4jConfig) {
-            PropertyConfigurator.configure(GreenMailStandaloneRunner.class.getResource("/log4j.xml"));
+            DOMConfigurator.configure(GreenMailStandaloneRunner.class.getResource("/log4j.xml"));
+        } else {
+            if (log4jConfig.toLowerCase().endsWith(".xml")) {
+                DOMConfigurator.configure(log4jConfig);
+            } else {
+                PropertyConfigurator.configure(log4jConfig);
+            }
         }
 
         new GreenMailStandaloneRunner().doRun(System.getProperties());
