@@ -43,7 +43,7 @@ public class UserBean {
         return "UserBean{" +
                 "email='" + email + '\'' +
                 ", login='" + login + '\'' +
-                ", password='" + password + '\'' +
+                ", password='" + password + '\'' + // NOSONAR
                 '}';
     }
 

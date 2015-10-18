@@ -6,6 +6,7 @@
  */
 package com.icegreen.greenmail.imap.commands;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -13,7 +14,7 @@ import java.util.StringTokenizer;
 /**
  * Represents a range of UID values.
  */
-public class IdRange {
+public class IdRange implements Serializable {
 
     private long lowVal;
     private long highVal;

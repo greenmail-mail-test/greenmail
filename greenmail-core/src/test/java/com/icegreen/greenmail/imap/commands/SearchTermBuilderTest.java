@@ -28,7 +28,6 @@ public class SearchTermBuilderTest {
                 new Data("4:*", new long[]{5L, 10L}, new long[]{3L})
         };
         for (Data d : data) {
-            System.err.println("uidseq: " + d.uidSeq);
             List<IdRange> uidSet = IdRange.parseRangeSequence(d.uidSeq);
             SearchTermBuilder.UidSearchTerm term = new SearchTermBuilder.UidSearchTerm(uidSet);
             for (long uidMatch : d.uidMatching) {
