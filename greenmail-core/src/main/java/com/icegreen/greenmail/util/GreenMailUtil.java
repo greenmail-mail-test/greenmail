@@ -430,19 +430,4 @@ public class GreenMailUtil {
                     + quotaRoot + " for user " + user, ex);
         }
     }
-
-    /**
-     * Helper method designed to remove/purge all emails from either POP3 or IMAP mailboxes.
-     * @param greenMail
-     * @throws FolderException
-     */
-    public static void purgeEmailFromAllMailboxes(final GreenMail greenMail) throws FolderException {
-        Managers managers = greenMail.getManagers();
-        ImapHostManager imaphost = managers.getImapHostManager();
-        InMemoryStore store = (InMemoryStore) imaphost.getStore();
-        Collection<MailFolder> mailboxes = store.listMailboxes("*");
-        for (MailFolder folder : mailboxes) {
-            folder.deleteAllMessages();
-        }
-    }
 }

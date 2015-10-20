@@ -104,44 +104,6 @@ public class GreenMailUtilTest {
         }
     }
 
-    @Test
-    public void testRemoveAllMessagesInPop3Mailbox() throws FolderException {
-        final GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_POP3);
-        try{
-            greenMail.setUser("foo@localhost", "pwd");
-            greenMail.start();
-            GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost",
-                    "Test subject", "Test message", ServerSetupTest.SMTP);
-            greenMail.waitForIncomingEmail(1);
-            GreenMailUtil.purgeEmailFromAllMailboxes(greenMail);
-            Retriever retriever = new Retriever(greenMail.getPop3());
-            Message[] messages = retriever.getMessages("foo@localhost","pwd");
-            assertEquals(0,messages.length);
-        }   finally {
-            greenMail.stop();
-        }
-
-    }
-
-    @Test
-    public void testremoveAllMessagesInImapMailbox() throws FolderException {
-        GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
-        try{
-            greenMail.setUser("foo@localhost", "pwd");
-            greenMail.start();
-            GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost",
-                    "Test subject", "Test message", ServerSetupTest.SMTP);
-            assertTrue(greenMail.waitForIncomingEmail(1));
-            GreenMailUtil.purgeEmailFromAllMailboxes(greenMail);
-            Retriever retriever = new Retriever(greenMail.getImap());
-            Message[] messages = retriever.getMessages("foo@localhost", "pwd");
-            assertEquals(0, messages.length);
-        }   finally {
-            greenMail.stop();
-        }
-
-    }
-
     final static String SAMPLE_EMAIL = "From - Thu Jan 19 00:30:34 2006\r\n"
             + "X-Account-Key: account245\r\n"
             + "X-UIDL: 11332317636080.2607.mail5,S=833\r\n"

@@ -67,7 +67,7 @@ public class GreenMailRule extends GreenMailProxy implements MethodRule, TestRul
     }
 
     @Override
-    protected GreenMail getGreenMail() {
+    public GreenMail getGreenMail() {
         return greenMail;
     }
 }
