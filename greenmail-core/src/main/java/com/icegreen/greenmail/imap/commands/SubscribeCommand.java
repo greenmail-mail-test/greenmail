@@ -20,11 +20,12 @@ import com.icegreen.greenmail.store.FolderException;
  */
 class SubscribeCommand extends AuthenticatedStateCommand {
     public static final String NAME = "SUBSCRIBE";
-    public static final String ARGS = "<mailbox>";
 
-    /**
-     * @see CommandTemplate#doProcess
-     */
+    SubscribeCommand() {
+        super(NAME, "<mailbox>");
+    }
+
+    @Override
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session)
@@ -35,19 +36,5 @@ class SubscribeCommand extends AuthenticatedStateCommand {
         session.getHost().subscribe(session.getUser(), mailboxName);
         session.unsolicitedResponses(response);
         response.commandComplete(this);
-    }
-
-    /**
-     * @see ImapCommand#getName
-     */
-    public String getName() {
-        return NAME;
-    }
-
-    /**
-     * @see CommandTemplate#getArgSyntax
-     */
-    public String getArgSyntax() {
-        return ARGS;
     }
 }

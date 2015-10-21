@@ -21,11 +21,15 @@ import com.icegreen.greenmail.store.MailFolder;
  */
 class ExpungeCommand extends SelectedStateCommand {
     public static final String NAME = "EXPUNGE";
-    public static final String ARGS = null;
+
+    ExpungeCommand() {
+        super(NAME, null);
+    }
 
     /**
      * @see CommandTemplate#doProcess
      */
+    @Override
     protected void doProcess(ImapRequestLineReader request,
                              final ImapResponse response,
                              ImapSession session)
@@ -41,20 +45,6 @@ class ExpungeCommand extends SelectedStateCommand {
 
         session.unsolicitedResponses(response);
         response.commandComplete(this);
-    }
-
-    /**
-     * @see ImapCommand#getName
-     */
-    public String getName() {
-        return NAME;
-    }
-
-    /**
-     * @see CommandTemplate#getArgSyntax
-     */
-    public String getArgSyntax() {
-        return ARGS;
     }
 }
 

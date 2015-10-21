@@ -22,9 +22,14 @@ class LoginCommand extends NonAuthenticatedStateCommand {
     public static final String NAME = "LOGIN";
     public static final String ARGS = "<userid> <password>";
 
+    LoginCommand() {
+        super(NAME, ARGS);
+    }
+
     /**
      * @see CommandTemplate#doProcess
      */
+    @Override
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session)
@@ -41,20 +46,6 @@ class LoginCommand extends NonAuthenticatedStateCommand {
         } else {
             response.commandFailed(this, "Invalid login/password for user id "+userid);
         }
-    }
-
-    /**
-     * @see ImapCommand#getName
-     */
-    public String getName() {
-        return NAME;
-    }
-
-    /**
-     * @see CommandTemplate#getArgSyntax
-     */
-    public String getArgSyntax() {
-        return ARGS;
     }
 }
 

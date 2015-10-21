@@ -10,7 +10,7 @@ import com.icegreen.greenmail.imap.ImapConstants;
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.store.MessageFlags;
-import com.sun.mail.imap.protocol.BASE64MailboxDecoder;
+import com.sun.mail.imap.protocol.BASE64MailboxDecoder; // NOSONAR
 
 import javax.mail.Flags;
 import java.text.ParseException;
@@ -357,45 +357,22 @@ public class CommandParser {
 
         int commaPos = nextWord.indexOf(',');
         if (commaPos == -1) {
-            return new IdRange[]{parseRange(nextWord)};
+            return new IdRange[]{IdRange.parseRange(nextWord)};
         }
 
         List<IdRange> rangeList = new ArrayList<IdRange>();
         int pos = 0;
         while (commaPos != -1) {
             String range = nextWord.substring(pos, commaPos);
-            IdRange set = parseRange(range);
+            IdRange set = IdRange.parseRange(range);
             rangeList.add(set);
 
             pos = commaPos + 1;
             commaPos = nextWord.indexOf(',', pos);
         }
         String range = nextWord.substring(pos);
-        rangeList.add(parseRange(range));
+        rangeList.add(IdRange.parseRange(range));
         return rangeList.toArray(new IdRange[rangeList.size()]);
-    }
-
-    private IdRange parseRange(String range) throws ProtocolException {
-        int pos = range.indexOf(':');
-        try {
-            if (pos == -1) {
-                long value = parseLong(range);
-                return new IdRange(value);
-            } else {
-                long lowVal = parseLong(range.substring(0, pos));
-                long highVal = parseLong(range.substring(pos + 1));
-                return new IdRange(lowVal, highVal);
-            }
-        } catch (NumberFormatException e) {
-            throw new ProtocolException("Invalid message set.");
-        }
-    }
-
-    private long parseLong(String value) {
-        if (value.length() == 1 && value.charAt(0) == '*') {
-            return Long.MAX_VALUE;
-        }
-        return Long.parseLong(value);
     }
 
     /**
@@ -412,12 +389,14 @@ public class CommandParser {
     }
 
     protected static class NoopCharValidator implements CharacterValidator {
+        @Override
         public boolean isValid(char chr) {
             return true;
         }
     }
 
     protected class ATOM_CHARValidator implements CharacterValidator {
+        @Override
         public boolean isValid(char chr) {
             return isCHAR(chr) && !isAtomSpecial(chr) &&
                     !isListWildcard(chr) && !isQuotedSpecial(chr);
@@ -433,6 +412,7 @@ public class CommandParser {
     }
 
     protected static class DigitCharValidator implements CharacterValidator {
+        @Override
         public boolean isValid(char chr) {
             return (chr >= '0' && chr <= '9') ||
                     chr == '*';
@@ -440,12 +420,14 @@ public class CommandParser {
     }
 
     private class TagCharValidator extends ATOM_CHARValidator {
+        @Override
         public boolean isValid(char chr) {
             return chr != '+' && super.isValid(chr);
         }
     }
 
     private static class MessageSetCharValidator implements CharacterValidator {
+        @Override
         public boolean isValid(char chr) {
             return isDigit(chr) ||
                     chr == ':' ||

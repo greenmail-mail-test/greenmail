@@ -19,9 +19,14 @@ class CreateCommand extends AuthenticatedStateCommand {
     public static final String NAME = "CREATE";
     public static final String ARGS = "<mailbox>";
 
+    CreateCommand() {
+        super(NAME, ARGS);
+    }
+
     /**
      * @see CommandTemplate#doProcess
      */
+    @Override
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session)
@@ -33,21 +38,6 @@ class CreateCommand extends AuthenticatedStateCommand {
         session.unsolicitedResponses(response);
         response.commandComplete(this);
     }
-
-    /**
-     * @see ImapCommand#getName
-     */
-    public String getName() {
-        return NAME;
-    }
-
-    /**
-     * @see CommandTemplate#getArgSyntax
-     */
-    public String getArgSyntax() {
-        return ARGS;
-    }
-
 }
 
 /*

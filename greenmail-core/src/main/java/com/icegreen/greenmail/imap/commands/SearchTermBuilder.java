@@ -1,13 +1,17 @@
 package com.icegreen.greenmail.imap.commands;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.icegreen.greenmail.store.StoredMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.mail.Flags;
 import javax.mail.Message;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.search.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Builder for search terms.
@@ -70,6 +74,9 @@ public abstract class SearchTermBuilder {
                 break;
             case TO:
                 builder = createRecipientSearchTermBuilder(Message.RecipientType.TO);
+                break;
+            case UID:
+                builder = createUidTermBuilder();
                 break;
             case UNANSWERED:
                 builder = createSearchTermBuilder(createFlagSearchTerm("ANSWERED", false));
@@ -196,27 +203,37 @@ public abstract class SearchTermBuilder {
         return new FlagTerm(flags, pValue);
     }
 
+    private static SearchTermBuilder createUidTermBuilder() {
+        return new SearchTermBuilder() {
+            @Override
+            public SearchTerm build() {
+                final List<IdRange> uidSetList = IdRange.parseRangeSequence(getParameter(0));
+                return new UidSearchTerm(uidSetList);
+            }
+        };
+    }
+
     private static javax.mail.Flags.Flag toFlag(String pFlag) {
         if (pFlag == null || pFlag.trim().length() < 1) {
             throw new IllegalArgumentException("Can not convert empty string to mail flag");
         }
         String flag = pFlag.trim().toUpperCase();
-        if (flag.equals("ANSWERED")) {
+        if ("ANSWERED".equals(flag)) {
             return javax.mail.Flags.Flag.ANSWERED;
         }
-        if (flag.equals("DELETED")) {
+        if ("DELETED".equals(flag)) {
             return javax.mail.Flags.Flag.DELETED;
         }
-        if (flag.equals("DRAFT")) {
+        if ("DRAFT".equals(flag)) {
             return javax.mail.Flags.Flag.DRAFT;
         }
-        if (flag.equals("FLAGGED")) {
+        if ("FLAGGED".equals(flag)) {
             return javax.mail.Flags.Flag.FLAGGED;
         }
-        if (flag.equals("RECENT")) {
+        if ("RECENT".equals(flag)) {
             return javax.mail.Flags.Flag.RECENT;
         }
-        if (flag.equals("SEEN")) {
+        if ("SEEN".equals(flag)) {
             return javax.mail.Flags.Flag.SEEN;
         }
         return null;
@@ -237,6 +254,37 @@ public abstract class SearchTermBuilder {
         @Override
         public boolean match(Message msg) {
             return true;
+        }
+    }
+
+    // Not very efficient due to underlying JavaMail based impl.
+    // The term compares each mail if matching.
+    public static class UidSearchTerm extends SearchTerm {
+        private final List<IdRange> uidSetList;
+
+        public UidSearchTerm(List<IdRange> uidSetList) {
+            this.uidSetList = uidSetList;
+        }
+
+        @Override
+        public boolean match(Message msg) {
+            if (msg instanceof StoredMessage.UidAwareMimeMessage) {
+                long uid = ((StoredMessage.UidAwareMimeMessage) msg).getUid();
+                return match(uid);
+            } else {
+                final Logger log = LoggerFactory.getLogger(UidSearchTerm.class);
+                log.warn("No uid support for message " + msg + ", failing to match.");
+                return false;
+            }
+        }
+
+        public boolean match(long uid) {
+            for (IdRange uidSet : uidSetList) {
+                if (uidSet.includes(uid)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

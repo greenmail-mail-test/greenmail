@@ -15,10 +15,16 @@ import com.icegreen.greenmail.imap.ImapSessionState;
  * @version $Revision: 109034 $
  */
 abstract class SelectedStateCommand extends CommandTemplate {
+
+    SelectedStateCommand(String name, String argSyntax) {
+        super(name, argSyntax);
+    }
+
     /**
      * Subclasses of this command are only valid in the
      * {@link ImapSessionState#SELECTED} state.
      */
+    @Override
     public boolean validForState(ImapSessionState state) {
         return state == ImapSessionState.SELECTED;
     }

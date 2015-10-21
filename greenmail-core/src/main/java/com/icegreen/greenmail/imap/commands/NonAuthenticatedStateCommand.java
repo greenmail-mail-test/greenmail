@@ -16,9 +16,14 @@ import com.icegreen.greenmail.imap.ImapSessionState;
  */
 abstract class NonAuthenticatedStateCommand extends CommandTemplate {
 
+    NonAuthenticatedStateCommand(String name, String argSyntax) {
+        super(name, argSyntax);
+    }
+
     /**
      * Ensure that state is {@link ImapSessionState#NON_AUTHENTICATED}.
      */
+    @Override
     public boolean validForState(ImapSessionState state) {
         return state == ImapSessionState.NON_AUTHENTICATED;
     }

@@ -49,9 +49,9 @@ public class MailCommand
                     state.getMessage().setReturnPath(fromAddr);
                     conn.send("250 OK");
                 } else {
-                	state.clearMessage();
-                	state.getMessage();
-                	conn.send("250 OK");
+                    state.clearMessage();
+                    state.getMessage();
+                    conn.send("250 OK");
                 }
 
             } else {

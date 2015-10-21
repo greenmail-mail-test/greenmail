@@ -15,6 +15,11 @@ import com.icegreen.greenmail.imap.ImapSessionState;
  * @version $Revision: 109034 $
  */
 abstract class AuthenticatedStateCommand extends CommandTemplate {
+
+    AuthenticatedStateCommand(String name, String argSyntax) {
+        super(name, argSyntax);
+    }
+
     /**
      * Check that the state is {@link ImapSessionState#AUTHENTICATED } or
      * {@link ImapSessionState#SELECTED}

@@ -20,9 +20,14 @@ class CopyCommand extends SelectedStateCommand implements UidEnabledCommand {
     public static final String NAME = "COPY";
     public static final String ARGS = "<message-set> <mailbox>";
 
+    CopyCommand() {
+        super(NAME, ARGS);
+    }
+
     /**
      * @see CommandTemplate#doProcess
      */
+    @Override
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session)
@@ -30,6 +35,7 @@ class CopyCommand extends SelectedStateCommand implements UidEnabledCommand {
         doProcess(request, response, session, false);
     }
 
+    @Override
     public void doProcess(ImapRequestLineReader request,
                           ImapResponse response,
                           ImapSession session,
@@ -53,8 +59,7 @@ class CopyCommand extends SelectedStateCommand implements UidEnabledCommand {
 //        }
 //        currentMailbox.copyMessages(toMailbox, idSet);
         long[] uids = currentMailbox.getMessageUids();
-        for (int i = 0; i < uids.length; i++) {
-            long uid = uids[i];
+        for (long uid : uids) {
             boolean inSet;
             if (useUids) {
                 inSet = includes(idSet, uid);
@@ -70,19 +75,5 @@ class CopyCommand extends SelectedStateCommand implements UidEnabledCommand {
 
         session.unsolicitedResponses(response);
         response.commandComplete(this);
-    }
-
-    /**
-     * @see ImapCommand#getName
-     */
-    public String getName() {
-        return NAME;
-    }
-
-    /**
-     * @see CommandTemplate#getArgSyntax
-     */
-    public String getArgSyntax() {
-        return ARGS;
     }
 }

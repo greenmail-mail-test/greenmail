@@ -23,12 +23,20 @@ abstract class CommandTemplate
         implements ImapCommand, ImapConstants {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected CommandParser parser = new CommandParser();
+    private String name;
+    private String argSyntax;
+
+    CommandTemplate(String name, String argSyntax) {
+        this.name = name;
+        this.argSyntax = argSyntax;
+    }
 
     /**
      * By default, valid in any state (unless overridden by subclass.
      *
      * @see com.icegreen.greenmail.imap.commands.ImapCommand#validForState
      */
+    @Override
     public boolean validForState(ImapSessionState state) {
         return true;
     }
@@ -41,6 +49,7 @@ abstract class CommandTemplate
      *
      * @see ImapCommand#process
      */
+    @Override
     public void process(ImapRequestLineReader request,
                         ImapResponse response,
                         ImapSession session) {
@@ -104,7 +113,9 @@ abstract class CommandTemplate
      * @return The syntax for the command arguments, or <code>null</code> for
      *         commands without arguments.
      */
-    protected abstract String getArgSyntax();
+    protected final String getArgSyntax() {
+        return argSyntax;
+    }
 
     protected MailFolder getMailbox(String mailboxName,
                                     ImapSession session,
@@ -115,5 +126,10 @@ abstract class CommandTemplate
 
     public CommandParser getParser() {
         return parser;
+    }
+
+    @Override
+    public final String getName() {
+        return name;
     }
 }

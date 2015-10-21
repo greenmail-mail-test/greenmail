@@ -1,6 +1,7 @@
 <?xml version='1.0'?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <name>== GreenMail ==</name>
   <description>GreenMail - Email Test Servers</description>
@@ -57,6 +58,7 @@
 
   <modules>
     <module>greenmail-core</module>
+    <module>greenmail-standalone</module>
     <module>greenmail-webapp</module>
     <module>greenmail-jboss-service</module>
     <module>greenmail-spring</module>
@@ -238,6 +240,11 @@
           <artifactId>maven-resources-plugin</artifactId>
           <version>2.7</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>2.4.1</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -250,7 +257,8 @@
     <spring.version>4.1.7.RELEASE</spring.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <argLine>-Xmx512m -enableassertions</argLine> <!-- Allow JaCoCo agent modifications for Surefire -->
+    <!-- Allow JaCoCo agent modifications for Surefire -->
+    <argLine>-Xmx512m -enableassertions</argLine>
   </properties>
 
   <dependencyManagement>
@@ -349,7 +357,7 @@
       <dependency>
         <groupId>org.easymock</groupId>
         <artifactId>easymock</artifactId>
-        <version>3.3.1</version>
+        <version>3.4</version>
         <scope>test</scope>
       </dependency>
       <dependency>

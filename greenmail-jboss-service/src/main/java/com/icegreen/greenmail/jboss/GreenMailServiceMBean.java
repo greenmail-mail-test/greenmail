@@ -18,11 +18,11 @@ public interface GreenMailServiceMBean extends ServiceMBean {
     void setUsers(final String[] theUsers);
 
     /**
-     * Get the list of configured users.
+     * Gets the list of configured users.
      *
      * @return Value for property 'users'.
      */
-    public String[] getUsers();
+    String[] getUsers();
 
     /**
      * Sets the hostname for the mail server.
@@ -153,10 +153,10 @@ public interface GreenMailServiceMBean extends ServiceMBean {
      * @param theSubject the 'SUBJECT' field.
      * @param theContent the content.
      */
-    public void sendMail(final String theTo,
-                         final String theFrom,
-                         final String theSubject,
-                         final String theContent);
+    void sendMail(final String theTo,
+                  final String theFrom,
+                  final String theSubject,
+                  final String theContent);
 
     /**
      * Lists all mails for the user HTML formated.

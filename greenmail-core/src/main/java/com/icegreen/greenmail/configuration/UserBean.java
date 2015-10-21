@@ -37,4 +37,34 @@ public class UserBean {
     public String getPassword() {
         return this.password;
     }
+
+    @Override
+    public String toString() {
+        return "UserBean{" +
+                "email='" + email + '\'' +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' + // NOSONAR
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) { // nosonar
+        if (this == o) return true;
+        if (!(o instanceof UserBean)) return false;
+
+        UserBean userBean = (UserBean) o;
+
+        if (email != null ? !email.equals(userBean.email) : userBean.email != null) return false;
+        if (login != null ? !login.equals(userBean.login) : userBean.login != null) return false;
+        return !(password != null ? !password.equals(userBean.password) : userBean.password != null);
+
+    }
+
+    @Override
+    public int hashCode() { // nosonar
+        int result = email != null ? email.hashCode() : 0;
+        result = 31 * result + (login != null ? login.hashCode() : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        return result;
+    }
 }

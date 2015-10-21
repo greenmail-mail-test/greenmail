@@ -25,12 +25,30 @@ public class StoredMessage {
     private long uid;
     private SimpleMessageAttributes attributes;
 
+    /**
+     * Wraps a mime message and provides support for uid.
+     * Required for searching.
+     *
+     * @see com.icegreen.greenmail.imap.commands.SearchTermBuilder.UidSearchTerm
+     */
+    public static class UidAwareMimeMessage extends MimeMessage {
+        private long uid;
+        public UidAwareMimeMessage(MimeMessage source, long uid) throws MessagingException {
+            super(source);
+            this.uid = uid;
+        }
+
+        public long getUid() {
+            return uid;
+        }
+    }
+
     StoredMessage(MimeMessage mimeMessage,
                   Date receivedDate, long uid) {
-        this.mimeMessage = mimeMessage;
         this.receivedDate = receivedDate;
         this.uid = uid;
         try {
+            this.mimeMessage = new UidAwareMimeMessage(mimeMessage, uid);
             this.attributes = new SimpleMessageAttributes(mimeMessage, receivedDate);
         } catch (MessagingException e) {
             throw new IllegalStateException("Could not parse mime message " + mimeMessage + " with uid " + uid, e);

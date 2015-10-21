@@ -12,8 +12,8 @@ import com.icegreen.greenmail.imap.ImapSession;
 import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
-import com.sun.mail.imap.protocol.BASE64MailboxDecoder;
-import com.sun.mail.imap.protocol.BASE64MailboxEncoder;
+import com.sun.mail.imap.protocol.BASE64MailboxDecoder; // NOSONAR
+import com.sun.mail.imap.protocol.BASE64MailboxEncoder; // NOSONAR
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,9 +30,18 @@ class ListCommand extends AuthenticatedStateCommand {
 
     private ListCommandParser parser = new ListCommandParser();
 
+    ListCommand() {
+        super(NAME, ARGS);
+    }
+
+    ListCommand(String name) {
+        super(name, null);
+    }
+
     /**
      * @see CommandTemplate#doProcess
      */
+    @Override
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session)
@@ -154,20 +163,6 @@ class ListCommand extends AuthenticatedStateCommand {
         return buffer.toString();
     }
 
-    /**
-     * @see ImapCommand#getName
-     */
-    public String getName() {
-        return NAME;
-    }
-
-    /**
-     * @see CommandTemplate#getArgSyntax
-     */
-    public String getArgSyntax() {
-        return ARGS;
-    }
-
     private static class ListCommandParser extends CommandParser {
         /**
          * Reads an argument of type "list_mailbox" from the request, which is
@@ -193,6 +188,7 @@ class ListCommand extends AuthenticatedStateCommand {
         }
 
         private class ListCharValidator extends ATOM_CHARValidator {
+            @Override
             public boolean isValid(char chr) {
                 return isListWildcard(chr) || super.isValid(chr);
             }

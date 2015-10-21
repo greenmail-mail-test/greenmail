@@ -487,7 +487,7 @@ public final class JavaEscape {
             throw new IllegalArgumentException("The 'level' argument cannot be null");
         }
 
-        final int textLen = (text == null? 0 : text.length);
+        final int textLen = text == null? 0 : text.length;
 
         if (offset < 0 || offset > textLen) {
             throw new IllegalArgumentException(
@@ -558,7 +558,7 @@ public final class JavaEscape {
             throw new IllegalArgumentException("Argument 'writer' cannot be null");
         }
 
-        final int textLen = (text == null? 0 : text.length);
+        final int textLen = text == null? 0 : text.length;
 
         if (offset < 0 || offset > textLen) {
             throw new IllegalArgumentException(

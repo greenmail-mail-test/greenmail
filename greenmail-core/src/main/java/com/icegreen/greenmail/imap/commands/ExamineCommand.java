@@ -13,7 +13,7 @@ package com.icegreen.greenmail.imap.commands;
 class ExamineCommand extends SelectCommand {
     public static final String NAME = "EXAMINE";
 
-    public String getName() {
-        return NAME;
+    ExamineCommand() {
+        super(NAME);
     }
 }

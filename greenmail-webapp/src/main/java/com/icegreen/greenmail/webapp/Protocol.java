@@ -1,5 +1,7 @@
 package com.icegreen.greenmail.webapp;
 
+import java.util.Arrays;
+
 /**
  * Defines the supported mail protocols and default ports.
  */
@@ -16,13 +18,14 @@ enum Protocol {
     IMAP(143),
     /** Secure IMAP */
     IMAPS(993);
-    /** Private constructor, including default port */
-    private Protocol(final int pPort) {
-        port = pPort;
-    }
 
     /** The default port. */
     int port;
+
+    /** Private constructor, including default port */
+    Protocol(final int pPort) {
+        port = pPort;
+    }
 
     /**
      * Finds the protocol by its default port.
@@ -36,7 +39,7 @@ enum Protocol {
                 return p;
             }
         }
-        throw new IllegalArgumentException("Unknown port "+pPort+", supported ports are "+values());
+        throw new IllegalArgumentException("Unknown port "+pPort+", supported ports are "+ Arrays.toString(values()));
     }
 
     @Override

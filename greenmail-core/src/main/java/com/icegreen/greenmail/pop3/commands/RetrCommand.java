@@ -20,11 +20,13 @@ import java.util.List;
 
 public class RetrCommand
         extends Pop3Command {
+    @Override
     public boolean isValidForState(Pop3State state) {
 
         return state.isAuthenticated();
     }
 
+    @Override
     public void execute(Pop3Connection conn, Pop3State state,
                         String cmd) {
         try {

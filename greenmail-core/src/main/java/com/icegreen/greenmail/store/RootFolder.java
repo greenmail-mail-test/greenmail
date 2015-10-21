@@ -14,6 +14,7 @@ class RootFolder extends HierarchicalFolder {
         super(storedMessageCollectionFactory, null, ImapConstants.USER_NAMESPACE);
     }
 
+    @Override
     public String getFullName() {
         return name;
     }

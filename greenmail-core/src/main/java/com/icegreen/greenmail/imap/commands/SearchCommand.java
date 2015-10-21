@@ -31,9 +31,11 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
     private SearchCommandParser parser = new SearchCommandParser();
 
-    /**
-     * @see CommandTemplate#doProcess
-     */
+    SearchCommand() {
+        super(NAME, ARGS);
+    }
+
+    @Override
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session)
@@ -41,6 +43,7 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
         doProcess(request, response, session, false);
     }
 
+    @Override
     public void doProcess(ImapRequestLineReader request,
                           ImapResponse response,
                           ImapSession session,
@@ -71,21 +74,6 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
         boolean omitExpunged = !useUids;
         session.unsolicitedResponses(response, omitExpunged);
         response.commandComplete(this);
-    }
-
-
-    /**
-     * @see ImapCommand#getName
-     */
-    public String getName() {
-        return NAME;
-    }
-
-    /**
-     * @see CommandTemplate#getArgSyntax
-     */
-    public String getArgSyntax() {
-        return ARGS;
     }
 
     private class SearchCommandParser extends CommandParser {

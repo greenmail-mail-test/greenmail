@@ -34,6 +34,7 @@ public class Pop3Handler implements ProtocolHandler {
         _socket = socket;
     }
 
+    @Override
     public void run() {
         try {
             _conn = new Pop3Connection(this, _socket);
@@ -95,6 +96,7 @@ public class Pop3Handler implements ProtocolHandler {
         command.execute(_conn, _state, _currentLine);
     }
 
+    @Override
     public void close() {
          _quitting = true;
         try {

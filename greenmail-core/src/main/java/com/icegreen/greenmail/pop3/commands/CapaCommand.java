@@ -27,10 +27,12 @@ import com.icegreen.greenmail.pop3.Pop3State;
  *   S: .
  */
 public class CapaCommand extends Pop3Command {
+    @Override
     public boolean isValidForState(Pop3State state) {
         return true;
     }
 
+    @Override
     public void execute(Pop3Connection conn, Pop3State state, String cmd) {
         // We don't support any additional capabilities
         conn.println("+OK");

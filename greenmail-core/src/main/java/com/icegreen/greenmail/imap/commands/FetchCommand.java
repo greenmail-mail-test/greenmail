@@ -22,7 +22,9 @@ import java.util.*;
 
 
 /**
- * Handles processeing for the FETCH imap command.
+ * Handles processing for the FETCH imap command.
+ * <p/>
+ * https://tools.ietf.org/html/rfc3501#section-6.4.5
  *
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
@@ -33,9 +35,11 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
     private FetchCommandParser parser = new FetchCommandParser();
 
-    /**
-     * @see CommandTemplate#doProcess
-     */
+    FetchCommand() {
+        super(NAME, ARGS);
+    }
+
+    @Override
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session)
@@ -43,6 +47,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         doProcess(request, response, session, false);
     }
 
+    @Override
     public void doProcess(ImapRequestLineReader request,
                           ImapResponse response,
                           ImapSession session,
@@ -207,34 +212,43 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             bytes = doPartial(partial, bytes, response);
             addLiteral(bytes, response);
         } else if ("TEXT".equalsIgnoreCase(sectionSpecifier)) {
-            // TODO - need to use an InputStream from the response here.
-            // TODO - this is a hack. To get just the body content, I'm using a null
-            // input stream to take the headers. Need to have a way of ignoring headers.
-
-            byte[] bytes = GreenMailUtil.getBodyAsBytes(mimeMessage);
-            bytes = doPartial(partial, bytes, response);
-            addLiteral(bytes, response);
+            handleBodyFetchForText(mimeMessage, partial, response);
         } else {
-            if(log.isDebugEnabled()) {
-                log.debug("Fetching body part for section specifier "+sectionSpecifier);
+            if (log.isDebugEnabled()) {
+                log.debug("Fetching body part for section specifier " + sectionSpecifier +
+                        " and mime message (contentType=" + mimeMessage.getContentType());
             }
-            MimeMultipart mp = (MimeMultipart) mimeMessage.getContent();
-            BodyPart part = null;
-            String[] nestedIdx = sectionSpecifier.split("\\.");
-            for(String idx: nestedIdx) {
-                int partNumber = Integer.parseInt(idx) - 1;
-                if(null==part) {
-                    part = mp.getBodyPart(partNumber);
+            String contentType = mimeMessage.getContentType();
+            if (contentType.startsWith("text/plain") && "1".equals(sectionSpecifier)) {
+                handleBodyFetchForText(mimeMessage, partial, response);
+            } else {
+                MimeMultipart mp = (MimeMultipart) mimeMessage.getContent();
+                BodyPart part = null;
+                String[] nestedIdx = sectionSpecifier.split("\\.");
+                for (String idx : nestedIdx) {
+                    int partNumber = Integer.parseInt(idx) - 1;
+                    if (null == part) {
+                        part = mp.getBodyPart(partNumber);
+                    } else {
+                        // Content must be multipart
+                        part = ((Multipart) part.getContent()).getBodyPart(partNumber);
+                    }
                 }
-                else {
-                    // Content must be multipart
-                    part = ((Multipart)part.getContent()).getBodyPart(partNumber);
-                }
+                byte[] bytes = GreenMailUtil.getBodyAsBytes(part);
+                bytes = doPartial(partial, bytes, response);
+                addLiteral(bytes, response);
             }
-            byte[] bytes = GreenMailUtil.getBodyAsBytes(part);
-            bytes = doPartial(partial, bytes, response);
-            addLiteral(bytes, response);
         }
+    }
+
+    private void handleBodyFetchForText(MimeMessage mimeMessage, String partial, StringBuilder response) {
+        // TODO - need to use an InputStream from the response here.
+        // TODO - this is a hack. To get just the body content, I'm using a null
+        // input stream to take the headers. Need to have a way of ignoring headers.
+
+        byte[] bytes = GreenMailUtil.getBodyAsBytes(mimeMessage);
+        bytes = doPartial(partial, bytes, response);
+        addLiteral(bytes, response);
     }
 
     private byte[] doPartial(String partial, byte[] bytes, StringBuilder response) {
@@ -313,36 +327,29 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         response.append("\r\n");
     }
 
-    /**
-     * @see ImapCommand#getName
-     */
-    public String getName() {
-        return NAME;
-    }
-
-    /**
-     * @see CommandTemplate#getArgSyntax
-     */
-    public String getArgSyntax() {
-        return ARGS;
-    }
-
     private static class FetchCommandParser extends CommandParser {
 
         public FetchRequest fetchRequest(ImapRequestLineReader request)
                 throws ProtocolException {
             FetchRequest fetch = new FetchRequest();
 
-            nextNonSpaceChar(request);
-            consumeChar(request, '(');
-
+            // Parenthesis optional if single 'atom'
             char next = nextNonSpaceChar(request);
-            while (next != ')') {
-                addNextElement(request, fetch);
-                next = nextNonSpaceChar(request);
-            }
+            boolean parenthesis = '(' == next;
+            if (parenthesis) {
+                consumeChar(request, '(');
 
-            consumeChar(request, ')');
+                next = nextNonSpaceChar(request);
+                while (next != ')') {
+                    addNextElement(request, fetch);
+                    next = nextNonSpaceChar(request);
+                }
+
+                consumeChar(request, ')');
+            } else {
+                // Single item
+                addNextElement(request, fetch);
+            }
 
             return fetch;
         }
@@ -412,7 +419,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
                 String parameter = sectionIdentifier.toString();
 
                 StringBuilder partial = null;
-                next = nextCharInLine(command);
+                next = command.nextChar(); // Can be end of line if single option
                 if ('<' == next) {
                     partial = new StringBuilder();
                     consumeChar(command, '<');
@@ -428,10 +435,10 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
                 if ("BODY".equalsIgnoreCase(name)) {
                     fetch.add(new BodyFetchElement("BODY[" + parameter + ']', parameter,
-                                                   null==partial?null:partial.toString()), false);
+                            null == partial ? null : partial.toString()), false);
                 } else if ("BODY.PEEK".equalsIgnoreCase(name)) {
                     fetch.add(new BodyFetchElement("BODY[" + parameter + ']', parameter,
-                                                   null==partial?null:partial.toString()), true);
+                            null == partial ? null : partial.toString()), true);
                 } else {
                     throw new ProtocolException("Invalid fetch attibute: " + name + "[]");
                 }

@@ -14,11 +14,13 @@ import com.icegreen.greenmail.store.MailFolder;
 
 public class QuitCommand
         extends Pop3Command {
+    @Override
     public boolean isValidForState(Pop3State state) {
 
         return true;
     }
 
+    @Override
     public void execute(Pop3Connection conn, Pop3State state,
                         String cmd) {
         try {

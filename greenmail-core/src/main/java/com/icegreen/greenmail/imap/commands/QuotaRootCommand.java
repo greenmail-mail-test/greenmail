@@ -20,6 +20,9 @@ import com.icegreen.greenmail.store.FolderException;
 public class QuotaRootCommand extends QuotaCommand {
     public static final String NAME = "GETQUOTAROOT";
 
+    QuotaRootCommand() {
+        super(NAME);
+    }
     @Override
     protected void doProcess(final ImapRequestLineReader request, final ImapResponse response,
                              final ImapSession session) throws ProtocolException, FolderException, AuthorizationException {
@@ -44,16 +47,6 @@ public class QuotaRootCommand extends QuotaCommand {
             response.untaggedResponse(buf.toString());
         }
         response.commandComplete(this);
-    }
-
-    @Override
-    protected String getArgSyntax() {
-        return "quota-root--arg";
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }
 

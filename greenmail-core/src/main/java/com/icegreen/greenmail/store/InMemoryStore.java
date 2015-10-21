@@ -33,6 +33,7 @@ public class InMemoryStore
         this.rootMailbox = new RootFolder(storedMessageCollectionFactory);
     }
 
+    @Override
     public MailFolder getMailbox(String absoluteMailboxName) {
         StringTokenizer tokens = new StringTokenizer(absoluteMailboxName, HIERARCHY_DELIMITER);
 
@@ -50,10 +51,12 @@ public class InMemoryStore
         return parent;
     }
 
+    @Override
     public MailFolder getMailbox(MailFolder parent, String name) {
         return ((HierarchicalFolder) parent).getChild(name);
     }
 
+    @Override
     public MailFolder createMailbox(MailFolder parent,
                                     String mailboxName,
                                     boolean selectable)
@@ -68,6 +71,7 @@ public class InMemoryStore
         return child;
     }
 
+    @Override
     public void deleteMailbox(MailFolder folder) throws FolderException {
         HierarchicalFolder toDelete = (HierarchicalFolder) folder;
 
@@ -83,6 +87,7 @@ public class InMemoryStore
         parent.getChildren().remove(toDelete);
     }
 
+    @Override
     public void renameMailbox(MailFolder existingFolder, String newName) throws FolderException {
         HierarchicalFolder toRename = (HierarchicalFolder) existingFolder;
         HierarchicalFolder parent = toRename.getParent();
@@ -123,19 +128,19 @@ public class InMemoryStore
         return currentFolder;
     }
 
+    @Override
     public Collection<MailFolder> getChildren(MailFolder parent) {
         Collection<HierarchicalFolder> children = ((HierarchicalFolder) parent).getChildren();
         return Collections.<MailFolder>unmodifiableCollection(children);
     }
 
+    @Override
     public MailFolder setSelectable(MailFolder folder, boolean selectable) {
         ((HierarchicalFolder) folder).setSelectable(selectable);
         return folder;
     }
 
-    /**
-     * @see com.icegreen.greenmail.store.Store#listMailboxes
-     */
+    @Override
     public Collection<MailFolder> listMailboxes(String searchPattern)
             throws FolderException {
         int starIndex = searchPattern.indexOf('*');
@@ -184,6 +189,7 @@ public class InMemoryStore
         return mailboxes;
     }
 
+    @Override
     public Quota[] getQuota(final String root, final String qualifiedRootPrefix) {
         Set<String> rootPaths = new HashSet<String>();
         if (!root.contains(ImapConstants.HIERARCHY_DELIMITER)) {
@@ -237,6 +243,7 @@ public class InMemoryStore
         }
     }
 
+    @Override
     public void setQuota(final Quota quota, String qualifiedRootPrefix) {
         // Validate
         for (Quota.Resource r : quota.resources) {
@@ -265,10 +272,12 @@ public class InMemoryStore
         }
     }
 
+    @Override
     public boolean isQuotaSupported() {
         return quotaSupported;
     }
 
+    @Override
     public void setQuotaSupported(final boolean pQuotaSupported) {
         quotaSupported = pQuotaSupported;
     }

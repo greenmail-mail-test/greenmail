@@ -20,9 +20,14 @@ class DeleteCommand extends AuthenticatedStateCommand {
     public static final String NAME = "DELETE";
     public static final String ARGS = "<mailbox>";
 
+    DeleteCommand() {
+        super(NAME, ARGS);
+    }
+
     /**
      * @see CommandTemplate#doProcess
      */
+    @Override
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session)
@@ -40,20 +45,6 @@ class DeleteCommand extends AuthenticatedStateCommand {
 
         session.unsolicitedResponses(response);
         response.commandComplete(this);
-    }
-
-    /**
-     * @see ImapCommand#getName
-     */
-    public String getName() {
-        return NAME;
-    }
-
-    /**
-     * @see CommandTemplate#getArgSyntax
-     */
-    public String getArgSyntax() {
-        return ARGS;
     }
 }
 

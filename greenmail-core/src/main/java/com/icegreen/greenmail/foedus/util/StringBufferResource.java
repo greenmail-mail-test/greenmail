@@ -15,6 +15,7 @@ public class StringBufferResource
     StringBuilder _contentBuffer;
 
     public StringBufferResource() {
+        // Nothing
     }
 
     public StringBufferResource(String initalValue) {

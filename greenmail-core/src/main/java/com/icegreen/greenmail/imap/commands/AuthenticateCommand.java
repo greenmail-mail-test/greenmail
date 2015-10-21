@@ -21,9 +21,14 @@ class AuthenticateCommand extends NonAuthenticatedStateCommand {
     public static final String NAME = "AUTHENTICATE";
     public static final String ARGS = "<auth_type> *(CRLF base64)";
 
+    AuthenticateCommand() {
+        super(NAME, ARGS);
+    }
+
     /**
      * @see CommandTemplate#doProcess
      */
+    @Override
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session) throws ProtocolException {
@@ -32,20 +37,6 @@ class AuthenticateCommand extends NonAuthenticatedStateCommand {
 
         response.commandFailed(this, "Unsupported authentication mechanism '" +
                 authType + "'");
-    }
-
-    /**
-     * @see ImapCommand#getName
-     */
-    public String getName() {
-        return NAME;
-    }
-
-    /**
-     * @see CommandTemplate#getArgSyntax
-     */
-    public String getArgSyntax() {
-        return ARGS;
     }
 }
 
