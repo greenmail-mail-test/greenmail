@@ -4,17 +4,7 @@
  */
 package com.icegreen.greenmail.util;
 
-import com.icegreen.greenmail.pop3.Pop3Handler;
-import com.icegreen.greenmail.pop3.Pop3State;
-import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.user.GreenMailUser;
-import com.icegreen.greenmail.Managers;
-import com.icegreen.greenmail.imap.ImapHostManager;
-import com.icegreen.greenmail.store.InMemoryStore;
-import com.icegreen.greenmail.store.MailFolder;
-import com.icegreen.greenmail.user.UserManager;
-import com.icegreen.greenmail.util.ServerSetupTest;
-import com.sun.mail.pop3.POP3Store;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +13,6 @@ import javax.activation.DataSource;
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.io.*;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Random;

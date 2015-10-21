@@ -1,6 +1,7 @@
 package com.icegreen.greenmail.junit;
 
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
+import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailProxy;
 import com.icegreen.greenmail.util.ServerSetup;
@@ -67,8 +68,13 @@ public class GreenMailRule extends GreenMailProxy implements MethodRule, TestRul
     }
 
     @Override
-    public GreenMail getGreenMail() {
+    protected GreenMail getGreenMail() {
         return greenMail;
+    }
+
+    @Override
+    public void purgeEmailFromAllMailboxes() throws FolderException{
+        greenMail.purgeEmailFromAllMailboxes();
     }
 }
 
