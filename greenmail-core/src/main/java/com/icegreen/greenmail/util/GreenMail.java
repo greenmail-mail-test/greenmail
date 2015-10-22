@@ -7,11 +7,15 @@ package com.icegreen.greenmail.util;
 import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.configuration.ConfiguredGreenMail;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
+import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.imap.ImapServer;
 import com.icegreen.greenmail.pop3.Pop3Server;
 import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpServer;
+import com.icegreen.greenmail.store.FolderException;
+import com.icegreen.greenmail.store.InMemoryStore;
+import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
@@ -287,6 +291,20 @@ public class GreenMail extends ConfiguredGreenMail {
         // Just overriding to return more specific type
         super.withConfiguration(config);
         return this;
+    }
+
+    /**
+     * Helper method designed to remove/purge all emails from either POP3 or IMAP mailboxes.
+     * @throws FolderException
+     */
+    public void purgeEmailFromAllMailboxes() throws FolderException {
+        Managers managers = this.getManagers();
+        ImapHostManager imaphost = managers.getImapHostManager();
+        InMemoryStore store = (InMemoryStore) imaphost.getStore();
+        Collection<MailFolder> mailboxes = store.listMailboxes("*");
+        for (MailFolder folder : mailboxes) {
+            folder.deleteAllMessages();
+        }
     }
 
     public GreenMailUtil util() {

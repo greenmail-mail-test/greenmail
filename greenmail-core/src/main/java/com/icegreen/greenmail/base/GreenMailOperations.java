@@ -5,6 +5,7 @@ import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.imap.ImapServer;
 import com.icegreen.greenmail.pop3.Pop3Server;
 import com.icegreen.greenmail.smtp.SmtpServer;
+import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.user.GreenMailUser;
 
 import javax.mail.internet.MimeMessage;
@@ -136,4 +137,9 @@ public interface GreenMailOperations {
      * Restart the GreenMail server. Clear all data (send messages, users, ...)
      */
     void reset();
+
+    /**
+     * Remove/purge all data from all mail stores (POP3/IMAP)
+     */
+    void purgeEmailFromAllMailboxes() throws FolderException;
 }
