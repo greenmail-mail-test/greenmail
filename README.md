@@ -42,6 +42,7 @@ Development  [![Build status](https://circleci.com/gh/greenmail-mail-test/greenm
 
   `mvn clean deploy -Prelease-ossrh`
 
+* Check [Sonar][sonar] report
 
 [greenmail_project_site]: http://www.icegreen.com/greenmail
 [greenmail_examples]: http://www.icegreen.com/greenmail/#examples
@@ -56,6 +57,7 @@ Development  [![Build status](https://circleci.com/gh/greenmail-mail-test/greenm
 [maven_repository_release]: http://central.maven.org/maven2/com/icegreen/
 [github_fork]: https://help.github.com/articles/fork-a-repo/
 [github_pull_request]: https://help.github.com/articles/creating-a-pull-request/
+[sonar]: http://nemo.sonarqube.org/dashboard/index?id=com.icegreen%3Agreenmail-parent
 
 Contribution guidelines
 -----------------------
