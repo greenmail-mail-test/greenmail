@@ -62,13 +62,26 @@ Development  [![Build status](https://circleci.com/gh/greenmail-mail-test/greenm
 Contribution guidelines
 -----------------------
 
+We really appreciate your contribution!
+To make it easier for integrating your contribution, have a look at the following guidelines.
+
+### Be concise
+
+Try to keep your changes focused. Please avoid (major) refactorings and avoid re-formatting existing code.
+A good check is looking at the diff of the your pull requrest.
+
 ### Code formatter ###
 Please set your code formatter to use 4 spaces for indentation of Java files (not tabs) and
-to two spaces for xml files (like the pom.xml)
+to two spaces for xml files (like the pom.xml). As a general best practise,
+your contribution should adhere to existing code style.
 
 ### Bill of Materials ###
 We have the pom.xml in the root where we set the versions of all dependencies to keep them consistent
 among subprojects. Please do not add any version tags into the child pom.xml files.
+
+Please also do not introduce new dependencies as we try to keep these to a minimum.
+If you think you require a new dependencies or dependency update,
+discuss this up front with committers.
 
 ### Starting your pull request ###
 The best strategy for opening a [pull request][github_pull_request] after a [fork][github_fork] is to add the this repository ( https://github.com/greenmail-mail-test/greenmail )
