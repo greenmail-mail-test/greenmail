@@ -256,14 +256,27 @@ public class ServerSetup {
                 '}';
     }
 
+    /**
+     * Create a deep copy.
+     *
+     * @return a copy of the server setup configuration.
+     */
     public ServerSetup createCopy() {
-        ServerSetup setup = new ServerSetup(getPort(), getBindAddress(), getProtocol());
+        return createCopy(getBindAddress());
+    }
+
+    /**
+     * Create a deep copy.
+     *
+     * @param bindAddress overwrites bind address when creating deep copy.
+     * @return a copy of the server setup configuration.
+     */
+    public ServerSetup createCopy(String bindAddress) {
+        ServerSetup setup = new ServerSetup(getPort(), bindAddress, getProtocol());
         setup.setServerStartupTimeout(getServerStartupTimeout());
         setup.setConnectionTimeout(getConnectionTimeout());
         setup.setReadTimeout(getReadTimeout());
         setup.setWriteTimeout(getWriteTimeout());
-
-        assert setup.equals(this);
 
         return setup;
     }

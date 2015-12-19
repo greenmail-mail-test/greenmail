@@ -35,6 +35,14 @@ public class PropertiesBasedServerSetupBuilderTest {
         assert setups != null;
         assertArrayEquals(setups, new ServerSetup[]{ServerSetupTest.SMTP});
 
+        // With hostname
+        properties.clear();
+        properties.setProperty("greenmail.setup.test.smtp", "");
+        properties.setProperty("greenmail.hostname", "0.0.0.0");
+        setups = setupBuilder.build(properties);
+        assert setups != null;
+        assertArrayEquals(setups, new ServerSetup[]{ServerSetupTest.SMTP.createCopy("0.0.0.0")});
+
         // Default test setups
         for(ServerSetup setup: ServerSetupTest.ALL) {
             properties.clear();

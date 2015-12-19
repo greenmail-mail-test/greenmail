@@ -1,7 +1,6 @@
 package com.icegreen.greenmail.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -48,76 +47,81 @@ public class PropertiesBasedServerSetupBuilder {
     public ServerSetup[] build(Properties properties) {
         List<ServerSetup> serverSetups = new ArrayList<ServerSetup>();
 
+        String hostname = properties.getProperty("greenmail.hostname", ServerSetup.getLocalHostAddress());
+
         // Default setups
-        addDefaultSetups(properties, serverSetups);
+        addDefaultSetups(hostname, properties, serverSetups);
 
         // Default setups for test
-        addTestSetups(properties, serverSetups);
+        addTestSetups(hostname, properties, serverSetups);
 
         // Default setups
         for (String protocol : ServerSetup.PROTOCOLS) {
-            addSetup(protocol, properties, serverSetups);
+            addSetup(hostname, protocol, properties, serverSetups);
         }
 
         return serverSetups.toArray(new ServerSetup[serverSetups.size()]);
     }
 
-    protected void addSetup(String protocol, Properties properties, List<ServerSetup> serverSetups) {
+    protected void addSetup(String hostname, String protocol, Properties properties, List<ServerSetup> serverSetups) {
         if (properties.containsKey("greenmail." + protocol + ".port")) {
             int port = Integer.parseInt(properties.getProperty("greenmail." + protocol + ".port"));
-            String hostname = properties.getProperty("greenmail." + protocol + ".hostname", ServerSetup.getLocalHostAddress());
-            ServerSetup setup = new ServerSetup(port, hostname, protocol);
+            String setupHostname = properties.getProperty("greenmail." + protocol + ".hostname", hostname);
+            ServerSetup setup = new ServerSetup(port, setupHostname, protocol);
             serverSetups.add(setup);
         }
     }
 
 
-    protected void addTestSetups(Properties properties, List<ServerSetup> serverSetups) {
+    protected void addTestSetups(String hostname, Properties properties, List<ServerSetup> serverSetups) {
         if (properties.containsKey("greenmail.setup.test.all")) {
-            serverSetups.addAll(Arrays.asList(ServerSetupTest.ALL));
+            for(ServerSetup setup : ServerSetupTest.ALL) {
+                serverSetups.add(setup.createCopy(hostname));
+            }
         }
         if (properties.containsKey("greenmail.setup.test.smtp")) {
-            serverSetups.add(ServerSetupTest.SMTP);
+            serverSetups.add(ServerSetupTest.SMTP.createCopy(hostname));
         }
         if (properties.containsKey("greenmail.setup.test.smtps")) {
-            serverSetups.add(ServerSetupTest.SMTPS);
+            serverSetups.add(ServerSetupTest.SMTPS.createCopy(hostname));
         }
         if (properties.containsKey("greenmail.setup.test.pop3")) {
-            serverSetups.add(ServerSetupTest.POP3);
+            serverSetups.add(ServerSetupTest.POP3.createCopy(hostname));
         }
         if (properties.containsKey("greenmail.setup.test.pop3s")) {
-            serverSetups.add(ServerSetupTest.POP3S);
+            serverSetups.add(ServerSetupTest.POP3S.createCopy(hostname));
         }
         if (properties.containsKey("greenmail.setup.test.imap")) {
-            serverSetups.add(ServerSetupTest.IMAP);
+            serverSetups.add(ServerSetupTest.IMAP.createCopy(hostname));
         }
         if (properties.containsKey("greenmail.setup.test.imaps")) {
-            serverSetups.add(ServerSetupTest.IMAPS);
+            serverSetups.add(ServerSetupTest.IMAPS.createCopy(hostname));
         }
     }
 
-    protected void addDefaultSetups(Properties properties, List<ServerSetup> serverSetups) {
+    protected void addDefaultSetups(String hostname, Properties properties, List<ServerSetup> serverSetups) {
         if (properties.containsKey("greenmail.setup.all")) {
-            serverSetups.addAll(Arrays.asList(ServerSetup.ALL));
+            for(ServerSetup setup : ServerSetup.ALL) {
+                serverSetups.add(setup.createCopy(hostname));
+            }
         }
-
         if (properties.containsKey("greenmail.setup.smtp")) {
-            serverSetups.add(ServerSetup.SMTP);
+            serverSetups.add(ServerSetup.SMTP.createCopy(hostname));
         }
         if (properties.containsKey("greenmail.setup.smtps")) {
-            serverSetups.add(ServerSetup.SMTPS);
+            serverSetups.add(ServerSetup.SMTPS.createCopy(hostname));
         }
         if (properties.containsKey("greenmail.setup.pop3")) {
-            serverSetups.add(ServerSetup.POP3);
+            serverSetups.add(ServerSetup.POP3.createCopy(hostname));
         }
         if (properties.containsKey("greenmail.setup.pop3s")) {
-            serverSetups.add(ServerSetup.POP3S);
+            serverSetups.add(ServerSetup.POP3S.createCopy(hostname));
         }
         if (properties.containsKey("greenmail.setup.imap")) {
-            serverSetups.add(ServerSetup.IMAP);
+            serverSetups.add(ServerSetup.IMAP.createCopy(hostname));
         }
         if (properties.containsKey("greenmail.setup.imaps")) {
-            serverSetups.add(ServerSetup.IMAPS);
+            serverSetups.add(ServerSetup.IMAPS.createCopy(hostname));
         }
     }
 }

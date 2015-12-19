@@ -492,6 +492,20 @@ java [OPTIONS] -jar greenmail-standalone.jar
                         </td>
                     </tr>
                     <tr>
+                        <td class="text-nowrap">-Dgreenmail.hostname</td>
+                        <td>Configures the default hostname or ip bind address. If
+                            <div class="alert alert-warning" role="alert">
+                            Note: Hostnames must be DNS resolvable!
+                            </div>
+                            <div class="alert alert-info" role="info">
+                            Note: Default hostname is 127.0.0.1
+                            </div>
+                            <p>
+                            Example: <p>-Dgreenmail.smtp.port=3025 -Dgreenmail.imap.port=3143 -Dgreenmail.hostname=0.0.0.0</p>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
                         <td class="text-nowrap">-Dgreenmail.users=user1[, ..., userN]</td>
                         <td>Configures the user mail boxes including password.
                             <p>The list of users is comma separated.</p>
@@ -529,6 +543,13 @@ java -Dgreenmail.setup.test.smtp -Dgreenmail.setup.test.imap \
                 Starts GreenMail for SMTP (test port 3025), SMTPS (test port 3465), IMAP (test port 3143), IMAPS (test port 3993), POP3 (test port 3110) and POP3S (test port 3995) using localhost/127.0.0.1 :
                 <pre><code class="language-bash"><!-- @formatter:off -->
 java -Dgreenmail.setup.test.all -Dgreenmail.users=test1:pwd1,test2:pwd2@example.com \
+     -jar greenmail-standalone.jar
+                </code></pre><!-- @formatter:on -->
+                <h5>Test setup for SMTP(S)/IMAP(S)/POP3(S), one user and bound to 0.0.0.0</h5>
+                Starts GreenMail for SMTP (test port 3025), SMTPS (test port 3465), IMAP (test port 3143), IMAPS (test port 3993), POP3 (test port 3110) and POP3S (test port 3995) using 0.0.0.0 :
+                <pre><code class="language-bash"><!-- @formatter:off -->
+java -Dgreenmail.setup.test.all -Dgreenmail.users=test1:pwd1 \
+     -Dgreenmail.hostname=0.0.0.0 \
      -jar greenmail-standalone.jar
                 </code></pre><!-- @formatter:on -->
                 <h5>SMTP only</h5>
