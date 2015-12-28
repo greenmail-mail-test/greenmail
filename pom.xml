@@ -270,6 +270,11 @@
       </dependency>
       <dependency>
         <groupId>com.icegreen</groupId>
+        <artifactId>greenmail-standalone</artifactId>
+        <version>1.4.2-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.icegreen</groupId>
         <artifactId>greenmail-webapp</artifactId>
         <version>1.4.2-SNAPSHOT</version>
       </dependency>
