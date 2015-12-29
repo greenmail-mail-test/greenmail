@@ -15,7 +15,7 @@
   <version>1.4.2-SNAPSHOT</version>
 
   <prerequisites>
-    <maven>3.0.5</maven>
+    <maven>3.2.1</maven>
   </prerequisites>
 
   <licenses>
@@ -139,9 +139,7 @@
             <reuseForks>true</reuseForks>
             <!-- cli -->
             <workingDirectory>target</workingDirectory>
-            <configuration>
-              <argLine>-Dfile.encoding=UTF-8</argLine>
-            </configuration>
+            <argLine>-Dfile.encoding=UTF-8</argLine>
           </configuration>
         </plugin>
         <plugin>
