@@ -1,0 +1,121 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <name>== GreenMail Docker :: Standalone ==</name>
+  <description>Docker image running GreenMail Standalone</description>
+
+  <artifactId>greenmail-docker-standalone</artifactId>
+  <version>1.4.2-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <parent>
+    <groupId>com.icegreen</groupId>
+    <artifactId>greenmail-parent</artifactId>
+    <version>1.4.2-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.icegreen</groupId>
+      <artifactId>greenmail-standalone</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.10</version>
+        <configuration>
+          <artifactItems>
+            <artifactItem>
+              <groupId>com.icegreen</groupId>
+              <artifactId>greenmail-standalone</artifactId>
+              <version>${project.version}</version>
+              <type>jar</type>
+              <overWrite>false</overWrite>
+              <destFileName>greenmail-standalone.jar</destFileName>
+            </artifactItem>
+          </artifactItems>
+          <outputDirectory>${project.build.directory}</outputDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.jolokia</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <version>0.13.7</version>
+        <configuration>
+          <autoPull>false</autoPull>
+          <images>
+            <image>
+              <name>greenmail/standalone:${project.version}</name>
+              <build>
+                <assembly>
+                  <dockerFileDir>${basedir}</dockerFileDir>
+                </assembly>
+              </build>
+              <run>
+                <ports>
+                  <port>3025:3025</port>
+                  <port>3110:3110</port>
+                  <port>3143:3143</port>
+                  <port>3465:3465</port>
+                  <port>3993:3993</port>
+                  <port>3995:3995</port>
+                </ports>
+                <wait>
+                  <tcp>
+                    <ports>
+                      <port>3025</port>
+                      <port>3110</port>
+                      <port>3143</port>
+                      <port>3465</port>
+                      <port>3993</port>
+                      <port>3995</port>
+                    </ports>
+                  </tcp>
+                  <time>10000</time>
+                </wait>
+              </run>
+            </image>
+          </images>
+          <verbose>true</verbose>
+        </configuration>
+        <executions>
+          <execution>
+            <id>docker-package</id>
+            <phase>package</phase>
+            <goals>
+              <goal>build</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>docker-deploy</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>push</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Tell surefire to skip test, there is none -->
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

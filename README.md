@@ -22,9 +22,10 @@ Development  [![Build status](https://circleci.com/gh/greenmail-mail-test/greenm
 
 * Build GreenMail from source 
 
-  `mvn clean install`
+  `mvn clean install -Pdocker`
 
   Make sure you got [Maven 3.2.1+][maven_download] or higher.
+  If you want to skip building the docker image, leave out the `-Pdocker` profile option.
 
 * Build the Maven site (and the optional example report)
 
@@ -34,13 +35,13 @@ Development  [![Build status](https://circleci.com/gh/greenmail-mail-test/greenm
 
   For a tagged release and deployment to [Sonatype OpenSource Repository Hosting][ossrh_maven] and later syncing to [Maven Central][maven_repository_release], do
 
-  `mvn clean deploy -Prelease,release-ossrh`
+  `mvn clean deploy -Prelease,release-ossrh,docker`
 
 * Build and deploy a snapshot
 
   For a Maven Snapshot deployment to [Sonatype][maven_repository_snapshot], do
 
-  `mvn clean deploy -Prelease-ossrh`
+  `mvn clean deploy -Prelease-ossrh,docker`
 
 * Check [Sonar][sonar] report
 

@@ -543,5 +543,12 @@
       </reporting>
 
     </profile>
+
+    <profile>
+      <id>docker</id>
+      <modules>
+        <module>greenmail-docker/standalone</module>
+      </modules>
+    </profile>
   </profiles>
 </project>

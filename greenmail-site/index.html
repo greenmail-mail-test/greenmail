@@ -26,7 +26,11 @@
 
 <body data-spy="scroll" data-offset="80">
 
-<a href="https://github.com/greenmail-mail-test/greenmail"><img style="z-index:9999999;position: fixed; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+<a href="https://github.com/greenmail-mail-test/greenmail"><img
+        style="z-index:9999999;position: fixed; top: 0; right: 0; border: 0;"
+        src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67"
+        alt="Fork me on GitHub"
+        data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
 
 <header id="top" role="banner" class="navbar navbar-fixed-top bs-docs-nav">
     <div class="container">
@@ -78,7 +82,13 @@
                 <ul>
                     <li>Supports SMTP, POP3 and IMAP including SSL</li>
                     <li>Prevents accidental email leaking to real mail servers</li>
-                    <li>Provides different deployment models, such as <a href="#deploy_webapp">WAR module</a> or <a href="#deploy_jboss_sar">JBoss GreenMail Service</a></li>
+                    <li>Provides different deployment models, such as a simple <a href="#deploy_standalone">standalone
+                                                                                                            JVM
+                                                                                                            process</a>,
+                        as a <a href="#deploy_webapp">WAR module</a>, as a
+                        <a href="#deploy_jboss_sar">JBoss GreenMail Service</a> or <a href="#deploy_docker_standalone">docker
+                                                                                                                       image</a>
+                    </li>
                     <li>Easily embeddable in JUnit tests for integration testing</li>
                     <li>Lightweight with few dependencies</li>
                 </ul>
@@ -171,8 +181,9 @@ public void testReceive() throws MessagingException {
                             href="http://james.apache.org/">Apache James</a>).
                 </p>
 
-                <p>Check out the possible deployments as <a href="#deploy_webapp">webapp</a> or <a
-                        href="#deploy_jboss_sar">JBoss Service</a> or <a href="#deploy_standalone">standalone</a>.</p>
+                <p>Check out the possible deployments as <a href="#deploy_webapp">webapp</a>, <a
+                        href="#deploy_jboss_sar">JBoss Service</a>, <a href="#deploy_standalone">standalone</a>
+                   or <a href="#deploy_docker_standalone">standalone docker image</a>.</p>
 
                 <h4 id="implementation" class="anchor">Implementation</h4>
 
@@ -181,8 +192,8 @@ public void testReceive() throws MessagingException {
                 <ul>
                     <li>javamail.jar - <a href="https://java.net/projects/javamail/">JavaMail API</a></li>
                     <li>activation.jar - <a href="http://www.oracle.com/technetwork/java/javase/jaf-135115.html">Java
-                                                                                                        Activation
-                                                                                                        Framework</a>,
+                                                                                                                 Activation
+                                                                                                                 Framework</a>,
                         required by JavaMail (provided by JDK since 1.6+)
                     </li>
                     <li>slf4j-api.jar - required for logging via <a href="http://www.slf4j.org/">Simple Logging
@@ -198,13 +209,13 @@ public void testReceive() throws MessagingException {
                     You find the source on <a href="https://github.com/greenmail-mail-test/greenmail">GitHub</a>
                     including build instructions.
                     GreenMail is open source released under <a href="http://www.apache.org/licenses/LICENSE-2.0.txt"
-                        >The Apache 2.0 License</a>.
+                >The Apache 2.0 License</a>.
                 </p>
 
                 <p>
                     GreenMail's protocol source code is based on a cocktail of <a
                         href="http://foedus.sourceforge.net"
-                        >Foedus</a> and <a
+                >Foedus</a> and <a
                         href="http://james.apache.org">James</a>.
                 </p>
 
@@ -270,16 +281,22 @@ public void testReceive() throws MessagingException {
                     <li><a href="http://www.imapwiki.org/ImapRFCList">Collection of IMAP related RFCs</a></li>
                 </ul>
                 <h4 id="thanks" class="anchor">Thanks</h4>
-                <p>Special thanks to all contributors for feedback and <a href="https://github.com/greenmail-mail-test/greenmail/graphs/contributors">patches</a>!</p>
-                <p>Many thanks to <a href="http://www.ej-technologies.com/products/jprofiler/overview.html" title="JProfiler"><img src="http://www.ej-technologies.com/images/banners/jprofiler_small.png" alt="JProfiler logo"/></a>
-                   and <a href="https://www.jetbrains.com/">JetBrains</a> for supporting this project with free OSS licenses!</p>
+                <p>Special thanks to all contributors for feedback and <a
+                        href="https://github.com/greenmail-mail-test/greenmail/graphs/contributors">patches</a>!</p>
+                <p>Many thanks to <a href="http://www.ej-technologies.com/products/jprofiler/overview.html"
+                                     title="JProfiler"><img
+                        src="http://www.ej-technologies.com/images/banners/jprofiler_small.png"
+                        alt="JProfiler logo"/></a>
+                   and <a href="https://www.jetbrains.com/">JetBrains</a> for supporting this project with free OSS
+                   licenses!</p>
             </div>
 
             <div id="examples" class="bs-docs-section anchor">
                 <h1 class="page-header">Examples</h1>
                 <div>The source code of the examples can be found in the test package of GreenMail
-                    (<a href="https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-core/src/test/java/com/icegreen/greenmail/examples">greenmail-core/src/test/java/com/icegreen/greenmail/examples/</a>).</div>
-        <h3 id="ex_junit_rule" class="anchor">Using JUnit (Rule based setup)</h3>
+                     (<a href="https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-core/src/test/java/com/icegreen/greenmail/examples">greenmail-core/src/test/java/com/icegreen/greenmail/examples/</a>).
+                </div>
+                <h3 id="ex_junit_rule" class="anchor">Using JUnit (Rule based setup)</h3>
         <pre><code class="language-java"><!-- @formatter:off -->
 /** [See code on GitHub](https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-core/src/test/java/com/icegreen/greenmail/examples/ExampleRuleTest.java) */
 @Rule
@@ -360,7 +377,8 @@ assertEquals(1, greenMail.getReceivedMessages().length);
 greenMail.stop();
         </code></pre><!-- @formatter:on -->
 
-                <h3 id="ex_javamail_send_retrieve" class="anchor">Testing using plain JavaMail for sending/retrieving code</h3>
+                <h3 id="ex_javamail_send_retrieve" class="anchor">Testing using plain JavaMail for sending/retrieving
+                                                                  code</h3>
         <pre><code class="language-java"><!-- @formatter:off -->
 /** [See code on GitHub](https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-core/src/test/java/com/icegreen/greenmail/examples/ExampleJavaMailTest.java) */
 @Rule
@@ -414,7 +432,8 @@ public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IM
                 <h3 id="deploy_standalone" class="anchor">Run GreenMail as standalone java application</h3>
                 <p>Running GreenMail as a standalone process is useful if you want a simple sand boxed mail server.</p>
                 <p>All you require is a compatible JRE and the standalone JAR. The standalone JAR already
-                   contains all dependencies and a default logging. You can configure GreenMail by setting system properties</p>
+                   contains all dependencies and a default logging. You can configure GreenMail by setting system
+                   properties</p>
 
                 <h4>Starting GreenMail standalone</h4>
                 <pre><code class="language-bash"><!-- @formatter:off -->
@@ -431,31 +450,45 @@ java [OPTIONS] -jar greenmail-standalone.jar
                     </thead>
                     <tr>
                         <td class="text-nowrap">-Dgreenmail.setup.all</td>
-                        <td>Uses <a href="http://www.icegreen.com/greenmail/javadocs/com/icegreen/greenmail/util/ServerSetup.html">ServerSetup.ALL</a>
+                        <td>Uses <a
+                                href="http://www.icegreen.com/greenmail/javadocs/com/icegreen/greenmail/util/ServerSetup.html">ServerSetup.ALL</a>
                             configuration to start all default mail services using default ports:
                             <ul>
-                                <li>SMTP : 25</li><li>SMTPS : 465</li><li>IMAP : 143</li><li>IMAPS : 993</li><li>POP3 : 110</li><li>POP3S : 995</li>
+                                <li>SMTP : 25</li>
+                                <li>SMTPS : 465</li>
+                                <li>IMAP : 143</li>
+                                <li>IMAPS : 993</li>
+                                <li>POP3 : 110</li>
+                                <li>POP3S : 995</li>
                             </ul>
                             <p>
-                            Example: -Dgreenmail.setup.all
+                                Example: -Dgreenmail.setup.all
                             </p>
                         </td>
                     </tr>
                     <tr>
                         <td class="text-nowrap">-Dgreenmail.setup.test.all</td>
-                        <td>Uses <a href="http://www.icegreen.com/greenmail/javadocs/com/icegreen/greenmail/util/ServerSetupTest.html">ServerSetupTest.ALL</a>
-                            configuration to start all default mail services using default ports including offset of 3000:
+                        <td>Uses <a
+                                href="http://www.icegreen.com/greenmail/javadocs/com/icegreen/greenmail/util/ServerSetupTest.html">ServerSetupTest.ALL</a>
+                            configuration to start all default mail services using default ports including offset of
+                            3000:
                             <ul>
-                                <li>SMTP : 3025</li><li>SMTPS : 3465</li><li>IMAP : 3143</li><li>IMAPS : 3993</li><li>POP3 : 3110</li><li>POP3S : 3995</li>
+                                <li>SMTP : 3025</li>
+                                <li>SMTPS : 3465</li>
+                                <li>IMAP : 3143</li>
+                                <li>IMAPS : 3993</li>
+                                <li>POP3 : 3110</li>
+                                <li>POP3S : 3995</li>
                             </ul>
                             <p>
-                            Example: -Dgreenmail.setup.test.all
+                                Example: -Dgreenmail.setup.test.all
                             </p>
                         </td>
                     </tr>
                     <tr>
                         <td class="text-nowrap">-Dgreenmail.PROTOCOL.hostname</td>
-                        <td>Configures the hostname (or IP bind address) and activates a server for given protocol. Protocol can be one of
+                        <td>Configures the hostname (or IP bind address) and activates a server for given protocol.
+                            Protocol can be one of
                             <ul>
                                 <li>smtp</li>
                                 <li>smtps</li>
@@ -465,10 +498,10 @@ java [OPTIONS] -jar greenmail-standalone.jar
                                 <li>pop3s</li>
                             </ul>
                             <div class="alert alert-warning" role="alert">
-                            Note: Requires -Dgreenmail.PROTOCOL.port option!
+                                Note: Requires -Dgreenmail.PROTOCOL.port option!
                             </div>
                             <p>
-                            Example: -Dgreenmail.smtp.hostname=127.0.0.1 -Dgreenmail.smtp.port=3025
+                                Example: -Dgreenmail.smtp.hostname=127.0.0.1 -Dgreenmail.smtp.port=3025
                             </p>
                         </td>
                     </tr>
@@ -484,24 +517,25 @@ java [OPTIONS] -jar greenmail-standalone.jar
                                 <li>pop3s</li>
                             </ul>
                             <div class="alert alert-warning" role="alert">
-                            Note: Requires -Dgreenmail.PROTOCOL.hostname option!
+                                Note: Requires -Dgreenmail.PROTOCOL.hostname option!
                             </div>
                             <p>
-                            Example: -Dgreenmail.smtp.port=3025 -Dgreenmail.smtp.hostname=127.0.0.1
+                                Example: -Dgreenmail.smtp.port=3025 -Dgreenmail.smtp.hostname=127.0.0.1
                             </p>
                         </td>
                     </tr>
                     <tr>
                         <td class="text-nowrap">-Dgreenmail.hostname</td>
-                        <td>Configures the default hostname or ip bind address. If
+                        <td>Configures the default hostname or ip bind address.
                             <div class="alert alert-warning" role="alert">
-                            Note: Hostnames must be DNS resolvable!
+                                Note: Hostnames must be DNS resolvable!
                             </div>
                             <div class="alert alert-info" role="info">
-                            Note: Default hostname is 127.0.0.1
+                                Note: Default hostname is 127.0.0.1
                             </div>
                             <p>
-                            Example: <p>-Dgreenmail.smtp.port=3025 -Dgreenmail.imap.port=3143 -Dgreenmail.hostname=0.0.0.0</p>
+                                Example:
+                            <p>-Dgreenmail.smtp.port=3025 -Dgreenmail.imap.port=3143 -Dgreenmail.hostname=0.0.0.0</p>
                             </p>
                         </td>
                     </tr>
@@ -509,12 +543,13 @@ java [OPTIONS] -jar greenmail-standalone.jar
                         <td class="text-nowrap">-Dgreenmail.users=user1[, ..., userN]</td>
                         <td>Configures the user mail boxes including password.
                             <p>The list of users is comma separated.</p>
-                            <p>A single user is of format <i>logon</i>:<i>password</i>[@<i>domain</i>] , where the <i>domain</i> part is optional.</p>
+                            <p>A single user is of format <i>logon</i>:<i>password</i>[@<i>domain</i>] , where the <i>domain</i>
+                               part is optional.</p>
                             <div class="alert alert-warning" role="alert">
-                            Note: Domain must be DNS resolvable!
+                                Note: Domain must be DNS resolvable!
                             </div>
                             <p>
-                            Example: -Dgreenmail.users=foo:pwd@bar.com,jabber:wocky@monster.local,foo1:bar
+                                Example: -Dgreenmail.users=foo:pwd@bar.com,jabber:wocky@monster.local,foo1:bar
                             </p>
                         </td>
                     </tr>
@@ -522,11 +557,13 @@ java [OPTIONS] -jar greenmail-standalone.jar
                         <td class="text-nowrap">-Dlog4j.configuration</td>
                         <td><p>Configures log4j using given configuration file.</p>
                             <p>
-                            By default, GreenMail standalone runner uses a provided log4j configuration packed into the standalone ueber JAR.
-                            This options allows you to override the default log4j configuration by providing your own log4j configuration file.
+                                By default, GreenMail standalone runner uses a provided log4j configuration packed into
+                                the standalone ueber JAR.
+                                This options allows you to override the default log4j configuration by providing your
+                                own log4j configuration file.
                             </p>
                             <p>
-                            Example: -Dlog4j.configuration=file:///tmp/log4j.xml
+                                Example: -Dlog4j.configuration=file:///tmp/log4j.xml
                             </p>
                         </td>
                     </tr>
@@ -534,31 +571,85 @@ java [OPTIONS] -jar greenmail-standalone.jar
 
                 <h4>GreenMail standalone examples</h4>
                 <h5>Test setup for SMTP/IMAP and one user</h5>
-                Starts GreenMail for SMTP (test port 3025) and IMAP (test port 3143) using localhost/127.0.0.1 and a single user <i>test1</i> with password <i>pwd1</i> and email <i>test1@localhost</i> :
+                             Starts GreenMail for SMTP (test port 3025) and IMAP (test port 3143) using
+                             localhost/127.0.0.1 and a single user <i>test1</i> with password <i>pwd1</i> and email <i>test1@localhost</i>
+                             :
                 <pre><code class="language-bash"><!-- @formatter:off -->
 java -Dgreenmail.setup.test.smtp -Dgreenmail.setup.test.imap \
      -Dgreenmail.users=test1:pwd1 -jar greenmail-standalone.jar
                 </code></pre><!-- @formatter:on -->
                 <h5>Test setup for SMTP(S)/IMAP(S)/POP3(S) and two user</h5>
-                Starts GreenMail for SMTP (test port 3025), SMTPS (test port 3465), IMAP (test port 3143), IMAPS (test port 3993), POP3 (test port 3110) and POP3S (test port 3995) using localhost/127.0.0.1 :
+                             Starts GreenMail for SMTP (test port 3025), SMTPS (test port 3465), IMAP (test port 3143),
+                             IMAPS (test port 3993), POP3 (test port 3110) and POP3S (test port 3995) using
+                             localhost/127.0.0.1 :
                 <pre><code class="language-bash"><!-- @formatter:off -->
 java -Dgreenmail.setup.test.all -Dgreenmail.users=test1:pwd1,test2:pwd2@example.com \
      -jar greenmail-standalone.jar
                 </code></pre><!-- @formatter:on -->
                 <h5>Test setup for SMTP(S)/IMAP(S)/POP3(S), one user and bound to 0.0.0.0</h5>
-                Starts GreenMail for SMTP (test port 3025), SMTPS (test port 3465), IMAP (test port 3143), IMAPS (test port 3993), POP3 (test port 3110) and POP3S (test port 3995) using 0.0.0.0 :
+                             Starts GreenMail for SMTP (test port 3025), SMTPS (test port 3465), IMAP (test port 3143),
+                             IMAPS (test port 3993), POP3 (test port 3110) and POP3S (test port 3995) using 0.0.0.0 :
                 <pre><code class="language-bash"><!-- @formatter:off -->
 java -Dgreenmail.setup.test.all -Dgreenmail.users=test1:pwd1 \
      -Dgreenmail.hostname=0.0.0.0 \
      -jar greenmail-standalone.jar
                 </code></pre><!-- @formatter:on -->
                 <h5>SMTP only</h5>
-                Starts GreenMail with directly configured SMTP on 127.0.0.1:4025
+                             Starts GreenMail with directly configured SMTP on 127.0.0.1:4025
                 <pre><code class="language-bash"><!-- @formatter:off -->
 java -Dgreenmail.smtp.hostname=127.0.0.1 -Dgreenmail.smtp.port=4025 \
      -jar greenmail-standalone.jar
                 </code></pre><!-- @formatter:on -->
 
+                <h3 id="deploy_docker_standalone" class="anchor">Deploy as a standalone Docker image </h3>
+
+                <p>GreenMail provides a pre-configured Docker image running
+                    <a href="#deploy_standalone">GreenMail
+                    standalone</a>. The image is available via <a href="https://hub.docker.com/r/greenmail/standalone">Docker Hub Public Repository</a>,
+                    but you can also build it yourself using our
+                    <a href="https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-docker/standalone/Dockerfile">Dockerfile</a>.
+                </p>
+                <p>By default GreenMail standalone runs using the GreenMail test setup, using the following ports
+                   (default ports plus offset of 3000):</p>
+                <table class="table table-striped">
+                    <tr>
+                        <th>Port</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>3025</td>
+                        <td>SMTP</td>
+                    </tr>
+                    <tr>
+                        <td>3110</td>
+                        <td>POP3</td>
+                    </tr>
+                    <tr>
+                        <td>3143</td>
+                        <td>IMAP</td>
+                    </tr>
+                    <tr>
+                        <td>3465</td>
+                        <td>SMTPS</td>
+                    </tr>
+                    <tr>
+                        <td>3993</td>
+                        <td>IMAPS</td>
+                    </tr>
+                    <tr>
+                        <td>3995</td>
+                        <td>POP3S</td>
+                    </tr>
+                </table>
+
+                <h4>Using docker to run the image</h4>
+                <pre><code class="language-bash"><!-- @formatter:off -->
+docker pull greenmail/standalone:1.4.2
+docker run -t -i -p 3025:3025 -p 3110:3110 -p 3143:3143 \
+                 -p 3465:3465 -p 3993:3993 -p 3995:3995 \
+                 greenmail/standalone
+                </code></pre><!-- @formatter:on -->
+                             You might want to modify your mapped ports.
 
                 <h3 id="deploy_webapp" class="anchor">Deploy as a webapp (WAR)</h3>
 
@@ -642,11 +733,11 @@ java -Dgreenmail.smtp.hostname=127.0.0.1 -Dgreenmail.smtp.port=4025 \
                    developer has its own local mail server sandbox - so there's no danger for accidentally leaking test
                    mails into the Internet.</p>
                 <div class="alert alert-warning" role="alert">
-                   <p>GreenMail SAR works only up to JBoss AS 6!</p>
-                   <p>
-                   JBoss introduced a not backward compatible change to the SAR MBean deployment in JBoss AS 7+.
-                   As alternative, try out the <a href="#deploy_webapp">GreenMail WAR  deployment</a>.
-                   </p>
+                    <p>GreenMail SAR works only up to JBoss AS 6!</p>
+                    <p>
+                        JBoss introduced a not backward compatible change to the SAR MBean deployment in JBoss AS 7+.
+                        As alternative, try out the <a href="#deploy_webapp">GreenMail WAR deployment</a>.
+                    </p>
                 </div>
 
                 <h4 id="deploy_jboss_sar_deploy" class="anchor">Deploy the service</h4>
@@ -669,14 +760,16 @@ jar xvf /path/to/greenmail-jboss-service-XXX.jar
                    message on the console output, including basic configuration data like active protocols and their
                    ports:
                 </p>
-                <img src="images/greenmail_jboss_sar_console.png" class="img-rounded" alt="JBoss console output when deploying GreenMail SAR" width="682px" height="199px"/>
+                <img src="images/greenmail_jboss_sar_console.png" class="img-rounded"
+                     alt="JBoss console output when deploying GreenMail SAR" width="682px" height="199px"/>
 
                 <p><!-- space --></p>
 
                 <p>
                     Opening the JBoss Console, you can see the GreenMail Service JMX Bean:
                 </p>
-                <img src="images/greenmail_jboss_jmx_console.png" class="img-rounded" alt="GreenMail JMX Bean" width="742px" height="611px"/>
+                <img src="images/greenmail_jboss_jmx_console.png" class="img-rounded" alt="GreenMail JMX Bean"
+                     width="742px" height="611px"/>
 
                 <p>
                     You find two entries, of which the second one holds our interest:
@@ -700,7 +793,8 @@ jar xvf /path/to/greenmail-jboss-service-XXX.jar
                     <li>Select the JMX bean of name GreenMail and type service</li>
                     <li>Invoke the sendMail operation:</li>
                 </ol>
-                <img src="images/greenmail_jboss_jmx_send.png" class="img-rounded" alt="Sending email using GreenMail JMX Bean" width="580px" height="238px"/>
+                <img src="images/greenmail_jboss_jmx_send.png" class="img-rounded"
+                     alt="Sending email using GreenMail JMX Bean" width="580px" height="238px"/>
 
                 <p>The mail should now be visible by listing the user mails, if there is no automatic polling of the
                    mail box.</p>
@@ -721,10 +815,12 @@ jar xvf /path/to/greenmail-jboss-service-XXX.jar
                         paragraph)
                     </li>
                     <li>Enter the user email for the listMailsForUserHTML operation:
-                        <img src="images/greenmail_jboss_jmx_list_mail_for_user.png" class="img-rounded" alt="List mails operation for GreenMail JMX Bean" width="550px" height="163px"/>
+                        <img src="images/greenmail_jboss_jmx_list_mail_for_user.png" class="img-rounded"
+                             alt="List mails operation for GreenMail JMX Bean" width="550px" height="163px"/>
                     </li>
                     <li>Click the invoke button. The browser now shows all emails for the specified user:
-                        <img src="images/greenmail_jboss_jmx_list_emails_for_user.png" class="img-rounded" alt="Listing mails for a user using GreenMail JMX Bean" width="726px" height="349px"/>
+                        <img src="images/greenmail_jboss_jmx_list_emails_for_user.png" class="img-rounded"
+                             alt="Listing mails for a user using GreenMail JMX Bean" width="726px" height="349px"/>
                     </li>
                 </ol>
                 <div class="alert alert-info" role="alert">Note that displaying mails does not modify the user mail
@@ -762,7 +858,7 @@ jar xvf /path/to/greenmail-jboss-service-XXX.jar
                 <h4>How can I use IMAP quotas?</h4>
 
                 <p>GreenMail supports IMAP quota. Quota capbility can be toggled on and off. For details see <a
-                   href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-core/src/test/java/com/icegreen/greenmail/test/ImapServerTest.java">
+                        href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-core/src/test/java/com/icegreen/greenmail/test/ImapServerTest.java">
                     ImapServerTest.java</a> quota test</p>
 
                 <h4>How can I create or delete a mail user?</h4>
@@ -941,13 +1037,15 @@ greenMail.getManagers().getUserManager().deleteUser(user1); // Delete user
                             <li><a href="#ex_send_simple">Testing your sending code (simple)</a></li>
                             <li><a href="#ex_send_adv">Testing your sending code (advanced)</a></li>
                             <li><a href="#ex_retrieve">Testing your retrieving code</a></li>
-                            <li><a href="#ex_javamail_send_retrieve">Testing using plain JavaMail for sending/retrieving code</a></li>
+                            <li><a href="#ex_javamail_send_retrieve">Testing using plain JavaMail for sending/retrieving
+                                                                     code</a></li>
                         </ul>
                     </li>
                     <li>
                         <a href="#deployment">Deployments</a>
                         <ul class="nav">
                             <li><a href="#deploy_standalone">Run as a standalone Java process</a></li>
+                            <li><a href="#deploy_docker_standalone">Run as a docker image</a></li>
                             <li><a href="#deploy_webapp">Deploy as a webapp (WAR)</a></li>
                             <li><a href="#deploy_jboss_sar">Deploy as a JBoss Service (SAR)</a>
                                 <ul class="nav">
@@ -995,28 +1093,28 @@ greenMail.getManagers().getUserManager().deleteUser(user1); // Delete user
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script src="js/prism.min.js"></script>
 <script>
-/*!
- * IE10 viewport hack for Surface/desktop Windows 8 bug
- * Copyright 2014 Twitter, Inc.
- * Licensed under the Creative Commons Attribution 3.0 Unported License. For
- * details, see http://creativecommons.org/licenses/by/3.0/.
- */
+    /*!
+     * IE10 viewport hack for Surface/desktop Windows 8 bug
+     * Copyright 2014 Twitter, Inc.
+     * Licensed under the Creative Commons Attribution 3.0 Unported License. For
+     * details, see http://creativecommons.org/licenses/by/3.0/.
+     */
 
-// See the Getting Started docs for more information:
-// http://getbootstrap.com/getting-started/#support-ie10-width
+    // See the Getting Started docs for more information:
+    // http://getbootstrap.com/getting-started/#support-ie10-width
 
-(function () {
-  'use strict';
-  if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
-    var msViewportStyle = document.createElement('style')
-    msViewportStyle.appendChild(
-      document.createTextNode(
-        '@-ms-viewport{width:auto!important}'
-      )
-    )
-    document.querySelector('head').appendChild(msViewportStyle)
-  }
-})();
+    (function () {
+        'use strict';
+        if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
+            var msViewportStyle = document.createElement('style')
+            msViewportStyle.appendChild(
+                    document.createTextNode(
+                            '@-ms-viewport{width:auto!important}'
+                    )
+            )
+            document.querySelector('head').appendChild(msViewportStyle)
+        }
+    })();
 </script>
 <script type="application/javascript">
     $(document).ready(function () {
