@@ -25,7 +25,7 @@ import java.util.*;
  * Message Sequence Numbers or UIDs.
  * <p> reinitialize() must be called on deserialization to reset Logger
  * <p/>
- * Reference: RFC 2060 - para 2.3
+ * Reference: RFC 2060 - para 2.3 https://www.ietf.org/rfc/rfc2060.txt
  *
  * @author <a href="mailto:sascha@kulawik.de">Sascha Kulawik</a>
  * @author <a href="mailto:charles@benett1.demon.co.uk">Charles Benett</a>
@@ -668,7 +668,10 @@ public class SimpleMessageAttributes
     }
 
 
-    //~ inner class
+    /**
+     * http://tools.ietf.org/html/rfc1806
+     * http://tools.ietf.org/html/rfc2183 content disposition
+     */
     private static class Header {
         String value;
         Set<String> params = null;
@@ -677,7 +680,7 @@ public class SimpleMessageAttributes
             String[] strs = line.split(";");
             value = strs[0];
             if (0 != strs.length) {
-                params = new HashSet<String>();
+                params = new HashSet<String>(strs.length);
                 for (int i = 1; i < strs.length; i++) {
                     String p = strs[i].trim();
                     int e = p.indexOf('=');
@@ -703,18 +706,22 @@ public class SimpleMessageAttributes
             if (null == params) {
                 ret.append(Q).append(value).append(Q);
             } else {
-                ret.append(LB);
-                ret.append(Q).append(value).append(Q + SP);
-                ret.append(LB);
-                int i = 0;
-                for (String param : params) {
-                    if (i++ > 0) {
-                        ret.append(SP);
+                if(params.size()==0) {
+                    ret.append(NIL);
+                } else {
+                    ret.append(LB);
+                    ret.append(Q).append(value).append(Q + SP);
+                    ret.append(LB);
+                    int i = 0;
+                    for (String param : params) {
+                        if (i++ > 0) {
+                            ret.append(SP);
+                        }
+                        ret.append(param);
                     }
-                    ret.append(param);
+                    ret.append(RB);
+                    ret.append(RB);
                 }
-                ret.append(RB);
-                ret.append(RB);
             }
             return ret.toString();
         }
