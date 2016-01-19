@@ -17,7 +17,9 @@ The GreenMail project welcomes any contribution, so go ahead and fork/open a pul
 
 ***Note***: GreenMail recently moved to Github and was previously hosted on [SF][greenmail_sf_site].
 
-Development  [![Build status](https://circleci.com/gh/greenmail-mail-test/greenmail/tree/master.svg?style=svg)](https://circleci.com/gh/greenmail-mail-test/greenmail/tree/master)
+Development
+[![Build status](https://circleci.com/gh/greenmail-mail-test/greenmail/tree/master.svg?style=svg)](https://circleci.com/gh/greenmail-mail-test/greenmail/tree/master)
+[![Maven Central](https://img.shields.io/maven-central/v/org.apache.maven/apache-maven.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.icegreen%22%20AND%20a%3A%22greenmail%22)
 -----------
 
 * Build GreenMail from source 
