@@ -92,7 +92,7 @@ public class ImapCommandFactory {
             }
             return cmd;
         } catch (Exception e) {
-            throw new RuntimeException("Could not create command instance: " + commandClass.getName(), e);
+            throw new IllegalArgumentException("Can not create command instance " + commandClass.getName(), e);
         }
     }
 

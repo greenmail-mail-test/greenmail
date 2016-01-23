@@ -32,6 +32,7 @@ import java.util.*;
 class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
     public static final String NAME = "FETCH";
     public static final String ARGS = "<message-set> <fetch-profile>";
+    static final Flags FLAGS_SEEN = new Flags(Flags.Flag.SEEN);
 
     private FetchCommandParser parser = new FetchCommandParser();
 
@@ -91,7 +92,6 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         return outputMessage(fetch, storedMessage, mailbox, useUids);
     }
 
-    static final Flags FLAGS_SEEN = new Flags(Flags.Flag.SEEN);
 
     private String outputMessage(FetchRequest fetch, StoredMessage message,
                                  ImapSessionFolder folder, boolean useUids)

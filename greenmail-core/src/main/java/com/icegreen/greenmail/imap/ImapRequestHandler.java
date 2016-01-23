@@ -60,8 +60,8 @@ public final class ImapRequestHandler {
     private void doProcessRequest(ImapRequestLineReader request,
                                   ImapResponse response,
                                   ImapSession session) {
-        String tag = null;
-        String commandName = null;
+        String tag;
+        String commandName;
 
         try {
             tag = parser.tag(request);
@@ -79,18 +79,18 @@ public final class ImapRequestHandler {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("C: tag="+tag+", command="+commandName);
+            log.debug("C: tag=" + tag + ", command=" + commandName);
         }
 
         ImapCommand command = imapCommands.getCommand(commandName);
         if (command == null) {
-            log.error("Command '"+commandName+"' not valid");
+            log.error("Command '" + commandName + "' not valid");
             response.commandError("Invalid command.");
             return;
         }
 
         if (!command.validForState(session.getState())) {
-            log.error("Command '"+commandName+"' not valid in this state "+session.getState());
+            log.error("Command '" + commandName + "' not valid in this state " + session.getState());
             response.commandFailed(command, "Command not valid in this state");
             return;
         }
