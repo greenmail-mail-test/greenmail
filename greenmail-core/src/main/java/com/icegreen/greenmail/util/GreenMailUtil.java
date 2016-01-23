@@ -11,7 +11,9 @@ import org.slf4j.LoggerFactory;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.*;
-import javax.mail.internet.*;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import java.io.*;
 import java.util.Date;
 import java.util.Properties;
@@ -56,13 +58,15 @@ public class GreenMailUtil {
     }
 
     /**
-     * Convenience method which creates a new {@link MimeMessage} from an input stream
+     * Convenience method which creates a new {@link MimeMessage} from an input stream.
+     *
+     * @return the created mime message.
      */
     public static MimeMessage newMimeMessage(InputStream inputStream) {
         try {
             return new MimeMessage(Session.getDefaultInstance(new Properties()), inputStream);
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException("Can not generate mime message for input stream " + inputStream, e);
         }
     }
 
@@ -72,12 +76,7 @@ public class GreenMailUtil {
      * @throws MessagingException
      */
     public static MimeMessage newMimeMessage(String mailString) throws MessagingException {
-        try {
-            byte[] bytes = mailString.getBytes("US-ASCII");
-            return newMimeMessage(new ByteArrayInputStream(bytes));
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        return newMimeMessage(EncodingUtil.toStream(mailString, EncodingUtil.CHARSET_EIGHT_BIT_ENCODING));
     }
 
     public static boolean hasNonTextAttachments(Part m) {
@@ -96,7 +95,7 @@ public class GreenMailUtil {
                 return !m.getContentType().trim().toLowerCase().startsWith("text");
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -109,7 +108,7 @@ public class GreenMailUtil {
             reader.skip(Long.MAX_VALUE);
             return reader.getLineNumber();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         } finally {
             try {
                 reader.close();
@@ -145,18 +144,18 @@ public class GreenMailUtil {
         try {
             ByteArrayOutputStream bodyOut = new ByteArrayOutputStream();
             msg.writeTo(bodyOut);
-            return bodyOut.toString("US-ASCII").trim();
+            return bodyOut.toString(EncodingUtil.EIGHT_BIT_ENCODING).trim();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
     public static byte[] getBodyAsBytes(Part msg) {
-        return getBody(msg).getBytes();
+        return getBody(msg).getBytes(EncodingUtil.CHARSET_EIGHT_BIT_ENCODING);
     }
 
     public static byte[] getHeaderAsBytes(Part part) {
-        return getHeaders(part).getBytes();
+        return getHeaders(part).getBytes(EncodingUtil.CHARSET_EIGHT_BIT_ENCODING);
     }
 
     /**
@@ -192,20 +191,30 @@ public class GreenMailUtil {
         return ret.toString();
     }
 
+    /**
+     * Sends a text message using the default test setup for SMTP.
+     *
+     * @param to      the to address.
+     * @param from    the from address.
+     * @param subject the subject.
+     * @param msg     the text message.
+     * @see ServerSetupTest#SMTP
+     */
     public static void sendTextEmailTest(String to, String from, String subject, String msg) {
-        try {
-            sendTextEmail(to, from, subject, msg, ServerSetupTest.SMTP);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        sendTextEmail(to, from, subject, msg, ServerSetupTest.SMTP);
     }
 
+    /**
+     * Sends a text message using the default test setup for SMTPS.
+     *
+     * @param to      the to address.
+     * @param from    the from address.
+     * @param subject the subject.
+     * @param msg     the text message.
+     * @see ServerSetupTest#SMTPS
+     */
     public static void sendTextEmailSecureTest(String to, String from, String subject, String msg) {
-        try {
-            sendTextEmail(to, from, subject, msg, ServerSetupTest.SMTPS);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        sendTextEmail(to, from, subject, msg, ServerSetupTest.SMTPS);
     }
 
     public static String getAddressList(Address[] addresses) {
@@ -226,30 +235,30 @@ public class GreenMailUtil {
         try {
             Session session = getSession(setup);
 
-            Address[] tos = new InternetAddress[]{new InternetAddress(to)};
-            Address[] froms = new InternetAddress[]{new InternetAddress(from)};
             MimeMessage mimeMessage = new MimeMessage(session);
             mimeMessage.setSubject(subject);
             mimeMessage.setSentDate(new Date());
-            mimeMessage.setFrom(froms[0]);
-            mimeMessage.setRecipients(Message.RecipientType.TO, tos);
+            mimeMessage.setFrom(from);
+            mimeMessage.setRecipients(Message.RecipientType.TO, to);
 
             mimeMessage.setText(msg);
             return mimeMessage;
-        } catch (AddressException e) {
-            throw new RuntimeException(e);
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException("Can not generate message", e);
         }
     }
 
+    /**
+     * Sends a text message using given server setup for SMTP.
+     *
+     * @param to      the to address.
+     * @param from    the from address.
+     * @param subject the subject.
+     * @param msg     the test message.
+     * @param setup   the SMTP setup.
+     */
     public static void sendTextEmail(String to, String from, String subject, String msg, final ServerSetup setup) {
-        try {
-            final MimeMessage mimeMessage = createTextEmail(to, from, subject, msg, setup);
-            Transport.send(mimeMessage);
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
+        sendMimeMessage(createTextEmail(to, from, subject, msg, setup));
     }
 
     /**
@@ -261,7 +270,7 @@ public class GreenMailUtil {
         try {
             Transport.send(mimeMessage);
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Can not send message " + mimeMessage, e);
         }
     }
 
@@ -280,15 +289,13 @@ public class GreenMailUtil {
             Session smtpSession = getSession(serverSetup);
             MimeMessage mimeMessage = new MimeMessage(smtpSession);
 
-            mimeMessage.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
-            mimeMessage.setFrom(new InternetAddress(from));
+            mimeMessage.setRecipients(Message.RecipientType.TO, to);
+            mimeMessage.setFrom(from);
             mimeMessage.setSubject(subject);
             mimeMessage.setContent(body, contentType);
             sendMimeMessage(mimeMessage);
-        } catch (AddressException e) {
-            throw new RuntimeException(e);
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Can not send message", e);
         }
     }
 
@@ -350,7 +357,7 @@ public class GreenMailUtil {
             binaryPart.setDescription(description);
             return multiPart;
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException("Can not create multipart message with attachment", e);
         }
     }
 

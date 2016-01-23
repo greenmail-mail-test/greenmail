@@ -90,7 +90,7 @@ public class MovingMessage {
      * &lt;CRLF&gt;.&lt;CRLF&gt; is encountered.
      * <p/>
      * <p/>
-     * It would be possible and prehaps desirable to prevent the
+     * It would be possible and perhaps desirable to prevent the
      * adding of an unnecessary CRLF at the end of the message, but
      * it hardly seems worth 30 seconds of effort.
      * </p>

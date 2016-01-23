@@ -6,6 +6,8 @@
  */
 package com.icegreen.greenmail.foedus.util;
 
+import com.icegreen.greenmail.util.EncodingUtil;
+
 import java.io.*;
 
 
@@ -35,7 +37,7 @@ public class StringBufferResource
             throws IOException {
         closeInput();
 
-        return new ByteArrayInputStream(_contentBuffer.toString().getBytes());
+        return new ByteArrayInputStream(_contentBuffer.toString().getBytes(EncodingUtil.CHARSET_EIGHT_BIT_ENCODING));
     }
 
     @Override

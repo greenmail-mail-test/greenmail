@@ -5,8 +5,10 @@
 package com.icegreen.greenmail.util;
 
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 
 /**
  * Writes to a wrapped Writer class, ensuring that all line separators are '\r\n', regardless
@@ -65,6 +67,17 @@ public class InternetPrintWriter
     public InternetPrintWriter(OutputStream out, boolean autoFlush) {
         super(out, autoFlush);
         this.autoFlush = autoFlush;
+    }
+
+    /**
+     * Creates a new InternetPrintWriter for given charset encoding.
+     *
+     * @param outputStream the wrapped output stream.
+     * @param charset      the charset.
+     * @return a new InternetPrintWriter.
+     */
+    public static InternetPrintWriter createForEncoding(OutputStream outputStream, boolean autoFlush, Charset charset) {
+        return new InternetPrintWriter(new OutputStreamWriter(outputStream, charset), autoFlush);
     }
 
     /**

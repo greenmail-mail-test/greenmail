@@ -8,6 +8,7 @@ package com.icegreen.greenmail.imap;
 
 import com.icegreen.greenmail.imap.commands.ImapCommand;
 import com.icegreen.greenmail.store.MessageFlags;
+import com.icegreen.greenmail.util.EncodingUtil;
 import com.icegreen.greenmail.util.InternetPrintWriter;
 
 import javax.mail.Flags;
@@ -22,7 +23,7 @@ public class ImapResponse implements ImapConstants {
     private String tag = UNTAGGED;
 
     public ImapResponse(OutputStream output) {
-        this.writer = new InternetPrintWriter(output, true);
+        this.writer = InternetPrintWriter.createForEncoding(output, true, EncodingUtil.CHARSET_EIGHT_BIT_ENCODING);
     }
 
     public void setTag(String tag) {

@@ -6,6 +6,7 @@
  */
 package com.icegreen.greenmail.smtp;
 
+import com.icegreen.greenmail.util.EncodingUtil;
 import com.icegreen.greenmail.util.InternetPrintWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,7 @@ public class SmtpConnection {
         clientAddress = sock.getInetAddress();
         OutputStream o = sock.getOutputStream();
         InputStream i = sock.getInputStream();
-        out = new InternetPrintWriter(o, true);
+        out = InternetPrintWriter.createForEncoding(o, true, EncodingUtil.CHARSET_EIGHT_BIT_ENCODING);
         in = new BufferedReader(new InputStreamReader(i));
 
         this.handler = handler;
