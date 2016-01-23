@@ -420,7 +420,8 @@ public class SimpleMessageAttributes
             buf.append(NIL); // should add route-addr
             buf.append(SP);
             try {
-                MailAddress mailAddr = new MailAddress(netAddr.getAddress());
+                // Remove quotes to avoid double quoting
+                MailAddress mailAddr = new MailAddress(netAddr.getAddress().replaceAll("\"", ""));
                 buf.append(Q).append(mailAddr.getUser()).append(Q);
                 buf.append(SP);
                 buf.append(Q).append(mailAddr.getHost()).append(Q);
@@ -697,7 +698,7 @@ public class SimpleMessageAttributes
         }
 
         private String strip(String s) {
-            return s.replaceAll("\\\"", "");
+            return s.trim().replaceAll("\\\"", "");
         }
 
         @Override

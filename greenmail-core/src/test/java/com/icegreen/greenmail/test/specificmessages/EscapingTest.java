@@ -9,7 +9,6 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -32,17 +31,18 @@ public class EscapingTest {
         String to = "to@localhost";
         String subject = "Subject?<>/|\\\\.%\\\"*?:{[]}!";
         greenMail.setUser(to, to);
-        GreenMailUtil.sendTextEmail(to, "from@localhost", subject, "msg", greenMail.getSmtp().getServerSetup());
+        final String from = "from@localhost";
+        GreenMailUtil.sendTextEmail(to, from, subject, "msg", greenMail.getSmtp().getServerSetup());
         greenMail.waitForIncomingEmail(5000, 1);
 
-        retrieveAndCheck(greenMail.getPop3(), to, subject);
-        retrieveAndCheck(greenMail.getImap(), to, subject);
+        retrieveAndCheck(greenMail.getPop3(), to, from, subject);
+        retrieveAndCheck(greenMail.getImap(), to, from, subject);
     }
-    
+
     @Test
     public void testEscapeMessageID() throws MessagingException, IOException {
         String to = "foo@localhost";
-        String from = "bar@localhost";
+        String from = "bar`bar <bar@localhost>";
         String subject = "Bad IMAP Envelope";
         String body = "Example text";
         greenMail.setUser(to, to);
@@ -50,27 +50,26 @@ public class EscapingTest {
         Session smtpSession = greenMail.getSmtp().createSession();
         GreenMailMimeMessage mimeMessage = new GreenMailMimeMessage(smtpSession);
 
-        Address[] froms = new InternetAddress[] { new InternetAddress(from) };
-
-        mimeMessage.setRecipients(Message.RecipientType.TO,InternetAddress.parse(to));
-        mimeMessage.setFrom(froms[0]);
+        mimeMessage.setRecipients(Message.RecipientType.TO, to);
+        mimeMessage.setFrom(from);
         mimeMessage.setSubject(subject);
         mimeMessage.setText(body);
 
         GreenMailUtil.sendMimeMessage(mimeMessage);
-        greenMail.waitForIncomingEmail(5000,1);
+        greenMail.waitForIncomingEmail(5000, 1);
 
-        retrieveAndCheck(greenMail.getImap(), to, subject);
+        retrieveAndCheck(greenMail.getImap(), to, from, subject);
     }
 
     /**
      * Retrieve message from retriever and check content
      *
-     * @param server    Server to read from
-     * @param to        Account to retrieve
-     * @param subject   Subject of message
+     * @param server  Server to read from
+     * @param to      Account to retrieve
+     * @param subject Subject of message
      */
-    private void retrieveAndCheck(AbstractServer server, String to, String subject) throws MessagingException, IOException {
+    private void retrieveAndCheck(AbstractServer server, String to, String from, String subject)
+            throws MessagingException, IOException {
         Retriever retriever = new Retriever(server);
         try {
             Message[] messages = retriever.getMessages(to);
@@ -79,6 +78,8 @@ public class EscapingTest {
 
             // Message subject
             assertThat(message.getSubject(), is(subject));
+            assertThat(message.getAllRecipients()[0].toString(), is(to));
+            assertThat(message.getFrom()[0].toString(), is(from));
         } finally {
             retriever.close();
         }
