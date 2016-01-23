@@ -139,7 +139,6 @@
             <reuseForks>true</reuseForks>
             <!-- cli -->
             <workingDirectory>target</workingDirectory>
-            <argLine>-Dfile.encoding=UTF-8</argLine>
           </configuration>
         </plugin>
         <plugin>

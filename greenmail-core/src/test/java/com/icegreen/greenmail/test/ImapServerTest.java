@@ -14,8 +14,10 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import javax.mail.*;
+import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
+import java.util.Date;
 
 import static javax.mail.Flags.Flag.DELETED;
 import static org.junit.Assert.*;
@@ -26,16 +28,32 @@ import static org.junit.Assert.*;
  * @since Jan 28, 2006
  */
 public class ImapServerTest {
+    public static final String UMLAUTS = "öäü \u00c4 \u00e4";
     @Rule
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
 
+    /**
+     * Tests simple send and retrieve, including umlauts.
+     *
+     * @throws Exception on error.
+     */
     @Test
     public void testRetreiveSimple() throws Exception {
         assertNotNull(greenMail.getImap());
-        final String subject = GreenMailUtil.random() + " öäü";
-        final String body = GreenMailUtil.random() + "\r\n" + GreenMailUtil.random() + "\r\n" + GreenMailUtil.random();
+        final String subject = GreenMailUtil.random() + UMLAUTS;
+        final String body = GreenMailUtil.random()
+                + "\r\n" + " öäü \u00c4 \u00e4"
+                + "\r\n" + GreenMailUtil.random();
         final String to = "test@localhost";
-        GreenMailUtil.sendTextEmailTest(to, "from@localhost", subject, body);
+        MimeMessage mimeMessage = new MimeMessage(greenMail.getSmtp().createSession());
+        mimeMessage.setSentDate(new Date());
+        mimeMessage.setFrom("from@localhost");
+        mimeMessage.setRecipients(Message.RecipientType.TO, to);
+
+        mimeMessage.setSubject(subject, "UTF-8"); // Need to explicitly set encoding
+        mimeMessage.setText(body, "UTF-8");
+        Transport.send(mimeMessage);
+
         greenMail.waitForIncomingEmail(5000, 1);
 
         Retriever retriever = new Retriever(greenMail.getImap());

@@ -49,12 +49,14 @@ public class TopCommand
             int numLines = Integer.parseInt(cmdLine[2]);
 
             BufferedReader in = new BufferedReader(new StringReader(GreenMailUtil.getWholeMessage(msg.getMimeMessage())));
+            try {
+                conn.println("+OK");
 
-            conn.println("+OK");
-
-            copyHeaders(in, conn);
-            copyLines(in, conn, numLines);
-            in.close();
+                copyHeaders(in, conn);
+                copyLines(in, conn, numLines);
+            } finally {
+                in.close();
+            }
             conn.println(".");
         } catch (Exception e) {
             conn.println("-ERR " + e);
