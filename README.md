@@ -70,6 +70,7 @@ To make it easier for integrating your contribution, have a look at the followin
 
 Try to keep your changes focused. Please avoid (major) refactorings and avoid re-formatting existing code.
 A good check is looking at the diff of the your pull requrest.
+Also, please refer to the open issue you're fixing by including a reference in your commit message.
 
 ### Code formatter ###
 Please set your code formatter to use 4 spaces for indentation of Java files (not tabs) and
