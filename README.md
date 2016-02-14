@@ -86,7 +86,7 @@ If you think you require a new dependencies or dependency update,
 discuss this up front with committers.
 
 ### Starting your pull request ###
-The best strategy for opening a [pull request][github_pull_request] after a [fork][github_fork] is to add the this repository ( https://github.com/greenmail-mail-test/greenmail )
+The best strategy for opening a [pull request][github_pull_request] after a [fork][github_fork] is to add the this [repository](https://github.com/greenmail-mail-test/greenmail)
 as the "upstream" to your .git/config such as:
 
     [remote "upstream"]
