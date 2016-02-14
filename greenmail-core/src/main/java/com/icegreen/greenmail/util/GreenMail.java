@@ -303,6 +303,10 @@ public class GreenMail extends ConfiguredGreenMail {
         }
     }
 
+    /**
+     * @deprecated As of 1.5 and to be removed in 1.6. No need to instantiate static helper class
+     */
+    @Deprecated
     public GreenMailUtil util() {
         return GreenMailUtil.instance();
     }
