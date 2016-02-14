@@ -326,7 +326,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     }
 
     @Override
-    public void copyMessage(long uid, MailFolder toFolder)
+    public long copyMessage(long uid, MailFolder toFolder)
             throws FolderException {
         StoredMessage originalMessage = getMessage(uid);
         MimeMessage newMime;
@@ -336,7 +336,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
             throw new FolderException("Can not copy message " + uid + " to folder " + toFolder, e);
         }
 
-        toFolder.appendMessage(newMime, originalMessage.getFlags(), originalMessage.getReceivedDate());
+        return toFolder.appendMessage(newMime, originalMessage.getFlags(), originalMessage.getReceivedDate());
     }
 
     @Override

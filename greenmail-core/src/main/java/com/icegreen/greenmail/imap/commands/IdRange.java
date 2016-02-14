@@ -7,9 +7,7 @@
 package com.icegreen.greenmail.imap.commands;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * Represents a range of UID values.
@@ -43,8 +41,9 @@ public class IdRange implements Serializable {
 
     /**
      * Parses a uid sequence, a comma separated list of uid ranges.
-     *
+     * <p/>
      * Example: 1 2:5 8:*
+     *
      * @param idRangeSequence the sequence
      * @return a list of ranges, never null.
      */
@@ -77,6 +76,58 @@ public class IdRange implements Serializable {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid message set " + range);
         }
+    }
+
+    public static IdRange[] convertUidsToIdRangeArray(List<Long> uids) {
+        if (uids == null || uids.isEmpty()) {
+            return new IdRange[0];
+        }
+
+        List<Long> uidsLocal = new LinkedList<Long>(uids);
+        Collections.sort(uidsLocal);
+
+        List<IdRange> ids = new LinkedList<IdRange>();
+
+        IdRange currentIdRange = new IdRange(uidsLocal.get(0));
+        for (Long uid : uidsLocal) {
+            if (uid == currentIdRange.getHighVal()) {
+                // Ignore
+            } else if (uid > currentIdRange.getHighVal() && (uid == currentIdRange.getHighVal() + 1)) {
+                currentIdRange = new IdRange(currentIdRange.getLowVal(), uid);
+            } else {
+                ids.add(currentIdRange);
+                currentIdRange = new IdRange(uid);
+            }
+        }
+
+        if (!ids.contains(currentIdRange)) {
+            ids.add(currentIdRange);
+        }
+
+        return ids.toArray(new IdRange[ids.size()]);
+    }
+
+    public static String uidsToRangeString(List<Long> uids) {
+        return idRangesToString(convertUidsToIdRangeArray(uids));
+    }
+
+    public static String idRangeToString(IdRange idRange) {
+        return idRange.getHighVal() == idRange.getLowVal()
+                ? Long.toString(idRange.getLowVal())
+                : Long.toString(idRange.getLowVal()) + ":" + Long.toString(idRange.getHighVal());
+    }
+
+    public static String idRangesToString(IdRange[] idRanges) {
+        StringBuilder sb = new StringBuilder();
+
+        for (IdRange idRange : idRanges) {
+            if (sb.length() > 0) {
+                sb.append(",");
+            }
+            sb.append(idRangeToString(idRange));
+        }
+
+        return sb.toString();
     }
 
     private static long parseLong(String value) {

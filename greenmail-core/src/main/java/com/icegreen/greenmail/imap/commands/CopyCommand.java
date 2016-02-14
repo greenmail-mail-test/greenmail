@@ -10,6 +10,9 @@ import com.icegreen.greenmail.imap.*;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Handles processeing for the COPY imap command.
  *
@@ -54,10 +57,9 @@ class CopyCommand extends SelectedStateCommand implements UidEnabledCommand {
             throw e;
         }
 
-//        if (! useUids) {
-//            idSet = currentMailbox.toUidSet(idSet);
-//        }
-//        currentMailbox.copyMessages(toMailbox, idSet);
+        List<Long> copiedUidsOld = new ArrayList<Long>();
+        List<Long> copiedUidsNew = new ArrayList<Long>();
+
         long[] uids = currentMailbox.getMessageUids();
         for (long uid : uids) {
             boolean inSet;
@@ -69,11 +71,35 @@ class CopyCommand extends SelectedStateCommand implements UidEnabledCommand {
             }
 
             if (inSet) {
-                currentMailbox.copyMessage(uid, toFolder);
+                long copiedUid = currentMailbox.copyMessage(uid, toFolder);
+                copiedUidsOld.add(uid);
+                copiedUidsNew.add(copiedUid);
             }
         }
 
         session.unsolicitedResponses(response);
-        response.commandComplete(this);
+        response.commandComplete(this, generateCopyUidResponseCode(currentMailbox, copiedUidsOld, copiedUidsNew));
+    }
+
+    /**
+     * Generates <b>COPYUID</b> response code
+     * (see <a href="http://tools.ietf.org/html/rfc2359#page-4">http://tools.ietf.org/html/rfc2359</a>)
+     * using format : <i>COPYUID UIDVALIDITY SOURCE-UIDS TARGET-UIDS</i>.
+     *
+     * For example <i>COPYUID 38505 304,319,320 3956,3957,3958</i>
+     *
+     * @param currentMailbox imap folder which is target of copy command
+     * @param copiedUidsFrom List of source uids which was successfully copied
+     * @param copiedUidsTo   List of message uids which was successfully copied
+     * @return response code
+     */
+    private String generateCopyUidResponseCode(ImapSessionFolder currentMailbox,
+                                               List<Long> copiedUidsFrom, List<Long> copiedUidsTo) {
+        StringBuilder copyuidResponseCode = new StringBuilder("COPYUID").append(SP).
+                append(currentMailbox.getUidValidity()).append(SP).
+                append(IdRange.uidsToRangeString(copiedUidsFrom)).append(SP).
+                append(IdRange.uidsToRangeString(copiedUidsTo));
+
+        return copyuidResponseCode.toString();
     }
 }

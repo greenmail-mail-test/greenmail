@@ -83,7 +83,7 @@ public class SimpleMessageAttributes
         this.receivedDateString = new MailDateFormat().format(receivedDate);
         this.sentDateEnvelopeString = new MailDateFormat().format(sentDate);
 
-        if(msg != null) {
+        if (msg != null) {
             parseMimePart(msg);
         }
     }
@@ -96,12 +96,12 @@ public class SimpleMessageAttributes
      * @return Sent date or now if no date could be found
      */
     private static Date getSentDate(MimeMessage msg, Date defaultVal) {
-        if(msg == null) {
+        if (msg == null) {
             return defaultVal;
         }
         try {
             Date sentDate = msg.getSentDate();
-            if(sentDate == null) {
+            if (sentDate == null) {
                 return defaultVal;
             } else {
                 return sentDate;
@@ -208,8 +208,8 @@ public class SimpleMessageAttributes
 //            contentDisposition = part.getDisposition();
             contentDisposition = Header.create(part.getHeader("Content-Disposition"));
         } catch (MessagingException me) {
-            if(log.isDebugEnabled()) {
-                log.debug("Can not create content disposition for part "+part, me);
+            if (log.isDebugEnabled()) {
+                log.debug("Can not create content disposition for part " + part, me);
             }
         }
 
@@ -217,8 +217,8 @@ public class SimpleMessageAttributes
             // TODO this doesn't work
             lineCount = getLineCount(part);
         } catch (Exception e) {
-            if(log.isDebugEnabled()) {
-                log.debug("Can not get line count for part "+part, e);
+            if (log.isDebugEnabled()) {
+                log.debug("Can not get line count for part " + part, e);
             }
         }
 
@@ -240,7 +240,7 @@ public class SimpleMessageAttributes
                     }
                 }
             } catch (Exception e) {
-                if(log.isDebugEnabled()) {
+                if (log.isDebugEnabled()) {
                     log.debug("Can not recurse through multipart content", e);
                 }
             }
@@ -270,9 +270,9 @@ public class SimpleMessageAttributes
                 //}
 
                 // TODO: Warn till fixed!
-                log.warn("Unknown/unhandled subtype "+secondaryType+" of message encountered.");
+                log.warn("Unknown/unhandled subtype " + secondaryType + " of message encountered.");
             } else {
-                log.warn("Unknown/unhandled subtype "+secondaryType+" of message encountered.");
+                log.warn("Unknown/unhandled subtype " + secondaryType + " of message encountered.");
             }
         }
     }
@@ -707,7 +707,7 @@ public class SimpleMessageAttributes
             if (null == params) {
                 ret.append(Q).append(value).append(Q);
             } else {
-                if(params.size()==0) {
+                if (params.isEmpty()) {
                     ret.append(NIL);
                 } else {
                     ret.append(LB);
@@ -732,7 +732,7 @@ public class SimpleMessageAttributes
                 return null;
             }
             if (header.length > 1) {
-                throw new IllegalArgumentException("Header creation assumes only one occurrence of header instead of "+header.length);
+                throw new IllegalArgumentException("Header creation assumes only one occurrence of header instead of " + header.length);
             }
             return new Header(header[0]);
         }

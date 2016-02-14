@@ -65,7 +65,7 @@ public interface MailFolder {
 
     long[] search(SearchTerm searchTerm);
 
-    void copyMessage(long uid, MailFolder toFolder)
+    long copyMessage(long uid, MailFolder toFolder)
             throws FolderException;
 
     void setFlags(Flags flags, boolean value, long uid, FolderListener silentListener, boolean addUid) throws FolderException;
