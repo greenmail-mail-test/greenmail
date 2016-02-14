@@ -60,7 +60,7 @@ public abstract class AbstractServer extends Thread implements Service {
         if (setup.isSecure()) {
             socket = DummySSLServerSocketFactory.getDefault().createServerSocket();
         } else {
-            socket = new ServerSocket();
+            socket = new ServerSocket(); // NOSONAR
         }
         socket.setReuseAddress(true); // Try to fix TIME_WAIT on Linux when quickly starting/stopping server
         try {
