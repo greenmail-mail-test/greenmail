@@ -3,7 +3,7 @@ GreenMail
 
 [GreenMail][greenmail_project_site] is an open source, intuitive and easy-to-use test suite of email servers for testing purposes. 
 Supports SMTP, POP3, IMAP with SSL socket support. GreenMail also provides a JBoss GreenMail Service.
-GreenMail is the fist and only library that offers a test framework for both receiving and retrieving emails from Java.
+GreenMail is the first and only library that offers a test framework for both receiving and retrieving emails from Java.
 
 Go to the [project site][greenmail_project_site] for details:
 
