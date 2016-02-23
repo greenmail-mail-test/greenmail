@@ -76,5 +76,6 @@ public class GreenMailRule extends GreenMailProxy implements MethodRule, TestRul
     public void purgeEmailFromAllMailboxes() throws FolderException{
         greenMail.purgeEmailFromAllMailboxes();
     }
+
 }
 

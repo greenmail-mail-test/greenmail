@@ -7,6 +7,8 @@
 package com.icegreen.greenmail.user;
 
 import com.icegreen.greenmail.imap.ImapHostManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -17,6 +19,9 @@ public class UserManager {
     private Map<String, GreenMailUser> loginToUser = Collections.synchronizedMap(new HashMap<String, GreenMailUser>());
     private Map<String, GreenMailUser> emailToUser = Collections.synchronizedMap(new HashMap<String, GreenMailUser>());
     private ImapHostManager imapHostManager;
+    private boolean authRequired = true;
+    private final Logger log = LoggerFactory.getLogger(UserManager.class);
+
 
     public UserManager(ImapHostManager imapHostManager) {
         this.imapHostManager = imapHostManager;
@@ -55,9 +60,25 @@ public class UserManager {
         return Collections.unmodifiableCollection(loginToUser.values());
     }
 
-    public boolean test(String userid, String password) {
-        GreenMailUser u = getUser(userid);
-        return null != u && u.getPassword().equals(password);
+    public boolean test(String userID, String password) {
+        if(authRequired) {
+            GreenMailUser u = getUser(userID);
+            return null != u && u.getPassword().equals(password);
+        }
+
+        try {
+            if(!userExists(userID)) {
+                createUser(userID, userID, "");
+            }
+        } catch (UserException e) {
+            log.error("Failed to create user with userid=" + userID,e);
+
+        }
+        return true;
+    }
+
+    public void setAuthRequired(boolean auth) {
+        authRequired = auth;
     }
 
     public ImapHostManager getImapHostManager() {
@@ -72,5 +93,9 @@ public class UserManager {
      */
     private static String normalizerUserName(String login) {
         return login.trim().toLowerCase(Locale.ENGLISH);
+    }
+
+    public boolean userExists(String userid) {
+        return loginToUser.containsKey(userid) || emailToUser.containsKey(userid);
     }
 }
