@@ -53,7 +53,7 @@ public class ServerStartStopTest {
         }
 
         // Set large startup timeout
-        for(ServerSetup s: setups) {
+        for (ServerSetup s : setups) {
             s.setServerStartupTimeout(3000L);
         }
         service = new GreenMail(setups);

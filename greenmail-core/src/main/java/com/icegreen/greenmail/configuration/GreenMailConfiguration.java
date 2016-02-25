@@ -1,5 +1,7 @@
 package com.icegreen.greenmail.configuration;
 
+import com.icegreen.greenmail.Managers;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +10,14 @@ import java.util.List;
  */
 public class GreenMailConfiguration {
     private final List<UserBean> usersToCreate = new ArrayList<UserBean>();
+    private Class<? extends Managers> managersClass = Managers.class;
+
+    /**
+     * @return New GreenMail configuration
+     */
+    public static GreenMailConfiguration aConfig() {
+        return new GreenMailConfiguration();
+    }
 
     /**
      * The given {@link com.icegreen.greenmail.user.GreenMailUser} will be created when servers will start
@@ -33,11 +43,12 @@ public class GreenMailConfiguration {
         return this;
     }
 
-    /**
-     * @return New GreenMail configuration
-     */
-    public static GreenMailConfiguration aConfig() {
-        return new GreenMailConfiguration();
+    public GreenMailConfiguration withManagersClass(final Class<? extends Managers> managersClass) {
+        if (managersClass == null) {
+            throw new NullPointerException("managersClass may not be null.");
+        }
+        this.managersClass = managersClass;
+        return this;
     }
 
     /**
@@ -45,5 +56,12 @@ public class GreenMailConfiguration {
      */
     public List<UserBean> getUsersToCreate() {
         return usersToCreate;
+    }
+
+    /**
+     * @return The {@link Managers} class to should be used
+     */
+    public Class<? extends Managers> getManagersClass() {
+        return managersClass;
     }
 }

@@ -26,13 +26,13 @@ import java.util.*;
 public abstract class AbstractServer extends Thread implements Service {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final InetAddress bindTo;
+    private final List<ProtocolHandler> handlers = Collections.synchronizedList(new ArrayList<ProtocolHandler>());
+    private final Object startupMonitor = new Object();
     protected ServerSocket serverSocket = null;
     protected Managers managers;
     protected ServerSetup setup;
-    private final List<ProtocolHandler> handlers = Collections.synchronizedList(new ArrayList<ProtocolHandler>());
     private volatile boolean keepRunning = false;
     private volatile boolean running = false;
-    private final Object startupMonitor = new Object();
 
     protected AbstractServer(ServerSetup setup, Managers managers) {
         this.setup = setup;

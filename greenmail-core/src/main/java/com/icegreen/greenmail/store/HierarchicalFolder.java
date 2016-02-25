@@ -30,7 +30,8 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         PERMANENT_FLAGS.add(Flags.Flag.SEEN);
     }
 
-    private final StoredMessageCollection mailMessages = new ListBasedStoredMessageCollection();
+    private final StoredMessageCollectionFactory storedMessageCollectionFactory;
+    private final StoredMessageCollection mailMessages;
     private final List<FolderListener> _mailboxListeners = Collections.synchronizedList(new ArrayList<FolderListener>());
     protected String name;
     private Collection<HierarchicalFolder> children;
@@ -39,12 +40,18 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     private long nextUid = 1;
     private long uidValidity;
 
-    public HierarchicalFolder(HierarchicalFolder parent,
-                              String name) {
+    protected HierarchicalFolder(final StoredMessageCollectionFactory storedMessageCollectionFactory,
+                                 HierarchicalFolder parent, String name) {
+        this.storedMessageCollectionFactory = storedMessageCollectionFactory;
+        mailMessages = storedMessageCollectionFactory.createCollection();
         this.name = name;
         this.children = new ArrayList<HierarchicalFolder>();
         this.parent = parent;
         this.uidValidity = System.currentTimeMillis();
+    }
+
+    public HierarchicalFolder(final HierarchicalFolder castParent, final String mailboxName) {
+        this(castParent.storedMessageCollectionFactory, castParent, mailboxName);
     }
 
     public Collection<HierarchicalFolder> getChildren() {

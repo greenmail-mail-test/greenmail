@@ -63,11 +63,35 @@ public class GreenMail extends ConfiguredGreenMail {
     }
 
     /**
+     * Create the required services according to the server setup
+     *
+     * @param config Service configuration
+     * @return Services map
+     */
+    private static Map<String, AbstractServer> createServices(ServerSetup[] config, Managers mgr) {
+        Map<String, AbstractServer> srvc = new HashMap<String, AbstractServer>();
+        for (ServerSetup setup : config) {
+            if (srvc.containsKey(setup.getProtocol())) {
+                throw new IllegalArgumentException("Server '" + setup.getProtocol() + "' was found at least twice in the array");
+            }
+            final String protocol = setup.getProtocol();
+            if (protocol.startsWith(ServerSetup.PROTOCOL_SMTP)) {
+                srvc.put(protocol, new SmtpServer(setup, mgr));
+            } else if (protocol.startsWith(ServerSetup.PROTOCOL_POP3)) {
+                srvc.put(protocol, new Pop3Server(setup, mgr));
+            } else if (protocol.startsWith(ServerSetup.PROTOCOL_IMAP)) {
+                srvc.put(protocol, new ImapServer(setup, mgr));
+            }
+        }
+        return srvc;
+    }
+
+    /**
      * Initialize
      */
     private void init() {
         if (managers == null) {
-            managers = new Managers();
+            managers = createManagers();
         }
         if(services == null) {
             services = createServices(config, managers);
@@ -122,7 +146,7 @@ public class GreenMail extends ConfiguredGreenMail {
                 service.stopService();
             }
         }
-        managers = new Managers();
+        managers.reset();
         services = null;
     }
 
@@ -130,30 +154,6 @@ public class GreenMail extends ConfiguredGreenMail {
     public void reset() {
         stop();
         start();
-    }
-
-    /**
-     * Create the required services according to the server setup
-     *
-     * @param config Service configuration
-     * @return Services map
-     */
-    private static Map<String, AbstractServer> createServices(ServerSetup[] config, Managers mgr) {
-        Map<String, AbstractServer> srvc = new HashMap<String, AbstractServer>();
-        for (ServerSetup setup : config) {
-            if (srvc.containsKey(setup.getProtocol())) {
-                throw new IllegalArgumentException("Server '" + setup.getProtocol() + "' was found at least twice in the array");
-            }
-            final String protocol = setup.getProtocol();
-            if (protocol.startsWith(ServerSetup.PROTOCOL_SMTP)) {
-                srvc.put(protocol, new SmtpServer(setup, mgr));
-            } else if (protocol.startsWith(ServerSetup.PROTOCOL_POP3)) {
-                srvc.put(protocol, new Pop3Server(setup, mgr));
-            } else if (protocol.startsWith(ServerSetup.PROTOCOL_IMAP)) {
-                srvc.put(protocol, new ImapServer(setup, mgr));
-            }
-        }
-        return srvc;
     }
 
     @Override

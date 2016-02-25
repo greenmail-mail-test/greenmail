@@ -16,9 +16,9 @@ import javax.mail.internet.MimeMessage;
 
 
 public class UserImpl implements GreenMailUser {
-    String email;
     private final int cachedHashCode;
     private final String cachedHashCodeAsString;
+    String email;
     String login;
     String password;
     private ImapHostManager imapHostManager;
@@ -46,9 +46,9 @@ public class UserImpl implements GreenMailUser {
         try {
             imapHostManager.deleteMailbox(this, ImapConstants.INBOX_NAME);
         } catch (FolderException e) {
-            throw new IllegalStateException("Can not delete user "+this, e);
+            throw new IllegalStateException("Can not delete user " + this, e);
         } catch (AuthorizationException e) {
-            throw new IllegalStateException("Can not delete user "+this, e);
+            throw new IllegalStateException("Can not delete user " + this, e);
         }
     }
 

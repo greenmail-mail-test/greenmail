@@ -10,8 +10,8 @@ import com.icegreen.greenmail.imap.ImapConstants;
  * @author Raimund Klein <raimund.klein@gmx.de>
  */
 class RootFolder extends HierarchicalFolder {
-    public RootFolder() {
-        super(null, ImapConstants.USER_NAMESPACE);
+    RootFolder(final StoredMessageCollectionFactory storedMessageCollectionFactory) {
+        super(storedMessageCollectionFactory, null, ImapConstants.USER_NAMESPACE);
     }
 
     @Override

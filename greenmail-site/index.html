@@ -862,16 +862,18 @@ jar xvf /path/to/greenmail-jboss-service-XXX.jar
                     ImapServerTest.java</a> quota test</p>
 
                 <h4>How can I create or delete a mail user?</h4>
+
                 <p>
 <pre><code class="language-java"><!-- @formatter:off -->
-GreenMail greenMail = ...
-// Create user with login id equals email
-GreenMailUser user1 = greenMail.setUser("foo@localhost", "some secret pwd");
-// Create user with login id different than email
-GreenMailUser user2 = greenMail.setUser("foo@localhost", "login-id", "some secret pwd");
-...
-greenMail.getManagers().getUserManager().deleteUser(user1); // Delete user
-</code></pre><!-- @formatter:on -->
+                GreenMail greenMail = ...
+                // Create user with login id equals email
+                GreenMailUser user1 = greenMail.setUser("foo@localhost", "some secret pwd");
+                // Create user with login id different than email
+                GreenMailUser user2 = greenMail.setUser("foo@localhost", "login-id", "some secret pwd");
+                ...
+                greenMail.getManagers().getUserManager().deleteUser(user1); // Delete user
+            </code></pre>
+                <!-- @formatter:on -->
                 </p>
 
             </div>
