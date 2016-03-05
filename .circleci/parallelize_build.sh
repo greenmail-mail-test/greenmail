@@ -8,29 +8,34 @@ copy_artifacts() {
 }
 
 run_maven() {
- mvn clean install -DskipTests
+ mvn -V clean install -DskipTests
  mvn test
 }
 
 jdk7() {
  sudo update-alternatives --set java "/usr/lib/jvm/jdk1.7.0/bin/java"
  sudo update-alternatives --set javac "/usr/lib/jvm/jdk1.7.0/bin/javac"
+ echo 'export JAVA_HOME=/usr/lib/jvm/jdk1.7.0/' >> ~/.circlerc
 }
 
 jdk8() {
  sudo update-alternatives --set java "/usr/lib/jvm/jdk1.8.0/bin/java"
  sudo update-alternatives --set javac "/usr/lib/jvm/jdk1.8.0/bin/javac"
+ echo 'export JAVA_HOME=/usr/lib/jvm/jdk1.8.0' >> ~/.circlerc
 }
 
 openjdk7() {
  sudo update-alternatives --set java "/usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java"
  sudo update-alternatives --set javac "/usr/lib/jvm/java-7-openjdk-amd64/bin/javac"
+ echo 'export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64' >> ~/.circlerc
 }
 
 openjdk8() {
  sudo update-alternatives --set java "/usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java"
  sudo update-alternatives --set javac "/usr/lib/jvm/java-8-openjdk-amd64/bin/javac"
+ echo 'export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64' >> ~/.circlerc
 }
+
 case $CIRCLE_NODE_INDEX in 
 	0)
 	 echo "Building GreenMail on Oracle JDK7"
