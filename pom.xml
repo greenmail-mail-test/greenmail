@@ -95,6 +95,15 @@
       <email>camann9 (at) gmail.com</email>
       <url>https://github.com/camann9</url>
     </developer>
+    <developer>
+      <name>Youssuf ElKalay</name>
+      <id>buildscientist</id>
+      <properties>
+        <id>buildscientist</id>
+      </properties>
+      <email>yelkalay (at) gmail.com</email>
+      <url>https://github.com/buildscientist</url>
+    </developer>
   </developers>
   <contributors>
     <contributor>
