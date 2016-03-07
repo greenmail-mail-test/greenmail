@@ -310,4 +310,5 @@ public class GreenMail extends ConfiguredGreenMail {
     public GreenMailUtil util() {
         return GreenMailUtil.instance();
     }
+
 }

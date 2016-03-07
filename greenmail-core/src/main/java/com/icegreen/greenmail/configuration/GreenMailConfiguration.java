@@ -1,5 +1,7 @@
 package com.icegreen.greenmail.configuration;
 
+import com.icegreen.greenmail.user.UserManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,5 +47,10 @@ public class GreenMailConfiguration {
      */
     public List<UserBean> getUsersToCreate() {
         return usersToCreate;
+    }
+
+    public GreenMailConfiguration withDisabledAuthentication(UserManager userManager) {
+        userManager.setAuthRequired(false);
+        return this;
     }
 }

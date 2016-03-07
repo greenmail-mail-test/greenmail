@@ -3,10 +3,12 @@ package com.icegreen.greenmail.user;
 import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.imap.ImapHostManagerImpl;
 import com.icegreen.greenmail.store.InMemoryStore;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 public class UserManagerTest {
     @Test
@@ -55,5 +57,51 @@ public class UserManagerTest {
 
         userManager.deleteUser(user);
         assertTrue(userManager.listUser().isEmpty());
+    }
+
+    @Test
+    public void testNoAuthRequired() {
+        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
+        UserManager userManager = new UserManager(imapHostManager);
+        userManager.setAuthRequired(false);
+
+        assertTrue(userManager.listUser().isEmpty());
+        assertTrue(userManager.test("foo@localhost",null));
+
+    }
+
+    @Test
+    public void testNoAuthRequiredWithExistingUser() throws UserException {
+        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
+        UserManager userManager = new UserManager(imapHostManager);
+        userManager.setAuthRequired(false);
+
+        userManager.createUser("foo@example.com","foo",null);
+        assertFalse(userManager.listUser().isEmpty());
+        assertTrue(userManager.test("foo",null));
+
+    }
+
+    @Test
+    public void testAuthRequired() {
+        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
+        UserManager userManager = new UserManager(imapHostManager);
+        userManager.setAuthRequired(true);
+
+        assertTrue(userManager.listUser().isEmpty());
+        assertFalse(userManager.test("foo@localhost",null));
+
+    }
+
+    @Test
+    public void testAuthRequiredWithExistingUser() throws UserException {
+        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
+        UserManager userManager = new UserManager(imapHostManager);
+        userManager.setAuthRequired(true);
+        userManager.createUser("foo@example.com","foo","bar");
+
+        assertFalse(userManager.listUser().isEmpty());
+        assertTrue(userManager.test("foo","bar"));
+
     }
 }

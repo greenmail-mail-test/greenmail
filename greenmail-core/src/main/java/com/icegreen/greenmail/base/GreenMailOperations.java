@@ -140,6 +140,8 @@ public interface GreenMailOperations {
 
     /**
      * Remove/purge all data from all mail stores (POP3/IMAP)
-     */
+    */
     void purgeEmailFromAllMailboxes() throws FolderException;
+
+
 }
