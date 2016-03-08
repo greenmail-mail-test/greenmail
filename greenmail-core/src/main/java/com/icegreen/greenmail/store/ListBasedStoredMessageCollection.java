@@ -73,8 +73,8 @@ public class ListBasedStoredMessageCollection implements StoredMessageCollection
     }
 
     @Override
-    public List getMessages(MsgRangeFilter range) {
-        List<StoredMessage> ret = new ArrayList<StoredMessage>();
+    public List<StoredMessage> getMessages(MsgRangeFilter range) {
+        List<StoredMessage> ret = new ArrayList<>();
 
         synchronized (mailMessages) {
             for (int i = 0; i < mailMessages.size(); i++) {
@@ -91,7 +91,7 @@ public class ListBasedStoredMessageCollection implements StoredMessageCollection
     public List<StoredMessage> getMessages() {
         synchronized (mailMessages) {
             // Return new list since we don't want to give the caller access to the internal list
-            return new ArrayList<StoredMessage>(mailMessages);
+            return new ArrayList<>(mailMessages);
         }
     }
 

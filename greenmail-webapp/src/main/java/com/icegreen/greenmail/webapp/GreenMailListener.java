@@ -63,8 +63,8 @@ public class GreenMailListener implements ServletContextListener {
     }
 
     private Map<String, String> extractParameters(ServletContext pServletContext) {
-        Enumeration names = pServletContext.getInitParameterNames();
-        Map<String, String> parameterMap = new HashMap<String, String>();
+        Enumeration<?> names = pServletContext.getInitParameterNames();
+        Map<String, String> parameterMap = new HashMap<>();
         while (names.hasMoreElements()) {
             String name = (String) names.nextElement();
             parameterMap.put(name, pServletContext.getInitParameter(name));

@@ -42,7 +42,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     public HierarchicalFolder(HierarchicalFolder parent,
                               String name) {
         this.name = name;
-        this.children = new ArrayList<HierarchicalFolder>();
+        this.children = new ArrayList<>();
         this.parent = parent;
         this.uidValidity = System.currentTimeMillis();
     }
@@ -162,7 +162,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     }
 
     @Override
-    public List getMessages(MsgRangeFilter range) {
+    public List<StoredMessage> getMessages(MsgRangeFilter range) {
         return mailMessages.getMessages(range);
     }
 
@@ -173,7 +173,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
 
     @Override
     public List<StoredMessage> getNonDeletedMessages() {
-        List<StoredMessage> ret = new ArrayList<StoredMessage>();
+        List<StoredMessage> ret = new ArrayList<>();
 
         synchronized (mailMessages) {
             for (StoredMessage mailMessage : mailMessages) {
@@ -306,7 +306,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
 
     @Override
     public long[] search(SearchTerm searchTerm) {
-        List<StoredMessage> matchedMessages = new ArrayList<StoredMessage>();
+        List<StoredMessage> matchedMessages = new ArrayList<>();
 
         synchronized (mailMessages) {
             for (StoredMessage mailMessage : mailMessages) {
@@ -380,7 +380,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     @Override
     public Message[] getMessagesByUID(long start, long end) throws MessagingException {
         synchronized (mailMessages) {
-            List<Message> messages = new ArrayList<Message>();
+            List<Message> messages = new ArrayList<>();
             for (StoredMessage mailMessage : mailMessages) {
                 final long uid = mailMessage.getUid();
                 if (uid >= start && uid <= end) {
@@ -394,8 +394,8 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     @Override
     public Message[] getMessagesByUID(long[] uids) throws MessagingException {
         synchronized (mailMessages) {
-            List<Message> messages = new ArrayList<Message>(uids.length);
-            Map<Long, StoredMessage> uid2Msg = new HashMap<Long, StoredMessage>(mailMessages.size());
+            List<Message> messages = new ArrayList<>(uids.length);
+            Map<Long, StoredMessage> uid2Msg = new HashMap<>(mailMessages.size());
             for (StoredMessage mailMessage : mailMessages) {
                 uid2Msg.put(mailMessage.getUid(), mailMessage);
             }

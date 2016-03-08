@@ -7,7 +7,7 @@ import java.util.List;
  * Properties that can be defined to configure a GreenMail instance or GreenMailRule.
  */
 public class GreenMailConfiguration {
-    private final List<UserBean> usersToCreate = new ArrayList<UserBean>();
+    private final List<UserBean> usersToCreate = new ArrayList<>();
     private boolean disableAuthenticationCheck = false;
 
     /**

@@ -209,7 +209,7 @@ public class CommandParser {
      * Consumes a CRLF from the request.
      * TODO we're being liberal, the spec insists on \r\n for new lines.
      *
-     * @param request
+     * @param request the imap request
      * @throws ProtocolException
      */
     private void consumeCRLF(ImapRequestLineReader request)
@@ -360,7 +360,7 @@ public class CommandParser {
             return new IdRange[]{IdRange.parseRange(nextWord)};
         }
 
-        List<IdRange> rangeList = new ArrayList<IdRange>();
+        List<IdRange> rangeList = new ArrayList<>();
         int pos = 0;
         while (commaPos != -1) {
             String range = nextWord.substring(pos, commaPos);

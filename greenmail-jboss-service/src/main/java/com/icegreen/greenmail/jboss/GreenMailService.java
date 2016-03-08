@@ -38,7 +38,7 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
 
     private Managers managers;
     private Map<ServiceProtocol, Service> services =
-            new EnumMap<ServiceProtocol, Service>(ServiceProtocol.class);
+            new EnumMap<>(ServiceProtocol.class);
 
     /** Default port offset is {@value}. */
     public static final int DEFAULT_PORT_OFFSET = 3000;
@@ -173,11 +173,7 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
                 }
                 builder.append("</tr>");
             }
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        } catch (MessagingException e) {
-            throw new IllegalStateException(e);
-        } catch (FolderException e) {
+        } catch (IOException | MessagingException | FolderException e) {
             throw new IllegalStateException(e);
         }
         builder.append("</table>");

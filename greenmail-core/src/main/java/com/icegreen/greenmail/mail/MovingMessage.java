@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class MovingMessage {
     private MailAddress returnPath;
-    private List<MailAddress> toAddresses = new LinkedList<MailAddress>();
+    private List<MailAddress> toAddresses = new LinkedList<>();
     private Workspace _workspace;
     private Resource _content;
     private MimeMessage message;

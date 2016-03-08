@@ -49,7 +49,7 @@ public class IdRange implements Serializable {
      */
     public static List<IdRange> parseRangeSequence(String idRangeSequence) {
         StringTokenizer tokenizer = new StringTokenizer(idRangeSequence, ",");
-        List<IdRange> ranges = new ArrayList<IdRange>();
+        List<IdRange> ranges = new ArrayList<>();
         while (tokenizer.hasMoreTokens()) {
             ranges.add(parseRange(tokenizer.nextToken()));
         }
@@ -83,10 +83,10 @@ public class IdRange implements Serializable {
             return new IdRange[0];
         }
 
-        List<Long> uidsLocal = new LinkedList<Long>(uids);
+        List<Long> uidsLocal = new LinkedList<>(uids);
         Collections.sort(uidsLocal);
 
-        List<IdRange> ids = new LinkedList<IdRange>();
+        List<IdRange> ids = new LinkedList<>();
 
         IdRange currentIdRange = new IdRange(uidsLocal.get(0));
         for (Long uid : uidsLocal) {

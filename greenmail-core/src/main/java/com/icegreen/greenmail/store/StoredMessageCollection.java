@@ -22,7 +22,7 @@ public interface StoredMessageCollection extends Iterable<StoredMessage> {
 
     int getMsn(long uid) throws FolderException;
 
-    List getMessages(MsgRangeFilter range);
+    List<StoredMessage> getMessages(MsgRangeFilter range);
 
     List<StoredMessage> getMessages();
 

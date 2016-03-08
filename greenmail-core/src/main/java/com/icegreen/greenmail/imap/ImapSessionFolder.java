@@ -60,7 +60,7 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
     }
 
     @Override
-    public List getMessages(MsgRangeFilter msgRangeFilter) {
+    public List<StoredMessage> getMessages(MsgRangeFilter msgRangeFilter) {
         return _folder.getMessages(msgRangeFilter);
     }
 
@@ -100,7 +100,7 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
             return Collections.emptyList();
         }
 
-        List<FlagUpdate> retVal = new ArrayList<FlagUpdate>();
+        List<FlagUpdate> retVal = new ArrayList<>();
         retVal.addAll(_modifiedFlags.values());
         _modifiedFlags.clear();
         return retVal;

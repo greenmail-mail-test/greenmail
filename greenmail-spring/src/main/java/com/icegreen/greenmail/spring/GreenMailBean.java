@@ -98,7 +98,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
      * @return the configured server setups.
      */
     private ServerSetup[] createServerSetup() {
-        List<ServerSetup> setups = new ArrayList<ServerSetup>();
+        List<ServerSetup> setups = new ArrayList<>();
         if (smtpProtocol) {
             smtpServerSetup = createTestServerSetup(ServerSetup.SMTP);
             setups.add(smtpServerSetup);
@@ -355,7 +355,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
      *
      * @return Value for property 'users'.
      */
-    public List getUsers() {
+    public List<String> getUsers() {
         return users;
     }
 

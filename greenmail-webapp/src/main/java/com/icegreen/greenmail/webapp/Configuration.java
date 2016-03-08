@@ -46,10 +46,10 @@ public class Configuration {
      * Initializes configuration with
      */
     public Configuration() {
-        services = new ArrayList<ServiceConfiguration>();
+        services = new ArrayList<>();
         defaultHostname = DEFAULT_HOSTNAME;
         portOffset = DEFAULT_PORT_OFFSET;
-        users = new ArrayList<User>();
+        users = new ArrayList<>();
     }
 
     public String getDefaultHostname() {

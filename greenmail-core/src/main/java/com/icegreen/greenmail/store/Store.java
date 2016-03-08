@@ -39,7 +39,7 @@ public interface Store {
      * @return A read-only collection of {@link MailFolder} instances, which
      *         are the children of the supplied parent.
      */
-    Collection getChildren(MailFolder parent);
+    Collection<MailFolder> getChildren(MailFolder parent);
 
     /**
      * Creates a mailbox under the supplied parent with the given name.

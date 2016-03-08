@@ -13,7 +13,6 @@ import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.StoredMessage;
 
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -31,24 +30,23 @@ public class UidlCommand
         try {
             MailFolder inbox = state.getFolder();
             String[] cmdLine = cmd.split(" ");
-            List messages;
+            List<StoredMessage> messages;
             if (cmdLine.length > 1) {
                 String msgNumStr = cmdLine[1];
-                List msgList = inbox.getMessages(new MsgRangeFilter(msgNumStr, false));
+                List<StoredMessage> msgList = inbox.getMessages(new MsgRangeFilter(msgNumStr, false));
                 if (msgList.size() != 1) {
                     conn.println("-ERR no such message");
 
                     return;
                 }
 
-                StoredMessage msg = (StoredMessage) msgList.get(0);
+                StoredMessage msg = msgList.get(0);
                 conn.println("+OK " + msgNumStr + " " + msg.getUid());
             } else {
                 messages = inbox.getNonDeletedMessages();
 
                 conn.println("+OK");
-                for (Iterator i = messages.iterator(); i.hasNext();) {
-                    StoredMessage msg = (StoredMessage) i.next();
+                for (StoredMessage msg : messages) {
                     conn.println(inbox.getMsn(msg.getUid()) + " " + msg.getUid());
                 }
 

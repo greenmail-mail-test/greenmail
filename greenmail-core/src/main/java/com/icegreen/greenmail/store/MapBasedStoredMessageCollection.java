@@ -68,8 +68,8 @@ public class MapBasedStoredMessageCollection implements StoredMessageCollection 
     }
 
     @Override
-    public List getMessages(MsgRangeFilter range) {
-        final List<StoredMessage> messagesInRange = new ArrayList<StoredMessage>();
+    public List<StoredMessage> getMessages(MsgRangeFilter range) {
+        final List<StoredMessage> messagesInRange = new ArrayList<>();
         int i = 0;
         synchronized (mailMessages) {
             for (final StoredMessage message : mailMessages.values()) {
@@ -85,7 +85,7 @@ public class MapBasedStoredMessageCollection implements StoredMessageCollection 
     @Override
     public List<StoredMessage> getMessages() {
         synchronized (mailMessages) {
-            return new ArrayList<StoredMessage>(mailMessages.values());
+            return new ArrayList<>(mailMessages.values());
         }
     }
 

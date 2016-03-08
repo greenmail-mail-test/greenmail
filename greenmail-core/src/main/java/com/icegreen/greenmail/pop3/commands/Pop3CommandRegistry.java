@@ -11,7 +11,7 @@ import java.util.Map;
 
 
 public class Pop3CommandRegistry {
-    private static final Map<String, Pop3Command> commands = new HashMap<String, Pop3Command>();
+    private static final Map<String, Pop3Command> commands = new HashMap<>();
 
     static {
         commands.put("QUIT", new QuitCommand());

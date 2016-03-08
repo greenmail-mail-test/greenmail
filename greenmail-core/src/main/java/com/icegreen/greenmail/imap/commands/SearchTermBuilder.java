@@ -119,7 +119,7 @@ public abstract class SearchTermBuilder {
 
     SearchTermBuilder addParameter(final String pParameter) {
         if (Collections.<String>emptyList() == parameters) {
-            parameters = new ArrayList<String>();
+            parameters = new ArrayList<>();
         }
         parameters.add(pParameter);
         return this;

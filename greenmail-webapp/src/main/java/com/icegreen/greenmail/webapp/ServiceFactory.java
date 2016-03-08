@@ -22,7 +22,7 @@ public class ServiceFactory {
     public static List<Service> create(final Configuration pConf,
                    final Managers pManagers) {
         List<Configuration.ServiceConfiguration> seviceConfigs = pConf.getServiceConfigurations();
-        List<Service> services = new ArrayList<Service>(seviceConfigs.size());
+        List<Service> services = new ArrayList<>(seviceConfigs.size());
         for(Configuration.ServiceConfiguration serviceConf: seviceConfigs) {
             services.add(create(pConf, serviceConf, pManagers));
         }

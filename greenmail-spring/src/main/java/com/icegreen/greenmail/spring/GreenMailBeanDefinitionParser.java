@@ -18,7 +18,7 @@ public class GreenMailBeanDefinitionParser extends AbstractSingleBeanDefinitionP
 
     /** {@inheritDoc} */
     @Override
-    protected Class getBeanClass(final Element element) {
+    protected Class<?> getBeanClass(final Element element) {
         return GreenMailBean.class;
     }
 

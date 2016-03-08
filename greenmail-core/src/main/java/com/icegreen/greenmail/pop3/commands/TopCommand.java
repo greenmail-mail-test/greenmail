@@ -37,25 +37,23 @@ public class TopCommand
                 throw new IllegalArgumentException("range and line count required");
 
             String msgNumStr = cmdLine[1];
-            List msgList = inbox.getMessages(new MsgRangeFilter(msgNumStr, false));
+            List<StoredMessage> msgList = inbox.getMessages(new MsgRangeFilter(msgNumStr, false));
             if (msgList.size() != 1) {
                 conn.println("-ERR no such message");
 
                 return;
             }
 
-            StoredMessage msg = (StoredMessage) msgList.get(0);
+            StoredMessage msg = msgList.get(0);
 
             int numLines = Integer.parseInt(cmdLine[2]);
 
-            BufferedReader in = new BufferedReader(new StringReader(GreenMailUtil.getWholeMessage(msg.getMimeMessage())));
-            try {
+            try (BufferedReader in = new BufferedReader(
+                    new StringReader(GreenMailUtil.getWholeMessage(msg.getMimeMessage())))) {
                 conn.println("+OK");
 
                 copyHeaders(in, conn);
                 copyLines(in, conn, numLines);
-            } finally {
-                in.close();
             }
             conn.println(".");
         } catch (Exception e) {

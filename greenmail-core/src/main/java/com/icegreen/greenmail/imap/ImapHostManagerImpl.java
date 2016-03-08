@@ -39,12 +39,11 @@ public class ImapHostManagerImpl
 
     @Override
     public List<StoredMessage> getAllMessages() {
-        List<StoredMessage> ret = new ArrayList<StoredMessage>();
+        List<StoredMessage> ret = new ArrayList<>();
         try {
-            Collection boxes = store.listMailboxes("*");
-            for (Object boxe : boxes) {
-                MailFolder folder = (MailFolder) boxe;
-                ret.addAll(folder.getMessages());
+            Collection<MailFolder> boxes = store.listMailboxes("*");
+            for (MailFolder boxe : boxes) {
+                ret.addAll(boxe.getMessages());
             }
         } catch (FolderException e) {
             throw new IllegalStateException(e);
@@ -222,7 +221,7 @@ public class ImapHostManagerImpl
                                      String mailboxPattern,
                                      boolean subscribedOnly)
             throws FolderException {
-        List<MailFolder> mailboxes = new ArrayList<MailFolder>();
+        List<MailFolder> mailboxes = new ArrayList<>();
         String qualifiedPattern = getQualifiedMailboxName(user, mailboxPattern);
 
         for (MailFolder folder : store.listMailboxes(qualifiedPattern)) {
@@ -300,7 +299,7 @@ public class ImapHostManagerImpl
      * TODO persist
      */
     private static class MailboxSubscriptions {
-        private Map<String, List<String>> userSubs = new HashMap<String, List<String>>();
+        private Map<String, List<String>> userSubs = new HashMap<>();
 
         /**
          * Subscribes the user to the store.
@@ -342,7 +341,7 @@ public class ImapHostManagerImpl
         private List<String> getUserSubs(GreenMailUser user) {
             List<String> subs = userSubs.get(user.getLogin());
             if (subs == null) {
-                subs = new ArrayList<String>();
+                subs = new ArrayList<>();
                 userSubs.put(user.getLogin(), subs);
             }
             return subs;

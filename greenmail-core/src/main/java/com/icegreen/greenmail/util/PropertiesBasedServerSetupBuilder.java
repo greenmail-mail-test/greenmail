@@ -30,7 +30,7 @@ import java.util.Properties;
  * </ul>
  * <p/>
  * <h2>Protocol specific setups</h2>
- * Replace PROTOCOL with a value from {@value com.icegreen.greenmail.util.ServerSetup#PROTOCOL}:
+ * Replace PROTOCOL with a value from {@value com.icegreen.greenmail.util.ServerSetup#PROTOCOLS}:
  * <ul>
  * <li>greenmail.PROTOCOL.port</li>
  * <li>greenmail.PROTOCOL.hostname (defaults to {@link ServerSetup#getLocalHostAddress()}</li>
@@ -45,7 +45,7 @@ public class PropertiesBasedServerSetupBuilder {
      * @return the server setup, or an empty array.
      */
     public ServerSetup[] build(Properties properties) {
-        List<ServerSetup> serverSetups = new ArrayList<ServerSetup>();
+        List<ServerSetup> serverSetups = new ArrayList<>();
 
         String hostname = properties.getProperty("greenmail.hostname", ServerSetup.getLocalHostAddress());
 

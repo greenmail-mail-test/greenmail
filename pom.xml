@@ -133,6 +133,8 @@
             <compilerArgs>
               <arg>-Xlint</arg>
             </compilerArgs>
+            <showWarnings>true</showWarnings>
+            <showDeprecation>true</showDeprecation>
           </configuration>
         </plugin>
         <plugin>

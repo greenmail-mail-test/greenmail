@@ -29,7 +29,7 @@ public class Retriever {
      * </i>
      * This will fetch all available messages for Billy using POP3.
      *
-     * @param server
+     * @param server the POP3 or IMAP server
      */
     public Retriever(AbstractServer server) {
         this.server = server;
@@ -53,8 +53,6 @@ public class Retriever {
             rootFolder.fetch(rootFolder.getMessages(), fp);
 
             return messages.toArray(new Message[messages.size()]);
-        } catch (NoSuchProviderException e) {
-            throw new RuntimeException(e);
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
@@ -87,7 +85,7 @@ public class Retriever {
     }
 
     private List<Message> getMessages(Folder folder) throws MessagingException {
-        List<Message> ret = new ArrayList<Message>();
+        List<Message> ret = new ArrayList<>();
         if ((folder.getType() & Folder.HOLDS_MESSAGES) != 0) {
             if (!folder.isOpen()) {
                 folder.open(Folder.READ_ONLY);

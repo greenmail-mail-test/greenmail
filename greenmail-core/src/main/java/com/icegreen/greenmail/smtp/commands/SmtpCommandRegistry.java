@@ -11,7 +11,7 @@ import java.util.Map;
 
 
 public class SmtpCommandRegistry {
-    private static final Map<String, SmtpCommand> commands = new HashMap<String, SmtpCommand>();
+    private static final Map<String, SmtpCommand> commands = new HashMap<>();
 
     static {
         commands.put("HELO", new HeloCommand());

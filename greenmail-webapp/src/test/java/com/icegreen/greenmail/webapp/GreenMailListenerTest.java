@@ -19,7 +19,7 @@ public class GreenMailListenerTest {
 
     @Test
     public void testStart() {
-        Map<String, String> paramValues = new HashMap<String, String>();
+        Map<String, String> paramValues = new HashMap<>();
         paramValues.put("greenmail.defaultHostname", "127.0.0.1");
         paramValues.put("greenmail.portOffset", "20000");
         paramValues.put("greenmail.smtp", "");
@@ -27,7 +27,7 @@ public class GreenMailListenerTest {
         paramValues.put("greenmail.pop3.port", "1110");
         paramValues.put("greenmail.imap", "");
 
-        Enumeration params = Collections.enumeration(paramValues.keySet());
+        Enumeration<String> params = Collections.enumeration(paramValues.keySet());
         ServletContext servletContext = EasyMock.createMock(ServletContext.class);
         EasyMock.expect(servletContext.getInitParameterNames()).andReturn(params);
         for (Map.Entry<String, String> entry : paramValues.entrySet()) {

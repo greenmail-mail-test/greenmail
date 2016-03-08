@@ -159,7 +159,8 @@ public class ImapServerTest {
             Quota testQuota = new Quota("INBOX");
             testQuota.setResourceLimit("STORAGE", 1024L * 42L);
             testQuota.setResourceLimit("MESSAGES", 5L);
-            final QuotaAwareStore quotaAwareStore = (QuotaAwareStore) store;
+
+            final QuotaAwareStore quotaAwareStore = store;
             quotaAwareStore.setQuota(testQuota);
 
             Quota[] quotas = quotaAwareStore.getQuota("INBOX");
@@ -186,7 +187,7 @@ public class ImapServerTest {
     public void testQuotaCapability() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
         greenMail.setQuotaSupported(false);
-        final IMAPStore store = (IMAPStore) greenMail.getImap().createStore();
+        final IMAPStore store = greenMail.getImap().createStore();
         try {
             store.connect("foo@localhost", "pwd");
 
@@ -208,7 +209,7 @@ public class ImapServerTest {
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject", "Test message", ServerSetupTest.SMTP);
         greenMail.waitForIncomingEmail(1);
 
-        final IMAPStore store = (IMAPStore) greenMail.getImap().createStore();
+        final IMAPStore store = greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
         try {
 

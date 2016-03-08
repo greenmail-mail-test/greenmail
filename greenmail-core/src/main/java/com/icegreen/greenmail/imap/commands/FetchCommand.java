@@ -152,9 +152,8 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         }
 
         // BODY part responses.
-        Collection elements = fetch.getBodyElements();
-        for (Object element : elements) {
-            BodyFetchElement fetchElement = (BodyFetchElement) element;
+        Collection<BodyFetchElement> elements = fetch.getBodyElements();
+        for (BodyFetchElement fetchElement : elements) {
             response.append(SP);
             response.append(fetchElement.getResponseName());
             if (null == fetchElement.getPartial()) {
@@ -292,7 +291,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
     }
 
     private String[] split(String value, String delimiter) {
-        List<String> strings = new ArrayList<String>();
+        List<String> strings = new ArrayList<>();
         int startPos = 0;
         int delimPos;
         while ((delimPos = value.indexOf(delimiter, startPos)) != -1) {
@@ -307,7 +306,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
     }
 
     private void addHeaders(Enumeration inum, StringBuilder response) {
-        List<String> lines = new ArrayList<String>();
+        List<String> lines = new ArrayList<>();
         int count = 0;
         while (inum.hasMoreElements()) {
             String line = (String) inum.nextElement();
@@ -477,7 +476,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
         private boolean setSeen = false;
 
-        private Set<BodyFetchElement> bodyElements = new HashSet<BodyFetchElement>();
+        private Set<BodyFetchElement> bodyElements = new HashSet<>();
 
         public Collection<BodyFetchElement> getBodyElements() {
             return bodyElements;

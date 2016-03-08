@@ -28,7 +28,7 @@ public class StatCommand
                         String cmd) {
         try {
             MailFolder inbox = state.getFolder();
-            List messages = inbox.getNonDeletedMessages();
+            List<StoredMessage> messages = inbox.getNonDeletedMessages();
             long size = sumMessageSizes(messages);
             conn.println("+OK " + messages.size() + " " + size);
         } catch (Exception me) {
@@ -36,12 +36,11 @@ public class StatCommand
         }
     }
 
-    long sumMessageSizes(List messages)
+    long sumMessageSizes(List<StoredMessage> messages)
             throws MailException {
         long total = 0;
 
-        for (Object message : messages) {
-            StoredMessage msg = (StoredMessage) message;
+        for (StoredMessage msg : messages) {
             try {
                 total += msg.getMimeMessage().getSize();
             } catch (MessagingException e) {

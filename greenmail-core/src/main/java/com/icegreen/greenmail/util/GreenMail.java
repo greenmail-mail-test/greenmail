@@ -139,7 +139,7 @@ public class GreenMail extends ConfiguredGreenMail {
      * @return Services map
      */
     private static Map<String, AbstractServer> createServices(ServerSetup[] config, Managers mgr) {
-        Map<String, AbstractServer> srvc = new HashMap<String, AbstractServer>();
+        Map<String, AbstractServer> srvc = new HashMap<>();
         for (ServerSetup setup : config) {
             if (srvc.containsKey(setup.getProtocol())) {
                 throw new IllegalArgumentException("Server '" + setup.getProtocol() + "' was found at least twice in the array");
@@ -226,10 +226,10 @@ public class GreenMail extends ConfiguredGreenMail {
 
     @Override
     public MimeMessage[] getReceivedMessages() {
-        List msgs = managers.getImapHostManager().getAllMessages();
+        List<StoredMessage> msgs = managers.getImapHostManager().getAllMessages();
         MimeMessage[] ret = new MimeMessage[msgs.size()];
         for (int i = 0; i < msgs.size(); i++) {
-            StoredMessage storedMessage = (StoredMessage) msgs.get(i);
+            StoredMessage storedMessage = msgs.get(i);
             ret[i] = storedMessage.getMimeMessage();
         }
         return ret;
@@ -238,7 +238,7 @@ public class GreenMail extends ConfiguredGreenMail {
     @Override
     public MimeMessage[] getReceviedMessagesForDomain(String domain) {
         List<StoredMessage> msgs = managers.getImapHostManager().getAllMessages();
-        List<MimeMessage> ret = new ArrayList<MimeMessage>();
+        List<MimeMessage> ret = new ArrayList<>();
         try {
             for (StoredMessage msg : msgs) {
                 String tos = GreenMailUtil.getAddressList(msg.getMimeMessage().getAllRecipients());

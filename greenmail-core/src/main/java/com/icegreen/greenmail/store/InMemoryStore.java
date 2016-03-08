@@ -23,7 +23,7 @@ public class InMemoryStore
         implements Store, ImapConstants {
     boolean quotaSupported = true;
     private RootFolder rootMailbox = new RootFolder();
-    private Map<String, Set<Quota>> quotaMap = new HashMap<String, Set<Quota>>();
+    private Map<String, Set<Quota>> quotaMap = new HashMap<>();
 
     @Override
     public MailFolder getMailbox(String absoluteMailboxName) {
@@ -144,7 +144,7 @@ public class InMemoryStore
             throw new FolderException("WIldcard characters are only handled as the last character of a list argument.");
         }
 
-        List<MailFolder> mailboxes = new ArrayList<MailFolder>();
+        List<MailFolder> mailboxes = new ArrayList<>();
         if (starIndex != -1 || percentIndex != -1) {
             int lastDot = searchPattern.lastIndexOf(HIERARCHY_DELIMITER);
             String parentName;
@@ -183,7 +183,7 @@ public class InMemoryStore
 
     @Override
     public Quota[] getQuota(final String root, final String qualifiedRootPrefix) {
-        Set<String> rootPaths = new HashSet<String>();
+        Set<String> rootPaths = new HashSet<>();
         if (!root.contains(ImapConstants.HIERARCHY_DELIMITER)) {
             rootPaths.add(qualifiedRootPrefix + root);
         } else {
@@ -193,7 +193,7 @@ public class InMemoryStore
         }
         rootPaths.add(qualifiedRootPrefix); // Add default root
 
-        Set<Quota> collectedQuotas = new HashSet<Quota>();
+        Set<Quota> collectedQuotas = new HashSet<>();
         for (String p : rootPaths) {
             Set<Quota> quotas = quotaMap.get(p);
             if (null != quotas) {
@@ -247,7 +247,7 @@ public class InMemoryStore
         // Save quota
         Set<Quota> quotas = quotaMap.get(qualifiedRootPrefix + quota.quotaRoot);
         if (null == quotas) {
-            quotas = new HashSet<Quota>();
+            quotas = new HashSet<>();
             quotaMap.put(qualifiedRootPrefix + quota.quotaRoot, quotas);
         } else {
             quotas.clear(); // " Any previous resource limits for the named quota root are discarded"
@@ -256,9 +256,8 @@ public class InMemoryStore
     }
 
     private void addAllChildren(HierarchicalFolder mailbox, Collection<MailFolder> mailboxes) {
-        Collection children = mailbox.getChildren();
-        for (Object aChildren : children) {
-            HierarchicalFolder child = (HierarchicalFolder) aChildren;
+        Collection<HierarchicalFolder> children = mailbox.getChildren();
+        for (HierarchicalFolder child : children) {
             mailboxes.add(child);
             addAllChildren(child, mailboxes);
         }

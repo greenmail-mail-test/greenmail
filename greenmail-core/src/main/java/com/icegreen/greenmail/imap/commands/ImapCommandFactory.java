@@ -17,7 +17,7 @@ import java.util.Map;
  * @version $Revision: 109034 $
  */
 public class ImapCommandFactory {
-    private final Map<String, Class<? extends ImapCommand>> _imapCommands = new HashMap<String, Class<? extends ImapCommand>>();
+    private final Map<String, Class<? extends ImapCommand>> _imapCommands = new HashMap<>();
 
     public ImapCommandFactory() {
         // Commands valid in any state

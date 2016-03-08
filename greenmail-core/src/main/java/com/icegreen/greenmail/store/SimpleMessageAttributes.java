@@ -68,7 +68,7 @@ public class SimpleMessageAttributes
     private String contentType;
     private String primaryType;   // parsed from contentType
     private String secondaryType; // parsed from contentType
-    private Set parameters;      // parsed from contentType
+    private Set<String> parameters;      // parsed from contentType
     private String contentID;
     private String contentDesc;
     private String contentEncoding;
@@ -285,7 +285,7 @@ public class SimpleMessageAttributes
      * Builds IMAP envelope String from pre-parsed data.
      */
     String parseEnvelope() {
-        List<String> response = new ArrayList<String>();
+        List<String> response = new ArrayList<>();
         //1. Date ---------------
         response.add(LB + Q + sentDateEnvelopeString + Q + SP);
         //2. Subject ---------------
@@ -491,9 +491,9 @@ public class SimpleMessageAttributes
             buf.append(NIL);
         } else {
             buf.append(LB);
-            Iterator it = parameters.iterator();
+            Iterator<String> it = parameters.iterator();
             while (it.hasNext()) {
-                buf.append((String) it.next());
+                buf.append(it.next());
                 // Space separated
                 if (it.hasNext()) {
                     buf.append(SP);
@@ -681,7 +681,7 @@ public class SimpleMessageAttributes
             String[] strs = line.split(";");
             value = strs[0];
             if (0 != strs.length) {
-                params = new HashSet<String>(strs.length);
+                params = new HashSet<>(strs.length);
                 for (int i = 1; i < strs.length; i++) {
                     String p = strs[i].trim();
                     int e = p.indexOf('=');
@@ -693,7 +693,7 @@ public class SimpleMessageAttributes
             }
         }
 
-        public Set getParams() {
+        public Set<String> getParams() {
             return params;
         }
 

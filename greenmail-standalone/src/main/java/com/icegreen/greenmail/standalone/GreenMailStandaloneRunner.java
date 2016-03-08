@@ -63,7 +63,7 @@ public class GreenMailStandaloneRunner {
             if (opt.length == 1) {
                 out.println(String.format("%1$44s %2$s", " ", opt[0]));
             } else {
-                out.println(String.format("%1$-42s : %2$s", opt)); // NOSONAR
+                out.println(String.format("%1$-42s : %2$s", (Object[]) opt)); // NOSONAR
             }
         }
         out.println();

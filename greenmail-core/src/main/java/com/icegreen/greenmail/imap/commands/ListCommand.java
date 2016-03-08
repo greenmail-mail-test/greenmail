@@ -84,7 +84,7 @@ class ListCommand extends AuthenticatedStateCommand {
                 removeUserPrefix = true;
             }
 
-            mailboxes = new ArrayList<MailFolder>(1);
+            mailboxes = new ArrayList<>(1);
             mailboxes.add(referenceFolder);
         } else {
             String searchPattern;

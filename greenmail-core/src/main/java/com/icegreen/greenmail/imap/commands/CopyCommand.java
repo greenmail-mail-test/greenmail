@@ -57,8 +57,8 @@ class CopyCommand extends SelectedStateCommand implements UidEnabledCommand {
             throw e;
         }
 
-        List<Long> copiedUidsOld = new ArrayList<Long>();
-        List<Long> copiedUidsNew = new ArrayList<Long>();
+        List<Long> copiedUidsOld = new ArrayList<>();
+        List<Long> copiedUidsNew = new ArrayList<>();
 
         long[] uids = currentMailbox.getMessageUids();
         for (long uid : uids) {
