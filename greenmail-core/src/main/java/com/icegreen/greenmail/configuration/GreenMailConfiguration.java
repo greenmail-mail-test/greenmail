@@ -1,7 +1,5 @@
 package com.icegreen.greenmail.configuration;
 
-import com.icegreen.greenmail.user.UserManager;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,9 +8,10 @@ import java.util.List;
  */
 public class GreenMailConfiguration {
     private final List<UserBean> usersToCreate = new ArrayList<UserBean>();
+    private boolean disableAuthenticationCheck = false;
 
     /**
-     * The given {@link com.icegreen.greenmail.user.GreenMailUser} will be created when servers will start
+     * The given {@link com.icegreen.greenmail.user.GreenMailUser} will be created when servers will start.
      *
      * @param login User id and email address
      * @param password Password of user that belongs to login name
@@ -23,7 +22,7 @@ public class GreenMailConfiguration {
     }
 
     /**
-     * The given {@link com.icegreen.greenmail.user.GreenMailUser} will be created when servers will start
+     * The given {@link com.icegreen.greenmail.user.GreenMailUser} will be created when servers will start.
      *
      * @param email Email address
      * @param login Login name of user
@@ -49,8 +48,24 @@ public class GreenMailConfiguration {
         return usersToCreate;
     }
 
-    public GreenMailConfiguration withDisabledAuthentication(UserManager userManager) {
-        userManager.setAuthRequired(false);
+    /**
+     * Disables authentication.
+     *
+     * Useful if you want to avoid setting up users up front.
+     *
+     * @return Modified configuration.
+     */
+    public GreenMailConfiguration withDisabledAuthentication() {
+        disableAuthenticationCheck = true;
         return this;
+    }
+
+    /**
+     * @return true, if authentication is disabled.
+     *
+     * @see GreenMailConfiguration#withDisabledAuthentication()
+     */
+    public boolean isAuthenticationDisabled() {
+        return disableAuthenticationCheck;
     }
 }
