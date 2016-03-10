@@ -83,10 +83,10 @@ public class ImapSortTest {
         message1.setSubject("testSearch");
         message1.setText("content");
 
-        int[] message1RecipientsIndexes = new int[]{1, 2};
-        setRecipients(message1, Message.RecipientType.TO, "to", message1RecipientsIndexes);
-        setRecipients(message1, Message.RecipientType.CC, "cc", message1RecipientsIndexes);
-        setRecipients(message1, Message.RecipientType.BCC, "bcc", message1RecipientsIndexes);
+        int[] message1RecipientsSuffixes = new int[]{1, 2};
+        setRecipients(message1, Message.RecipientType.TO, "to", message1RecipientsSuffixes);
+        setRecipients(message1, Message.RecipientType.CC, "cc", message1RecipientsSuffixes);
+        setRecipients(message1, Message.RecipientType.BCC, "bcc", message1RecipientsSuffixes);
         message1.setFrom(new InternetAddress("from2@localhost"));
         message1.setFlag(Flags.Flag.ANSWERED, true);
         message1.setFlags(flags, true);
@@ -95,10 +95,10 @@ public class ImapSortTest {
         MimeMessage message2 = new MimeMessage(session);
         message2.setSubject("testSearch");
         message2.setText("content");
-        int[] message2RecipientsIndexes = new int[]{2, 3};
-        setRecipients(message2, Message.RecipientType.TO, "to", message2RecipientsIndexes);
-        setRecipients(message2, Message.RecipientType.CC, "cc", message2RecipientsIndexes);
-        setRecipients(message2, Message.RecipientType.BCC, "bcc", message2RecipientsIndexes);
+        int[] message2RecipientsSuffixes = new int[]{2, 3};
+        setRecipients(message2, Message.RecipientType.TO, "to", message2RecipientsSuffixes);
+        setRecipients(message2, Message.RecipientType.CC, "cc", message2RecipientsSuffixes);
+        setRecipients(message2, Message.RecipientType.BCC, "bcc", message2RecipientsSuffixes);
         message2.setFrom(new InternetAddress("from3@localhost"));
         message2.setFlag(Flags.Flag.ANSWERED, false);
         folder.store(message2);
