@@ -4,8 +4,6 @@ import com.icegreen.greenmail.imap.*;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.StoredMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -18,11 +16,10 @@ import java.util.*;
  */
 class SortCommand extends SelectedStateCommand implements UidEnabledCommand {
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
     public static final String NAME = "SORT";
     public static final String ARGS = "(<sort criteria>) <charset specification> <search term>";
 
-    private SortCommandParser parser = new SortCommandParser();
+    private SortCommandParser sortCommandParser = new SortCommandParser();
 
     SortCommand() {
         super(NAME, ARGS);
@@ -41,7 +38,7 @@ class SortCommand extends SelectedStateCommand implements UidEnabledCommand {
                           ImapResponse response,
                           ImapSession session,
                           boolean useUids) throws ProtocolException, FolderException {
-        final SortTerm sortTerm = parser.sortTerm(request);
+        final SortTerm sortTerm = sortCommandParser.sortTerm(request);
 
         final MailFolder folder = session.getSelected();
 

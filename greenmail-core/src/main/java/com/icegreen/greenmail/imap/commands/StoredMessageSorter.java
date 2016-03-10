@@ -9,6 +9,8 @@ import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
+ * Sorts messages by given sort term.
+ *
  * Created on 10/03/2016.
  *
  * @author Reda.Housni-Alaoui
@@ -62,7 +64,7 @@ class StoredMessageSorter implements Comparator<StoredMessage> {
             }
             return compareResult;
         } catch (MessagingException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
 
