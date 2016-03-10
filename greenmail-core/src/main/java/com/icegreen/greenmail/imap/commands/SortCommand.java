@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.search.SearchTerm;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -25,7 +24,6 @@ class SortCommand extends SelectedStateCommand implements UidEnabledCommand {
     public static final String NAME = "SORT";
     public static final String ARGS = "(<sort criteria>) <charset specification> <search term>";
 
-    private SearchCommandParser searchCommandParser = new SearchCommandParser();
     private SortCommandParser parser = new SortCommandParser();
 
     SortCommand() {
@@ -49,7 +47,7 @@ class SortCommand extends SelectedStateCommand implements UidEnabledCommand {
 
         final MailFolder folder = session.getSelected();
 
-        long[] uids = folder.search(sortTerm.searchTerm);
+        long[] uids = folder.search(sortTerm.getSearchTerm());
         List<StoredMessage> messages = new ArrayList<>();
         for (long uid : uids) {
             messages.add(folder.getMessage(uid));
@@ -92,7 +90,7 @@ class SortCommand extends SelectedStateCommand implements UidEnabledCommand {
         public int compare(StoredMessage m1, StoredMessage m2) {
             try {
                 int compareResult = 0;
-                for (SortKey sortKey : sortTerm.sortCriteria) {
+                for (SortKey sortKey : sortTerm.getSortCriteria()) {
                     switch (sortKey) {
                         case REVERSE:
                             reverse.set(true);
@@ -169,50 +167,7 @@ class SortCommand extends SelectedStateCommand implements UidEnabledCommand {
     }
 
 
-    private class SortCommandParser extends CommandParser {
-        public SortTerm sortTerm(ImapRequestLineReader request) throws ProtocolException {
-            SortTerm sortTerm = new SortTerm();
-
-            /* Sort criteria */
-            char next = request.nextChar();
-            StringBuilder sb = new StringBuilder();
-            boolean buffering = false;
-            while (next != '\n') {
-                if (next != '(' && next != ')' && next != 32 /* space */ && next != 13 /* cr */) {
-                    sb.append(next);
-                } else {
-                    if (buffering) {
-                        sortTerm.sortCriteria.add(SortKey.valueOf(sb.toString()));
-                        sb = new StringBuilder();
-                    } else {
-                        buffering = next == '(';
-                    }
-                }
-                request.consume();
-                if (next == ')') {
-                    break;
-                }
-                next = request.nextChar();
-            }
-
-            /* Charset */
-            sortTerm.charset = consumeWord(request, new ATOM_CHARValidator());
-
-            /* Search term */
-            sortTerm.searchTerm = searchCommandParser.searchTerm(request);
-            searchCommandParser.endLine(request);
-
-            return sortTerm;
-        }
-    }
-
-    private class SortTerm {
-        private final List<SortKey> sortCriteria = new ArrayList<>();
-        private String charset;
-        private SearchTerm searchTerm;
-    }
-
-/*
+    /*
     BASE.6.4.SORT. SORT Command
 
    Arguments:  sort program
