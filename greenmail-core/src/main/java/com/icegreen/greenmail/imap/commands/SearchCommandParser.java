@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2014 Wael Chatila / Icegreen Technologies. All Rights Reserved.
+ * This software is released under the Apache license 2.0
+ * This file has been modified by the copyright holder.
+ * Original file can be found at http://james.apache.org
+ */
 package com.icegreen.greenmail.imap.commands;
 
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
@@ -10,9 +16,9 @@ import javax.mail.search.NotTerm;
 import javax.mail.search.SearchTerm;
 
 /**
- * Created on 10/03/2016.
+ * Handles processing for the SEARCH imap command.
  *
- * @author Reda.Housni-Alaoui
+ * @author Darrell DeBoer <darrell@apache.org>
  */
 class SearchCommandParser extends CommandParser {
     private final Logger log = LoggerFactory.getLogger(SearchCommandParser.class);
