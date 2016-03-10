@@ -14,6 +14,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
+ * Implements SORT command described in <a href="https://tools.ietf.org/html/rfc5256">RFC5256</a>
+ * <br><br>
  * Created on 10/03/2016.
  *
  * @author Reda.Housni-Alaoui
@@ -166,116 +168,4 @@ class SortCommand extends SelectedStateCommand implements UidEnabledCommand {
         }
     }
 
-
-    /*
-    BASE.6.4.SORT. SORT Command
-
-   Arguments:  sort program
-               charset specification
-               searching criteria (one or more)
-
-   Data:       untagged responses: SORT
-
-   Result:     OK - sort completed
-               NO - sort error: can't sort that charset or
-                    criteria
-               BAD - command unknown or arguments invalid
-
-      The SORT command is a variant of SEARCH with sorting semantics for
-      the results.  There are two arguments before the searching
-      criteria argument: a parenthesized list of sort criteria, and the
-      searching charset.
-
-      The charset argument is mandatory (unlike SEARCH) and indicates
-      the [CHARSET] of the strings that appear in the searching
-      criteria.  The US-ASCII and [UTF-8] charsets MUST be implemented.
-      All other charsets are optional.
-
-      There is also a UID SORT command that returns unique identifiers
-      instead of message sequence numbers.  Note that there are separate
-      searching criteria for message sequence numbers and UIDs; thus,
-      the arguments to UID SORT are interpreted the same as in SORT.
-      This is analogous to the behavior of UID SEARCH, as opposed to UID
-      COPY, UID FETCH, or UID STORE.
-
-      The SORT command first searches the mailbox for messages that
-      match the given searching criteria using the charset argument for
-      the interpretation of strings in the searching criteria.  It then
-      returns the matching messages in an untagged SORT response, sorted
-      according to one or more sort criteria.
-
-      Sorting is in ascending order.  Earlier dates sort before later
-      dates; smaller sizes sort before larger sizes; and strings are
-      sorted according to ascending values established by their
-      collation algorithm (see "Internationalization Considerations").
-
-      If two or more messages exactly match according to the sorting
-      criteria, these messages are sorted according to the order in
-      which they appear in the mailbox.  In other words, there is an
-      implicit sort criterion of "sequence number".
-
-      When multiple sort criteria are specified, the result is sorted in
-      the priority order that the criteria appear.  For example,
-      (SUBJECT DATE) will sort messages in order by their base subject
-      text; and for messages with the same base subject text, it will
-      sort by their sent date.
-
-      Untagged EXPUNGE responses are not permitted while the server is
-      responding to a SORT command, but are permitted during a UID SORT
-      command.
-
-      The defined sort criteria are as follows.  Refer to the Formal
-      Syntax section for the precise syntactic definitions of the
-      arguments.  If the associated RFC-822 header for a particular
-      criterion is absent, it is treated as the empty string.  The empty
-      string always collates before non-empty strings.
-
-      ARRIVAL
-         Internal date and time of the message.  This differs from the
-         ON criteria in SEARCH, which uses just the internal date.
-
-      CC
-         [IMAP] addr-mailbox of the first "cc" address.
-
-      DATE
-         Sent date and time, as described in section 2.2.
-
-      FROM
-         [IMAP] addr-mailbox of the first "From" address.
-
-      REVERSE
-         Followed by another sort criterion, has the effect of that
-         criterion but in reverse (descending) order.
-            Note: REVERSE only reverses a single criterion, and does not
-            affect the implicit "sequence number" sort criterion if all
-            other criteria are identical.  Consequently, a sort of
-            REVERSE SUBJECT is not the same as a reverse ordering of a
-            SUBJECT sort.  This can be avoided by use of additional
-            criteria, e.g., SUBJECT DATE vs. REVERSE SUBJECT REVERSE
-            DATE.  In general, however, it's better (and faster, if the
-            client has a "reverse current ordering" command) to reverse
-            the results in the client instead of issuing a new SORT.
-
-
-      SIZE
-         Size of the message in octets.
-
-      SUBJECT
-         Base subject text.
-
-      TO
-         [IMAP] addr-mailbox of the first "To" address.
-
-   Example:    C: A282 SORT (SUBJECT) UTF-8 SINCE 1-Feb-1994
-               S: * SORT 2 84 882
-               S: A282 OK SORT completed
-               C: A283 SORT (SUBJECT REVERSE DATE) UTF-8 ALL
-               S: * SORT 5 3 4 1 2
-               S: A283 OK SORT completed
-               C: A284 SORT (SUBJECT) US-ASCII TEXT "not in mailbox"
-               S: * SORT
-               S: A284 OK SORT completed
-
-
-     */
 }
