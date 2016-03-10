@@ -82,9 +82,11 @@ public class ImapSortTest {
         MimeMessage message1 = new MimeMessage(session);
         message1.setSubject("testSearch");
         message1.setText("content");
-        setRecipients(message1, Message.RecipientType.TO, "to", 1, 2);
-        setRecipients(message1, Message.RecipientType.CC, "cc", 1, 2);
-        setRecipients(message1, Message.RecipientType.BCC, "bcc", 1, 2);
+
+        int[] message1RecipientsIndexes = new int[]{1, 2};
+        setRecipients(message1, Message.RecipientType.TO, "to", message1RecipientsIndexes);
+        setRecipients(message1, Message.RecipientType.CC, "cc", message1RecipientsIndexes);
+        setRecipients(message1, Message.RecipientType.BCC, "bcc", message1RecipientsIndexes);
         message1.setFrom(new InternetAddress("from2@localhost"));
         message1.setFlag(Flags.Flag.ANSWERED, true);
         message1.setFlags(flags, true);
@@ -93,9 +95,10 @@ public class ImapSortTest {
         MimeMessage message2 = new MimeMessage(session);
         message2.setSubject("testSearch");
         message2.setText("content");
-        setRecipients(message2, Message.RecipientType.TO, "to", 2, 3);
-        setRecipients(message2, Message.RecipientType.CC, "cc", 2, 3);
-        setRecipients(message2, Message.RecipientType.BCC, "bcc", 2, 3);
+        int[] message2RecipientsIndexes = new int[]{2, 3};
+        setRecipients(message2, Message.RecipientType.TO, "to", message2RecipientsIndexes);
+        setRecipients(message2, Message.RecipientType.CC, "cc", message2RecipientsIndexes);
+        setRecipients(message2, Message.RecipientType.BCC, "bcc", message2RecipientsIndexes);
         message2.setFrom(new InternetAddress("from3@localhost"));
         message2.setFlag(Flags.Flag.ANSWERED, false);
         folder.store(message2);
