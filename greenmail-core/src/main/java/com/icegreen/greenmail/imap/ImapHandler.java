@@ -24,7 +24,7 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private ImapRequestHandler requestHandler = new ImapRequestHandler();
     private ImapSession session;
-    private Object closeMonitor = new Object();
+    private final Object closeMonitor = new Object();
 
     /**
      * The TCP/IP socket over which the IMAP interaction

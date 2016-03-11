@@ -37,7 +37,7 @@ public class UserImpl implements GreenMailUser {
         try {
             imapHostManager.createPrivateMailAccount(this);
         } catch (FolderException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Can not create user" + this, e);
         }
     }
 
@@ -45,10 +45,8 @@ public class UserImpl implements GreenMailUser {
     public void delete() {
         try {
             imapHostManager.deleteMailbox(this, ImapConstants.INBOX_NAME);
-        } catch (FolderException e) {
-            throw new IllegalStateException("Can not delete user "+this, e);
-        } catch (AuthorizationException e) {
-            throw new IllegalStateException("Can not delete user "+this, e);
+        } catch (FolderException | AuthorizationException e) {
+            throw new IllegalStateException("Can not delete user " + this, e);
         }
     }
 
@@ -56,21 +54,17 @@ public class UserImpl implements GreenMailUser {
     public void deliver(MovingMessage msg) {
         try {
             imapHostManager.getInbox(this).store(msg);
-        } catch (FolderException e) {
-            throw new RuntimeException(e);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Can not deliver " + msg + " for user " + this, e);
         }
     }
 
     @Override
-    public void deliver(MimeMessage msg)  {
+    public void deliver(MimeMessage msg) {
         try {
             imapHostManager.getInbox(this).store(msg);
-        } catch (FolderException e) {
-            throw new RuntimeException(e);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Can not deliver " + msg + " for user " + this, e);
         }
     }
 
