@@ -67,7 +67,6 @@ public class UserManagerTest {
 
         assertTrue(userManager.listUser().isEmpty());
         assertTrue(userManager.test("foo@localhost",null));
-
     }
 
     @Test
@@ -79,7 +78,6 @@ public class UserManagerTest {
         userManager.createUser("foo@example.com","foo",null);
         assertFalse(userManager.listUser().isEmpty());
         assertTrue(userManager.test("foo",null));
-
     }
 
     @Test
@@ -90,7 +88,6 @@ public class UserManagerTest {
 
         assertTrue(userManager.listUser().isEmpty());
         assertFalse(userManager.test("foo@localhost",null));
-
     }
 
     @Test
@@ -102,6 +99,5 @@ public class UserManagerTest {
 
         assertFalse(userManager.listUser().isEmpty());
         assertTrue(userManager.test("foo","bar"));
-
     }
 }

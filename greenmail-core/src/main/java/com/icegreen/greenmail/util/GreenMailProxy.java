@@ -5,6 +5,7 @@ import com.icegreen.greenmail.configuration.ConfiguredGreenMail;
 import com.icegreen.greenmail.imap.ImapServer;
 import com.icegreen.greenmail.pop3.Pop3Server;
 import com.icegreen.greenmail.smtp.SmtpServer;
+import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.user.GreenMailUser;
 
 import javax.mail.internet.MimeMessage;
@@ -104,6 +105,11 @@ public abstract class GreenMailProxy extends ConfiguredGreenMail {
     @Override
     public void reset() {
         getGreenMail().reset();
+    }
+
+    @Override
+    public void purgeEmailFromAllMailboxes() throws FolderException {
+        getGreenMail().purgeEmailFromAllMailboxes();
     }
 
     /**
