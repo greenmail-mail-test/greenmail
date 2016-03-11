@@ -48,16 +48,18 @@ public class GreenMailStandaloneRunner {
         out.println("Usage: java OPTIONS -jar greenmail.jar");
         out.println("\nOPTIONS:");
         String[][] options = {
-                {"-Dgreenmail.setup.<protocol|all>", "specify mail server to start using default port and bind " +
+                {"-Dgreenmail.setup.<protocol|all>", "Specifies mail server to start using default port and bind " +
                         "address 127.0.0.1"},
-                {"Note: protocol can be one of smtp,smtps,imap,imaps,pop3 or pop3s"},
-                {"-Dgreenmail.setup.test.<protocol|all>", "specify mail server to start using default port plus " +
+                {"Note: Protocol can be one of smtp,smtps,imap,imaps,pop3 or pop3s"},
+                {"-Dgreenmail.setup.test.<protocol|all>", "Specifies mail server to start using default port plus " +
                         "offset 3000 and bind address 127.0.0.1"},
                 {"-Dgreenmail.<protocol|all>.hostname=...",
-                        "specify bind address. Requires additional port parameter."},
-                {"-Dgreenmail.<protocol|all>.port=...", "specify port. Requires additional hostname parameter."},
-                {"-Dgreenmail.users=<logon:pwd@domain>[,...]", "specify mail users, eg foo:pwd@bar.com,foo2:pwd@bar2.com."},
+                        "Specifies bind address. Requires additional port parameter."},
+                {"-Dgreenmail.<protocol|all>.port=...", "Specifies port. Requires additional hostname parameter."},
+                {"-Dgreenmail.users=<logon:pwd@domain>[,...]", "Specifies mail users, eg foo:pwd@bar.com,foo2:pwd@bar2.com."},
                 {"Note: domain must be DNS resolvable!"},
+                {"-Dgreenmail.auth.disabled ","Disables authentication check so that any password works."},
+                {"Also automatically provisions previously non-existent users."},
         };
         for (String[] opt : options) {
             if (opt.length == 1) {
@@ -72,8 +74,8 @@ public class GreenMailStandaloneRunner {
         out.println("       Starts SMTP,SMTPS,IMAP,IMAPS,POP3,POP3S" +
                 "with default ports plus offset 3000 on 127.0.0.1 and user foo@bar.com.");
         out.println("       Note: bar.com domain for user must be DNS resolvable!");
-        out.println(" java -Dgreenmail.setup.test.smtp -Dgreenmail.setup.test.imap -jar greenmail.jar");
-        out.println("       Starts SMTP on 127.0.01:3025 and IMAP on 127.0.0.1:3143");
+        out.println(" java -Dgreenmail.setup.test.smtp -Dgreenmail.setup.test.imap -Dgreenmail.auth.disabled -jar greenmail.jar");
+        out.println("       Starts SMTP on 127.0.01:3025 and IMAP on 127.0.0.1:3143, disabling user authentication");
         out.println(" java -Dgreenmail.smtp.hostname=0.0.0.0 -Dgreenmail.smtp.port=3025 " +
                 "-Dgreenmail.imap.hostname=0.0.0.0 -Dgreenmail.imap.port=3143 -jar greenmail.jar");
         out.println("       Starts SMTP on 0.0.0.0:3025 and IMAP on 0.0.0.0:3143");

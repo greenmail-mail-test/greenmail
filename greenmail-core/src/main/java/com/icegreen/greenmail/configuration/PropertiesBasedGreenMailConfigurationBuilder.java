@@ -20,6 +20,12 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
      * Property for list of users.
      */
     public static final String GREENMAIL_USERS = "greenmail.users";
+    /**
+     * Disables authentication check.
+     *
+     * @see GreenMailConfiguration#withDisabledAuthentication()
+     */
+    public static final String GREENMAIL_AUTH_DISABLED = "greenmail.auth.disabled";
 
     /**
      * Builds a configuration object based on given properties.
@@ -35,6 +41,10 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
             for (String user : usersArray) {
                 extractAndAddUser(configuration, user);
             }
+        }
+        String disabledAuthentication = properties.getProperty(GREENMAIL_AUTH_DISABLED);
+        if (null != disabledAuthentication) {
+            configuration.withDisabledAuthentication();
         }
         return configuration;
     }

@@ -461,9 +461,9 @@ java [OPTIONS] -jar greenmail-standalone.jar
                                 <li>POP3 : 110</li>
                                 <li>POP3S : 995</li>
                             </ul>
-                            <p>
-                                Example: -Dgreenmail.setup.all
-                            </p>
+                            <div class="bs-example">
+                                <code>-Dgreenmail.setup.all</code>
+                            </div>
                         </td>
                     </tr>
                     <tr>
@@ -480,9 +480,9 @@ java [OPTIONS] -jar greenmail-standalone.jar
                                 <li>POP3 : 3110</li>
                                 <li>POP3S : 3995</li>
                             </ul>
-                            <p>
-                                Example: -Dgreenmail.setup.test.all
-                            </p>
+                            <div class="bs-example">
+                                <code>-Dgreenmail.setup.test.all</code>
+                            </div>
                         </td>
                     </tr>
                     <tr>
@@ -497,12 +497,12 @@ java [OPTIONS] -jar greenmail-standalone.jar
                                 <li>pop3</li>
                                 <li>pop3s</li>
                             </ul>
+                            <div class="bs-example">
+                                <code>-Dgreenmail.smtp.hostname=127.0.0.1 -Dgreenmail.smtp.port=3025</code>
+                            </div>
                             <div class="alert alert-warning" role="alert">
                                 Note: Requires -Dgreenmail.PROTOCOL.port option!
                             </div>
-                            <p>
-                                Example: -Dgreenmail.smtp.hostname=127.0.0.1 -Dgreenmail.smtp.port=3025
-                            </p>
                         </td>
                     </tr>
                     <tr>
@@ -516,12 +516,12 @@ java [OPTIONS] -jar greenmail-standalone.jar
                                 <li>pop3</li>
                                 <li>pop3s</li>
                             </ul>
+                            <div class="bs-example">
+                                <code>-Dgreenmail.smtp.port=3025 -Dgreenmail.smtp.hostname=127.0.0.1</code>
+                            </div>
                             <div class="alert alert-warning" role="alert">
                                 Note: Requires -Dgreenmail.PROTOCOL.hostname option!
                             </div>
-                            <p>
-                                Example: -Dgreenmail.smtp.port=3025 -Dgreenmail.smtp.hostname=127.0.0.1
-                            </p>
                         </td>
                     </tr>
                     <tr>
@@ -533,10 +533,9 @@ java [OPTIONS] -jar greenmail-standalone.jar
                             <div class="alert alert-info" role="info">
                                 Note: Default hostname is 127.0.0.1
                             </div>
-                            <p>
-                                Example:
-                            <p>-Dgreenmail.smtp.port=3025 -Dgreenmail.imap.port=3143 -Dgreenmail.hostname=0.0.0.0</p>
-                            </p>
+                            <div class="bs-example"><!-- @formatter:off -->
+                                <code>-Dgreenmail.smtp.port=3025 -Dgreenmail.imap.port=3143 -Dgreenmail.hostname=0.0.0.0</code>
+                            </div><!-- @formatter:on -->
                         </td>
                     </tr>
                     <tr>
@@ -548,9 +547,19 @@ java [OPTIONS] -jar greenmail-standalone.jar
                             <div class="alert alert-warning" role="alert">
                                 Note: Domain must be DNS resolvable!
                             </div>
-                            <p>
-                                Example: -Dgreenmail.users=foo:pwd@bar.com,jabber:wocky@monster.local,foo1:bar
-                            </p>
+                            <div class="bs-example">
+                                <code>-Dgreenmail.users=foo:pwd@bar.com,jabber:wocky@monster.local,foo1:bar</code>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-nowrap">-Dgreenmail.auth.disabled</td>
+                        <td>Disables user authentication check, so that any password works.
+                            Useful if you do not want to preconfigure user/passwords.
+                            GreenMail automatically creates non existent users.
+                            <div class="bs-example">
+                                Example: <code>-Dgreenmail.auth.disabled</code>
+                            </div>
                         </td>
                     </tr>
                     <tr>
@@ -562,9 +571,9 @@ java [OPTIONS] -jar greenmail-standalone.jar
                                 This options allows you to override the default log4j configuration by providing your
                                 own log4j configuration file.
                             </p>
-                            <p>
-                                Example: -Dlog4j.configuration=file:///tmp/log4j.xml
-                            </p>
+                            <div class="bs-example">
+                                Example: <code>-Dlog4j.configuration=file:///tmp/log4j.xml</code>
+                            </div>
                         </td>
                     </tr>
                 </table>
@@ -605,8 +614,9 @@ java -Dgreenmail.smtp.hostname=127.0.0.1 -Dgreenmail.smtp.port=4025 \
 
                 <p>GreenMail provides a pre-configured Docker image running
                     <a href="#deploy_standalone">GreenMail
-                    standalone</a>. The image is available via <a href="https://hub.docker.com/r/greenmail/standalone">Docker Hub Public Repository</a>,
-                    but you can also build it yourself using our
+                                                 standalone</a>. The image is available via <a
+                            href="https://hub.docker.com/r/greenmail/standalone">Docker Hub Public Repository</a>,
+                   but you can also build it yourself using our
                     <a href="https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-docker/standalone/Dockerfile">Dockerfile</a>.
                 </p>
                 <p>By default GreenMail standalone runs using the GreenMail test setup, using the following ports
@@ -862,7 +872,6 @@ jar xvf /path/to/greenmail-jboss-service-XXX.jar
                     ImapServerTest.java</a> quota test</p>
 
                 <h4>How can I create or delete a mail user?</h4>
-                <p>
 <pre><code class="language-java"><!-- @formatter:off -->
 GreenMail greenMail = ...
 // Create user with login id equals email
@@ -872,7 +881,6 @@ GreenMailUser user2 = greenMail.setUser("foo@localhost", "login-id", "some secre
 ...
 greenMail.getManagers().getUserManager().deleteUser(user1); // Delete user
 </code></pre><!-- @formatter:on -->
-                </p>
 
             </div>
 
@@ -1092,7 +1100,7 @@ greenMail.getManagers().getUserManager().deleteUser(user1); // Delete user
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script src="js/prism.min.js"></script>
-<script>
+<script >
     /*!
      * IE10 viewport hack for Surface/desktop Windows 8 bug
      * Copyright 2014 Twitter, Inc.
