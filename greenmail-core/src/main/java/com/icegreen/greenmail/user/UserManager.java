@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 public class UserManager {
+    private static final Logger log = LoggerFactory.getLogger(UserManager.class);
     /**
      * User list by their trimmed, lowercased user names
      */
@@ -20,8 +21,6 @@ public class UserManager {
     private Map<String, GreenMailUser> emailToUser = Collections.synchronizedMap(new HashMap<String, GreenMailUser>());
     private ImapHostManager imapHostManager;
     private boolean authRequired = true;
-    private final Logger log = LoggerFactory.getLogger(UserManager.class);
-
 
     public UserManager(ImapHostManager imapHostManager) {
         this.imapHostManager = imapHostManager;
@@ -60,21 +59,27 @@ public class UserManager {
         return Collections.unmodifiableCollection(loginToUser.values());
     }
 
-    public boolean test(String userID, String password) {
-        if(authRequired) {
-            GreenMailUser u = getUser(userID);
-            return null != u && u.getPassword().equals(password);
+    public boolean test(String userId, String password) {
+        if (log.isDebugEnabled()) {
+            log.debug("Authenticating user "+userId);
         }
+        GreenMailUser u = getUser(userId);
 
-        try {
-            if(!userExists(userID)) {
-                createUser(userID, userID, "");
+        if (!authRequired && null == u) {
+            // Auto create user
+            try {
+                u = createUser(userId, userId, password);
+            } catch (UserException e) {
+                throw new IllegalStateException("Failed to create user with userid=" + userId, e);
             }
-        } catch (UserException e) {
-            log.error("Failed to create user with userid=" + userID,e);
-
         }
-        return true;
+
+        return null != u && checkPassword(u.getPassword(), password);
+    }
+
+    private boolean checkPassword(String expectedPassword, String password) {
+        return (null != expectedPassword && expectedPassword.equals(password))
+                || (null == password && expectedPassword == null);
     }
 
     public void setAuthRequired(boolean auth) {
@@ -95,7 +100,14 @@ public class UserManager {
         return login.trim().toLowerCase(Locale.ENGLISH);
     }
 
-    public boolean userExists(String userid) {
-        return loginToUser.containsKey(userid) || emailToUser.containsKey(userid);
+    /**
+     * Checks if user exists.
+     *
+     * @param userId the user id, which can be an email or the login.
+     * @return true, if user exists.
+     */
+    public boolean hasUser(String userId) {
+        String normalized = normalizerUserName(userId);
+        return loginToUser.containsKey(normalized) || emailToUser.containsKey(normalized);
     }
 }
