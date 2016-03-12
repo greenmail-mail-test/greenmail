@@ -33,7 +33,13 @@ import java.util.List;
  */
 public interface ImapHostManager {
 
+    /**
+     * Returns all messages.
+     *
+     * @return a list of messages.
+     */
     List<StoredMessage> getAllMessages();
+
     /**
      * Returns the hierarchy delimiter for mailboxes on this host.
      *

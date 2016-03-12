@@ -51,7 +51,7 @@ public class SimpleMessageAttributes
     private int size;
     private int lineCount;
     public MailMessageAttributes[] parts;
-    private List headers;
+    private List<String> headers;
 
     //rfc822 or MIME header fields
     //arrays only if multiple values allowed under rfc822

@@ -50,15 +50,15 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
 
     @Override
     public void run() {
-        try {
-            // Closed automatically when socket is closed via #close()
-            InputStream ins = new BufferedInputStream(socket.getInputStream(), 512);
-            OutputStream outs = new BufferedOutputStream(socket.getOutputStream(), 1024);
+        // Closed automatically when socket is closed via #close()
+        try (InputStream ins = new BufferedInputStream(socket.getInputStream(), 512);
+             OutputStream outs = new BufferedOutputStream(socket.getOutputStream(), 1024)
+        ) {
 
             response = new ImapResponse(outs);
 
             // Write welcome message
-            String responseBuffer = VERSION +" Server GreenMail ready";
+            String responseBuffer = VERSION + " Server GreenMail ready";
             response.okResponse(null, responseBuffer);
 
             session = new ImapSessionImpl(imapHost,
@@ -69,7 +69,6 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
             while (requestHandler.handleRequest(ins, outs, session)) {
                 // Loop ...
             }
-
         } catch (Exception e) {
             // Ignore if closed is invoked
             if (null != socket && !socket.isClosed()) {
@@ -77,7 +76,7 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
                 throw new IllegalStateException("Can not handle IMAP connection", e);
             }
         } finally {
-           close();
+            close();
         }
     }
 

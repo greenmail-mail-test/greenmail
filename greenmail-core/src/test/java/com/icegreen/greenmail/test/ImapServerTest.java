@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
  * @since Jan 28, 2006
  */
 public class ImapServerTest {
-    public static final String UMLAUTS = "öäü \u00c4 \u00e4";
+    private static final String UMLAUTS = "öäü \u00c4 \u00e4";
     @Rule
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
 
@@ -254,7 +254,7 @@ public class ImapServerTest {
     @Test
     public void testNestedFolders() throws MessagingException, InterruptedException {
         greenMail.setUser("foo@localhost", "pwd");
-        final IMAPStore store = (IMAPStore) greenMail.getImap().createStore();
+        final IMAPStore store = greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
         try {
 

@@ -318,7 +318,7 @@ public abstract class AbstractServer extends Thread implements Service {
 
         if (log.isDebugEnabled()) {
             StringBuilder buf = new StringBuilder("Server Mail session properties are :");
-            for (Map.Entry entry : props.entrySet()) {
+            for (Map.Entry<Object,Object> entry : props.entrySet()) {
                 if (entry.getKey().toString().contains("imap")) {
                     buf.append("\n\t").append(entry.getKey()).append("\t : ").append(entry.getValue());
                 }

@@ -59,7 +59,6 @@ public class RcptCommand
             }
         } catch (AddressException e) {
             conn.send("501 Malformed email address. Use form email@host");
-
         }
     }
 }
