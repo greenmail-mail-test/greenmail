@@ -19,8 +19,7 @@ import static org.junit.Assert.assertEquals;
 public class AuthenticationDisabledTest {
     @Rule
     public final GreenMailRule greenMail = new GreenMailRule(new ServerSetup[]{ServerSetupTest.SMTP, ServerSetupTest.IMAP})
-            .withConfiguration(GreenMailConfiguration.aConfig().withDisabledAuthentication())
-            ;
+            .withConfiguration(GreenMailConfiguration.aConfig().withDisabledAuthentication());
 
     @Test
     public void testSendMailAndReceiveWithAuthDisabled() throws MessagingException, IOException {

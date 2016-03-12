@@ -65,13 +65,16 @@ public class UserManager {
         }
         GreenMailUser u = getUser(userId);
 
-        if (!authRequired && null == u) {
-            // Auto create user
-            try {
-                u = createUser(userId, userId, password);
-            } catch (UserException e) {
-                throw new IllegalStateException("Failed to create user with userid=" + userId, e);
+        if (!authRequired) {
+            if(null == u) { // Auto create user
+                try {
+                    createUser(userId, userId, password);
+                } catch (UserException e) {
+                    throw new IllegalStateException("Failed to create user with userid=" + userId, e);
+                }
             }
+
+            return true; // always authenticate successfully, if no auth required
         }
 
         return null != u && checkPassword(u.getPassword(), password);
