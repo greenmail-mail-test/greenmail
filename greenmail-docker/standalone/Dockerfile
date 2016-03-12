@@ -19,6 +19,7 @@ USER greenmail
 WORKDIR /home/greenmail
 # Run GreenMail Standalone with test setup and disabled authentication
 ENTRYPOINT ["java", \
+    "-Djava.net.preferIPv4Stack=true", \
     "-Dgreenmail.setup.test.all", \
     "-Dgreenmail.hostname=0.0.0.0", \
     "-Dgreenmail.auth.disabled", \
