@@ -12,7 +12,6 @@ import org.junit.Test;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
 import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -70,8 +69,7 @@ public class EscapingTest {
      */
     private void retrieveAndCheck(AbstractServer server, String to, String from, String subject)
             throws MessagingException, IOException {
-        Retriever retriever = new Retriever(server);
-        try {
+        try (Retriever retriever = new Retriever(server)) {
             Message[] messages = retriever.getMessages(to);
             assertEquals(1, messages.length);
             Message message = messages[0];
@@ -80,8 +78,6 @@ public class EscapingTest {
             assertThat(message.getSubject(), is(subject));
             assertThat(message.getAllRecipients()[0].toString(), is(to));
             assertThat(message.getFrom()[0].toString(), is(from));
-        } finally {
-            retriever.close();
         }
     }
 }

@@ -24,24 +24,18 @@ public class ExampleDisableAuthenticationTest {
 
     @Test
     public void testNoAuthIMAP() {
-        Retriever retriever = new Retriever(greenMail.getImap());
-        try {
+        try (Retriever retriever = new Retriever(greenMail.getImap())) {
             Message[] messages = retriever.getMessages("foo@localhost");
             assertEquals(0, messages.length);
-        } finally {
-            retriever.close();
         }
     }
 
     @Test
     public void testExistingUserNotRecreated() {
-        Retriever retriever = new Retriever(greenMail.getImap());
-        try {
+        try (Retriever retriever = new Retriever(greenMail.getImap())) {
             Message[] messages = retriever.getMessages("foo@localhost");
             assertEquals(0, messages.length);
             assertThat(greenMail.getManagers().getUserManager().userExists("foo@localhost"), equalTo(true));
-        } finally {
-            retriever.close();
         }
     }
 }

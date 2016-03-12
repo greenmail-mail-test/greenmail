@@ -25,8 +25,7 @@ public class ExamplePurgeAllEmailsTest {
 
     @Test
     public void testremoveAllMessagesInImapMailbox() throws FolderException {
-        Retriever retriever = new Retriever(greenMailRule.getImap());
-        try{
+        try (Retriever retriever = new Retriever(greenMailRule.getImap())) {
             greenMailRule.setUser("foo@localhost", "pwd");
             GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost",
                     "Test subject", "Test message", ServerSetupTest.SMTP);
@@ -34,8 +33,6 @@ public class ExamplePurgeAllEmailsTest {
             greenMailRule.purgeEmailFromAllMailboxes();
             Message[] messages = retriever.getMessages("foo@localhost", "pwd");
             assertEquals(0, messages.length);
-        }   finally {
-            retriever.close();
         }
 
     }

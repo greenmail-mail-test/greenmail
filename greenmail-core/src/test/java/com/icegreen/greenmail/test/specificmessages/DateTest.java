@@ -53,8 +53,7 @@ public class DateTest {
      */
     private void retrieveAndCheck(AbstractServer server, String to, Date sentDate, boolean checkReceivedDate)
             throws MessagingException, IOException {
-        Retriever retriever = new Retriever(server);
-        try {
+        try (Retriever retriever = new Retriever(server)) {
             Message[] messages = retriever.getMessages(to);
             assertThat(messages.length, is(1));
             Message message = messages[0];
@@ -62,8 +61,6 @@ public class DateTest {
             if (checkReceivedDate) {
                 assertThat(milliSecondDateDiff(message.getReceivedDate(), new Date()), lessThan(3000L));
             }
-        } finally {
-            retriever.close();
         }
     }
 
@@ -74,6 +71,7 @@ public class DateTest {
      * @param date2 Second date
      * @return Difference, always positive
      */
+
     private long milliSecondDateDiff(Date date1, Date date2) {
         long diff = date1.getTime() - date2.getTime();
         return Math.abs(diff);

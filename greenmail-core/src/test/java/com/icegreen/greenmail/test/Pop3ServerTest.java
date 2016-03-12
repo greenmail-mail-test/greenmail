@@ -53,17 +53,16 @@ public class Pop3ServerTest {
         GreenMailUtil.sendTextEmailTest(to, "from@localhost.com", subject, body);
         greenMail.waitForIncomingEmail(5000, 1);
 
-        Retriever retriever = new Retriever(greenMail.getPop3());
-        Message[] messages = retriever.getMessages(to);
-        assertEquals(1, messages.length);
-        assertEquals(subject, messages[0].getSubject());
-        assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
+        try (Retriever retriever = new Retriever(greenMail.getPop3())) {
+            Message[] messages = retriever.getMessages(to);
+            assertEquals(1, messages.length);
+            assertEquals(subject, messages[0].getSubject());
+            assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
 
-        // UID
-        POP3Folder f = (POP3Folder) messages[0].getFolder();
-        assertNotEquals("UNKNOWN", f.getUID(messages[0]));
-
-        retriever.close();
+            // UID
+            POP3Folder f = (POP3Folder) messages[0].getFolder();
+            assertNotEquals("UNKNOWN", f.getUID(messages[0]));
+        }
     }
 
     @Test
@@ -75,13 +74,12 @@ public class Pop3ServerTest {
         GreenMailUtil.sendTextEmailSecureTest(to, "from@localhost.com", subject, body);
         greenMail.waitForIncomingEmail(5000, 1);
 
-        Retriever retriever = new Retriever(greenMail.getPop3s());
-        Message[] messages = retriever.getMessages(to);
-        assertEquals(1, messages.length);
-        assertEquals(subject, messages[0].getSubject());
-        assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
-
-        retriever.close();
+        try (Retriever retriever = new Retriever(greenMail.getPop3s())) {
+            Message[] messages = retriever.getMessages(to);
+            assertEquals(1, messages.length);
+            assertEquals(subject, messages[0].getSubject());
+            assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
+        }
     }
 
     @Test
@@ -95,21 +93,19 @@ public class Pop3ServerTest {
         GreenMailUtil.sendTextEmailTest(to, "from@localhost.com", subject, body);
         greenMail.waitForIncomingEmail(5000, 1);
 
-        Retriever retriever = new Retriever(greenMail.getPop3());
-        boolean login_failed = false;
-        try {
-            retriever.getMessages(to, "wrongpassword");
-        } catch (Throwable e) {
-            login_failed = true;
+        try (Retriever retriever = new Retriever(greenMail.getPop3())) {
+            try {
+                retriever.getMessages(to, "wrongpassword");
+                fail("Expected authentication failure");
+            } catch (Throwable e) {
+                // ok
+            }
+
+            Message[] messages = retriever.getMessages(to, password);
+            assertEquals(1, messages.length);
+            assertEquals(subject, messages[0].getSubject());
+            assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
         }
-        assertTrue(login_failed);
-
-        Message[] messages = retriever.getMessages(to, password);
-        assertEquals(1, messages.length);
-        assertEquals(subject, messages[0].getSubject());
-        assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
-
-        retriever.close();
     }
 
     @Test
@@ -122,27 +118,26 @@ public class Pop3ServerTest {
         GreenMailUtil.sendAttachmentEmail(to, "from@localhost.com", subject, body, new byte[]{0, 1, 2}, "image/gif", "testimage_filename", "testimage_description", ServerSetupTest.SMTP);
         greenMail.waitForIncomingEmail(5000, 1);
 
-        Retriever retriever = new Retriever(greenMail.getPop3());
-        Message[] messages = retriever.getMessages(to);
+        try (Retriever retriever = new Retriever(greenMail.getPop3())) {
+            Message[] messages = retriever.getMessages(to);
 
-        Object o = messages[0].getContent();
-        assertTrue(o instanceof MimeMultipart);
-        MimeMultipart mp = (MimeMultipart) o;
-        assertEquals(2, mp.getCount());
-        BodyPart bp;
-        bp = mp.getBodyPart(0);
-        assertEquals(body, GreenMailUtil.getBody(bp).trim());
+            Object o = messages[0].getContent();
+            assertTrue(o instanceof MimeMultipart);
+            MimeMultipart mp = (MimeMultipart) o;
+            assertEquals(2, mp.getCount());
+            BodyPart bp;
+            bp = mp.getBodyPart(0);
+            assertEquals(body, GreenMailUtil.getBody(bp).trim());
 
-        bp = mp.getBodyPart(1);
-        assertEquals("AAEC", GreenMailUtil.getBody(bp).trim());
+            bp = mp.getBodyPart(1);
+            assertEquals("AAEC", GreenMailUtil.getBody(bp).trim());
 
-        ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        GreenMailUtil.copyStream(bp.getInputStream(), bout);
-        byte[] gif = bout.toByteArray();
-        for (int i = 0; i < gif.length; i++) {
-            assertEquals(i, gif[i]);
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            GreenMailUtil.copyStream(bp.getInputStream(), bout);
+            byte[] gif = bout.toByteArray();
+            for (int i = 0; i < gif.length; i++) {
+                assertEquals(i, gif[i]);
+            }
         }
-
-        retriever.close();
     }
 }

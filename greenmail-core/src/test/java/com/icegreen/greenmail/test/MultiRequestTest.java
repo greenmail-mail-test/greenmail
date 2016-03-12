@@ -67,8 +67,7 @@ public class MultiRequestTest {
             // If message is not sent after timeout period we abort
             int timeout = 10000;//ms
             int increment = timeout / 50;
-            Retriever r = new Retriever(server);
-            try {
+            try (Retriever r = new Retriever(server)) {
                 for (int time = 0; time < timeout; time += increment) {
                     try {
                         count = r.getMessages(to, to).length;
@@ -80,8 +79,6 @@ public class MultiRequestTest {
                         log.error("Error retrieving messages", e);
                     }
                 }
-            } finally {
-                r.close();
             }
         }
 

@@ -56,12 +56,12 @@ public class ImapServerTest {
 
         greenMail.waitForIncomingEmail(5000, 1);
 
-        Retriever retriever = new Retriever(greenMail.getImap());
-        Message[] messages = retriever.getMessages(to);
-        assertEquals(1, messages.length);
-        assertEquals(subject, messages[0].getSubject());
-        assertEquals(body, ((String) messages[0].getContent()).trim());
-        retriever.close();
+        try (Retriever retriever = new Retriever(greenMail.getImap())) {
+            Message[] messages = retriever.getMessages(to);
+            assertEquals(1, messages.length);
+            assertEquals(subject, messages[0].getSubject());
+            assertEquals(body, ((String) messages[0].getContent()).trim());
+        }
     }
 
     @Test
@@ -73,12 +73,12 @@ public class ImapServerTest {
         GreenMailUtil.sendTextEmailSecureTest(to, "from@localhost", subject, body);
         greenMail.waitForIncomingEmail(5000, 1);
 
-        Retriever retriever = new Retriever(greenMail.getImaps());
-        Message[] messages = retriever.getMessages(to);
-        assertEquals(1, messages.length);
-        assertEquals(subject, messages[0].getSubject());
-        assertEquals(body, ((String) messages[0].getContent()).trim());
-        retriever.close();
+        try (Retriever retriever = new Retriever(greenMail.getImaps())) {
+            Message[] messages = retriever.getMessages(to);
+            assertEquals(1, messages.length);
+            assertEquals(subject, messages[0].getSubject());
+            assertEquals(body, ((String) messages[0].getContent()).trim());
+        }
     }
 
     @Test
@@ -92,21 +92,19 @@ public class ImapServerTest {
         GreenMailUtil.sendTextEmailTest(to, "from@localhost", subject, body);
         greenMail.waitForIncomingEmail(5000, 1);
 
-        Retriever retriever = new Retriever(greenMail.getImap());
-        boolean login_failed = false;
-        try {
-            retriever.getMessages(to, "wrongpassword");
-        } catch (Throwable e) {
-            login_failed = true;
-        } finally {
-            retriever.close();
-        }
-        assertTrue(login_failed);
+        try (Retriever retriever = new Retriever(greenMail.getImap())) {
+            try {
+                retriever.getMessages(to, "wrongpassword");
+                fail("Expected failed login");
+            } catch (Throwable e) {
+                // ok
+            }
 
-        Message[] messages = retriever.getMessages(to, password);
-        assertEquals(1, messages.length);
-        assertEquals(subject, messages[0].getSubject());
-        assertEquals(body, ((String) messages[0].getContent()).trim());
+            Message[] messages = retriever.getMessages(to, password);
+            assertEquals(1, messages.length);
+            assertEquals(subject, messages[0].getSubject());
+            assertEquals(body, ((String) messages[0].getContent()).trim());
+        }
     }
 
     @Test
@@ -119,27 +117,27 @@ public class ImapServerTest {
         GreenMailUtil.sendAttachmentEmail(to, "from@localhost", subject, body, new byte[]{0, 1, 2}, "image/gif", "testimage_filename", "testimage_description", ServerSetupTest.SMTP);
         greenMail.waitForIncomingEmail(5000, 1);
 
-        Retriever retriever = new Retriever(greenMail.getImap());
-        Message[] messages = retriever.getMessages(to);
+        try (Retriever retriever = new Retriever(greenMail.getImap())) {
+            Message[] messages = retriever.getMessages(to);
 
-        Object o = messages[0].getContent();
-        assertTrue(o instanceof MimeMultipart);
-        MimeMultipart mp = (MimeMultipart) o;
-        assertEquals(2, mp.getCount());
-        BodyPart bp;
-        bp = mp.getBodyPart(0);
-        assertEquals(body, GreenMailUtil.getBody(bp).trim());
+            Object o = messages[0].getContent();
+            assertTrue(o instanceof MimeMultipart);
+            MimeMultipart mp = (MimeMultipart) o;
+            assertEquals(2, mp.getCount());
+            BodyPart bp;
+            bp = mp.getBodyPart(0);
+            assertEquals(body, GreenMailUtil.getBody(bp).trim());
 
-        bp = mp.getBodyPart(1);
-        assertEquals("AAEC", GreenMailUtil.getBody(bp).trim());
+            bp = mp.getBodyPart(1);
+            assertEquals("AAEC", GreenMailUtil.getBody(bp).trim());
 
-        ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        GreenMailUtil.copyStream(bp.getInputStream(), bout);
-        byte[] gif = bout.toByteArray();
-        for (int i = 0; i < gif.length; i++) {
-            assertEquals(i, gif[i]);
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            GreenMailUtil.copyStream(bp.getInputStream(), bout);
+            byte[] gif = bout.toByteArray();
+            for (int i = 0; i < gif.length; i++) {
+                assertEquals(i, gif[i]);
+            }
         }
-        retriever.close();
     }
 
     @Test

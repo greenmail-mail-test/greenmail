@@ -53,12 +53,11 @@ public class LargeMessageTest {
     /**
      * Retrieve message from retriever and check the attachment and text content
      *
-     * @param server    Server to read from
-     * @param to        Account to retrieve
+     * @param server Server to read from
+     * @param to     Account to retrieve
      */
     private void retrieveAndCheck(AbstractServer server, String to) throws MessagingException, IOException {
-        Retriever retriever = new Retriever(server);
-        try {
+        try (Retriever retriever = new Retriever(server)) {
             Message[] messages = retriever.getMessages(to);
             assertEquals(1, messages.length);
             Message message = messages[0];
@@ -77,20 +76,17 @@ public class LargeMessageTest {
             InputStream attachmentStream = (InputStream) attachment.getContent();
             byte[] bytes = IOUtils.toByteArray(attachmentStream);
             assertArrayEquals(createLargeByteArray(), bytes);
-        } finally {
-            retriever.close();
         }
     }
 
     /**
      * Retrieve message from retriever and check the body content
      *
-     * @param server    Server to read from
-     * @param to        Account to retrieve
+     * @param server Server to read from
+     * @param to     Account to retrieve
      */
     private void retrieveAndCheckBody(AbstractServer server, String to) throws MessagingException, IOException {
-        Retriever retriever = new Retriever(server);
-        try {
+        try (Retriever retriever = new Retriever(server)) {
             Message[] messages = retriever.getMessages(to);
             assertEquals(1, messages.length);
             Message message = messages[0];
@@ -103,8 +99,6 @@ public class LargeMessageTest {
 
             // Dump complete mail message. This leads to a FETCH command without section or "len" specified.
             message.writeTo(new ByteArrayOutputStream());
-        } finally {
-            retriever.close();
         }
     }
 
@@ -120,5 +114,7 @@ public class LargeMessageTest {
     /**
      * @return approx 100 kb String filled with the letter 'a'
      */
-    private String createLargeString() {return new String(new char[100000]).replace("\0","a");}
+    private String createLargeString() {
+        return new String(new char[100000]).replace("\0", "a");
+    }
 }

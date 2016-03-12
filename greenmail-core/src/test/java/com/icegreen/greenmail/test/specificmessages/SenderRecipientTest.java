@@ -99,12 +99,11 @@ public class SenderRecipientTest {
     /**
      * Retrieve message from retriever and check the sender and receivers
      *
-     * @param server    Server to read from
-     * @param login     Account to retrieve
+     * @param server Server to read from
+     * @param login  Account to retrieve
      */
     private void retrieveAndCheck(AbstractServer server, String login) throws MessagingException, IOException {
-        Retriever retriever = new Retriever(server);
-        try {
+        try (Retriever retriever = new Retriever(server)) {
             Message[] messages = retriever.getMessages(login);
             assertEquals(1, messages.length);
             Message message = messages[0];
@@ -114,8 +113,6 @@ public class SenderRecipientTest {
             // BCC addresses are not contained in the message since other receivers are not allowed to know the list of
             // BCC recipients
             assertThat(toInetAddr(message.getRecipients(Message.RecipientType.BCC)), nullValue());
-        } finally {
-            retriever.close();
         }
     }
 

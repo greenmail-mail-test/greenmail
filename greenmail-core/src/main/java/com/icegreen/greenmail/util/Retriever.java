@@ -14,7 +14,7 @@ import java.util.*;
  * @version $Id: $
  * @since Apr 16, 2005
  */
-public class Retriever {
+public class Retriever implements AutoCloseable {
     private AbstractServer server;
     private Store store;
 
@@ -76,6 +76,7 @@ public class Retriever {
      *
      * @since 1.5
      */
+    @Override
     public void close() {
         try {
             store.close();
