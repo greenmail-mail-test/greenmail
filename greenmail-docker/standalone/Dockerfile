@@ -17,8 +17,9 @@ ADD target/greenmail-standalone.jar /home/greenmail/greenmail-standalone.jar
 RUN chown greenmail:greenmail /home/greenmail/greenmail-standalone.jar
 USER greenmail
 WORKDIR /home/greenmail
-# Run GreenMail Standalone with test setup
+# Run GreenMail Standalone with test setup and disabled authentication
 ENTRYPOINT ["java", \
     "-Dgreenmail.setup.test.all", \
     "-Dgreenmail.hostname=0.0.0.0", \
+    "-Dgreenmail.auth.disabled", \
     "-jar", "greenmail-standalone.jar"]
