@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
+ This file is deprecated and only kept for historical reasons,
+ as all issues will be tracked in GitHub:
+ https://github.com/greenmail-mail-test/greenmail/issues
+
  See the documentation at http://maven.apache.org/plugins/maven-changes-plugin/usage.html
 
  Possible action types: add, fix, remove, update
-
  -->
 <document>
   <properties>
@@ -12,6 +15,7 @@
   </properties>
   <body>
   <release version="1.5" date="2014-02-16" description="Changes for 1.5 release">
+     <!-- See https://github.com/greenmail-mail-test/greenmail/milestones/1.5 -->
   </release>
   <release version="1.4.1" date="2015-04-27" description="Changes for 1.4.1 release">
     <action type="add" issue="37">
