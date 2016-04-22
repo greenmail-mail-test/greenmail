@@ -62,8 +62,8 @@ public class DataCommand extends SmtpCommand {
         }
 
         try {
-            manager.send(state);
             conn.send("250 OK");
+            manager.send(state);
         } catch (Exception je) {
             log.error("Can not send state '250 OK', aborted.", je);
             conn.send("451 Requested action aborted: local error in processing");
