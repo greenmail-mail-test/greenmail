@@ -36,11 +36,13 @@ public abstract class AbstractServer extends Thread implements Service {
 
     protected AbstractServer(ServerSetup setup, Managers managers) {
         this.setup = setup;
-        setName(setup.getProtocol() + ':' + setup.getPort());
+        String bindAddress = setup.getBindAddress();
+        if (null == bindAddress) {
+            bindAddress = setup.getDefaultBindAddress();
+        }
+        setName(setup.getProtocol() + ':' + bindAddress + ':' + setup.getPort());
         try {
-            bindTo = (setup.getBindAddress() == null)
-                    ? InetAddress.getByName(setup.getDefaultBindAddress())
-                    : InetAddress.getByName(setup.getBindAddress());
+            bindTo = InetAddress.getByName(bindAddress);
         } catch (UnknownHostException e) {
             throw new RuntimeException("Failed to setup bind address for " + getName(), e);
         }
@@ -151,6 +153,9 @@ public abstract class AbstractServer extends Thread implements Service {
         final ProtocolHandler handler = createProtocolHandler(clientSocket);
         addHandler(handler);
         String threadName = getName() + "<-" + clientSocket.getInetAddress() + ":" + clientSocket.getPort();
+        if(log.isDebugEnabled()) {
+            log.debug("Handling new client connection "+threadName);
+        }
         final Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -230,7 +235,7 @@ public abstract class AbstractServer extends Thread implements Service {
     public boolean waitTillRunning(long timeoutInMs) throws InterruptedException {
         long t = System.currentTimeMillis();
         synchronized (startupMonitor) {
-            // Loop to avoid spurious wakeups, see
+            // Loop to avoid spurious wake ups, see
             // https://www.securecoding.cert.org/confluence/display/java/THI03-J.+Always+invoke+wait%28%29+and+await%28%29+methods+inside+a+loop
             while (!isRunning() && System.currentTimeMillis() - t < timeoutInMs) {
                 startupMonitor.wait(timeoutInMs);
@@ -318,7 +323,7 @@ public abstract class AbstractServer extends Thread implements Service {
 
         if (log.isDebugEnabled()) {
             StringBuilder buf = new StringBuilder("Server Mail session properties are :");
-            for (Map.Entry<Object,Object> entry : props.entrySet()) {
+            for (Map.Entry<Object, Object> entry : props.entrySet()) {
                 if (entry.getKey().toString().contains("imap")) {
                     buf.append("\n\t").append(entry.getKey()).append("\t : ").append(entry.getValue());
                 }
