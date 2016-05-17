@@ -27,6 +27,8 @@ Development [![Build status](https://circleci.com/gh/greenmail-mail-test/greenma
   Make sure you got [Maven 3.2.1+][maven_download] or higher.
   If you want to skip building the docker image, leave out the `-Pdocker` profile option.
 
+  If you want to skip the long running tests, use the Maven option `-DskipITs` .
+
 * Build the Maven site (and the optional example report)
 
   `mvn site -Psite`

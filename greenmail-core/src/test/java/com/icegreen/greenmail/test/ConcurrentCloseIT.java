@@ -15,7 +15,7 @@ import javax.mail.internet.MimeMessage;
 
 import static org.junit.Assert.assertEquals;
 
-public class ConcurrentCloseTest {
+public class ConcurrentCloseIT {
     @Test
     public void concurrentCloseTest() throws Exception {
         for (int i = 0; i < 10000; i++) {
