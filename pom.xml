@@ -258,9 +258,9 @@
   </build>
 
   <properties>
-    <slf4j.version>1.7.18</slf4j.version>
+    <slf4j.version>1.7.21</slf4j.version>
     <hamcrest.version>1.3</hamcrest.version>
-    <spring.version>4.2.5.RELEASE</spring.version>
+    <spring.version>4.2.6.RELEASE</spring.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <!-- Allow JaCoCo agent modifications for Surefire -->
@@ -305,7 +305,7 @@
       <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
-        <version>2.4</version>
+        <version>2.5</version>
         <scope>test</scope>
       </dependency>
       <dependency>
