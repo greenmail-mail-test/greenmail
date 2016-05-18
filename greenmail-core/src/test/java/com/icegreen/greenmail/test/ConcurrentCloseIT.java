@@ -27,6 +27,7 @@ public class ConcurrentCloseIT {
     private void testThis() throws InterruptedException {
         exc = null;
         final GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP);
+        greenMail.setUser("test@localhost.com","test@localhost.com");
         greenMail.start();
         final Thread sendThread = new Thread() {
             public void run() {
