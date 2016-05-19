@@ -59,7 +59,11 @@ class SmtpHandler implements ProtocolHandler {
             _conn.send("421 Service shutting down and closing transmission channel");
 
         } catch (Exception e) {
-            throw new IllegalStateException(e);
+            // Closing socket on blocked read
+            if(!_quitting) {
+                log.error("Unexpected error handling connection, quitting=", e);
+                throw new IllegalStateException(e);
+            }
         } finally {
             if (null != _state) {
                 _state.clearMessage();
