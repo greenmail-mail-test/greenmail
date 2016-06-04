@@ -357,14 +357,14 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
                 throws ProtocolException {
             char next = nextCharInLine(command);
             StringBuilder element = new StringBuilder();
-            while (next != ' ' && next != '[' && next != ')') {
+            while (next != ' ' && next != '[' && next != ')' && !isCrOrLf(next)) {
                 element.append(next);
                 command.consume();
-                next = nextCharInLine(command);
+                next = command.nextChar();
             }
             String name = element.toString();
             // Simple elements with no '[]' parameters.
-            if (next == ' ' || next == ')') {
+            if (next == ' ' || next == ')' || isCrOrLf(next)) {
                 if ("FAST".equalsIgnoreCase(name)) {
                     fetch.flags = true;
                     fetch.internalDate = true;
@@ -447,8 +447,9 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         private char nextCharInLine(ImapRequestLineReader request)
                 throws ProtocolException {
             char next = request.nextChar();
-            if (next == '\r' || next == '\n') {
-                throw new ProtocolException("Unexpected end of line.");
+            if (isCrOrLf(next)) {
+                request.dumpLine();
+                throw new ProtocolException("Unexpected end of line (CR or LF).");
             }
             return next;
         }

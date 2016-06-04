@@ -337,6 +337,16 @@ public class CommandParser {
     }
 
     /**
+     * Checks if character is either CR or LF.
+     *
+     * @param chr the character
+     * @return true, if either CR or LF.
+     */
+    public static boolean isCrOrLf(final char chr) {
+        return '\r' == chr || '\n' == chr;
+    }
+
+    /**
      * Consumes the request up to and including the eno-of-line.
      *
      * @param request The request
