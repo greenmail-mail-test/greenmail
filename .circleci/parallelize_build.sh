@@ -10,6 +10,10 @@ copy_artifacts() {
 run_maven() {
  mvn -V clean install -DskipTests
  mvn test
+ return_code=$?
+ if [[ $return_code -ne 0 ]] ; then
+  echo 'Test failure(s) found. Exiting'; exit $return_code
+ fi
 }
 
 jdk7() {
@@ -47,20 +51,20 @@ case $CIRCLE_NODE_INDEX in
 	1)
 	 echo "Building GreenMail on Oracle JDK8"
 	 jdk8
-     run_maven
+    	 run_maven
 	 copy_artifacts "jdk1.8.0"
 	 ;;
 
 	2)
 	 echo "Building GreenMail on OpenJDK7"
 	 openjdk7
-     run_maven
+	 run_maven
 	 copy_artifacts "java-7-openjdk-amd64"
 	 ;;
 	3)
 	 echo "Building GreenMail on OpenJDK8"
 	 openjdk8
-     run_maven
+	 run_maven
 	 copy_artifacts "java-8-openjdk-amd64"
 	 ;;
 esac
