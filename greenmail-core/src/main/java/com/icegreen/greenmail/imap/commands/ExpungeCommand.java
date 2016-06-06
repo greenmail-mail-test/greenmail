@@ -14,16 +14,18 @@ import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
 
 /**
- * Handles processeing for the EXPUNGE imap command.
+ * Handles processing for the EXPUNGE imap command.
+ * <p>
+ * Supports also <a href="https://tools.ietf.org/html/rfc4315#section-2.1">UID EXPUNGE</a> of UIDPLUS extension.
  *
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-class ExpungeCommand extends SelectedStateCommand {
+class ExpungeCommand extends SelectedStateCommand implements UidEnabledCommand {
     public static final String NAME = "EXPUNGE";
 
     ExpungeCommand() {
-        super(NAME, null);
+        super(NAME, "<message-set>");
     }
 
     /**
@@ -34,6 +36,19 @@ class ExpungeCommand extends SelectedStateCommand {
                              final ImapResponse response,
                              ImapSession session)
             throws ProtocolException, FolderException {
+        doProcess(request, response, session, false);
+    }
+
+    /**
+     * @see UidEnabledCommand#doProcess(ImapRequestLineReader, ImapResponse, ImapSession, boolean)
+     */
+    @Override
+    public void doProcess(ImapRequestLineReader request, ImapResponse response, ImapSession session, boolean useUids)
+            throws ProtocolException, FolderException {
+        IdRange[] idSet = null;
+        if (useUids) {
+            idSet = parser.parseIdRange(request);
+        }
         parser.endLine(request);
 
         if (session.getSelected().isReadonly()) {
@@ -41,7 +56,15 @@ class ExpungeCommand extends SelectedStateCommand {
         }
 
         MailFolder folder = session.getSelected();
-        folder.expunge();
+        if (log.isDebugEnabled() && useUids) {
+            log.debug("Expunging messages matching uids " + IdRange.idRangesToString(idSet) + " from " + folder.getFullName());
+        }
+
+        if (useUids) {
+            folder.expunge(idSet);
+        } else {
+            folder.expunge();
+        }
 
         session.unsolicitedResponses(response);
         response.commandComplete(this);
@@ -77,4 +100,57 @@ http://tools.ietf.org/html/rfc3501#page-49 :
       \Deleted flag set.  See the description of the EXPUNGE
       response for further explanation.
 */
+/*
+https://tools.ietf.org/html/rfc4315#section-2.1 :
+
+2.1.  UID EXPUNGE Command
+
+   Arguments:  sequence set
+
+   Data:       untagged responses: EXPUNGE
+
+   Result:     OK - expunge completed
+               NO - expunge failure (e.g., permission denied)
+               BAD - command unknown or arguments invalid
+
+      The UID EXPUNGE command permanently removes all messages that both
+      have the \Deleted flag set and have a UID that is included in the
+      specified sequence set from the currently selected mailbox.  If a
+      message either does not have the \Deleted flag set or has a UID
+      that is not included in the specified sequence set, it is not
+      affected.
+
+      This command is particularly useful for disconnected use clients.
+      By using UID EXPUNGE instead of EXPUNGE when resynchronizing with
+      the server, the client can ensure that it does not inadvertantly
+      remove any messages that have been marked as \Deleted by other
+      clients between the time that the client was last connected and
+      the time the client resynchronizes.
+
+      If the server does not support the UIDPLUS capability, the client
+      should fall back to using the STORE command to temporarily remove
+      the \Deleted flag from messages it does not want to remove, then
+      issuing the EXPUNGE command.  Finally, the client should use the
+      STORE command to restore the \Deleted flag on the messages in
+      which it was temporarily removed.
+
+      Alternatively, the client may fall back to using just the EXPUNGE
+      command, risking the unintended removal of some messages.
+
+
+
+
+
+
+Crispin                     Standards Track                     [Page 2]
+
+RFC 4315                IMAP - UIDPLUS Extension           December 2005
+
+
+   Example:    C: A003 UID EXPUNGE 3000:3002
+               S: * 3 EXPUNGE
+               S: * 3 EXPUNGE
+               S: * 3 EXPUNGE
+               S: A003 OK UID EXPUNGE completed
+ */
 

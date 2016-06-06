@@ -7,6 +7,7 @@
 package com.icegreen.greenmail.store;
 
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
+import com.icegreen.greenmail.imap.commands.IdRange;
 import com.icegreen.greenmail.mail.MovingMessage;
 
 import javax.mail.Flags;
@@ -51,6 +52,14 @@ public interface MailFolder {
     void deleteAllMessages();
 
     void expunge() throws FolderException;
+
+    /**
+     * Expunges flagged for deletion messages in given range.
+     *
+     * @see com.icegreen.greenmail.imap.commands.ExpungeCommand
+     * @param idRanges the ranges. Can be null.
+     */
+    void expunge(IdRange[] idRanges);
 
     void addListener(FolderListener listener);
 

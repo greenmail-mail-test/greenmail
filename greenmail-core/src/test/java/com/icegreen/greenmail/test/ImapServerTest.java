@@ -357,7 +357,7 @@ public class ImapServerTest {
         greenMail.setUser("foo@localhost", "pwd");
 
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test UIDFolder",
-                "Test message", ServerSetupTest.SMTP);
+                "Test message", greenMail.getSmtp().getServerSetup());
         final IMAPStore store = greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
         try {
@@ -378,6 +378,56 @@ public class ImapServerTest {
             uidMessages = uidFolder.getMessagesByUID(uid, uid);
             assertEquals(1, uidMessages.length);
             assertEquals(message, uidMessages[0]);
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
+    public void testUIDExpunge() throws MessagingException {
+        greenMail.setUser("foo@localhost", "pwd");
+
+        // Create some test emails
+        int numberOfEmails = 10;
+        long[] uids = new long[numberOfEmails];
+        for (int i = 0; i < numberOfEmails; i++) {
+            GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test UID expunge #" + i,
+                    "Test message", greenMail.getSmtp().getServerSetup());
+        }
+
+        final IMAPStore store = greenMail.getImap().createStore();
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_WRITE);
+
+            Message[] messages = folder.getMessages();
+            assertEquals(numberOfEmails, messages.length);
+
+            // Mark even as deleted ...
+            Message[] msgsForDeletion = new Message[uids.length / 2];
+            for (int i = 0; i < messages.length; i++) {
+                assertFalse(messages[i].getFlags().contains(Flags.Flag.DELETED));
+                uids[i] = folder.getUID(messages[i]);
+                if (i % 2 == 0) { // Deleted
+                    messages[i].setFlag(Flags.Flag.DELETED, true);
+                    msgsForDeletion[i / 2] = messages[i];
+                }
+            }
+
+            // ... and expunge (with UID)
+            folder.expunge(msgsForDeletion);
+
+            // Check
+            for (int i = 0; i < uids.length; i++) {
+                final Message message = folder.getMessageByUID(uids[i]);
+                if (i % 2 == 0) { // Deleted
+                    assertNull(message);
+                } else {
+                    assertTrue("" + i, !message.isExpunged());
+                    assertTrue("" + i, !message.getFlags().contains(Flags.Flag.DELETED));
+                }
+            }
         } finally {
             store.close();
         }

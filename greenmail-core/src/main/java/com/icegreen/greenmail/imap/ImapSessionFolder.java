@@ -7,6 +7,7 @@
 package com.icegreen.greenmail.imap;
 
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
+import com.icegreen.greenmail.imap.commands.IdRange;
 import com.icegreen.greenmail.mail.MovingMessage;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.FolderListener;
@@ -224,6 +225,11 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
     @Override
     public void expunge() throws FolderException {
         _folder.expunge();
+    }
+
+    @Override
+    public void expunge(IdRange[] idRanges) {
+        _folder.expunge(idRanges);
     }
 
     @Override

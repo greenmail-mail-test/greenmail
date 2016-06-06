@@ -5,6 +5,7 @@
 package com.icegreen.greenmail.store;
 
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
+import com.icegreen.greenmail.imap.commands.IdRange;
 import com.icegreen.greenmail.util.MaxSizeLinkedHashMap;
 
 import javax.mail.Flags;
@@ -104,11 +105,17 @@ public class MapBasedStoredMessageCollection implements StoredMessageCollection 
 
     @Override
     public void expunge(List<FolderListener> mailboxListeners) {
+        expunge(mailboxListeners, null);
+    }
+
+    @Override
+    public void expunge(List<FolderListener> mailboxListeners, IdRange[] idRanges) {
         int i = 1;
         synchronized (mailMessages) {
             for (final Iterator<Map.Entry<Long, StoredMessage>> messageEntryIt = mailMessages.entrySet().iterator(); messageEntryIt.hasNext(); ) {
                 final Map.Entry<Long, StoredMessage> messageEntry = messageEntryIt.next();
-                if (messageEntry.getValue().isSet(Flags.Flag.DELETED)) {
+                if (messageEntry.getValue().isSet(Flags.Flag.DELETED) &&
+                        (idRanges == null || IdRange.containsUid(idRanges, messageEntry.getValue().getUid()))) {
                     // Notify all the listeners of the pending delete
                     synchronized (mailboxListeners) {
                         messageEntryIt.remove();

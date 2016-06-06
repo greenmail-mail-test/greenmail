@@ -5,6 +5,7 @@
 package com.icegreen.greenmail.store;
 
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
+import com.icegreen.greenmail.imap.commands.IdRange;
 
 import javax.mail.Flags;
 import java.util.*;
@@ -109,10 +110,16 @@ public class ListBasedStoredMessageCollection implements StoredMessageCollection
 
     @Override
     public void expunge(List<FolderListener> folderListeners) {
+        expunge(folderListeners, null);
+    }
+
+    @Override
+    public void expunge(List<FolderListener> folderListeners, IdRange[] idRanges) {
         synchronized (mailMessages) {
             for (int i = mailMessages.size() - 1; i >= 0; i--) {
                 StoredMessage message = mailMessages.get(i);
-                if (message.isSet(Flags.Flag.DELETED)) {
+                if (message.isSet(Flags.Flag.DELETED) &&
+                        (idRanges == null || IdRange.containsUid(idRanges, message.getUid()))) {
                     expungeMessage(i + 1, folderListeners); // MSNs start counting at 1
                 }
             }

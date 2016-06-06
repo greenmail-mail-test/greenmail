@@ -5,6 +5,7 @@
 package com.icegreen.greenmail.store;
 
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
+import com.icegreen.greenmail.imap.commands.IdRange;
 
 import java.util.List;
 
@@ -30,5 +31,14 @@ public interface StoredMessageCollection extends Iterable<StoredMessage> {
 
     void expunge(List<FolderListener> folderListeners);
 
+    /**
+     * Expunges all messages flagged deleted and with UID in given ranges.
+     *
+     * @param mailboxListeners folders to notify.
+     * @param idRanges the UID message set ranges.
+     */
+    void expunge(List<FolderListener> mailboxListeners, IdRange[] idRanges);
+
     StoredMessage get(int i);
+
 }

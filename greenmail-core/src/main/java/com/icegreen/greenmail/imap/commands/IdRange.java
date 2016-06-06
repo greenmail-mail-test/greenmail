@@ -136,4 +136,22 @@ public class IdRange implements Serializable {
         }
         return Long.parseLong(value);
     }
+
+    /**
+     * Checks if ranges contain the uid
+     *
+     * @param idRanges the id ranges
+     * @param uid      the uid
+     * @return true, if ranges contain given uid
+     */
+    public static boolean containsUid(IdRange[] idRanges, long uid) {
+        if (null != idRanges && idRanges.length > 0) {
+            for (IdRange range : idRanges) {
+                if (range.includes(uid)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

@@ -6,6 +6,7 @@ package com.icegreen.greenmail.store;
 
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import com.icegreen.greenmail.imap.ImapConstants;
+import com.icegreen.greenmail.imap.commands.IdRange;
 import com.icegreen.greenmail.mail.MovingMessage;
 
 import javax.mail.Flags;
@@ -342,6 +343,11 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     @Override
     public void expunge() throws FolderException {
         mailMessages.expunge(_mailboxListeners);
+    }
+
+    @Override
+    public void expunge(IdRange[] idRanges) {
+        mailMessages.expunge(_mailboxListeners, idRanges);
     }
 
     @Override
