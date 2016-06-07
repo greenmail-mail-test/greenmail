@@ -63,10 +63,10 @@ class AppendCommand extends AuthenticatedStateCommand {
             throw e;
         }
 
-        folder.appendMessage(message, flags, receivedDate);
+        long uid = folder.appendMessage(message, flags, receivedDate);
 
         session.unsolicitedResponses(response);
-        response.commandComplete(this);
+        response.commandComplete(this, "APPENDUID" + SP + folder.getUidValidity() + SP + uid);
     }
 
     private static class AppendCommandParser extends CommandParser {

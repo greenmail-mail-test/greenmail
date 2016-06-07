@@ -7,7 +7,9 @@ package com.icegreen.greenmail.test;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
+import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import com.sun.mail.imap.AppendUID;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.imap.IMAPStore;
 import org.junit.Rule;
@@ -30,7 +32,11 @@ import static org.junit.Assert.*;
 public class ImapServerTest {
     private static final String UMLAUTS = "öäü \u00c4 \u00e4";
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
+    public final GreenMailRule greenMail = new GreenMailRule(new ServerSetup[]{
+            ServerSetupTest.IMAP,
+            ServerSetupTest.IMAPS,
+            ServerSetupTest.SMTP
+    });
 
     /**
      * Tests simple send and retrieve, including umlauts.
@@ -428,6 +434,48 @@ public class ImapServerTest {
                     assertTrue("" + i, !message.getFlags().contains(Flags.Flag.DELETED));
                 }
             }
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
+    public void testAppend() throws MessagingException {
+        greenMail.setUser("foo@localhost", "pwd");
+
+        GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test Append",
+                "Test message", greenMail.getSmtp().getServerSetup());
+
+        final IMAPStore store = greenMail.getImap().createStore();
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder inboxFolder = (IMAPFolder) store.getFolder("INBOX");
+            inboxFolder.open(Folder.READ_WRITE);
+
+            Message[] messages = inboxFolder.getMessages();
+            assertEquals(1, messages.length);
+            Message message = messages[0];
+
+            Message[] toBeAppended = new Message[]{
+                    new MimeMessage((MimeMessage) message) // Copy
+            };
+            toBeAppended[0].setSubject("testAppend#1");
+
+            inboxFolder.appendMessages(toBeAppended);
+            messages = inboxFolder.getMessages();
+            assertEquals(2, messages.length);
+
+            // UIDPLUS
+            toBeAppended[0] = new MimeMessage((MimeMessage) message);
+            toBeAppended[0].setSubject("testAppend#2");
+
+            final AppendUID[] appendUIDs = inboxFolder.appendUIDMessages(toBeAppended); // Copy again
+            long uid = appendUIDs[0].uid;
+            Message newMsg = inboxFolder.getMessageByUID(uid);
+            assertEquals(toBeAppended[0].getSubject(), newMsg.getSubject());
+            assertTrue(appendUIDs[0].uidvalidity == inboxFolder.getUIDValidity());
+            messages = inboxFolder.getMessages();
+            assertEquals(3, messages.length);
         } finally {
             store.close();
         }

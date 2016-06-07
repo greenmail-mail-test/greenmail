@@ -47,6 +47,14 @@ public interface MailFolder {
 
     long getUidNext();
 
+    /**
+     * Appends a message.
+     *
+     * @param message the message.
+     * @param flags the flags.
+     * @param internalDate the received date
+     * @return the uid.
+     */
     long appendMessage(MimeMessage message, Flags flags, Date internalDate);
 
     void deleteAllMessages();

@@ -13,7 +13,7 @@ import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.store.FolderException;
 
 /**
- * Handles processeing for the UID imap command.
+ * Handles processing for the UID imap command.
  *
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
@@ -24,7 +24,7 @@ class UidCommand extends SelectedStateCommand {
     private ImapCommandFactory commandFactory;
 
     UidCommand() {
-        super(NAME, "<fetch-command>|<store-command>|<copy-command>|<search-command>");
+        super(NAME, "<fetch-command>|<store-command>|<copy-command>|<search-command>|<expunge-command>");
     }
 
     @Override
