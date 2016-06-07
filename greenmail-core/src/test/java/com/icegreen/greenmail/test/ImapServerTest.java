@@ -35,7 +35,8 @@ public class ImapServerTest {
     public final GreenMailRule greenMail = new GreenMailRule(new ServerSetup[]{
             ServerSetupTest.IMAP,
             ServerSetupTest.IMAPS,
-            ServerSetupTest.SMTP
+            ServerSetupTest.SMTP,
+            ServerSetupTest.SMTPS
     });
 
     /**
