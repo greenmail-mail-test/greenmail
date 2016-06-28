@@ -206,6 +206,9 @@ public class ServerSetup {
             props.setProperty("mail.transport.protocol.rfc822", getProtocol());
         }
 
+        // Auto configure stores.
+        props.setProperty("mail.store.protocol", getProtocol());
+
         // Merge with optional additional properties
         if (null != properties && !properties.isEmpty()) {
             props.putAll(properties);
