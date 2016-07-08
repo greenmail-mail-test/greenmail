@@ -129,7 +129,7 @@ public class GreenMailUtil {
     public static String getBody(Part msg) {
         String all = getWholeMessage(msg);
         int i = all.indexOf("\r\n\r\n");
-        return all.substring(i + 4, all.length());
+        return i < 0 ? "" /* empty body */ : all.substring(i + 4, all.length());
     }
 
     /**
@@ -138,7 +138,7 @@ public class GreenMailUtil {
     public static String getHeaders(Part msg) {
         String all = getWholeMessage(msg);
         int i = all.indexOf("\r\n\r\n");
-        return all.substring(0, i);
+        return i < 0 ? all : all.substring(0, i);
     }
 
     /**

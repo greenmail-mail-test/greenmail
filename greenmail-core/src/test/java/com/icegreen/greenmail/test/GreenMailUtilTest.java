@@ -9,13 +9,17 @@ package com.icegreen.greenmail.test;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Test;
 
 import javax.mail.*;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -36,6 +40,49 @@ public class GreenMailUtilTest {
         MimeMessage message = GreenMailUtil.newMimeMessage(SAMPLE_EMAIL);
         String body = GreenMailUtil.getBody(message);
         assertEquals("Yo wassup Bertil", body.trim());
+    }
+
+    @Test
+    public void testGetEmptyBodyAndHeader() throws Exception {
+        GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
+        try {
+            greenMail.start();
+
+            String subject = GreenMailUtil.random();
+            String body = ""; // Provokes https://github.com/greenmail-mail-test/greenmail/issues/151
+            String to = "test@localhost";
+            final byte[] gifAttachment = {0, 1, 2};
+            GreenMailUtil.sendAttachmentEmail(to, "from@localhost", subject, body, gifAttachment,
+                    "image/gif", "testimage_filename", "testimage_description",
+                    greenMail.getSmtp().getServerSetup());
+            greenMail.waitForIncomingEmail(5000, 1);
+
+            try (Retriever retriever = new Retriever(greenMail.getImap())) {
+                MimeMultipart mp = (MimeMultipart) retriever.getMessages(to)[0].getContent();
+                BodyPart bp;
+                bp = mp.getBodyPart(0);
+                assertEquals(body, GreenMailUtil.getBody(bp).trim());
+                assertEquals(
+                        "Content-Type: text/plain; charset=us-ascii\r\n" +
+                        "Content-Transfer-Encoding: 7bit",
+                        GreenMailUtil.getHeaders(bp).trim());
+
+                bp = mp.getBodyPart(1);
+                assertEquals("AAEC", GreenMailUtil.getBody(bp).trim());
+                assertEquals(
+                        "Content-Type: image/gif; name=testimage_filename\r\n" +
+                        "Content-Transfer-Encoding: base64\r\n" +
+                        "Content-Disposition: attachment; filename=testimage_filename\r\n" +
+                        "Content-Description: testimage_description",
+                        GreenMailUtil.getHeaders(bp).trim());
+
+                ByteArrayOutputStream bout = new ByteArrayOutputStream();
+                GreenMailUtil.copyStream(bp.getInputStream(), bout);
+                assertArrayEquals(gifAttachment, bout.toByteArray());
+            }
+        } finally {
+            greenMail.stop();
+        }
     }
 
     @Test
