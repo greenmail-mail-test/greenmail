@@ -67,6 +67,13 @@ public class ImapSubjectLineTest {
         testSubject(subjectWithTabCharacter);
     }
 
+    @Test
+    public void testSubjectWithBackslashCharacter() throws Exception {
+        String subjectWithBackslashCharacter = "With \\back slash.";
+
+        testSubject(subjectWithBackslashCharacter);
+    }
+
     private void testSubject(String subject) throws Exception {
         GreenMailUser user = greenMail.setUser("to1@localhost", "pwd");
         assertNotNull(greenMail.getImap());
