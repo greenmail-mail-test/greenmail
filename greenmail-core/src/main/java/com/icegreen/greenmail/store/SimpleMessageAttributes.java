@@ -738,7 +738,7 @@ public class SimpleMessageAttributes
     }
 
     public String escapeHeader(final String text) {
-        return text.replace("\r", "\\\r").replace("\n", "\\\n").replace("\\", "\\\\").replace("\"", "\\\"");
+        return MimeUtility.unfold(text).replace("\\", "\\\\").replace("\"", "\\\"");
     }
 
 }
