@@ -28,7 +28,7 @@ import static org.junit.Assert.fail;
 public class ImapSubjectLineTest {
 
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
+    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.IMAP);
 
     @Test
     public void testLongSubjectLine() throws Exception {
