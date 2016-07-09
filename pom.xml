@@ -206,13 +206,12 @@
           <version>2.2</version>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
-          <version>2.4</version>
+          <version>3.0.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.4</version>
+          <version>3.5</version>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-report-plugin</artifactId>
@@ -220,7 +219,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>2.8.1</version>
+          <version>2.9</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -247,7 +246,7 @@
         <plugin>
           <groupId>org.sonatype.plugins</groupId>
           <artifactId>nexus-staging-maven-plugin</artifactId>
-          <version>1.6.6</version>
+          <version>1.6.7</version>
         </plugin>
         <plugin>
           <artifactId>maven-gpg-plugin</artifactId>
@@ -520,10 +519,11 @@
               <aggregate>true</aggregate>
               <linksource>true</linksource>
               <links>
-                <link>http://docs.oracle.com/javase/1.6.0/docs/api/</link>
+                <link>http://docs.oracle.com/javase/1.7.0/docs/api/</link>
                 <link>https://javamail.java.net/nonav/docs/api/</link>
-                <link>http://junit.org/apidocs/</link>
+                <link>http://junit.org/junit4/javadoc/latest/</link>
               </links>
+              <failOnError>false</failOnError>
             </configuration>
           </plugin>
 
