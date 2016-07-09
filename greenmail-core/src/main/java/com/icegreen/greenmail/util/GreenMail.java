@@ -235,8 +235,17 @@ public class GreenMail extends ConfiguredGreenMail {
         return ret;
     }
 
+    /**
+     * @deprecated Use {@link #getReceivedMessagesForDomain(String domain)} instead.
+     */
+    @Deprecated
     @Override
     public MimeMessage[] getReceviedMessagesForDomain(String domain) {
+        return getReceivedMessagesForDomain(domain);
+    }
+
+    @Override
+    public MimeMessage[] getReceivedMessagesForDomain(String domain) {
         List<StoredMessage> msgs = managers.getImapHostManager().getAllMessages();
         List<MimeMessage> ret = new ArrayList<>();
         try {

@@ -65,9 +65,18 @@ public abstract class GreenMailProxy extends ConfiguredGreenMail {
         return getGreenMail().getReceivedMessages();
     }
 
+    /**
+     * @deprecated Use {@link #getReceivedMessagesForDomain(String domain)} instead.
+     */
+    @Deprecated
     @Override
     public MimeMessage[] getReceviedMessagesForDomain(String domain) {
-        return getGreenMail().getReceviedMessagesForDomain(domain);
+        return getReceivedMessagesForDomain(domain);
+    }
+
+    @Override
+    public MimeMessage[] getReceivedMessagesForDomain(String domain) {
+        return getGreenMail().getReceivedMessagesForDomain(domain);
     }
 
     @Override

@@ -76,11 +76,19 @@ public interface GreenMailOperations {
     MimeMessage[] getReceivedMessages();
 
     /**
+     * @deprecated Use {@link #getReceivedMessagesForDomain(String domain)} instead.
+     *
+     * @param domain returns all received messages arrived to domain.
+     */
+    @Deprecated
+    MimeMessage[] getReceviedMessagesForDomain(String domain);
+
+    /**
      * This method can be used as an easy 'catch-all' mechanism.
      *
-     * @param domain returns all receved messages arrived to domain.
+     * @param domain returns all received messages arrived to domain.
      */
-    MimeMessage[] getReceviedMessagesForDomain(String domain);
+    MimeMessage[] getReceivedMessagesForDomain(String domain);
 
     /**
      * Sets the password for the account linked to email. If no account exits, one is automatically created when an email is received
