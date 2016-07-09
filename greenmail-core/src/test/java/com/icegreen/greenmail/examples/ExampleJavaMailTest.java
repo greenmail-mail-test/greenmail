@@ -54,8 +54,8 @@ public class ExampleJavaMailTest {
         assertEquals(msg.getSubject(), msgReceived.getSubject());
 
         // Alternative 3: ... directly fetch sent message using GreenMail API
-        assertEquals(1, greenMail.getReceviedMessagesForDomain("bar@example.com").length);
-        msgReceived = greenMail.getReceviedMessagesForDomain("bar@example.com")[0];
+        assertEquals(1, greenMail.getReceivedMessagesForDomain("bar@example.com").length);
+        msgReceived = greenMail.getReceivedMessagesForDomain("bar@example.com")[0];
         assertEquals(msg.getSubject(), msgReceived.getSubject());
 
         store.close();
