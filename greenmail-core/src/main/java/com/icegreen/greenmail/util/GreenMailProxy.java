@@ -66,7 +66,7 @@ public abstract class GreenMailProxy extends ConfiguredGreenMail {
     }
 
     /**
-     * @deprecated Use {@link #getReceivedMessagesForDomain(String domain)} instead.
+     * @deprecated As of 1.5 and to be removed in 1.6. Use {@link #getReceivedMessagesForDomain(String domain)} instead.
      */
     @Deprecated
     @Override
