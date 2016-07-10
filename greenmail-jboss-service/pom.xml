@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.icegreen</groupId>
   <artifactId>greenmail-jboss-service</artifactId>
-  <version>1.5.1-SNAPSHOT</version>
+  <version>1.5.1</version>
   <packaging>jboss-sar</packaging>
   <name>== GreenMail JBoss Service ==</name>
   <description>JBoss Service MBean for GreenMail</description>
@@ -11,7 +11,7 @@
   <parent>
     <groupId>com.icegreen</groupId>
     <artifactId>greenmail-parent</artifactId>
-    <version>1.5.1-SNAPSHOT</version>
+    <version>1.5.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
