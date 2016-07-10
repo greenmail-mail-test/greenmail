@@ -62,7 +62,7 @@ public interface GreenMailOperations {
     boolean waitForIncomingEmail(long timeout, int emailCount);
 
     /**
-     * Does the same thing as {@link #wait(long, int)} but with a timeout of 5000ms
+     * Does the same thing as {@link #waitForIncomingEmail(long, int)} but with a default timeout of 5000ms
      *
      * @param emailCount waits for these many emails to arrive before returning
      * @return Returns false if timeout period was reached, otherwise true.
@@ -78,7 +78,8 @@ public interface GreenMailOperations {
     /**
      * @deprecated As of 1.5 and to be removed in 1.6. Use {@link #getReceivedMessagesForDomain(String domain)} instead.
      *
-     * @param domain returns all received messages arrived to domain.
+     * @param domain the domain
+     * @return Returns all received messages for given domain.
      */
     @Deprecated
     MimeMessage[] getReceviedMessagesForDomain(String domain);
@@ -86,7 +87,8 @@ public interface GreenMailOperations {
     /**
      * This method can be used as an easy 'catch-all' mechanism.
      *
-     * @param domain returns all received messages arrived to domain.
+     * @param domain the domain
+     * @return Returns all received messages for given domain.
      */
     MimeMessage[] getReceivedMessagesForDomain(String domain);
 
@@ -96,6 +98,7 @@ public interface GreenMailOperations {
      *
      * @param login    Login for which the password should be set. This is assumed to be the same as the email address.
      * @param password New password
+     * @return the user created
      */
     GreenMailUser setUser(String login, String password);
 
@@ -107,6 +110,7 @@ public interface GreenMailOperations {
      * @param login    Login name for login. This may be different to the email address. E.g. the email address could be
      *                 "info@localhost", the login could be "info".
      * @param password New password
+     * @return the user created
      */
     GreenMailUser setUser(String email, String login, String password);
 
@@ -128,6 +132,7 @@ public interface GreenMailOperations {
      * Configure GreenMail instance using the given configuration
      *
      * @param config Configuration to use
+     * @return self (for method chaining)
      */
     GreenMailOperations withConfiguration(GreenMailConfiguration config);
 
@@ -148,8 +153,8 @@ public interface GreenMailOperations {
 
     /**
      * Remove/purge all data from all mail stores (POP3/IMAP)
+     *
+     * @throws FolderException on error
     */
     void purgeEmailFromAllMailboxes() throws FolderException;
-
-
 }

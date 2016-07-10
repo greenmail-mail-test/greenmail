@@ -193,15 +193,15 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             bytes = doPartial(partial, bytes, response);
             addLiteral(bytes, response);
         } else if ("HEADER".equalsIgnoreCase(sectionSpecifier)) {
-            Enumeration inum = mimeMessage.getAllHeaderLines();
+            Enumeration<?> inum = mimeMessage.getAllHeaderLines();
             addHeaders(inum, response);
         } else if (sectionSpecifier.startsWith("HEADER.FIELDS.NOT")) {
             String[] excludeNames = extractHeaderList(sectionSpecifier, "HEADER.FIELDS.NOT".length());
-            Enumeration inum = mimeMessage.getNonMatchingHeaderLines(excludeNames);
+            Enumeration<?> inum = mimeMessage.getNonMatchingHeaderLines(excludeNames);
             addHeaders(inum, response);
         } else if (sectionSpecifier.startsWith("HEADER.FIELDS ")) {
             String[] includeNames = extractHeaderList(sectionSpecifier, "HEADER.FIELDS ".length());
-            Enumeration inum = mimeMessage.getMatchingHeaderLines(includeNames);
+            Enumeration<?> inum = mimeMessage.getMatchingHeaderLines(includeNames);
             addHeaders(inum, response);
         } else if (sectionSpecifier.endsWith("MIME")) {
             String[] strs = sectionSpecifier.trim().split("\\.");
@@ -305,7 +305,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         return strings.toArray(new String[strings.size()]);
     }
 
-    private void addHeaders(Enumeration inum, StringBuilder response) {
+    private void addHeaders(Enumeration<?> inum, StringBuilder response) {
         List<String> lines = new ArrayList<>();
         int count = 0;
         while (inum.hasMoreElements()) {

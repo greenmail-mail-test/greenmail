@@ -152,6 +152,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         return mailMessages.getMsn(uid);
     }
 
+    @Override
     public void signalDeletion() {
         // Notify all the listeners of the new message
         synchronized (_mailboxListeners) {
