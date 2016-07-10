@@ -242,6 +242,14 @@
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>2.10.3</version>
+          <configuration>
+            <links>
+              <link>http://docs.oracle.com/javase/1.7.0/docs/api/</link>
+              <link>https://javamail.java.net/nonav/docs/api/</link>
+              <link>http://junit.org/junit4/javadoc/latest/</link>
+            </links>
+            <failOnError>false</failOnError>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.sonatype.plugins</groupId>

@@ -15,7 +15,7 @@ import java.util.Properties;
 
 /**
  * Enables GreenMail to run in standalone mode.
- * <p/>
+ *
  * Example: java  -Dgreenmail.smtp -Dgreenmail.users=test1:pwd1 -jar greenmail.jar
  *
  * @see PropertiesBasedServerSetupBuilder
