@@ -37,7 +37,9 @@ Development [![Build status](https://circleci.com/gh/greenmail-mail-test/greenma
 
   For a tagged release and deployment to [Sonatype OpenSource Repository Hosting][ossrh_maven] and later syncing to [Maven Central][maven_repository_release], do
 
-  `mvn clean deploy -Prelease,release-ossrh,docker`
+  `mvn clean deploy -Prelease,release-ossrh,docker,docker-tag-latest`
+
+  Note: Do only use docker-tag-latest profile if you really want the tag latest, e.g. for newest release of highest version.
 
 * Build and deploy a snapshot
 

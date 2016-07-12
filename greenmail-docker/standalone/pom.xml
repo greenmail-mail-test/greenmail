@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <name>== GreenMail Docker :: Standalone ==</name>
   <description>Docker image running GreenMail Standalone</description>
@@ -6,6 +7,10 @@
   <artifactId>greenmail-docker-standalone</artifactId>
   <version>1.5.2-SNAPSHOT</version>
   <packaging>pom</packaging>
+
+  <properties>
+    <greenmail.docker.tags>${project.version}</greenmail.docker.tags>
+  </properties>
 
   <parent>
     <groupId>com.icegreen</groupId>
@@ -22,11 +27,24 @@
   </dependencies>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>2.10</version>
+        </plugin>
+        <plugin>
+          <groupId>org.jolokia</groupId>
+          <artifactId>docker-maven-plugin</artifactId>
+          <version>0.13.9</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.10</version>
         <configuration>
           <artifactItems>
             <artifactItem>
@@ -52,13 +70,19 @@
       <plugin>
         <groupId>org.jolokia</groupId>
         <artifactId>docker-maven-plugin</artifactId>
-        <version>0.13.9</version>
         <configuration>
           <autoPull>false</autoPull>
           <images>
             <image>
               <name>greenmail/standalone:${project.version}</name>
               <build>
+                <tags>${greenmail.docker.tags}</tags>
+                <!--
+                <tags>
+                    <tag>${project.version}</tag>
+                    <tag>${greenmail.docker.latest}</tag>
+                </tags>
+                -->
                 <assembly>
                   <dockerFileDir>${basedir}</dockerFileDir>
                 </assembly>
@@ -117,4 +141,15 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>docker-tag-latest</id>
+      <!-- Use if you want to tag docker image with version and 'latest' label -->
+      <properties>
+        <greenmail.docker.tags>${project.version},latest</greenmail.docker.tags>
+      </properties>
+    </profile>
+  </profiles>
+
 </project>
