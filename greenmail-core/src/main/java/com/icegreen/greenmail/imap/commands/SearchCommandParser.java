@@ -37,13 +37,20 @@ class SearchCommandParser extends CommandParser {
         // Consume to the end of the line.
         char next = request.nextChar();
         StringBuilder sb = new StringBuilder();
+        boolean quoted = false;
         while (next != '\n') {
-            if (next != 32 /* space */ && next != 13 /* cr */) {
+            if (next != '\"' && (quoted || (next != '\"' && next != 32 /* space */ && next != 13 /* cr */ ))) {
                 sb.append(next);
             }
             request.consume();
             next = request.nextChar();
-            if (next == 32 || next == '\n') {
+            if(next == '\"') {
+                quoted = !quoted;
+                if(quoted) {
+                    continue;
+                }
+            }
+            if (!quoted && (next == 32 || next == '\n')) {
                 if (log.isDebugEnabled()) {
                     log.debug("Search request is '" + sb.toString() + '\'');
                 }

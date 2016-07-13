@@ -6,8 +6,6 @@
  */
 package com.icegreen.greenmail.imap.commands;
 
-import javax.mail.search.SearchTerm;
-
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ImapResponse;
 import com.icegreen.greenmail.imap.ImapSession;
@@ -16,6 +14,8 @@ import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.mail.search.SearchTerm;
 
 /**
  * Handles processing for the SEARCH imap command.
@@ -48,7 +48,15 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
                           boolean useUids)
             throws ProtocolException, FolderException {
         // Parse the search term from the request
-        SearchTerm searchTerm = parser.searchTerm(request);
+        SearchTerm searchTerm = null;
+        try {
+            searchTerm = parser.searchTerm(request);
+        } catch(IllegalArgumentException ex) {
+            // Not support => return "BAD"
+            response.badResponse("Search command not supported");
+            return;
+        }
+
         parser.endLine(request);
 
         MailFolder folder = session.getSelected();

@@ -72,6 +72,9 @@ public abstract class SearchTermBuilder {
             case SEEN:
                 builder = createSearchTermBuilder(createFlagSearchTerm("SEEN", true));
                 break;
+            case SUBJECT:
+                builder = createSubjectTermBuilder();
+                break;
             case TO:
                 builder = createRecipientSearchTermBuilder(Message.RecipientType.TO);
                 break;
@@ -170,6 +173,15 @@ public abstract class SearchTermBuilder {
                 } catch (AddressException e) {
                     throw new IllegalArgumentException("Address is not correct", e);
                 }
+            }
+        };
+    }
+
+    private static SearchTermBuilder createSubjectTermBuilder() {
+        return new SearchTermBuilder() {
+            @Override
+            public SearchTerm build() {
+                return new SubjectTerm(getParameters().get(0));
             }
         };
     }
