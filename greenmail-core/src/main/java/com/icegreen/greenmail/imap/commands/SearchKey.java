@@ -6,9 +6,8 @@ package com.icegreen.greenmail.imap.commands;
 
 /**
  * SearchKey as defined in "RFC3501" section "6.4.4. SEARCH Command"
- * Read more: http://www.faqs.org/rfcs/rfc3501.html
  * <p>
- * TODO: Add search keys that are missing
+ * Read more: https://tools.ietf.org/html/rfc3501
  * </p>
  * <ul>
  * <li>ALL All messages in the mailbox; the default initial key for ANDing</li>
@@ -41,7 +40,19 @@ package com.icegreen.greenmail.imap.commands;
  * <li>SUBJECT &lt;string&gt; Messages that contain the specified string in the envelope structure's SUBJECT field.</li>
  * <li>TODO: TEXT &lt;string&gt; Messages that contain the specified string in the header or body of the message.</li>
  * <li>TO &lt;string&gt; Messages that contain the specified string in the envelope structure's TO field.</li>
- * <li>UID &lt;sequence set&gt; Messages with unique identifiers corresponding to the specified unique identifier set. Sequence set ranges are permitted.</li>
+ * <li>UID &lt;sequence set&gt; Messages with unique identifiers corresponding to the specified unique identifier set. Sequence set ranges are permitted.
+ * <ul>
+ *  <li>uid-set         = (uniqueid / uid-range) *("," uid-set)</li>
+ *  <li>uid-range       = (uniqueid ":" uniqueid)
+ * <p>
+ *   Two uniqueid values and all values between these two regards of order.
+ * </p>
+ * <p>
+ *   Example: 2:4 and 4:2 are equivalent.
+ * </p>
+ *  </li>
+ * </ul>
+ * </li>
  * <li>UNANSWERED Messages that do not have the \Answered flag set.</li>
  * <li>UNDELETED Messages that do not have the \Deleted flag set.</li>
  * <li>UNDRAFT Messages that do not have the \Draft flag set.</li>

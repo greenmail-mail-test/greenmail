@@ -263,6 +263,8 @@ public abstract class SearchTermBuilder {
      * Search term that matches all messages
      */
     private static class AllSearchTerm extends SearchTerm {
+        private static final long serialVersionUID = 135627179677024837L;
+
         @Override
         public boolean match(Message msg) {
             return true;
@@ -272,6 +274,7 @@ public abstract class SearchTermBuilder {
     // Not very efficient due to underlying JavaMail based impl.
     // The term compares each mail if matching.
     public static class UidSearchTerm extends SearchTerm {
+        private static final long serialVersionUID = 1135219503729412087L;
         private final List<IdRange> uidSetList;
 
         public UidSearchTerm(List<IdRange> uidSetList) {

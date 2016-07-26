@@ -14,10 +14,12 @@ import com.icegreen.greenmail.util.GreenMailUtil;
 
 import javax.mail.BodyPart;
 import javax.mail.Flags;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 
@@ -183,8 +185,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
     private void handleBodyFetch(MimeMessage mimeMessage,
                                  String sectionSpecifier,
                                  String partial,
-                                 StringBuilder response)
-            throws Exception {
+                                 StringBuilder response) throws IOException, MessagingException {
         if (sectionSpecifier.length() == 0) {
             // TODO - need to use an InputStream from the response here.
             ByteArrayOutputStream bout = new ByteArrayOutputStream();

@@ -97,7 +97,7 @@ class StoredMessageSorter implements Comparator<StoredMessage> {
         if (c1 == c2) {
             return 0;
         } else if (c1 == null) {
-            return multiplier * 1;
+            return multiplier;
         } else if (c2 == null) {
             return multiplier * -1;
         }
