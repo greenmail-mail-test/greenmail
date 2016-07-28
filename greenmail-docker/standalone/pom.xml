@@ -27,20 +27,6 @@
   </dependencies>
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.10</version>
-        </plugin>
-        <plugin>
-          <groupId>org.jolokia</groupId>
-          <artifactId>docker-maven-plugin</artifactId>
-          <version>0.13.9</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -68,10 +54,11 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.jolokia</groupId>
+        <groupId>io.fabric8</groupId>
         <artifactId>docker-maven-plugin</artifactId>
         <configuration>
           <autoPull>false</autoPull>
+          <verbose>true</verbose>
           <images>
             <image>
               <name>greenmail/standalone:${project.version}</name>
@@ -83,9 +70,7 @@
                     <tag>${greenmail.docker.latest}</tag>
                 </tags>
                 -->
-                <assembly>
-                  <dockerFileDir>${basedir}</dockerFileDir>
-                </assembly>
+                <dockerFileDir>${basedir}</dockerFileDir>
               </build>
               <run>
                 <ports>
