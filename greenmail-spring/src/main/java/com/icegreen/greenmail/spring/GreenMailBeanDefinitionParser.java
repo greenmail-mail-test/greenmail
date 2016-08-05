@@ -15,6 +15,8 @@ public class GreenMailBeanDefinitionParser extends AbstractSingleBeanDefinitionP
     public static final String DEFAULT_HOSTNAME = "localhost";
     /** The default port offset ({@value}). */
     private static final Integer DEFAULT_PORT_OFFSET = Integer.valueOf(3000);
+    /** The default time to wait for server startup in millis ({@value}). */
+    public static final long DEFAULT_SERVER_STARTUP_TIMEOUT = 1000L;
 
     /** {@inheritDoc} */
     @Override
@@ -27,6 +29,7 @@ public class GreenMailBeanDefinitionParser extends AbstractSingleBeanDefinitionP
     protected void doParse(final Element element, final BeanDefinitionBuilder builder) {
         builder.addPropertyValue("hostname", extractHostname(element));
         builder.addPropertyValue("portOffset", extractPortOffset(element));
+        builder.addPropertyValue("serverStartupTimeout", extractServerStartupTimeout(element));
     }
 
     private Object extractPortOffset(final Element pElement) {
@@ -35,6 +38,14 @@ public class GreenMailBeanDefinitionParser extends AbstractSingleBeanDefinitionP
             return portOffsetElement.getTextContent();
         }
         return DEFAULT_PORT_OFFSET;
+    }
+
+    private Object extractServerStartupTimeout(final Element pElement) {
+        Element serverStartupTimeoutElement = DomUtils.getChildElementByTagName(pElement, "serverStartupTimeout");
+        if(null!=serverStartupTimeoutElement) {
+            return serverStartupTimeoutElement.getTextContent();
+        }
+        return DEFAULT_SERVER_STARTUP_TIMEOUT;
     }
 
     private Object extractHostname(final Element pElement) {
