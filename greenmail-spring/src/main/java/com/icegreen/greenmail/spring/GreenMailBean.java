@@ -60,6 +60,8 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
     private ServerSetup smtpServerSetup;
     /** Outoing secure mail server setup. */
     private ServerSetup smtpsServerSetup;
+    /** Timeout to wait for server startup in millis */
+    private long serverStartupTimeout = 1000L;
 
     /**
      * Invoked by a BeanFactory after it has set all bean properties supplied (and satisfied
@@ -153,9 +155,12 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
      * @return the test server setup.
      */
     private ServerSetup createTestServerSetup(final ServerSetup theSetup) {
-        return new ServerSetup(portOffset + theSetup.getPort(),
+        ServerSetup serverSetup =
+                new ServerSetup(portOffset + theSetup.getPort(),
                                hostname,
                                theSetup.getProtocol());
+        serverSetup.setServerStartupTimeout(serverStartupTimeout);
+        return serverSetup;
     }
 
     /**
@@ -398,5 +403,18 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
     @Override
     public void setBeanName(final String pName) {
         name = pName;
+    }
+
+    /**
+     * Timeout to wait for server startup in millis
+     *
+     * @return Value for property 'serverStartupTimeout'
+     */
+    public long getServerStartupTimeout() {
+        return serverStartupTimeout;
+    }
+
+    public void setServerStartupTimeout(long serverStartupTimeout) {
+        this.serverStartupTimeout = serverStartupTimeout;
     }
 }

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static com.icegreen.greenmail.spring.GreenMailBeanDefinitionParser.DEFAULT_SERVER_STARTUP_TIMEOUT;
+
 /**
  * Tests GreenMailBean.
  *
@@ -38,5 +40,7 @@ public class GreenMailBeanTest {
 
         greenMailBean.sendEmail("to@localhost","from@localhost","subject", "message");
         assert greenMailBean.getReceivedMessages().length == 1;
+
+        assert greenMailBean.getServerStartupTimeout() == DEFAULT_SERVER_STARTUP_TIMEOUT;
     }
 }
