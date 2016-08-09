@@ -24,7 +24,7 @@ How to build via docker CLI
 How to build via Maven
 ----------------------
 
-Maven uses the excellent [maven docker plugin](https://github.com/rhuss/docker-maven-plugin/).
+Maven uses the excellent [maven docker plugin](https://github.com/fabric8io/docker-maven-plugin).
 
 A quickstart when using Maven from this module:
 
