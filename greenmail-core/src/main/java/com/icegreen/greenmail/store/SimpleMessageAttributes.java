@@ -79,8 +79,10 @@ public class SimpleMessageAttributes
         Date sentDate = getSentDate(msg, receivedDate);
 
         this.receivedDate = receivedDate;
-        this.receivedDateString = new MailDateFormat().format(receivedDate);
-        this.sentDateEnvelopeString = new MailDateFormat().format(sentDate);
+        if(null != receivedDate) {
+            receivedDateString = new MailDateFormat().format(receivedDate);
+        }
+        sentDateEnvelopeString = new MailDateFormat().format(sentDate);
 
         if (msg != null) {
             parseMimePart(msg);
@@ -245,6 +247,14 @@ public class SimpleMessageAttributes
             }
         } else if (primaryType.equalsIgnoreCase("message")) {
             if (secondaryType.equalsIgnoreCase("RFC822")) {
+                parts = new SimpleMessageAttributes[1];
+                try {
+                    MimeMessage wrappedMessage = (MimeMessage) part.getContent();
+                    log.error("message type : "+wrappedMessage.getContentType());
+                    parts[0] = new SimpleMessageAttributes(wrappedMessage, null);
+                } catch (Exception e) {
+                    throw new IllegalStateException("Can not extract part for "+primaryType+"/"+secondaryType, e);
+                }
                 //try {
 
                 /*
@@ -436,6 +446,7 @@ public class SimpleMessageAttributes
         return buf.toString();
     }
 
+
     /**
      * Decode a content Type header line into types and parameters pairs
      */
@@ -610,7 +621,7 @@ public class SimpleMessageAttributes
             buf.append(RB);
             return buf.toString();
         } catch (Exception e) {
-            throw new RuntimeException("Can not parse body structure", e);
+            throw new IllegalStateException("Can not parse body structure", e);
         }
     }
 

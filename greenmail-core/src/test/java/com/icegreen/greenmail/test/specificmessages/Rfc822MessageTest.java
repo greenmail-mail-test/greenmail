@@ -12,8 +12,13 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import java.io.IOException;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.StringStartsWith.startsWith;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests forwarding an email.
@@ -30,17 +35,17 @@ public class Rfc822MessageTest {
      * <p>
      * Message (multipart/mixed)
      * \--> MultiPart (multipart/mixed)
-     *      \--> MimeBodyPart (message/rfc822)
-     *           \--> Message (test/plain)
+     * \--> MimeBodyPart (message/rfc822)
+     * \--> Message (text/plain)
      */
     @Test
-    public void testForwardWithRfc822() throws MessagingException {
+    public void testForwardWithRfc822() throws MessagingException, IOException {
         greenMail.setUser("foo@localhost", "pwd");
         final Session session = greenMail.getSmtp().createSession();
 
         // Message for forwarding
         Message msgToBeForwarded = GreenMailUtil.createTextEmail(
-                "foo@localhost", "foo@localhost", "test newMessageWithForward", "content",
+                "foo@localhost", "foo@localhost", "test newMessageWithForward", "forwarded mail content",
                 greenMail.getSmtp().getServerSetup());
 
 
@@ -69,7 +74,18 @@ public class Rfc822MessageTest {
             inboxFolder.open(Folder.READ_WRITE);
             Message[] messages = inboxFolder.getMessages();
             MimeMessage msg = (MimeMessage) messages[0];
-            assertEquals("multipart/mixed", msg.getContentType());
+            assertTrue(msg.getContentType().startsWith("multipart/mixed"));
+            Multipart multipartReceived = (Multipart) msg.getContent();
+            assertTrue(multipartReceived.getContentType().startsWith("multipart/mixed"));
+            MimeBodyPart mimeBodyPartReceived = (MimeBodyPart) multipartReceived.getBodyPart(0);
+            assertTrue(mimeBodyPartReceived.getContentType().toLowerCase().startsWith("message/rfc822"));
+
+            MimeMessage msgAttached = (MimeMessage) mimeBodyPartReceived.getContent();
+            assertThat(msgAttached.getContentType().toLowerCase(), startsWith("text/plain"));
+            assertArrayEquals(msgToBeForwarded.getRecipients(Message.RecipientType.TO), msgAttached.getRecipients(Message.RecipientType.TO));
+            assertArrayEquals(msgToBeForwarded.getFrom(), msgAttached.getFrom());
+            assertEquals(msgToBeForwarded.getSubject(), msgAttached.getSubject());
+            assertEquals(msgToBeForwarded.getContent(), msgAttached.getContent());
         } finally {
             store.close();
         }

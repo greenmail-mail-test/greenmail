@@ -21,6 +21,7 @@ import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 
 /**
@@ -34,7 +35,8 @@ import java.util.*;
 class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
     public static final String NAME = "FETCH";
     public static final String ARGS = "<message-set> <fetch-profile>";
-    static final Flags FLAGS_SEEN = new Flags(Flags.Flag.SEEN);
+    private static final Flags FLAGS_SEEN = new Flags(Flags.Flag.SEEN);
+    private static final Pattern NUMBER_MATCHER = Pattern.compile("^\\d+$");
 
     private FetchCommandParser parser = new FetchCommandParser();
 
@@ -219,24 +221,49 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
                         " and mime message (contentType=" + mimeMessage.getContentType());
             }
             String contentType = mimeMessage.getContentType();
-            if (contentType.startsWith("text/plain") && "1".equals(sectionSpecifier)) {
+            if (contentType.toLowerCase().startsWith("text/plain") && "1".equals(sectionSpecifier)) {
                 handleBodyFetchForText(mimeMessage, partial, response);
             } else {
                 MimeMultipart mp = (MimeMultipart) mimeMessage.getContent();
                 BodyPart part = null;
-                String[] nestedIdx = sectionSpecifier.split("\\.");
-                for (String idx : nestedIdx) {
-                    int partNumber = Integer.parseInt(idx) - 1;
+
+                // Find part by number spec, eg "1" or "2.1" or "4.3.1" ...
+                String spec = sectionSpecifier;
+
+                int dotIdx = spec.indexOf('.');
+                String pre = dotIdx < 0 ? spec : spec.substring(0, dotIdx);
+                while (null != pre && NUMBER_MATCHER.matcher(pre).matches()) {
+                    int partNumber = Integer.parseInt(pre) - 1;
                     if (null == part) {
                         part = mp.getBodyPart(partNumber);
                     } else {
                         // Content must be multipart
                         part = ((Multipart) part.getContent()).getBodyPart(partNumber);
                     }
+
+                    dotIdx = spec.indexOf('.');
+                    if (dotIdx > 0) { // Another sub part index?
+                        spec = spec.substring(dotIdx + 1);
+                        pre = spec.substring(0, dotIdx);
+                    } else {
+                        pre = null;
+                    }
                 }
-                byte[] bytes = GreenMailUtil.getBodyAsBytes(part);
-                bytes = doPartial(partial, bytes, response);
-                addLiteral(bytes, response);
+
+                if (null == part) {
+                    throw new IllegalStateException("Got null for " + sectionSpecifier);
+                }
+
+                // A bit optimistic to only cover theses cases ... TODO
+                if ("message/rfc822".equalsIgnoreCase(part.getContentType())) {
+                    handleBodyFetch((MimeMessage) part.getContent(), spec, partial, response);
+                } else if ("TEXT".equalsIgnoreCase(spec)) {
+                    handleBodyFetchForText(mimeMessage, partial, response);
+                } else {
+                    byte[] bytes = GreenMailUtil.getBodyAsBytes(part);
+                    bytes = doPartial(partial, bytes, response);
+                    addLiteral(bytes, response);
+                }
             }
         }
     }
@@ -329,7 +356,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
     private static class FetchCommandParser extends CommandParser {
 
-        public FetchRequest fetchRequest(ImapRequestLineReader request)
+        FetchRequest fetchRequest(ImapRequestLineReader request)
                 throws ProtocolException {
             FetchRequest fetch = new FetchRequest();
 
