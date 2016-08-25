@@ -79,8 +79,10 @@ public class SimpleMessageAttributes
         Date sentDate = getSentDate(msg, receivedDate);
 
         this.receivedDate = receivedDate;
-        this.receivedDateString = new MailDateFormat().format(receivedDate);
-        this.sentDateEnvelopeString = new MailDateFormat().format(sentDate);
+        if(null != receivedDate) {
+            receivedDateString = new MailDateFormat().format(receivedDate);
+        }
+        sentDateEnvelopeString = new MailDateFormat().format(sentDate);
 
         if (msg != null) {
             parseMimePart(msg);
@@ -245,31 +247,14 @@ public class SimpleMessageAttributes
             }
         } else if (primaryType.equalsIgnoreCase("message")) {
             if (secondaryType.equalsIgnoreCase("RFC822")) {
-                //try {
-
-                /*
-                MimeMessageWrapper message = new MimeMessageWrapper(part.getInputStream());
-                SimpleMessageAttributes msgAttrs = new SimpleMessageAttributes();
-                msgAttrs.setAttributesFor(message);
-
-                if (part instanceof MimeMessage) {
-                    Comments out because I don't know what it should do here
-                    MimeMessage msg1 = (MimeMessage) part;
-                    MimeMessageWrapper message2 = new MimeMessageWrapper(msg1);
-                    SimpleMessageAttributes msgAttrs2 = new SimpleMessageAttributes();
-                    msgAttrs.setAttributesFor(message2);
-                }
-
                 parts = new SimpleMessageAttributes[1];
-                parts[0] = msgAttrs;
-                */
-                //} catch (Exception e) {
-                //getLogger().error("Error interpreting a message/rfc822: " + e);
-                //e.printStackTrace();
-                //}
-
-                // TODO: Warn till fixed!
-                log.warn("Unknown/unhandled subtype " + secondaryType + " of message encountered.");
+                try {
+                    MimeMessage wrappedMessage = (MimeMessage) part.getContent();
+                    log.error("message type : "+wrappedMessage.getContentType());
+                    parts[0] = new SimpleMessageAttributes(wrappedMessage, null);
+                } catch (Exception e) {
+                    throw new IllegalStateException("Can not extract part for "+primaryType+"/"+secondaryType, e);
+                }
             } else {
                 log.warn("Unknown/unhandled subtype " + secondaryType + " of message encountered.");
             }
@@ -283,7 +268,7 @@ public class SimpleMessageAttributes
     /**
      * Builds IMAP envelope String from pre-parsed data.
      */
-    String parseEnvelope() {
+    private String parseEnvelope() {
         List<String> response = new ArrayList<>();
         //1. Date ---------------
         response.add(LB + Q + sentDateEnvelopeString + Q + SP);
@@ -294,84 +279,18 @@ public class SimpleMessageAttributes
             response.add(NIL + SP);
         }
         //3. From ---------------
-        if (from != null && from.length > 0) {
-            response.add(LB);
-            for (String aFrom : from) {
-                response.add(parseAddress(aFrom));
-            }
-            response.add(RB);
-        } else {
-            response.add(NIL);
-        }
+        addAddressToEnvelopeIfAvailable(from, response);
         response.add(SP);
         //4. Sender ---------------
-        if (sender != null && sender.length > 0) {
-//            if (DEBUG) getLogger().debug("parsingEnvelope - sender[0] is: " + sender[0]);
-            //Check for Netscape feature - sender is local part only
-            if (sender[0].indexOf('@') == -1) {
-                response.add(LB + response.get(3) + RB); //first From address
-            } else {
-                response.add(LB);
-                for (String aSender : sender) {
-                    response.add(parseAddress(aSender));
-                }
-                response.add(RB);
-            }
-        } else {
-            if (from != null && from.length > 0) {
-                response.add(LB + response.get(3) + RB); //first From address
-            } else {
-                response.add(NIL);
-            }
-        }
+        addAddressToEnvelopeIfAvailableWithNetscapeFeature(sender, response);
         response.add(SP);
-        if (replyTo != null && replyTo.length > 0) {
-            if (replyTo[0].indexOf('@') == -1) {
-                response.add(LB + response.get(3) + RB); //first From address
-            } else {
-                response.add(LB);
-                for (String aReplyTo : replyTo) {
-                    response.add(parseAddress(aReplyTo));
-                }
-                response.add(RB);
-            }
-        } else {
-            if (from != null && from.length > 0) {
-                response.add(LB + response.get(3) + RB); //first From address
-            } else {
-                response.add(NIL);
-            }
-        }
+        addAddressToEnvelopeIfAvailableWithNetscapeFeature(replyTo, response);
         response.add(SP);
-        if (to != null && to.length > 0) {
-            response.add(LB);
-            for (String aTo : to) {
-                response.add(parseAddress(aTo));
-            }
-            response.add(RB);
-        } else {
-            response.add(NIL);
-        }
+        addAddressToEnvelopeIfAvailable(to, response);
         response.add(SP);
-        if (cc != null && cc.length > 0) {
-            response.add(LB);
-            for (String aCc : cc) {
-                response.add(parseAddress(aCc));
-            }
-            response.add(RB);
-        } else {
-            response.add(NIL);
-        }
+        addAddressToEnvelopeIfAvailable(cc, response);
         response.add(SP);
-        if (bcc != null && bcc.length > 0) {
-            response.add(LB);
-            for (String aBcc : bcc) {
-                response.add(parseAddress(aBcc));
-            }
-            response.add(RB);
-        } else {
-            response.add(NIL);
-        }
+        addAddressToEnvelopeIfAvailable(bcc, response);
         response.add(SP);
         if (inReplyTo != null && inReplyTo.length > 0) {
             response.add(inReplyTo[0]);
@@ -395,10 +314,46 @@ public class SimpleMessageAttributes
         return buf.toString();
     }
 
+    private void addAddressToEnvelopeIfAvailableWithNetscapeFeature(String[] addresses, List<String> response) {
+        if (addresses != null && addresses.length > 0) {
+//            if (DEBUG) getLogger().debug("parsingEnvelope - sender[0] is: " + sender[0]);
+            //Check for Netscape feature - sender is local part only
+            if (addresses[0].indexOf('@') == -1) {
+                response.add(LB + response.get(3) + RB); //first From address
+            } else {
+                response.add(LB);
+                addAddressToEnvelope(addresses, response);
+                response.add(RB);
+            }
+        } else {
+            if (from != null && from.length > 0) {
+                response.add(LB + response.get(3) + RB); //first From address
+            } else {
+                response.add(NIL);
+            }
+        }
+    }
+
+    private void addAddressToEnvelopeIfAvailable(String[] addresses, List<String> response) {
+        if (addresses != null && addresses.length > 0) {
+            response.add(LB);
+            addAddressToEnvelope(addresses, response);
+            response.add(RB);
+        } else {
+            response.add(NIL);
+        }
+    }
+
+    private void addAddressToEnvelope(String[] addresses, List<String> response) {
+        for (String address : addresses) {
+            response.add(parseAddress(address));
+        }
+    }
+
     /**
      * Parses a String email address to an IMAP address string.
      */
-    String parseAddress(String address) {
+    private String parseAddress(String address) {
         int comma = address.indexOf(',');
         StringBuilder buf = new StringBuilder();
         if (comma == -1) { //single address
@@ -435,6 +390,7 @@ public class SimpleMessageAttributes
         }
         return buf.toString();
     }
+
 
     /**
      * Decode a content Type header line into types and parameters pairs
@@ -610,7 +566,7 @@ public class SimpleMessageAttributes
             buf.append(RB);
             return buf.toString();
         } catch (Exception e) {
-            throw new RuntimeException("Can not parse body structure", e);
+            throw new IllegalStateException("Can not parse body structure", e);
         }
     }
 
