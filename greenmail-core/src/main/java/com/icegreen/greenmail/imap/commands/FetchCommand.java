@@ -188,6 +188,11 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
                                  String sectionSpecifier,
                                  String partial,
                                  StringBuilder response) throws IOException, MessagingException {
+        if (log.isDebugEnabled()) {
+            log.debug("Fetching body part for section specifier " + sectionSpecifier +
+                    " and mime message (contentType=" + mimeMessage.getContentType());
+        }
+
         if (sectionSpecifier.length() == 0) {
             // TODO - need to use an InputStream from the response here.
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -216,10 +221,6 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         } else if ("TEXT".equalsIgnoreCase(sectionSpecifier)) {
             handleBodyFetchForText(mimeMessage, partial, response);
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Fetching body part for section specifier " + sectionSpecifier +
-                        " and mime message (contentType=" + mimeMessage.getContentType());
-            }
             String contentType = mimeMessage.getContentType();
             if (contentType.toLowerCase().startsWith("text/plain") && "1".equals(sectionSpecifier)) {
                 handleBodyFetchForText(mimeMessage, partial, response);
