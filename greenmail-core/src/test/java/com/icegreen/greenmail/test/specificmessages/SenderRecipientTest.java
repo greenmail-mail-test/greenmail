@@ -84,6 +84,13 @@ public class SenderRecipientTest {
         }
     }
 
+    @Test
+    public void testSendWithoutSubject() throws MessagingException {
+        GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com",
+                null, "some subjectless body");
+        assertEquals("some subjectless body", GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
+    }
+
     /**
      * Retrieve mail through IMAP and POP3 and check sender and receivers
      *

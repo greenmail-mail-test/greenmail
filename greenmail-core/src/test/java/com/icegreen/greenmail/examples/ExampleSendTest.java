@@ -20,11 +20,4 @@ public class ExampleSendTest {
                 "some subject", "some body"); // --- Place your sending code here instead
         assertEquals("some body", GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
     }
-
-    @Test
-    public void testSendWithoutSubject() throws MessagingException {
-        GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com",
-                null, "some subjectless body"); // --- Place your sending code here instead
-        assertEquals("some subjectless body", GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
-    }
 }
