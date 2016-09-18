@@ -10,6 +10,7 @@ import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.foedus.util.InMemoryWorkspace;
 import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.server.ProtocolHandler;
+import com.icegreen.greenmail.smtp.commands.SSLSmtpCommandRegistry;
 import com.icegreen.greenmail.smtp.commands.SmtpCommandRegistry;
 import com.icegreen.greenmail.util.ServerSetup;
 
@@ -22,7 +23,9 @@ public class SmtpServer extends AbstractServer {
 
     @Override
     protected ProtocolHandler createProtocolHandler(final Socket clientSocket) {
-        return new SmtpHandler(new SmtpCommandRegistry(), managers.getSmtpManager(),
+    	// If we start with a plain SMTP connection we can allow STARTTLS as a command
+    	SmtpCommandRegistry registry = this.setup.equals(ServerSetup.SMTPS) ? new SSLSmtpCommandRegistry() : new SmtpCommandRegistry();
+        return new SmtpHandler(registry, managers.getSmtpManager(),
                 new InMemoryWorkspace(), clientSocket);
     }
 }

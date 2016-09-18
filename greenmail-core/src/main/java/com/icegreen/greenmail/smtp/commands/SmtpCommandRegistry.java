@@ -11,11 +11,11 @@ import java.util.Map;
 
 
 public class SmtpCommandRegistry {
-    private static final Map<String, SmtpCommand> commands = new HashMap<>();
+    protected static final Map<String, SmtpCommand> commands = new HashMap<>();
 
     static {
         commands.put("HELO", new HeloCommand());
-        commands.put("EHLO", new HeloCommand());
+        commands.put("EHLO", new EhloCommand());
         commands.put("NOOP", new NoopCommand());
         commands.put("RSET", new RsetCommand());
         commands.put("QUIT", new QuitCommand());
@@ -23,6 +23,7 @@ public class SmtpCommandRegistry {
         commands.put("RCPT", new RcptCommand());
         commands.put("DATA", new DataCommand());
         commands.put("VRFY", new VrfyCommand());
+        commands.put("STARTTLS", new StartTlsCommand());
     }
 
     public SmtpCommand getCommand(String name) {

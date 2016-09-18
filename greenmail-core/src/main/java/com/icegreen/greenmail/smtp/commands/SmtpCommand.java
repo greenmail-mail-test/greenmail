@@ -17,6 +17,8 @@ import java.io.IOException;
 public abstract class SmtpCommand {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
+	protected static final String RESPONSE_PREFIX_MORE_COMING = "250-";
+	protected static final String RESPONSE_PREFIX_NO_MORE_COMING = "250 ";
     public abstract void execute(SmtpConnection conn,
                                  SmtpState state,
                                  SmtpManager manager,
