@@ -181,7 +181,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-war-plugin</artifactId>
-          <version>2.6</version>
+          <version>3.0.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-dependency-plugin</artifactId>
@@ -194,7 +194,7 @@
         <plugin>
           <groupId>io.fabric8</groupId>
           <artifactId>docker-maven-plugin</artifactId>
-          <version>0.15.12</version>
+          <version>0.16.3</version>
         </plugin>
         <!-- IDE plugins -->
         <plugin>
