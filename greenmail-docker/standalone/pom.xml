@@ -4,7 +4,7 @@
   <description>Docker image running GreenMail Standalone</description>
 
   <artifactId>greenmail-docker-standalone</artifactId>
-  <version>1.5.2</version>
+  <version>1.5.3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -14,7 +14,7 @@
   <parent>
     <groupId>com.icegreen</groupId>
     <artifactId>greenmail-parent</artifactId>
-    <version>1.5.2</version>
+    <version>1.5.3-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
