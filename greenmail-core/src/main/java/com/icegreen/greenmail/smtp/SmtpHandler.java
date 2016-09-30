@@ -101,7 +101,10 @@ class SmtpHandler implements ProtocolHandler {
 
             return;
         }
-
+        if (this._currentLine.length() < 4) {
+        	_conn.send("500 Invalid command. Must be at least 4 characters");
+        	return;
+        }
         String commandName = _currentLine.toUpperCase().startsWith(STARTTLS) ? STARTTLS : _currentLine.substring(0, 4).toUpperCase();
 
         SmtpCommand command = _registry.getCommand(commandName);

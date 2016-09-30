@@ -17,8 +17,6 @@ public class EhloCommand extends SmtpCommand {
 
 	private static final String STARTTLS = "STARTTLS";
 	private static final String TEA_ANYONEQM = " offers a cup of tea and a scone with jam";
-	private static final String RESPONSE_PREFIX_MORE_COMING = "250-";
-	private static final String RESPONSE_PREFIX_NO_MORE_COMING = "250 ";
 
 	/* (non-Javadoc)
 	 * @see com.icegreen.greenmail.smtp.commands.SmtpCommand#execute(com.icegreen.greenmail.smtp.SmtpConnection, com.icegreen.greenmail.smtp.SmtpState, com.icegreen.greenmail.smtp.SmtpManager, java.lang.String)
