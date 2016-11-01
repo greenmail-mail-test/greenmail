@@ -7,6 +7,12 @@
 package com.icegreen.greenmail.smtp;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import com.icegreen.greenmail.configuration.GreenMailConfiguration;
+import com.icegreen.greenmail.configuration.UserBean;
 import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.mail.MailAddress;
 import com.icegreen.greenmail.mail.MovingMessage;
@@ -15,22 +21,20 @@ import com.icegreen.greenmail.user.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 
 public class SmtpManager {
     protected static final Logger log = LoggerFactory.getLogger(SmtpManager.class);
 
     Incoming _incomingQueue;
     UserManager userManager;
+    GreenMailConfiguration startupConfig;
     private ImapHostManager imapHostManager;
     List<WaitObject> notifyList;
 
-    public SmtpManager(ImapHostManager imapHostManager, UserManager userManager) {
+    public SmtpManager(ImapHostManager imapHostManager, UserManager userManager, GreenMailConfiguration startupConfig) {
         this.imapHostManager = imapHostManager;
         this.userManager = userManager;
+        this.startupConfig = startupConfig;
         _incomingQueue = new Incoming();
         notifyList = Collections.synchronizedList(new ArrayList<WaitObject>());
     }
@@ -124,6 +128,20 @@ public class SmtpManager {
         }
 
         private void handle(MovingMessage msg, MailAddress mailAddress) {
+            if (startupConfig.hasMailsinkUser()) {
+                if (startupConfig.keepMailsinkInOriginalMailboxes()) {
+                    // Keep the mail in the original mailbox as well
+                    deliverContentToMailAddress(msg, mailAddress);
+                }
+                deliverContentToMailUser(msg, startupConfig.getMailsinkUser());
+            }
+            else {
+                deliverContentToMailAddress(msg, mailAddress);
+            }
+            msg.releaseContent();
+        }
+
+        private void deliverContentToMailAddress(MovingMessage msg, MailAddress mailAddress) {
             try {
                 GreenMailUser user = userManager.getUserByEmail(mailAddress.getEmail());
                 if (null == user) {
@@ -139,8 +157,23 @@ public class SmtpManager {
                 log.error("Can not deliver message " + msg + " to " + mailAddress, e);
                 throw new RuntimeException(e);
             }
+        }
 
-            msg.releaseContent();
+        private void deliverContentToMailUser(MovingMessage msg, UserBean mailUser) {
+            try {
+                GreenMailUser user = userManager.getUserByEmail(mailUser.getEmail());
+                if (null == user) {
+                    String login = mailUser.getLogin();
+                    String email = mailUser.getEmail();
+                    String password = mailUser.getPassword();
+                    user = userManager.createUser(email, login, password);
+                    log.info("Created user login {} for address {} with password {} because it didn't exist before.", login, email, password);
+                }
+                user.deliver(msg);
+            } catch (Exception e) {
+                log.error("Can not deliver message " + msg + " to " + mailUser, e);
+                throw new RuntimeException(e);
+            }
         }
     }
 }

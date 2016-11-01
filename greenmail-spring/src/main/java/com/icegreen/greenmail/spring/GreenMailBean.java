@@ -1,5 +1,9 @@
 package com.icegreen.greenmail.spring;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.mail.internet.MimeMessage;
+
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
@@ -8,10 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-
-import javax.mail.internet.MimeMessage;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Spring bean for GreenMail server.
@@ -75,6 +75,15 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
     @Override
     public void afterPropertiesSet() throws Exception {
         greenMail = new GreenMail(createServerSetup());
+        if (autostart) {
+            greenMail.start();
+            started = true;
+        }
+
+        // 2016-11-01 msaladin@ringworld.ch: Changed the order here, before being able to call setUser to
+        // greenMail, greenMail must be initialized (e.g. the managers must be created, and this can only
+        // be done after the start-call because the GreenMail user could provide different startupProps
+        // before createing the GreenMail instance and the call to start().
         if (null != users) {
             for (String user : users) {
                 int posColon = user.indexOf(':');
@@ -87,10 +96,6 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
                 }
                 greenMail.setUser(login + '@' + domain, login, pwd);
             }
-        }
-        if (autostart) {
-            greenMail.start();
-            started = true;
         }
     }
 

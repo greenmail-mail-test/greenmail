@@ -14,6 +14,19 @@ import org.junit.runners.model.Statement;
 public class GreenMailRule extends GreenMailProxy implements MethodRule, TestRule {
     private GreenMail greenMail;
     private final ServerSetup[] serverSetups;
+    private final GreenMailConfiguration ruleStartupConfig;
+
+
+    /**
+     * Initialize with multiple server setups
+     *
+     * @param serverSetups All setups to use
+     */
+    public GreenMailRule(ServerSetup[] serverSetups, GreenMailConfiguration config) {
+        this.ruleStartupConfig = config;
+        this.serverSetups = serverSetups;
+    }
+
 
     /**
      * Initialize with multiple server setups
@@ -21,6 +34,7 @@ public class GreenMailRule extends GreenMailProxy implements MethodRule, TestRul
      * @param serverSetups All setups to use
      */
     public GreenMailRule(ServerSetup[] serverSetups) {
+        this.ruleStartupConfig = null;
         this.serverSetups = serverSetups;
     }
 
@@ -30,11 +44,26 @@ public class GreenMailRule extends GreenMailProxy implements MethodRule, TestRul
      * @param serverSetup Setup to use
      */
     public GreenMailRule(ServerSetup serverSetup) {
+        this.ruleStartupConfig = null;
+        this.serverSetups = new ServerSetup[]{serverSetup};
+    }
+
+    /**
+     * Initialize with single server setups
+     *
+     * @param serverSetup Setup to use
+     */
+    public GreenMailRule(ServerSetup serverSetup, GreenMailConfiguration config) {
+        this.ruleStartupConfig = config;
         this.serverSetups = new ServerSetup[]{serverSetup};
     }
 
     public GreenMailRule() {
         this(ServerSetupTest.ALL);
+    }
+
+    public GreenMailRule(GreenMailConfiguration config) {
+        this(ServerSetupTest.ALL, config);
     }
 
     @Override
@@ -48,6 +77,9 @@ public class GreenMailRule extends GreenMailProxy implements MethodRule, TestRul
             @Override
             public void evaluate() throws Throwable {
                 greenMail = new GreenMail(serverSetups);
+                if (ruleStartupConfig != null) {
+                    greenMail.withConfiguration(ruleStartupConfig);
+                }
                 try {
                     start();
                     base.evaluate();

@@ -1,10 +1,6 @@
 package com.icegreen.greenmail.test;
 
-import com.icegreen.greenmail.util.GreenMail;
-import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.ServerSetup;
-import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import javax.mail.Address;
 import javax.mail.MessagingException;
@@ -13,7 +9,11 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import static org.junit.Assert.assertEquals;
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetup;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import org.junit.Test;
 
 public class ConcurrentCloseIT {
     @Test
@@ -27,8 +27,8 @@ public class ConcurrentCloseIT {
     private void testThis() throws InterruptedException {
         exc = null;
         final GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP);
-        greenMail.setUser("test@localhost.com","test@localhost.com");
         greenMail.start();
+        greenMail.setUser("test@localhost.com","test@localhost.com");
         final Thread sendThread = new Thread() {
             public void run() {
                 try {

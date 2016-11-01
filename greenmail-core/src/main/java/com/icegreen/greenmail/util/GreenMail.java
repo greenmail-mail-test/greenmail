@@ -4,6 +4,15 @@
  */
 package com.icegreen.greenmail.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
 import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.configuration.ConfiguredGreenMail;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
@@ -21,10 +30,6 @@ import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import java.util.*;
 
 /**
  * Utility class that manages a greenmail server with support for multiple protocols
@@ -59,7 +64,14 @@ public class GreenMail extends ConfiguredGreenMail {
      */
     public GreenMail(ServerSetup[] config) {
         this.config = config;
-        init();
+        // 2016-11-01 msaladin@ringworld.ch: Removed call to init() from here, because it is done in start as well, and only in
+        // start we can be sure that the getStartupConfig() is up and ready, because the GreenMail user might change the config
+        // between the call to the constructor and the start-call, e.g. like this:
+        //   GreenMail greenMail = new GreenMail(ServerSetupTest.ALL);
+        //   greenMail.withConfiguration(new PropertiesBasedGreenMailConfigurationBuilder().build(props));
+        //   greenMail.start();
+        // So the problem is that when init() is invoked in the constructor, the configuration is not yet ready and therefore
+        // cannot be propagated easily to the managers.
     }
 
     /**
@@ -67,7 +79,7 @@ public class GreenMail extends ConfiguredGreenMail {
      */
     private void init() {
         if (managers == null) {
-            managers = new Managers();
+            managers = new Managers(this.getStartupConfig());
         }
         if(services == null) {
             services = createServices(config, managers);
@@ -268,6 +280,9 @@ public class GreenMail extends ConfiguredGreenMail {
 
     @Override
     public GreenMailUser setUser(String email, String login, String password) {
+        if (this.managers == null) {
+            throw new IllegalStateException("Please start GreenMail before calling setUser!");
+        }
         GreenMailUser user = managers.getUserManager().getUser(login);
         if (null == user) {
             try {
