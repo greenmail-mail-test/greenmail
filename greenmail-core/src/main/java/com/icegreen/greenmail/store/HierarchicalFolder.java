@@ -4,32 +4,31 @@
 */
 package com.icegreen.greenmail.store;
 
-import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
-import com.icegreen.greenmail.imap.ImapConstants;
-import com.icegreen.greenmail.imap.commands.IdRange;
-import com.icegreen.greenmail.mail.MovingMessage;
+import static com.icegreen.greenmail.imap.commands.ImapFlagConstants.PERMANENT_FLAGS;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.mail.Flags;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.UIDFolder;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
-import java.util.*;
+
+import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
+import com.icegreen.greenmail.imap.ImapConstants;
+import com.icegreen.greenmail.imap.commands.IdRange;
+import com.icegreen.greenmail.mail.MovingMessage;
 
 /**
  * @author Raimund Klein <raimund.klein@gmx.de>
  */
 class HierarchicalFolder implements MailFolder, UIDFolder {
-    private static final Flags PERMANENT_FLAGS = new Flags();
-
-    static {
-        PERMANENT_FLAGS.add(Flags.Flag.ANSWERED);
-        PERMANENT_FLAGS.add(Flags.Flag.DELETED);
-        PERMANENT_FLAGS.add(Flags.Flag.DRAFT);
-        PERMANENT_FLAGS.add(Flags.Flag.FLAGGED);
-        PERMANENT_FLAGS.add(Flags.Flag.SEEN);
-    }
 
     private final StoredMessageCollection mailMessages = new ListBasedStoredMessageCollection();
     private final List<FolderListener> _mailboxListeners = Collections.synchronizedList(new ArrayList<FolderListener>());
@@ -168,8 +167,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         return mailMessages.getMessages(range);
     }
 
-    @Override
-    public List<StoredMessage> getMessages() {
+    public List<StoredMessage> getMessageEntries() {
         return mailMessages.getMessages();
     }
 

@@ -1,12 +1,12 @@
 package com.icegreen.greenmail.test;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Test;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * Test that checks if greenmail start, stop and reset works correctly
@@ -15,6 +15,8 @@ public class ServerStartStopTest {
     @Test
     public void testStartStop() {
         GreenMail service = new GreenMail(ServerSetupTest.ALL);
+
+
         try {
             // Try to stop before start: Nothing happens
             service.stop();

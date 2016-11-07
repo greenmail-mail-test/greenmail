@@ -23,8 +23,8 @@ import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpServer;
 import com.icegreen.greenmail.store.FolderException;
-import com.icegreen.greenmail.store.InMemoryStore;
 import com.icegreen.greenmail.store.MailFolder;
+import com.icegreen.greenmail.store.Store;
 import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
@@ -134,7 +134,12 @@ public class GreenMail extends ConfiguredGreenMail {
                 service.stopService();
             }
         }
-        managers = new Managers();
+
+        if (this.managers != null) {
+            this.managers.stop();
+        }
+
+        managers = null;
         services = null;
     }
 
@@ -320,7 +325,7 @@ public class GreenMail extends ConfiguredGreenMail {
     @Override
     public void purgeEmailFromAllMailboxes() throws FolderException {
         ImapHostManager imaphost = getManagers().getImapHostManager();
-        InMemoryStore store = (InMemoryStore) imaphost.getStore();
+        Store store = imaphost.getStore();
         Collection<MailFolder> mailboxes = store.listMailboxes("*");
         for (MailFolder folder : mailboxes) {
             folder.deleteAllMessages();

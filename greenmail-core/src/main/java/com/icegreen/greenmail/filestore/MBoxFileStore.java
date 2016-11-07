@@ -1,0 +1,251 @@
+package com.icegreen.greenmail.filestore;
+
+import static com.icegreen.greenmail.imap.ImapConstants.HIERARCHY_DELIMITER;
+import static com.icegreen.greenmail.imap.ImapConstants.USER_NAMESPACE;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.StringTokenizer;
+import javax.mail.Quota;
+
+import com.icegreen.greenmail.imap.ImapConstants;
+import com.icegreen.greenmail.store.FolderException;
+import com.icegreen.greenmail.store.MailFolder;
+import com.icegreen.greenmail.store.Store;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Created by saladin on 11/1/16.
+ *
+ * TODO: When we have a message store which is file-based, we should implement a user-store which is file-based
+ * as well... Otherwise, users which were created automatically no longer exists after a restart and cannot be
+ * used to login.
+ *
+ */
+public class MBoxFileStore implements Store {
+	final Logger log = LoggerFactory.getLogger(MBoxFileStore.class);
+
+	private FileBaseContext ctx;
+	private Path rootDir;
+
+	public MBoxFileStore(Path pathToRootDir) {
+		this.rootDir = pathToRootDir;
+		this.ctx = new FileBaseContext(this.rootDir);
+	}
+
+	public void stop() {
+		// Make sure that the UUID generator is stopped correctly and the nextUID persisted to file-system
+		this.ctx.deInitUidGenerator();
+	}
+
+	public MailFolder getMailbox(String absoluteMailboxName) {
+		log.debug("Entering getMailbox with absoluteMailboxName: '" + absoluteMailboxName + "'");
+
+		if (absoluteMailboxName == null || USER_NAMESPACE.equals(absoluteMailboxName)) {
+            MailFolder result = ctx.getMailboxForPath(this.rootDir.resolve(ImapConstants.USER_NAMESPACE));
+            log.debug("Leaving getMailbox with mailbox for root: " + result);
+			return result;
+		}
+
+		StringTokenizer tokens = new StringTokenizer(absoluteMailboxName, HIERARCHY_DELIMITER);
+		// The first token must be "#mail"
+		if (!tokens.hasMoreTokens() || !tokens.nextToken().equalsIgnoreCase(USER_NAMESPACE)) {
+            throw new UncheckedFileStoreException("Mailbox with absolute name '" + absoluteMailboxName + "' is not valid "
+                    + "because it does not start with '" + USER_NAMESPACE + "'");
+		}
+
+		Path mboxPath = FileStoreUtil.convertFullNameToPath(this.rootDir.toAbsolutePath().toString(), absoluteMailboxName);
+        if (Files.isDirectory(mboxPath)) {
+            MailFolder result = ctx.getMailboxForPath(mboxPath);
+            log.debug("Leaving getMailbox with existing mailbox: " + result);
+            return result;
+        }
+
+        log.debug("Leaving getMailbox with null because mailbox is not existing.");
+        return null;
+	}
+
+    public MailFolder getMailbox(MailFolder parent, String mailboxName) {
+        log.debug("Enterint getMailbox with parent '" + parent + "' and mailboxName '" + mailboxName + "'");
+        if (!(parent instanceof FileHierarchicalFolder)) {
+            throw new UncheckedFileStoreException("Cannot create a MBoxFileStore mailbox from a parent which is not of type FileHierarchicalFolder");
+        }
+        FileHierarchicalFolder parentCasted = (FileHierarchicalFolder)parent;
+        Path parentPath = parentCasted.getPathToDir();
+        Path mboxPath = parentPath.resolve(mailboxName);
+
+        if (Files.isDirectory(mboxPath)) {
+            FileHierarchicalFolder child = ctx.getMailboxForPath(parentPath.resolve(mailboxName));
+            log.debug("Leaving getMailbox(parent,name) with mailbox: " + child);
+            return child;
+        }
+
+        log.debug("Leaving getMailbox(parent,name) with null because mailbox is not existing.");
+        return null;
+    }
+
+
+	public MailFolder createMailbox(MailFolder parent, String mailboxName, boolean selectable) throws FolderException {
+		log.debug("Entering createMailbox with parent: '" + parent + "' and name '" + mailboxName + "', and selectable: " + selectable);
+
+		if (!(parent instanceof FileHierarchicalFolder)) {
+			throw new UncheckedFileStoreException("Cannot create a MBoxFileStore mailbox from a parent which is not of type "
+                    + "FileHierarchicalFolder, parent is of type: " + parent.getClass().toString());
+		}
+		FileHierarchicalFolder parentCasted = (FileHierarchicalFolder)parent;
+		Path parentPath = parentCasted.getPathToDir();
+		FileHierarchicalFolder child = ctx.getMailboxForPath(parentPath.resolve(mailboxName));
+		child.setSelectable(selectable);
+		return child;
+	}
+
+	public Collection<MailFolder> listMailboxes(String searchPattern) throws FolderException {
+        log.debug("Entering listMailboxes with searchPattern: '" + searchPattern + "'");
+
+		int starIdx = searchPattern.indexOf('*');
+		int percentIdx = searchPattern.indexOf('%');
+		int searchPatLenMinus1 = searchPattern.length() - 1;
+
+		// We only handle wildcard at the end of the search pattern.
+		if ((starIdx > -1 && starIdx < searchPatLenMinus1) || (percentIdx > -1 && percentIdx < searchPatLenMinus1)) {
+			throw new FolderException("Wildcard characters are only handled as the last character of a list argument.");
+		}
+
+		List<MailFolder> result = new ArrayList<>();
+		if (starIdx != -1 || percentIdx != -1) {
+			int lastDot = searchPattern.lastIndexOf(HIERARCHY_DELIMITER);
+			String parentName;
+			if (lastDot < 0) {
+				parentName = USER_NAMESPACE;
+			} else {
+				parentName = searchPattern.substring(0, lastDot);
+			}
+
+			String matchPattern = searchPattern.substring(lastDot + 1, searchPattern.length() - 1);
+			FileHierarchicalFolder parent = (FileHierarchicalFolder) getMailbox(parentName);
+			if (parent != null) {
+				File rootFile = parent.getPathToDir().toFile();
+				for (File f : rootFile.listFiles()) {
+					if (f.isDirectory()) {
+						if (f.getName().startsWith(matchPattern)) {
+							FileHierarchicalFolder mbox = ctx.getMailboxForPath(f.toPath());
+							result.add(mbox);
+							if (starIdx != -1) {
+								addAllChildren(mbox, result);
+							}
+						}
+					}
+				}
+			}
+		} else {
+			// Exact match needed
+			MailFolder folder = this.getMailbox(searchPattern);
+			if (folder != null) {
+				result.add(folder);
+			}
+		}
+		return result;
+	}
+
+	private void addAllChildren(FileHierarchicalFolder mailbox, Collection<MailFolder> addToThisList) {
+		File rootFile = mailbox.getPathToDir().toFile();
+		for (File f : rootFile.listFiles()) {
+			if (f.isDirectory()) {
+				// A directory must be a mailbox, add it to the list:
+				FileHierarchicalFolder mbox = ctx.getMailboxForPath(f.toPath());
+				addToThisList.add(mbox);
+				addAllChildren(mbox, addToThisList);
+			}
+		}
+	}
+
+	public Collection<MailFolder> getChildren(MailFolder parent) {
+		if (!(parent instanceof FileHierarchicalFolder)) {
+			throw new UncheckedFileStoreException("Cannot create a MBoxFileStore mailbox from a parent which is not of type FileHierarchicalFolder");
+		}
+		List<MailFolder>result = new ArrayList<>();
+		FileHierarchicalFolder parentCasted = (FileHierarchicalFolder)parent;
+		File parentDir = parentCasted.getPathToDir().toFile();
+		for (File kid : parentDir.listFiles()) {
+			if (kid.isDirectory()) {
+				// All directories inside mailbox folders are other mailboxes:
+				result.add(ctx.getMailboxForPath(Paths.get(kid.getAbsolutePath())));
+			}
+		}
+		return Collections.<MailFolder>unmodifiableCollection(result);
+	}
+
+	public MailFolder setSelectable(MailFolder folder, boolean selectable) {
+		if (!(folder instanceof FileHierarchicalFolder)) {
+			throw new UncheckedFileStoreException("Cannot set the selectable flag from a mailfolder of type: " + folder
+					.getClass().toString());
+		}
+		FileHierarchicalFolder realFolder = (FileHierarchicalFolder)folder;
+		realFolder.setSelectable(selectable);
+		return realFolder;
+	}
+
+	public void deleteMailbox(MailFolder folder) throws FolderException {
+		if (!(folder instanceof FileHierarchicalFolder)) {
+			throw new UncheckedFileStoreException("Cannot delete a mailbox of type: " + folder.getClass().toString() + ". We "
+					+ "can only delete mailboxes of type FileHierarchicalFolder.");
+		}
+
+		FileHierarchicalFolder toDelete = (FileHierarchicalFolder) folder;
+		if (!toDelete.hasChildren()) {
+			throw new FolderException("Cannot delete mailbox with children.");
+		}
+		if (toDelete.getMessageCount() != 0) {
+			throw new FolderException("Cannot delete non-empty mailbox");
+		}
+
+		// OK, now delete mailbox:
+		toDelete.prepareForDeletion();
+
+		// OK, now, we should be able to delete the directory:
+		try {
+			Files.delete(toDelete.getPathToDir());
+		}
+		catch (IOException e) {
+			throw new FolderException("IOException occurred while deleting mailbox folder '" + toDelete.getPathToDir()
+					.toAbsolutePath() + "'.",	e);
+		}
+	}
+
+	public void renameMailbox(MailFolder existingFolder, String newName) throws FolderException {
+		// TODO: Implement it
+		throw new UncheckedFileStoreException("The Store MBoxFileStore does not support renaming mailboxes.");
+	}
+
+	public Quota[] getQuota(String root, String qualifiedRootPrefix) {
+		// TODO: Implement it
+		throw new UncheckedFileStoreException("The Store MBoxFileStore does not support quotas.");
+	}
+
+	public void setQuota(Quota quota, String qualifiedRootPrefix) {
+		// TODO: Implement it
+		throw new UncheckedFileStoreException("The Store MBoxFileStore does not support quotas.");
+	}
+
+	public boolean isQuotaSupported() {
+		// TODO: Implement it
+		// In the first version of the filestore, quotas are not supported
+		return false;
+	}
+
+	public void setQuotaSupported(boolean pQuotaSupported) {
+		// TODO: Implement it
+		if (pQuotaSupported) {
+			throw new UncheckedFileStoreException("The Store MBoxFileStore does not support quotas.");
+		}
+	}
+
+}

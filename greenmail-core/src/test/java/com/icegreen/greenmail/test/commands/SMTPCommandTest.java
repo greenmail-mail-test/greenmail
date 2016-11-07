@@ -1,28 +1,30 @@
 package com.icegreen.greenmail.test.commands;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
-import com.sun.mail.smtp.SMTPTransport;
-import org.junit.Rule;
-import org.junit.Test;
-
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.URLName;
-import java.io.IOException;
-import java.net.Socket;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
 
+import java.io.IOException;
+import java.net.Socket;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.URLName;
+
+import com.icegreen.greenmail.internal.GreenMailRuleWithStoreChooser;
+import com.icegreen.greenmail.internal.StoreChooser;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import com.sun.mail.smtp.SMTPTransport;
+import org.junit.Rule;
+import org.junit.Test;
+
 public class SMTPCommandTest {
 
 	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+	public final GreenMailRuleWithStoreChooser greenMail = new GreenMailRuleWithStoreChooser(ServerSetupTest.SMTP);
 
 	@Test
+	@StoreChooser(store="file,memory")
 	public void mailSenderEmpty() throws IOException, MessagingException {
 		Socket smtpSocket;
 		String hostAddress = greenMail.getSmtp().getBindTo();

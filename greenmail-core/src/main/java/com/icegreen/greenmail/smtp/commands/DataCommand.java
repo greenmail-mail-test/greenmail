@@ -6,15 +6,15 @@
  */
 package com.icegreen.greenmail.smtp.commands;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+
 import com.icegreen.greenmail.foedus.util.StreamUtils;
 import com.icegreen.greenmail.mail.MovingMessage;
 import com.icegreen.greenmail.smtp.SmtpConnection;
 import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpState;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
 
 
 /**

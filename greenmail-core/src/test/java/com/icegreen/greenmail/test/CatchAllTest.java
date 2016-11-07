@@ -1,14 +1,15 @@
 package com.icegreen.greenmail.test;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.junit.Assert.assertEquals;
+
+import javax.mail.MessagingException;
+
+import com.icegreen.greenmail.internal.GreenMailRuleWithStoreChooser;
+import com.icegreen.greenmail.internal.StoreChooser;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Rule;
 import org.junit.Test;
-
-import javax.mail.MessagingException;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author Wael Chatila
@@ -17,9 +18,10 @@ import static org.junit.Assert.assertEquals;
  */
 public class CatchAllTest {
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+    public final GreenMailRuleWithStoreChooser greenMail = new GreenMailRuleWithStoreChooser(ServerSetupTest.SMTP);
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testSmtpServerBasic() throws MessagingException {
         GreenMailUtil.sendTextEmailTest("to11@domain1.com", "from@localhost.com", "subject", "body");
         GreenMailUtil.sendTextEmailTest("to12@domain1.com", "from@localhost.com", "subject", "body");

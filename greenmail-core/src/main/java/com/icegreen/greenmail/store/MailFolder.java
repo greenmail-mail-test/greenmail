@@ -6,15 +6,15 @@
  */
 package com.icegreen.greenmail.store;
 
-import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
-import com.icegreen.greenmail.imap.commands.IdRange;
-import com.icegreen.greenmail.mail.MovingMessage;
-
+import java.util.Date;
+import java.util.List;
 import javax.mail.Flags;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
-import java.util.Date;
-import java.util.List;
+
+import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
+import com.icegreen.greenmail.imap.commands.IdRange;
+import com.icegreen.greenmail.mail.MovingMessage;
 
 /**
  * Represents a mailbox within an {@link com.icegreen.greenmail.store.Store}.
@@ -94,6 +94,6 @@ public interface MailFolder {
     void signalDeletion();
 
     List<StoredMessage> getMessages(MsgRangeFilter msgRangeFilter);
-    List<StoredMessage> getMessages();
+    List<StoredMessage> getMessageEntries();
     List<StoredMessage> getNonDeletedMessages();
 }

@@ -5,7 +5,15 @@
 */
 package com.icegreen.greenmail.test;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.icegreen.greenmail.internal.GreenMailRuleWithStoreChooser;
+import com.icegreen.greenmail.internal.StoreChooser;
 import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
@@ -15,11 +23,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.*;
-
 /**
  * Test multiple senders and receivers using all available protocols
  */
@@ -27,7 +30,7 @@ public class MultiRequestTest {
     protected final static Logger log = LoggerFactory.getLogger(MultiRequestTest.class);
 
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
+    public final GreenMailRuleWithStoreChooser greenMail = new GreenMailRuleWithStoreChooser(ServerSetupTest.ALL);
 
     //~ INNER CLASSES -----------------------------------------------
     private static class SenderThread extends Thread {
@@ -89,6 +92,7 @@ public class MultiRequestTest {
     //~ END INNER CLASSES -----------------------------------------------
 
     @Test
+    @StoreChooser(store="file,memory")
     public void test20Senders() throws InterruptedException {
         final int num = 20;
         addUsers(num);
@@ -100,6 +104,7 @@ public class MultiRequestTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void test20Senders20x4Retrievers() throws InterruptedException {
         final int num = 20;
         addUsers(num);
@@ -123,6 +128,7 @@ public class MultiRequestTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void test20Senders20x4RetrieversAtTheSameTime() throws InterruptedException {
         final int num = 20;
         addUsers(num);

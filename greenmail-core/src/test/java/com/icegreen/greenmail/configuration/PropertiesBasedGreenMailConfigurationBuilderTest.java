@@ -85,6 +85,24 @@ public class PropertiesBasedGreenMailConfigurationBuilderTest {
         assertFalse(config.hasMailsinkUser());
     }
 
+    @Test
+    public void testBuildWithNonDefaultStoreImplClass() {
+        Properties props = createPropertiesFor(PropertiesBasedGreenMailConfigurationBuilder.GREENMAIL_MAIL_STORE_IMPL_CLASS, "my.class");
+        GreenMailConfiguration config = new PropertiesBasedGreenMailConfigurationBuilder().build(props);
+        assertNotNull(config);
+        assertEquals("my.class", config.getStoreClassImplementation());
+    }
+
+    @Test
+    public void testBuildWithFileStoreRootDir() {
+        Properties props = createPropertiesFor(PropertiesBasedGreenMailConfigurationBuilder.GREENMAIL_FILESTORE_ROOT_DIR,
+                "/tmp/gugus");
+        GreenMailConfiguration config = new PropertiesBasedGreenMailConfigurationBuilder().build(props);
+        assertNotNull(config);
+        assertEquals("/tmp/gugus", config.getFileStoreRootDirectory());
+    }
+
+
     private Properties createPropertiesFor(String key, String value) {
         Properties props = new Properties();
         props.setProperty(key, value);

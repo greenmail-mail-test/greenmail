@@ -6,6 +6,20 @@
  */
 package com.icegreen.greenmail.imap;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import javax.mail.Flags;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.UIDFolder;
+import javax.mail.internet.MimeMessage;
+import javax.mail.search.SearchTerm;
+
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import com.icegreen.greenmail.imap.commands.IdRange;
 import com.icegreen.greenmail.mail.MovingMessage;
@@ -13,14 +27,6 @@ import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.FolderListener;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.StoredMessage;
-
-import javax.mail.Flags;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.UIDFolder;
-import javax.mail.internet.MimeMessage;
-import javax.mail.search.SearchTerm;
-import java.util.*;
 
 public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder {
     private MailFolder _folder;
@@ -65,9 +71,8 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
         return _folder.getMessages(msgRangeFilter);
     }
 
-    @Override
-    public List<StoredMessage> getMessages() {
-        return _folder.getMessages();
+    public List<StoredMessage> getMessageEntries() {
+        return _folder.getMessageEntries();
     }
 
     @Override

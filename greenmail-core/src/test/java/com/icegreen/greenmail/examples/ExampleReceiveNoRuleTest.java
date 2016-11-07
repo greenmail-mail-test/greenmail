@@ -1,22 +1,23 @@
 package com.icegreen.greenmail.examples;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Test;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import java.io.IOException;
-
-import static org.junit.Assert.assertEquals;
-
 public class ExampleReceiveNoRuleTest {
+
     @Test
-    public void testReceive() throws MessagingException, IOException {
-        //Start all email servers using non-default ports.
+    public void testReceiveWithMemoryStore() throws MessagingException, IOException {
         GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
+
         try {
             greenMail.start();
 

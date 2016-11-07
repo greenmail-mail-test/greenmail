@@ -4,12 +4,9 @@
  */
 package com.icegreen.greenmail.test.commands;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.store.MailFolder;
-import com.icegreen.greenmail.user.GreenMailUser;
-import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Rule;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import javax.mail.Address;
 import javax.mail.Folder;
@@ -20,17 +17,21 @@ import javax.mail.Store;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import com.icegreen.greenmail.internal.GreenMailRuleWithStoreChooser;
+import com.icegreen.greenmail.internal.StoreChooser;
+import com.icegreen.greenmail.store.MailFolder;
+import com.icegreen.greenmail.user.GreenMailUser;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import org.junit.Rule;
+import org.junit.Test;
 
 public class ImapSubjectLineTest {
 
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.IMAP);
+    public final GreenMailRuleWithStoreChooser greenMail = new GreenMailRuleWithStoreChooser(ServerSetupTest.IMAP);
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testLongSubjectLine() throws Exception {
         String longSubjectLine = "test subject line jumped over the lazy lorem ipsum looking dog, after which the subject line became long enough to trigger some folding.               it was a dark and stormy night, after all.  pretty sure the initial trigger " +
                 "for this test case did not have a subject line longer than 1000 chars, but there you go.  not sure what exactly what wouldve caused the folding, but maybe it happened on a somewhat shorter subject line.  whatever.";
@@ -39,6 +40,7 @@ public class ImapSubjectLineTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testSubjectWithEmbeddedSpaces() throws Exception {
         String subjectWithEmbeddedSpaces = "test subject line jumped over the lazy lorem ipsum looking dog, after which the subject line became long enough to trigger some folding.               it was a dark and stormy night, after all.  pretty sure the initial trigger " +
                 "for this test case did not have a subject line longer than 1000 chars, but there you go.  not sure what exactly what would've caused the folding, but maybe it happened on a somewhat shorter subject line.  whatever.";
@@ -47,6 +49,7 @@ public class ImapSubjectLineTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testSubjectWithSingleQuote() throws Exception {
         String subjectWithSingleQuote = "This is'nt a bad subject";
 
@@ -54,6 +57,7 @@ public class ImapSubjectLineTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testSubjectWithDoubleQuote() throws Exception {
         String subjectWithDoubleQuote = "This is\"nt a bad subject";
 
@@ -61,6 +65,7 @@ public class ImapSubjectLineTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testSubjectWithTabCharacter() throws Exception {
         String subjectWithTabCharacter = "The tab\t was there.";
 
@@ -68,6 +73,7 @@ public class ImapSubjectLineTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testSubjectWithBackslashCharacter() throws Exception {
         String subjectWithBackslashCharacter = "With \\back slash.";
 

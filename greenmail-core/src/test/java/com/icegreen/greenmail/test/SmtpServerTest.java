@@ -4,22 +4,23 @@
  */
 package com.icegreen.greenmail.test;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.ServerSetup;
-import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Rule;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import java.io.ByteArrayOutputStream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.icegreen.greenmail.internal.GreenMailRuleWithStoreChooser;
+import com.icegreen.greenmail.internal.StoreChooser;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetup;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import org.junit.Rule;
+import org.junit.Test;
 
 /**
  * @author Wael Chatila
@@ -28,9 +29,12 @@ import static org.junit.Assert.assertTrue;
  */
 public class SmtpServerTest {
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(new ServerSetup[]{ServerSetupTest.SMTP, ServerSetupTest.SMTPS});
+    public final GreenMailRuleWithStoreChooser greenMail = new GreenMailRuleWithStoreChooser(new ServerSetup[]{ServerSetupTest.SMTP,
+            ServerSetupTest
+            .SMTPS});
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testSmtpServerBasic() throws MessagingException {
         GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", "body");
         MimeMessage[] emails = greenMail.getReceivedMessages();
@@ -40,6 +44,7 @@ public class SmtpServerTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testSmtpServerTimeout() throws Throwable {
         assertEquals(0, greenMail.getReceivedMessages().length);
         long t0 = System.currentTimeMillis();
@@ -50,6 +55,7 @@ public class SmtpServerTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testSmtpServerReceiveWithSetup() throws Throwable {
         assertEquals(0, greenMail.getReceivedMessages().length);
 
@@ -64,6 +70,7 @@ public class SmtpServerTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testSmtpsServerReceive() throws Throwable {
         assertEquals(0, greenMail.getReceivedMessages().length);
 
@@ -78,6 +85,7 @@ public class SmtpServerTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testSmtpServerReceiveInThread() throws Throwable {
         assertEquals(0, greenMail.getReceivedMessages().length);
 
@@ -99,6 +107,7 @@ public class SmtpServerTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testSmtpServerReceiveMultipart() throws Exception {
         assertEquals(0, greenMail.getReceivedMessages().length);
 
@@ -130,6 +139,7 @@ public class SmtpServerTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testSmtpServerLeadingPeriods() throws MessagingException {
         String body = ". body with leading period";
         GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", body);

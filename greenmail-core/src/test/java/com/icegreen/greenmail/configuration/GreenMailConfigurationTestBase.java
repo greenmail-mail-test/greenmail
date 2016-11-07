@@ -1,12 +1,12 @@
 package com.icegreen.greenmail.configuration;
 
-import com.icegreen.greenmail.base.GreenMailOperations;
-import com.icegreen.greenmail.util.Retriever;
+import static com.icegreen.greenmail.configuration.GreenMailConfiguration.aConfig;
+import static org.junit.Assert.assertEquals;
 
 import javax.mail.Message;
 
-import static com.icegreen.greenmail.configuration.GreenMailConfiguration.aConfig;
-import static org.junit.Assert.assertEquals;
+import com.icegreen.greenmail.base.GreenMailOperations;
+import com.icegreen.greenmail.util.Retriever;
 
 /**
  * Test methods that are used in both GreenMailConfiguration tests

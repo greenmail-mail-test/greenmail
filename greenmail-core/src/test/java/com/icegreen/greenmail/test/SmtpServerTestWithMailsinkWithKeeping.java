@@ -7,7 +7,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import com.icegreen.greenmail.configuration.PropertiesBasedGreenMailConfigurationBuilder;
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.internal.GreenMailRuleWithStoreChooser;
+import com.icegreen.greenmail.internal.StoreChooser;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
@@ -26,10 +27,11 @@ public class SmtpServerTestWithMailsinkWithKeeping {
 	}
 
 	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(new ServerSetup[]{ServerSetupTest.SMTP, ServerSetupTest
-			.SMTPS}, new PropertiesBasedGreenMailConfigurationBuilder().build(mailsinkPropsWithoutKeeping));
+	public final GreenMailRuleWithStoreChooser greenMail = new GreenMailRuleWithStoreChooser(new ServerSetup[]{ServerSetupTest.SMTP,
+			ServerSetupTest.SMTPS}, new PropertiesBasedGreenMailConfigurationBuilder().build(mailsinkPropsWithoutKeeping));
 
 	@Test
+	@StoreChooser(store="file,memory")
 	public void testSmtpSendingtoMailsink() throws MessagingException {
 		GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", "body");
 		MimeMessage[] emails = greenMail.getReceivedMessages();

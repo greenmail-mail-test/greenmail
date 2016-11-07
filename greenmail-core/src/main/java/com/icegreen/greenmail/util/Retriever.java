@@ -25,7 +25,7 @@ public class Retriever implements AutoCloseable {
      * GreenMail greenMail = new GreenMail();<br>
      * ...<br>
      * Retriever r = new Retriever(greenMail.getPop3())<br>;
-     * r.getMessages("bill@microsoft.com");<br>
+     * r.getMessageEntries("bill@microsoft.com");<br>
      * </i>
      * This will fetch all available messages for Billy using POP3.
      *

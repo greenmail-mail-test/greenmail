@@ -43,7 +43,7 @@ public class ImapHostManagerImpl
         try {
             Collection<MailFolder> boxes = store.listMailboxes("*");
             for (MailFolder boxe : boxes) {
-                ret.addAll(boxe.getMessages());
+                ret.addAll(boxe.getMessageEntries());
             }
         } catch (FolderException e) {
             throw new IllegalStateException(e);

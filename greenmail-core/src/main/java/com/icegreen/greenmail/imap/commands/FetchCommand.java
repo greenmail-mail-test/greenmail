@@ -6,22 +6,31 @@
  */
 package com.icegreen.greenmail.imap.commands;
 
-import com.icegreen.greenmail.imap.*;
-import com.icegreen.greenmail.store.FolderException;
-import com.icegreen.greenmail.store.MessageFlags;
-import com.icegreen.greenmail.store.StoredMessage;
-import com.icegreen.greenmail.util.GreenMailUtil;
-
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
 import javax.mail.BodyPart;
 import javax.mail.Flags;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.*;
-import java.util.regex.Pattern;
+
+import com.icegreen.greenmail.imap.ImapRequestLineReader;
+import com.icegreen.greenmail.imap.ImapResponse;
+import com.icegreen.greenmail.imap.ImapSession;
+import com.icegreen.greenmail.imap.ImapSessionFolder;
+import com.icegreen.greenmail.imap.ProtocolException;
+import com.icegreen.greenmail.store.FolderException;
+import com.icegreen.greenmail.store.MessageFlags;
+import com.icegreen.greenmail.store.StoredMessage;
+import com.icegreen.greenmail.util.GreenMailUtil;
 
 
 /**

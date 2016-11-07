@@ -1,24 +1,29 @@
 package com.icegreen.greenmail.test.specificmessages;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.ServerSetupTest;
-import com.sun.mail.imap.IMAPStore;
-import org.junit.Rule;
-import org.junit.Test;
-
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import java.io.IOException;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Session;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
+import com.icegreen.greenmail.internal.GreenMailRuleWithStoreChooser;
+import com.icegreen.greenmail.internal.StoreChooser;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import com.sun.mail.imap.IMAPStore;
+import org.junit.Rule;
+import org.junit.Test;
 
 /**
  * Tests forwarding an email.
@@ -28,7 +33,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class Rfc822MessageTest {
     @Rule
-    public GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
+    public GreenMailRuleWithStoreChooser greenMail = new GreenMailRuleWithStoreChooser(ServerSetupTest.SMTP_IMAP);
 
     /**
      * Structure of test message and content type:
@@ -39,6 +44,7 @@ public class Rfc822MessageTest {
      * \--> Message (text/plain)
      */
     @Test
+    @StoreChooser(store="file,memory")
     public void testForwardWithRfc822() throws MessagingException, IOException {
         greenMail.setUser("foo@localhost", "pwd");
         final Session session = greenMail.getSmtp().createSession();

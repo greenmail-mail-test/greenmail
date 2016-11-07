@@ -12,6 +12,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.file.Paths;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Folder;
@@ -22,11 +23,14 @@ import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import com.icegreen.greenmail.configuration.GreenMailConfiguration;
+import com.icegreen.greenmail.internal.TestHelper;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -35,6 +39,7 @@ import org.junit.Test;
  * @since Jan 29, 2006
  */
 public class GreenMailUtilTest {
+
     @Test
     public void testMimeMessageLoading() throws MessagingException {
         MimeMessage message = GreenMailUtil.newMimeMessage(SAMPLE_EMAIL);
@@ -49,10 +54,25 @@ public class GreenMailUtilTest {
     }
 
     @Test
-    public void testGetEmptyBodyAndHeader() throws Exception {
-        GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
+    public void testGetEmptyBodyAndHeaderWithMemoryStore() throws Exception {
+        testGetEmptyBodyAndHeader(this.createGreenMailWithMemoryStore());
+    }
+
+    @Test
+    public void testGetEmptyBodyAndHeaderWithFileStore() throws Exception {
+        String toDeleteDir = TestHelper.getRandomDirectory();
         try {
-            greenMail.start();
+            testGetEmptyBodyAndHeader(this.createGreenMailWithFileStore(toDeleteDir));
+        } finally {
+            if (toDeleteDir != null) {
+                TestHelper.deleteDirectoryWithContentAndIgnoreExceptions(Paths.get(toDeleteDir));
+            }
+        }
+    }
+
+    public void testGetEmptyBodyAndHeader(GreenMail gm) throws Exception {
+        try {
+            gm.start();
 
             String subject = GreenMailUtil.random();
             String body = ""; // Provokes https://github.com/greenmail-mail-test/greenmail/issues/151
@@ -60,10 +80,10 @@ public class GreenMailUtilTest {
             final byte[] gifAttachment = {0, 1, 2};
             GreenMailUtil.sendAttachmentEmail(to, "from@localhost", subject, body, gifAttachment,
                     "image/gif", "testimage_filename", "testimage_description",
-                    greenMail.getSmtp().getServerSetup());
-            greenMail.waitForIncomingEmail(5000, 1);
+                    gm.getSmtp().getServerSetup());
+            gm.waitForIncomingEmail(5000, 1);
 
-            try (Retriever retriever = new Retriever(greenMail.getImap())) {
+            try (Retriever retriever = new Retriever(gm.getImap())) {
                 MimeMultipart mp = (MimeMultipart) retriever.getMessages(to)[0].getContent();
                 BodyPart bp;
                 bp = mp.getBodyPart(0);
@@ -87,21 +107,36 @@ public class GreenMailUtilTest {
                 assertArrayEquals(gifAttachment, bout.toByteArray());
             }
         } finally {
-            greenMail.stop();
+            gm.stop();
         }
     }
 
     @Test
-    public void testSendTextEmailTest() throws Exception {
-        GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
+    public void testSendTextEmailTestWithMemoryStore() throws Exception {
+        testSendTextEmailTest(this.createGreenMailWithMemoryStore());
+    }
+
+    @Test
+    public void testSendTextEmailTestWithFileStore() throws Exception {
+        String toDeleteDir = TestHelper.getRandomDirectory();
         try {
-            greenMail.start();
-            greenMail.setUser("foo@localhost", "pwd");
+            testSendTextEmailTest(this.createGreenMailWithFileStore(toDeleteDir));
+        } finally {
+            if (toDeleteDir != null) {
+                TestHelper.deleteDirectoryWithContentAndIgnoreExceptions(Paths.get(toDeleteDir));
+            }
+        }
+    }
+
+    public void testSendTextEmailTest(GreenMail gm) throws Exception {
+        try {
+            gm.start();
+            gm.setUser("foo@localhost", "pwd");
             GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost",
                     "Test subject", "Test message", ServerSetupTest.SMTP);
-            greenMail.waitForIncomingEmail(1);
+            gm.waitForIncomingEmail(1);
 
-            Store store = greenMail.getImap().createStore();
+            Store store = gm.getImap().createStore();
             store.connect("foo@localhost", "pwd");
             try {
                 Folder folder = store.getFolder("INBOX");
@@ -123,19 +158,35 @@ public class GreenMailUtilTest {
                 store.close();
             }
         } finally {
-            greenMail.stop();
+            gm.stop();
         }
     }
 
     @Test
-    public void testSetAndGetQuota() throws MessagingException {
-        GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
+    public void testSetAndGetQuotaWithMemoryStore() throws MessagingException {
+        testSetAndGetQuota(this.createGreenMailWithMemoryStore());
+    }
+
+    @Test
+    @Ignore
+    public void testSetAndGetQuotaWithFileStore() throws MessagingException {
+        String toDeleteDir = TestHelper.getRandomDirectory();
         try {
-            greenMail.start();
+            testSetAndGetQuota(this.createGreenMailWithFileStore(toDeleteDir));
+        } finally {
+            if (toDeleteDir != null) {
+                TestHelper.deleteDirectoryWithContentAndIgnoreExceptions(Paths.get(toDeleteDir));
+            }
+        }
+    }
 
-            final GreenMailUser user = greenMail.setUser("foo@localhost", "pwd");
+    private void testSetAndGetQuota(GreenMail gm) throws MessagingException {
+        try {
+            gm.start();
 
-            Store store = greenMail.getImap().createStore();
+            final GreenMailUser user = gm.setUser("foo@localhost", "pwd");
+
+            Store store = gm.getImap().createStore();
             store.connect("foo@localhost", "pwd");
 
             Quota testQuota = new Quota("INBOX");
@@ -151,8 +202,19 @@ public class GreenMailUtilTest {
 
             store.close();
         } finally {
-            greenMail.stop();
+            gm.stop();
         }
+    }
+
+    private GreenMail createGreenMailWithMemoryStore() {
+        return new GreenMail(ServerSetupTest.SMTP_IMAP);
+    }
+
+    private GreenMail createGreenMailWithFileStore(String randomDir) {
+        GreenMail gm = new GreenMail(ServerSetupTest.SMTP_IMAP);
+        gm.withConfiguration(GreenMailConfiguration.aConfig().withFileStoreRootDirectory(randomDir)
+                .withStoreClassImplementation("com.icegreen.greenmail.filestore.MBoxFileStore"));
+        return gm;
     }
 
     final static String SAMPLE_EMAIL = "From - Thu Jan 19 00:30:34 2006\r\n"

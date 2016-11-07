@@ -25,7 +25,10 @@ public interface ImapConstants {
     String HIERARCHY_DELIMITER = String.valueOf(HIERARCHY_DELIMITER_CHAR);
     String NAMESPACE_PREFIX = String.valueOf(NAMESPACE_PREFIX_CHAR);
 
+    String HIERARCHY_DELIMITER_REGEX = "\\" + String.valueOf(HIERARCHY_DELIMITER_CHAR);
+
     String INBOX_NAME = "INBOX";
     String STORAGE = "STORAGE";
     String MESSAGES = "MESSAGES";
+
 }

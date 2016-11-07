@@ -1,14 +1,14 @@
 package com.icegreen.greenmail.examples;
 
+import static org.junit.Assert.assertEquals;
+
+import javax.mail.MessagingException;
+
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Rule;
 import org.junit.Test;
-
-import javax.mail.MessagingException;
-
-import static org.junit.Assert.assertEquals;
 
 public class ExampleSendTest {
     @Rule

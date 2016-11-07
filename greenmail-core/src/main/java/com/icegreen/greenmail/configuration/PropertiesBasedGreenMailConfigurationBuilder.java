@@ -41,6 +41,17 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
     public static final String GREENMAIL_MAILSINK_KEEP_IN_ORIG_MBOX = "greenmail.mailsink.keep.in.original.mailboxes";
 
     /**
+     * The implementation of the Store interface. Current possible implementations: com.icegreen.greenmail.store.InMemoryStore
+     * or com.icegreen.greenmail.filestore.MBoxFileStore
+     */
+    public static final String GREENMAIL_MAIL_STORE_IMPL_CLASS = "greenmail.mailstore.impl.class";
+
+    /**
+     * The root directory for the MBoxFileStore where all mailboxes with messages will be persisted.
+     */
+    public static final String GREENMAIL_FILESTORE_ROOT_DIR = "greenmail.filestore.rootdir";
+
+    /**
      * Builds a configuration object based on given properties.
      *
      * @param properties the properties.
@@ -72,6 +83,14 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
             else {
                 configuration.withMailsinkKeepInOriginalMailboxes(true);
             }
+        }
+        String implClass = properties.getProperty(GREENMAIL_MAIL_STORE_IMPL_CLASS);
+        if (null != implClass) {
+            configuration.withStoreClassImplementation(implClass);
+        }
+        String fileStoreRoot = properties.getProperty(GREENMAIL_FILESTORE_ROOT_DIR);
+        if (null != fileStoreRoot) {
+            configuration.withFileStoreRootDirectory(fileStoreRoot);
         }
         return configuration;
     }
