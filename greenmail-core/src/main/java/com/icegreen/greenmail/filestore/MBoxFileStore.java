@@ -44,7 +44,9 @@ public class MBoxFileStore implements Store {
 
 	private FileBaseContext ctx;
 	private final Path rootDir;
-	private final Path userListPath;
+	private final Path userListFile;
+	private final Path pidFile;
+
 
 	/**
 	 * All classes implementing Store must have a public constructor which takes the configuration as parameter.
@@ -53,13 +55,23 @@ public class MBoxFileStore implements Store {
 	 */
 	public MBoxFileStore(GreenMailConfiguration startupConfig) {
 		this.rootDir = Paths.get(startupConfig.getFileStoreRootDirectory());
-        this.userListPath = this.rootDir.resolve("userlist");
-		this.ctx = new FileBaseContext(this.rootDir);
+		this.pidFile = this.rootDir.resolve("greenmail.pid");
+        if (Files.isRegularFile(this.pidFile)) {
+            throw new UncheckedFileStoreException("Greenmail PID file '" + this.pidFile.toAbsolutePath().toString() + "' "
+                    + "already exists. No two running Greenmail instances can access the same filestore. Please make sure that "
+                    + "the process referred in the PID file is no longer running, and then delete the PID file manually. Thanks"
+                    + " you.");
+        }
+
+        this.userListFile = this.rootDir.resolve("userlist");
+        this.ctx = new FileBaseContext(this.rootDir);
+		this.writePIDFile();
 	}
 
 	public void stop() {
 		// Make sure that the UUID generator is stopped correctly and the nextUID persisted to file-system
 		this.ctx.deInitUidGenerator();
+        this.deletePIDFile();
 	}
 
 	public MailFolder getMailbox(String absoluteMailboxName) {
@@ -266,9 +278,9 @@ public class MBoxFileStore implements Store {
 	 * @param userList
 	 */
 	synchronized public void writeUserStore(Collection<GreenMailUser>userList) {
-		log.info("Writing Greemail users to file: " + this.userListPath.toAbsolutePath().toString());
+		log.info("Writing Greemail users to file: " + this.userListFile.toAbsolutePath().toString());
 
-        try (BufferedWriter bw = Files.newBufferedWriter(userListPath, java.nio.charset.Charset.forName("UTF-8"), CREATE, WRITE,
+        try (BufferedWriter bw = Files.newBufferedWriter(userListFile, java.nio.charset.Charset.forName("UTF-8"), CREATE, WRITE,
                 TRUNCATE_EXISTING)) {
             for (GreenMailUser user : userList) {
                 bw.write(user.toSingleLine());
@@ -277,17 +289,42 @@ public class MBoxFileStore implements Store {
         }
         catch (IOException e) {
             throw new UncheckedFileStoreException(
-                    "IOException happened while trying to write file with Greemail users " + this.userListPath, e);
+                    "IOException happened while trying to write file with Greemail users " + this.userListFile, e);
         }
-        // Files.readAllLines(path, StandardCharsets.UTF_8)
 	}
+
+	private void writePIDFile() {
+		int processId = FileStoreUtil.getProcessId();
+		log.info("Writing current process id: " + processId + " to '" + this.pidFile.toAbsolutePath().toString() + "'");
+		try (BufferedWriter bw = Files.newBufferedWriter(pidFile, java.nio.charset.Charset.forName("UTF-8"), CREATE, WRITE,
+				TRUNCATE_EXISTING)) {
+			bw.write(Integer.toString(processId));
+			bw.newLine();
+		}
+		catch (IOException e) {
+			throw new UncheckedFileStoreException(
+					"IOException happened while trying to write PID file for Greenmail: " + this.pidFile, e);
+		}
+	}
+
+    private void deletePIDFile() {
+        if (Files.isRegularFile(this.pidFile)) {
+            try {
+                Files.delete(this.pidFile);
+            }
+            catch (IOException e) {
+                throw new UncheckedFileStoreException("IOException happened while trying to delete PID file: " + this.pidFile, e);
+            }
+        }
+    }
+
 
 	synchronized public Collection<GreenMailUser> readUserStore(ImapHostManager imapHostManager) {
         ArrayList<GreenMailUser> result = new ArrayList<>();
-        if (Files.isRegularFile(userListPath)) {
-            log.info("Reading Greemail users from file: " + this.userListPath.toAbsolutePath().toString());
+        if (Files.isRegularFile(userListFile)) {
+            log.info("Reading Greemail users from file: " + this.userListFile.toAbsolutePath().toString());
             try {
-                List<String> allLines = readAllLines(this.userListPath, java.nio.charset.Charset.forName("UTF-8"));
+                List<String> allLines = readAllLines(this.userListFile, java.nio.charset.Charset.forName("UTF-8"));
                 for (String line : allLines) {
                     log.info("  Adding user: " + line);
                     result.add(new UserImpl(line, imapHostManager));
@@ -295,7 +332,7 @@ public class MBoxFileStore implements Store {
             }
             catch (IOException e) {
                 throw new UncheckedFileStoreException(
-                        "IOException happened while trying to read file with Greemail users " + this.userListPath, e);
+                        "IOException happened while trying to read file with Greemail users " + this.userListFile, e);
             }
         }
         return result;

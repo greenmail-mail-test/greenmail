@@ -1,6 +1,11 @@
 package com.icegreen.greenmail.standalone;
 
+import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.Properties;
+
 import com.icegreen.greenmail.configuration.PropertiesBasedGreenMailConfigurationBuilder;
+import com.icegreen.greenmail.filestore.FileStoreUtil;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.PropertiesBasedServerSetupBuilder;
 import com.icegreen.greenmail.util.ServerSetup;
@@ -8,10 +13,6 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.Properties;
 
 /**
  * Enables GreenMail to run in standalone mode.
@@ -36,8 +37,18 @@ public class GreenMailStandaloneRunner {
             printUsage(System.out);
 
         } else {
-            GreenMail greenMail = new GreenMail(serverSetup);
+            final GreenMail greenMail = new GreenMail(serverSetup);
             log.info("Starting GreenMail standalone using " + Arrays.toString(serverSetup));
+            log.info("Process ID is : " + FileStoreUtil.getProcessId());
+
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                public void run() {
+                    log.info("Shutown Hook invoked. Stopping GreenMail. ");
+                    greenMail.stop();
+                    log.info("GreenMail has been stopped successfully and gracefully. ");
+                }
+            });
+
             greenMail.withConfiguration(new PropertiesBasedGreenMailConfigurationBuilder().build(properties))
                     .start();
         }

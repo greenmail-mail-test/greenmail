@@ -1,11 +1,16 @@
 package com.icegreen.greenmail.filestore;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.mail.Flags;
 
 import com.icegreen.greenmail.imap.ImapConstants;
+import sun.management.VMManagement;
 
 /**
  * Created by saladin on 11/2/16.
@@ -20,6 +25,23 @@ public class FileStoreUtil {
 	private static final int RECENT    = 16; // 00010000
 	private static final int SEEN      = 32; // 00100000
 
+	public static int getProcessId() {
+		try {
+			RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+			Field jvmField = runtimeMXBean.getClass().getDeclaredField("jvm");
+			jvmField.setAccessible(true);
+			VMManagement vmManagement = (VMManagement) jvmField.get(runtimeMXBean);
+			Method getProcessIdMethod = vmManagement.getClass().getDeclaredMethod("getProcessId");
+			getProcessIdMethod.setAccessible(true);
+			Integer processId = (Integer) getProcessIdMethod.invoke(vmManagement);
+			if (processId != null) {
+				return processId.intValue();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
 
 
 	public static Path convertFullNameToPath(String rootDir, String fullName) {
