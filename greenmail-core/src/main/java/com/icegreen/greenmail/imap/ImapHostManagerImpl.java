@@ -6,10 +6,19 @@
  */
 package com.icegreen.greenmail.imap;
 
-import com.icegreen.greenmail.store.*;
-import com.icegreen.greenmail.user.GreenMailUser;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
-import java.util.*;
+import com.icegreen.greenmail.store.FolderException;
+import com.icegreen.greenmail.store.InMemoryStore;
+import com.icegreen.greenmail.store.MailFolder;
+import com.icegreen.greenmail.store.Store;
+import com.icegreen.greenmail.store.StoredMessage;
+import com.icegreen.greenmail.user.GreenMailUser;
 
 /**
  * An initial implementation of an ImapHost. By default, uses,
@@ -19,8 +28,7 @@ import java.util.*;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-public class ImapHostManagerImpl
-        implements ImapHostManager, ImapConstants {
+public class ImapHostManagerImpl implements ImapHostManager, ImapConstants {
     private Store store;
     private MailboxSubscriptions subscriptions;
 
@@ -28,7 +36,7 @@ public class ImapHostManagerImpl
      * Hack constructor which creates an in-memory store, and creates a console logger.
      */
     public ImapHostManagerImpl() {
-        store = new InMemoryStore();
+        store = new InMemoryStore(null);
         subscriptions = new MailboxSubscriptions();
     }
 

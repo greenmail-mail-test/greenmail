@@ -6,13 +6,17 @@
  */
 package com.icegreen.greenmail.user;
 
+import java.util.StringTokenizer;
+import javax.mail.internet.MimeMessage;
+
+import com.icegreen.greenmail.filestore.UncheckedFileStoreException;
 import com.icegreen.greenmail.imap.AuthorizationException;
 import com.icegreen.greenmail.imap.ImapConstants;
 import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.mail.MovingMessage;
 import com.icegreen.greenmail.store.FolderException;
-
-import javax.mail.internet.MimeMessage;
+import com.sun.mail.imap.protocol.BASE64MailboxDecoder;
+import com.sun.mail.imap.protocol.BASE64MailboxEncoder;
 
 
 public class UserImpl implements GreenMailUser {
@@ -30,6 +34,34 @@ public class UserImpl implements GreenMailUser {
         this.login = login;
         this.password = password;
         this.imapHostManager = imapHostManager;
+    }
+
+    public UserImpl(String singleLine, ImapHostManager imapHostManager) {
+        StringTokenizer t = new StringTokenizer(singleLine, ":");
+        if (t.countTokens() != 4) {
+            throw new UncheckedFileStoreException("Cannot serialize user from entry: '" + singleLine + "'. Entry does not "
+                    + "contain 4 tokens separated with colon, but: " + t.countTokens());
+        }
+
+        this.cachedHashCodeAsString = t.nextToken();
+        this.cachedHashCode = Integer.parseInt(this.cachedHashCodeAsString);
+        this.login = t.nextToken();
+        this.password = BASE64MailboxDecoder.decode(t.nextToken());
+        this.email = t.nextToken();
+        this.imapHostManager = imapHostManager;
+    }
+
+    @Override
+    public String toSingleLine() {
+        StringBuilder b = new StringBuilder();
+        b.append(cachedHashCode);
+        b.append(":");
+        b.append(login);
+        b.append(":");
+        b.append(BASE64MailboxEncoder.encode(password));
+        b.append(":");
+        b.append(email);
+        return b.toString();
     }
 
     @Override

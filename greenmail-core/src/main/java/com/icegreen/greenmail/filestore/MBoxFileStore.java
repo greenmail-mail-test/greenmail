@@ -2,7 +2,12 @@ package com.icegreen.greenmail.filestore;
 
 import static com.icegreen.greenmail.imap.ImapConstants.HIERARCHY_DELIMITER;
 import static com.icegreen.greenmail.imap.ImapConstants.USER_NAMESPACE;
+import static java.nio.file.Files.readAllLines;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,10 +20,14 @@ import java.util.List;
 import java.util.StringTokenizer;
 import javax.mail.Quota;
 
+import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.imap.ImapConstants;
+import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.Store;
+import com.icegreen.greenmail.user.GreenMailUser;
+import com.icegreen.greenmail.user.UserImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,10 +43,17 @@ public class MBoxFileStore implements Store {
 	final Logger log = LoggerFactory.getLogger(MBoxFileStore.class);
 
 	private FileBaseContext ctx;
-	private Path rootDir;
+	private final Path rootDir;
+	private final Path userListPath;
 
-	public MBoxFileStore(Path pathToRootDir) {
-		this.rootDir = pathToRootDir;
+	/**
+	 * All classes implementing Store must have a public constructor which takes the configuration as parameter.
+	 *
+	 * @param startupConfig - startup configuration
+	 */
+	public MBoxFileStore(GreenMailConfiguration startupConfig) {
+		this.rootDir = Paths.get(startupConfig.getFileStoreRootDirectory());
+        this.userListPath = this.rootDir.resolve("userlist");
 		this.ctx = new FileBaseContext(this.rootDir);
 	}
 
@@ -48,27 +64,23 @@ public class MBoxFileStore implements Store {
 
 	public MailFolder getMailbox(String absoluteMailboxName) {
 		log.debug("Entering getMailbox with absoluteMailboxName: '" + absoluteMailboxName + "'");
-
 		if (absoluteMailboxName == null || USER_NAMESPACE.equals(absoluteMailboxName)) {
             MailFolder result = ctx.getMailboxForPath(this.rootDir.resolve(ImapConstants.USER_NAMESPACE));
             log.debug("Leaving getMailbox with mailbox for root: " + result);
 			return result;
 		}
-
 		StringTokenizer tokens = new StringTokenizer(absoluteMailboxName, HIERARCHY_DELIMITER);
 		// The first token must be "#mail"
 		if (!tokens.hasMoreTokens() || !tokens.nextToken().equalsIgnoreCase(USER_NAMESPACE)) {
             throw new UncheckedFileStoreException("Mailbox with absolute name '" + absoluteMailboxName + "' is not valid "
                     + "because it does not start with '" + USER_NAMESPACE + "'");
 		}
-
 		Path mboxPath = FileStoreUtil.convertFullNameToPath(this.rootDir.toAbsolutePath().toString(), absoluteMailboxName);
         if (Files.isDirectory(mboxPath)) {
             MailFolder result = ctx.getMailboxForPath(mboxPath);
             log.debug("Leaving getMailbox with existing mailbox: " + result);
             return result;
         }
-
         log.debug("Leaving getMailbox with null because mailbox is not existing.");
         return null;
 	}
@@ -247,5 +259,46 @@ public class MBoxFileStore implements Store {
 			throw new UncheckedFileStoreException("The Store MBoxFileStore does not support quotas.");
 		}
 	}
+
+	/**
+	 * Writes the whole userList to disk
+	 *
+	 * @param userList
+	 */
+	synchronized public void writeUserStore(Collection<GreenMailUser>userList) {
+		log.info("Writing Greemail users to file: " + this.userListPath.toAbsolutePath().toString());
+
+        try (BufferedWriter bw = Files.newBufferedWriter(userListPath, java.nio.charset.Charset.forName("UTF-8"), CREATE, WRITE,
+                TRUNCATE_EXISTING)) {
+            for (GreenMailUser user : userList) {
+                bw.write(user.toSingleLine());
+                bw.newLine();
+            }
+        }
+        catch (IOException e) {
+            throw new UncheckedFileStoreException(
+                    "IOException happened while trying to write file with Greemail users " + this.userListPath, e);
+        }
+        // Files.readAllLines(path, StandardCharsets.UTF_8)
+	}
+
+	synchronized public Collection<GreenMailUser> readUserStore(ImapHostManager imapHostManager) {
+        ArrayList<GreenMailUser> result = new ArrayList<>();
+        if (Files.isRegularFile(userListPath)) {
+            log.info("Reading Greemail users from file: " + this.userListPath.toAbsolutePath().toString());
+            try {
+                List<String> allLines = readAllLines(this.userListPath, java.nio.charset.Charset.forName("UTF-8"));
+                for (String line : allLines) {
+                    log.info("  Adding user: " + line);
+                    result.add(new UserImpl(line, imapHostManager));
+                }
+            }
+            catch (IOException e) {
+                throw new UncheckedFileStoreException(
+                        "IOException happened while trying to read file with Greemail users " + this.userListPath, e);
+            }
+        }
+        return result;
+    }
 
 }

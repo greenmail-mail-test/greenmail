@@ -18,6 +18,7 @@ import java.util.StringTokenizer;
 import javax.mail.MessagingException;
 import javax.mail.Quota;
 
+import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.imap.ImapConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,13 +30,21 @@ import org.slf4j.LoggerFactory;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-public class InMemoryStore
-        implements Store, ImapConstants {
+public class InMemoryStore implements Store, ImapConstants {
     final Logger log = LoggerFactory.getLogger(InMemoryStore.class);
 
     boolean quotaSupported = true;
     private RootFolder rootMailbox = new RootFolder();
     private Map<String, Set<Quota>> quotaMap = new HashMap<>();
+
+    /**
+     * All classes implementing Store must have a public constructor which takes the configuration as parameter.
+     *
+     * @param startupConfig - startup configuration
+     **/
+    public InMemoryStore(GreenMailConfiguration startupConfig) {
+
+    }
 
     @Override
     public MailFolder getMailbox(String absoluteMailboxName) {

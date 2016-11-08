@@ -6,11 +6,16 @@
  */
 package com.icegreen.greenmail.user;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import com.icegreen.greenmail.filestore.MBoxFileStore;
 import com.icegreen.greenmail.imap.ImapHostManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.*;
 
 public class UserManager {
     private static final Logger log = LoggerFactory.getLogger(UserManager.class);
@@ -24,6 +29,16 @@ public class UserManager {
 
     public UserManager(ImapHostManager imapHostManager) {
         this.imapHostManager = imapHostManager;
+
+        if (this.imapHostManager.getStore() instanceof MBoxFileStore) {
+            // We have a filestore to store the messages, this means that we have to store the users
+            // on the FS as well.
+            MBoxFileStore filestore = (MBoxFileStore)this.imapHostManager.getStore();
+            Collection<GreenMailUser>userList = filestore.readUserStore(this.imapHostManager);
+            for (GreenMailUser user : userList) {
+                addUser(user);
+            }
+        }
     }
 
     public GreenMailUser getUser(String login) {
@@ -35,24 +50,44 @@ public class UserManager {
     }
 
     public GreenMailUser createUser(String email, String login, String password) throws UserException {
+        log.debug("Create user with login: " + login);
         GreenMailUser user = new UserImpl(email, login, password, imapHostManager);
         user.create();
         addUser(user);
+
+        writeUserStoreToFS();
         return user;
     }
 
-    public void addUser(GreenMailUser user) {
-        deleteUser(user);
-        loginToUser.put(normalizerUserName(user.getLogin()), user);
-        emailToUser.put(normalizerUserName(user.getEmail()), user);
+    private void writeUserStoreToFS() {
+        if (this.imapHostManager.getStore() instanceof MBoxFileStore) {
+            log.debug("Writing all users to FS now, because store is of type MBoxFileStore");
+            // We have a filestore to store the messages, this means that we have to store the users
+            // on the FS as well.
+            MBoxFileStore filestore = (MBoxFileStore)this.imapHostManager.getStore();
+            Collection<GreenMailUser>userList = loginToUser.values();
+            filestore.writeUserStore(userList);
+        }
     }
 
-    public void deleteUser(GreenMailUser user) {
+    public void addUser(GreenMailUser user) {
         GreenMailUser deletedUser = loginToUser.remove(normalizerUserName(user.getLogin()));
         if (deletedUser != null) {
             emailToUser.remove(normalizerUserName(deletedUser.getEmail()));
             deletedUser.delete();
         }
+        loginToUser.put(normalizerUserName(user.getLogin()), user);
+        emailToUser.put(normalizerUserName(user.getEmail()), user);
+    }
+
+    public void deleteUser(GreenMailUser user) {
+        log.debug("Delete user with login: " + user.getLogin());
+        GreenMailUser deletedUser = loginToUser.remove(normalizerUserName(user.getLogin()));
+        if (deletedUser != null) {
+            emailToUser.remove(normalizerUserName(deletedUser.getEmail()));
+            deletedUser.delete();
+        }
+        this.writeUserStoreToFS();
     }
 
     public Collection<GreenMailUser> listUser() {

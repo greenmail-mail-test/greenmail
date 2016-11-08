@@ -4,12 +4,15 @@ import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -89,13 +92,17 @@ public class FileHierarchicalFolder implements MailFolder, UIDFolder {
 		private long uid;
 		private int flagBitSet;
 		private String shortFilename;
+
+        private static final int MSG_ENTRY_SIZE = 16;
+        private static final int COUNTER_SIZE = 4;
 	}
 
 	/**
-	 * Make sure that the settings file is removed and deleted.
+	 * Make sure that the settings and message entries files are removed and deleted.
 	 */
 	public void prepareForDeletion() {
 		this.deleteSettingsFile();
+		this.deleteMessageEntriesFile();
 	}
 
 	public Path getPathToDir() {
@@ -367,14 +374,16 @@ public class FileHierarchicalFolder implements MailFolder, UIDFolder {
         log.debug("  addUid         : " + addUid);
 
 		MessageEntry me = null;
+        int meIndex = 0;
+
 		synchronized (messageEntriesLock) {
 			for (MessageEntry entry : this.messageEntries) {
 				if (entry.uid == uid) {
 					me = entry;
 					break;
 				}
+				meIndex++;
 			}
-
 
 			if (me != null) {
                 log.debug("Found message where to set the flags: " + me.shortFilename);
@@ -390,7 +399,7 @@ public class FileHierarchicalFolder implements MailFolder, UIDFolder {
 					// if BIT is set, we should delete it in entr.flagBitSet... not yet implemented.
 				}
 			}
-            this.writeMessageEntriesFileWithoutSync();
+            this.writeMessageEntriesFileWithSingleEntryWithoutSync(meIndex);
         }
 
 		Long uidNotification = null;
@@ -403,20 +412,24 @@ public class FileHierarchicalFolder implements MailFolder, UIDFolder {
 	@Override
 	public void replaceFlags(Flags flags, long uid, FolderListener silentListener, boolean addUid) throws FolderException {
 		MessageEntry me = null;
+        int meIndex = 0;
+
 		synchronized (messageEntriesLock) {
 			for (MessageEntry entry : this.messageEntries) {
 				if (entry.uid == uid) {
 					me = entry;
 					break;
 				}
+                meIndex++;
 			}
 			if (me != null) {
 				// Set the flags
 				me.flagBitSet = FileStoreUtil.convertFlagsToFlagBitSet(flags);
 			}
+
+            this.writeMessageEntriesFileWithSingleEntryWithoutSync(meIndex);
 		}
 
-		this.writeMessageEntriesFile();
 
 		Long uidNotification = null;
 		if (addUid) {
@@ -471,17 +484,12 @@ public class FileHierarchicalFolder implements MailFolder, UIDFolder {
 
 	@Override
 	public long[] getMessageUids() {
-        log.debug("Entering getMessageUids");
 		synchronized (messageEntriesLock) {
 			int num = this.messageEntries.size();
 			long[] ret = new long[num];
-            StringBuilder debugStr = new StringBuilder();
 			for (int i = 0; i < num; i++) {
 				ret[i] = this.messageEntries.get(i).uid;
-                debugStr.append(ret[i]);
-                debugStr.append(",");
 			}
-            log.debug("Leaving getMessageUids with: " + debugStr.toString());
 			return ret;
 		}
 	}
@@ -734,6 +742,18 @@ public class FileHierarchicalFolder implements MailFolder, UIDFolder {
 		}
 	}
 
+	private void deleteMessageEntriesFile() {
+		if (Files.isRegularFile(this.messagesPath)) {
+			try {
+				Files.delete(this.messagesPath);
+			}
+			catch (IOException e) {
+				throw new UncheckedFileStoreException("IOException happened while trying to delete message file: " + this
+						.messagesPath,	e);
+			}
+		}
+	}
+
 	private void writeMessageEntriesFile() {
 		synchronized (this.messageEntriesLock) {
             this.writeMessageEntriesFileWithoutSync();
@@ -746,11 +766,8 @@ public class FileHierarchicalFolder implements MailFolder, UIDFolder {
                     DataOutputStream
                             dos = new DataOutputStream(os)) {
                 dos.writeInt(this.messageEntries.size());
-                for (MessageEntry e : messageEntries) {
-                    dos.writeInt(e.msgNum);
-                    dos.writeLong(e.uid);
-                    dos.writeInt(e.flagBitSet);
-                    // Do this in a backward compatible way: Only add additional properties at the end!
+                for (MessageEntry me : messageEntries) {
+                    this.writeToDOS(me, dos);
                 }
                 dos.flush();
             }
@@ -759,6 +776,56 @@ public class FileHierarchicalFolder implements MailFolder, UIDFolder {
             throw new UncheckedFileStoreException("IOException happened while trying to write message file: " + this
                     .messagesPath, e);
         }
+    }
+
+    /**
+     * Writes only one single MessageEntry to file
+     *
+     * @param index
+     */
+    private void writeMessageEntriesFileWithSingleEntryWithoutSync(int index) {
+        ByteBuffer toWriteBuffer;
+        try {
+            try (ByteArrayOutputStream bos = new ByteArrayOutputStream(MessageEntry.MSG_ENTRY_SIZE);
+                    DataOutputStream dos = new DataOutputStream(bos);) {
+                MessageEntry me = this.messageEntries.get(index);
+                this.writeToDOS(me, dos);
+                toWriteBuffer = ByteBuffer.wrap(bos.toByteArray());
+            }
+
+            try (FileChannel fc = (FileChannel.open(this.messagesPath, WRITE))) {
+                ByteBuffer copy = ByteBuffer.allocate(MessageEntry.MSG_ENTRY_SIZE);
+                fc.position(MessageEntry.COUNTER_SIZE + (index * MessageEntry.MSG_ENTRY_SIZE));
+                fc.write(toWriteBuffer);
+            }
+        }
+        catch (IOException e) {
+            throw new UncheckedFileStoreException(
+                    "IOException happened while trying to write message file: " + this.messagesPath,
+                    e);
+        }
+    }
+
+    /**
+     * Writes a single entry to the DataOutputStream
+     */
+    private void writeToDOS(MessageEntry me, DataOutputStream dos) throws IOException {
+        // Make sure that writing is not exceeding MessageEntry.MSG_ENTRY_SIZE bytes
+        dos.writeInt(me.msgNum);
+        dos.writeLong(me.uid);
+        dos.writeInt(me.flagBitSet);
+        // Do this in a backward compatible way: Only add additional properties at the end!
+    }
+
+    /**
+     * Writes a single entry to the DataOutputStream
+     */
+    private void readFromDIS(MessageEntry me, DataInputStream dis) throws IOException {
+        // Make sure that writing is not exceeding MessageEntry.MSG_ENTRY_SIZE bytes
+        me.msgNum = dis.readInt();
+        me.uid = dis.readLong();
+        me.flagBitSet = dis.readInt();
+        // Do this in a backward compatible way: Only add additional properties at the end!
     }
 
 	private void readMessageEntriesFile() {
@@ -772,10 +839,7 @@ public class FileHierarchicalFolder implements MailFolder, UIDFolder {
 						for (int i = 0; i < numEntries; i++) {
 							// Then, the entries begin:
 							MessageEntry e = new MessageEntry();
-							e.msgNum = dis.readInt();
-							e.uid = dis.readLong();
-							e.flagBitSet = dis.readInt();
-							// Do this in a backward compatible way: Only add additional properties at the end!
+                            this.readFromDIS(e, dis);
 							this.messageEntries.add(e);
 						}
 					}
