@@ -19,6 +19,8 @@ import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.Store;
 import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.user.GreenMailUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An initial implementation of an ImapHost. By default, uses,
@@ -29,6 +31,8 @@ import com.icegreen.greenmail.user.GreenMailUser;
  * @version $Revision: 109034 $
  */
 public class ImapHostManagerImpl implements ImapHostManager, ImapConstants {
+    final Logger log = LoggerFactory.getLogger(ImapHostManagerImpl.class);
+
     private Store store;
     private MailboxSubscriptions subscriptions;
 
@@ -248,6 +252,11 @@ public class ImapHostManagerImpl implements ImapHostManager, ImapConstants {
         }
 
         return mailboxes;
+    }
+
+    @Override
+    public void logout(GreenMailUser user) {
+        this.store.logout(user);
     }
 
     /**

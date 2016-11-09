@@ -6,14 +6,14 @@
  */
 package com.icegreen.greenmail.imap;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.Store;
 import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.user.GreenMailUser;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * A host machine that has an IMAP4rev1 messaging server. There should be one
@@ -267,5 +267,12 @@ public interface ImapHostManager {
      * @return the store.
      */
     Store getStore();
+
+    /**
+     * When the user logs out.
+     *
+     * @param user
+     */
+    void logout(GreenMailUser user);
 }
 

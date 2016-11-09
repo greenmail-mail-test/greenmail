@@ -77,27 +77,32 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
         ImapSessionFolder mailbox = session.getSelected();
         long[] uids = mailbox.getMessageUids();
-        for (long uid : uids) {
-            int msn = mailbox.getMsn(uid);
 
-            if ((useUids && includes(idSet, uid)) ||
-                    (!useUids && includes(idSet, msn))) {
-                String msgData = getMessageData(useUids, fetch, mailbox, uid);
-                response.fetchResponse(msn, msgData);
+        if (uids.length == 0) {
+            response.commandFailed(this, "The mailbox is empty, there are no messages in the mailbox.");
+        } else {
+            for (long uid : uids) {
+                int msn = mailbox.getMsn(uid);
+
+                if ((useUids && includes(idSet, uid)) ||
+                        (!useUids && includes(idSet, msn))) {
+                    String msgData = getMessageData(useUids, fetch, mailbox, uid);
+                    response.fetchResponse(msn, msgData);
+                }
             }
-        }
 
-        // a wildcard search must include the last message if the folder is not empty,
-        // as per https://tools.ietf.org/html/rfc3501#section-6.4.8
-        long lastMessageUid = uids[uids.length - 1];
-        if (mailbox.getMessageCount() > 0 && includes(idSet, Long.MAX_VALUE) && !includes(idSet, lastMessageUid)) {
-            String msgData = getMessageData(useUids, fetch, mailbox, lastMessageUid);
-            response.fetchResponse(mailbox.getMsn(lastMessageUid), msgData);
-        }
+            // a wildcard search must include the last message if the folder is not empty,
+            // as per https://tools.ietf.org/html/rfc3501#section-6.4.8
+            long lastMessageUid = uids[uids.length - 1];
+            if (mailbox.getMessageCount() > 0 && includes(idSet, Long.MAX_VALUE) && !includes(idSet, lastMessageUid)) {
+                String msgData = getMessageData(useUids, fetch, mailbox, lastMessageUid);
+                response.fetchResponse(mailbox.getMsn(lastMessageUid), msgData);
+            }
 
-        boolean omitExpunged = !useUids;
-        session.unsolicitedResponses(response, omitExpunged);
-        response.commandComplete(this);
+            boolean omitExpunged = !useUids;
+            session.unsolicitedResponses(response, omitExpunged);
+            response.commandComplete(this);
+        }
     }
 
     private String getMessageData(boolean useUids, FetchRequest fetch, ImapSessionFolder mailbox, long uid) throws FolderException, ProtocolException {

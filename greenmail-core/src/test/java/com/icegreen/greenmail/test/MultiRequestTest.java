@@ -98,7 +98,7 @@ public class MultiRequestTest {
         addUsers(num);
         startSenderThreads(num);
         final int tot = (num * (num + 1) / 2);
-        assertTrue(greenMail.waitForIncomingEmail(15000, tot));
+        assertTrue(greenMail.waitForIncomingEmail(50000, tot));
         // No more mails can arrive now
         assertFalse(greenMail.waitForIncomingEmail(1000, tot + 1));
     }
@@ -112,13 +112,13 @@ public class MultiRequestTest {
 
         // Now wait for senders to finish and mails to arrive
         final int sentMessages = (num * (num + 1) / 2);
-        assertTrue(greenMail.waitForIncomingEmail(15000, sentMessages));
+        assertTrue(greenMail.waitForIncomingEmail(25000, sentMessages));
 
         // Then start receivers
         ThreadGroup group = new ThreadGroup(RetrieverThread.class.getName());
         List<RetrieverThread> retrieverThreads = new ArrayList<RetrieverThread>();
         startRetrieverThreads(num, group, retrieverThreads);
-        waitForThreadGroup(group, 20000);
+        waitForThreadGroup(group, 50000);
 
         // Every message is received four times since there are four receivers for every mail account
         checkRetrieverThreadsMessagesArrived(sentMessages * 4, retrieverThreads);
@@ -138,7 +138,7 @@ public class MultiRequestTest {
         List<RetrieverThread> retrieverThreads = new ArrayList<RetrieverThread>();
         ThreadGroup group = new ThreadGroup(RetrieverThread.class.getName());
         startRetrieverThreads(num, group, retrieverThreads);
-        waitForThreadGroup(group, 30000);
+        waitForThreadGroup(group, 120000);
 
         final int sentMessages = (num * (num + 1) / 2);
         // Every message is received four times since there are four receivers for every mail account

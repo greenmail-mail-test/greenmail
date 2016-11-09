@@ -20,6 +20,7 @@ import javax.mail.Quota;
 
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.imap.ImapConstants;
+import com.icegreen.greenmail.user.GreenMailUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -302,6 +303,11 @@ public class InMemoryStore implements Store, ImapConstants {
 
     public void stop() {
         // Do nothing, it is an in-memory store, it will be garbage-collected automaticallys
+    }
+
+    @Override
+    public void logout(GreenMailUser user) {
+        // As we are only in memory, do nothing
     }
 
 }

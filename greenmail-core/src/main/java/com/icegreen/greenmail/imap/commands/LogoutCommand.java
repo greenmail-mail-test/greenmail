@@ -34,6 +34,8 @@ class LogoutCommand extends CommandTemplate {
                              ImapSession session) throws ProtocolException {
         parser.endLine(request);
 
+        session.getHost().logout(session.getUser());
+
         response.byeResponse(BYE_MESSAGE);
         response.commandComplete(this);
         session.closeConnection();
