@@ -6,13 +6,13 @@
  */
 package com.icegreen.greenmail.imap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Wraps the client input reader with a bunch of convenience methods, allowing lookahead=1
@@ -74,7 +74,7 @@ public class ImapRequestLineReader {
                 final char c = (char) read;
                 buf.append(c);
                 if(read == -1) {
-                    dumpLine();
+                    dumpLineUnexpected();
                     throw new ProtocolException("End of stream");
                 }
                 nextChar = c;
@@ -87,9 +87,18 @@ public class ImapRequestLineReader {
     }
 
     public void dumpLine() {
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             // Replace carriage return to avoid confusing multiline log output
             log.debug("IMAP Line received : <" + CARRIAGE_RETURN.matcher(buf).replaceAll("\\\\r\\\\n")+'>');
+        }
+        buf.delete(0, buf.length());
+    }
+
+    public void dumpLineUnexpected() {
+        if (log.isDebugEnabled()) {
+            // Replace carriage return to avoid confusing multiline log output
+            log.debug("IMAP Line received unexpected, throw ProtocolException: <" + CARRIAGE_RETURN.matcher(buf).replaceAll
+                    ("\\\\r\\\\n")+'>');
         }
         buf.delete(0, buf.length());
     }

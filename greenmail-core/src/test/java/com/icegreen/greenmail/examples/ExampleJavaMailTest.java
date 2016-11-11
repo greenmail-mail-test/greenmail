@@ -1,5 +1,17 @@
 package com.icegreen.greenmail.examples;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.UnsupportedEncodingException;
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Store;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.util.ServerSetupTest;
@@ -7,17 +19,11 @@ import com.sun.mail.imap.IMAPStore;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import java.io.UnsupportedEncodingException;
-
-import static org.junit.Assert.assertEquals;
-
 /**
  * Example using plain JavaMail for sending / receiving mails via GreenMail server.
  */
 public class ExampleJavaMailTest {
+
     @Rule
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
 

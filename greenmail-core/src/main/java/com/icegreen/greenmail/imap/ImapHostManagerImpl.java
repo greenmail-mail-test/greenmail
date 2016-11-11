@@ -6,10 +6,21 @@
  */
 package com.icegreen.greenmail.imap;
 
-import com.icegreen.greenmail.store.*;
-import com.icegreen.greenmail.user.GreenMailUser;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
-import java.util.*;
+import com.icegreen.greenmail.store.FolderException;
+import com.icegreen.greenmail.store.InMemoryStore;
+import com.icegreen.greenmail.store.MailFolder;
+import com.icegreen.greenmail.store.Store;
+import com.icegreen.greenmail.store.StoredMessage;
+import com.icegreen.greenmail.user.GreenMailUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An initial implementation of an ImapHost. By default, uses,
@@ -19,8 +30,9 @@ import java.util.*;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-public class ImapHostManagerImpl
-        implements ImapHostManager, ImapConstants {
+public class ImapHostManagerImpl implements ImapHostManager, ImapConstants {
+    final Logger log = LoggerFactory.getLogger(ImapHostManagerImpl.class);
+
     private Store store;
     private MailboxSubscriptions subscriptions;
 
@@ -28,7 +40,7 @@ public class ImapHostManagerImpl
      * Hack constructor which creates an in-memory store, and creates a console logger.
      */
     public ImapHostManagerImpl() {
-        store = new InMemoryStore();
+        store = new InMemoryStore(null);
         subscriptions = new MailboxSubscriptions();
     }
 
@@ -43,7 +55,7 @@ public class ImapHostManagerImpl
         try {
             Collection<MailFolder> boxes = store.listMailboxes("*");
             for (MailFolder boxe : boxes) {
-                ret.addAll(boxe.getMessages());
+                ret.addAll(boxe.getMessageEntries());
             }
         } catch (FolderException e) {
             throw new IllegalStateException(e);
@@ -240,6 +252,11 @@ public class ImapHostManagerImpl
         }
 
         return mailboxes;
+    }
+
+    @Override
+    public void logout(GreenMailUser user) {
+        this.store.logout(user);
     }
 
     /**

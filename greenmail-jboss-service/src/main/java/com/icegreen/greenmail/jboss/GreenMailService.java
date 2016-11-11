@@ -152,7 +152,7 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
                     .append(" Mails for ").append(pEmail).append("</caption>");
             builder.append(
                     "<tr><th>From</th><th>Subject</th><th>Received date</th><th>Content</th></tr>");
-            for (StoredMessage msg : mailFolder.getMessages()) {
+            for (StoredMessage msg : mailFolder.getMessageEntries()) {
                 MimeMessage mimeMessage = msg.getMimeMessage();
                 builder.append("<tr>");
                 builder.append("<td>").append(

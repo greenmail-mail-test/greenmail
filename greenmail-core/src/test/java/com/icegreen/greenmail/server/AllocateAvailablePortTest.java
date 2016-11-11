@@ -1,16 +1,17 @@
 package com.icegreen.greenmail.server;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import javax.mail.internet.MimeMessage;
+
+import com.icegreen.greenmail.internal.GreenMailRuleWithStoreChooser;
+import com.icegreen.greenmail.internal.StoreChooser;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
 import org.junit.Rule;
 import org.junit.Test;
-
-import javax.mail.internet.MimeMessage;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class AllocateAvailablePortTest {
 
@@ -19,14 +20,16 @@ public class AllocateAvailablePortTest {
     private final ServerSetup allocateAnyFreePortForAnSmtpServer = smtpServerAtPort(AnyFreePort);
 
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(allocateAnyFreePortForAnSmtpServer);
+    public final GreenMailRuleWithStoreChooser greenMail = new GreenMailRuleWithStoreChooser(allocateAnyFreePortForAnSmtpServer);
 
     @Test
+    @StoreChooser(store="file,memory")
     public void returnTheActuallyAllocatedPort() throws Exception {
         assertThat(greenMail.getSmtp().getPort(), not(0));
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void ensureThatMailCanActuallyBeSentToTheAllocatedPort() throws Exception {
         GreenMailUtil.sendTextEmail("to@localhost.com", "from@localhost.com", "subject", "body", smtpServerAtPort(greenMail.getSmtp().getPort()));
 

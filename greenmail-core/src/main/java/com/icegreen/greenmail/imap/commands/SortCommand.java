@@ -1,11 +1,17 @@
 package com.icegreen.greenmail.imap.commands;
 
-import com.icegreen.greenmail.imap.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import com.icegreen.greenmail.imap.AuthorizationException;
+import com.icegreen.greenmail.imap.ImapRequestLineReader;
+import com.icegreen.greenmail.imap.ImapResponse;
+import com.icegreen.greenmail.imap.ImapSession;
+import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.StoredMessage;
-
-import java.util.*;
 
 /**
  * Implements SORT command described in <a href="https://tools.ietf.org/html/rfc5256">RFC5256</a>
@@ -45,7 +51,10 @@ class SortCommand extends SelectedStateCommand implements UidEnabledCommand {
         long[] uids = folder.search(sortTerm.getSearchTerm());
         List<StoredMessage> messages = new ArrayList<>();
         for (long uid : uids) {
-            messages.add(folder.getMessage(uid));
+            StoredMessage m = folder.getMessage(uid);
+            if (m != null) {
+                messages.add(m);
+            }
         }
 
         Collections.sort(messages, new StoredMessageSorter(sortTerm));

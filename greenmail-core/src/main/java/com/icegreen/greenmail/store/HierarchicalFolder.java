@@ -4,32 +4,31 @@
 */
 package com.icegreen.greenmail.store;
 
-import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
-import com.icegreen.greenmail.imap.ImapConstants;
-import com.icegreen.greenmail.imap.commands.IdRange;
-import com.icegreen.greenmail.mail.MovingMessage;
+import static com.icegreen.greenmail.imap.commands.ImapFlagConstants.PERMANENT_FLAGS;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.mail.Flags;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.UIDFolder;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
-import java.util.*;
+
+import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
+import com.icegreen.greenmail.imap.ImapConstants;
+import com.icegreen.greenmail.imap.commands.IdRange;
+import com.icegreen.greenmail.mail.MovingMessage;
 
 /**
  * @author Raimund Klein <raimund.klein@gmx.de>
  */
 class HierarchicalFolder implements MailFolder, UIDFolder {
-    private static final Flags PERMANENT_FLAGS = new Flags();
-
-    static {
-        PERMANENT_FLAGS.add(Flags.Flag.ANSWERED);
-        PERMANENT_FLAGS.add(Flags.Flag.DELETED);
-        PERMANENT_FLAGS.add(Flags.Flag.DRAFT);
-        PERMANENT_FLAGS.add(Flags.Flag.FLAGGED);
-        PERMANENT_FLAGS.add(Flags.Flag.SEEN);
-    }
 
     private final StoredMessageCollection mailMessages = new ListBasedStoredMessageCollection();
     private final List<FolderListener> _mailboxListeners = Collections.synchronizedList(new ArrayList<FolderListener>());
@@ -168,8 +167,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         return mailMessages.getMessages(range);
     }
 
-    @Override
-    public List<StoredMessage> getMessages() {
+    public List<StoredMessage> getMessageEntries() {
         return mailMessages.getMessages();
     }
 
@@ -301,10 +299,89 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         return null;
     }
 
+    /**
+     * Return all message UIDS of all messages in the mailbox.
+     *
+     * @return - an array of uids, which can be empty
+     */
     @Override
     public long[] getMessageUids() {
         return mailMessages.getMessageUids();
     }
+
+    /**
+     * Return all message UIDS of all messages in the mailbox which match the UID range.
+     *
+     * @param uidRange - Range of UIDS
+     *
+     * @return - an array of uids, which can be empty
+     */
+    @Override
+    public long[] getMessageUidsByUidRange(IdRange[] uidRange) {
+        long[] allUids = mailMessages.getMessageUids();
+
+        ArrayList<Long>matchedUids = new ArrayList<>();
+        for (long currentUid : allUids) {
+            if (includes(uidRange, currentUid)) {
+                matchedUids.add(currentUid);
+            }
+        }
+        long[] result = new long[matchedUids.size()];
+        int index = 0;
+        for (Long matchedUid : matchedUids) {
+            result[index] = matchedUid.longValue();
+            index++;
+        }
+        return result;
+    }
+
+    /**
+     * Return all message UIDS of all messages in the mailbox which match the msgNum range.
+     *
+     * @param msgNumRange - Range of message numbers
+     *
+     * @return - an array of uids, which can be empty
+     * @throws FolderException
+     */
+    @Override
+    public long[] getMessageUidsByMsgNumRange(IdRange[] msgNumRange) throws FolderException {
+        long[] allUids = mailMessages.getMessageUids();
+
+        ArrayList<Long>matchedUids = new ArrayList<>();
+        for (long currentUid : allUids) {
+            int msn = getMsn(currentUid);
+            if (includes(msgNumRange, msn)) {
+                matchedUids.add(currentUid);
+            }
+        }
+        long[] result = new long[matchedUids.size()];
+        int index = 0;
+        for (Long matchedUid : matchedUids) {
+            result[index] = matchedUid.longValue();
+            index++;
+        }
+        return result;
+    }
+
+    protected boolean includes(IdRange[] idSet, long id) {
+        for (IdRange idRange : idSet) {
+            if (idRange.includes(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the message UID of the last message in the mailbox, or -1L to show that no such message exist (e.g. when the
+     * mailbox is empty).
+     *
+     * @return - a valid UID of the last message or -1
+     */
+    public long getMessageUidOfLastMessage() {
+        return this.mailMessages.getLastMessageUid();
+    }
+
 
     @Override
     public long[] search(SearchTerm searchTerm) {

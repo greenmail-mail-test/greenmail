@@ -1,5 +1,10 @@
 package com.icegreen.greenmail.examples;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import javax.mail.Message;
+
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.GreenMailUtil;
@@ -7,11 +12,6 @@ import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Rule;
 import org.junit.Test;
-
-import javax.mail.Message;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Youssuf ElKalay.

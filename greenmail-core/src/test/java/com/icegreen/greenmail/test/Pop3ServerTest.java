@@ -4,7 +4,20 @@
  */
 package com.icegreen.greenmail.test;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.ByteArrayOutputStream;
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMultipart;
+
+import com.icegreen.greenmail.internal.GreenMailRuleWithStoreChooser;
+import com.icegreen.greenmail.internal.StoreChooser;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
@@ -14,14 +27,6 @@ import com.sun.mail.pop3.POP3Store;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMultipart;
-import java.io.ByteArrayOutputStream;
-
-import static org.junit.Assert.*;
-
 /**
  * @author Wael Chatila
  * @version $Id: $
@@ -29,9 +34,10 @@ import static org.junit.Assert.*;
  */
 public class Pop3ServerTest {
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
+    public final GreenMailRuleWithStoreChooser greenMail = new GreenMailRuleWithStoreChooser(ServerSetupTest.ALL);
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testPop3Capabillities() throws MessagingException, UserException {
         final POP3Store store = greenMail.getPop3().createStore();
         greenMail.getManagers().getUserManager().createUser("testPop3Capabillities@localhost.com",
@@ -45,6 +51,7 @@ public class Pop3ServerTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testRetrieve() throws Exception {
         assertNotNull(greenMail.getPop3());
         final String subject = GreenMailUtil.random();
@@ -66,6 +73,7 @@ public class Pop3ServerTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testPop3sReceive() throws Throwable {
         assertNotNull(greenMail.getPop3s());
         final String subject = GreenMailUtil.random();
@@ -83,6 +91,7 @@ public class Pop3ServerTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testRetrieveWithNonDefaultPassword() throws Exception {
         assertNotNull(greenMail.getPop3());
         final String to = "test@localhost.com";
@@ -109,6 +118,7 @@ public class Pop3ServerTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testRetrieveMultipart() throws Exception {
         assertNotNull(greenMail.getPop3());
 

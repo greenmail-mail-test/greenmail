@@ -4,21 +4,36 @@
  */
 package com.icegreen.greenmail.test.commands;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.Date;
+import javax.mail.Address;
+import javax.mail.Flags;
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Store;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.mail.search.ComparisonTerm;
+import javax.mail.search.FlagTerm;
+import javax.mail.search.FromTerm;
+import javax.mail.search.HeaderTerm;
+import javax.mail.search.RecipientTerm;
+import javax.mail.search.SentDateTerm;
+import javax.mail.search.SubjectTerm;
+
 import com.icegreen.greenmail.imap.commands.SearchKey;
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.internal.GreenMailRuleWithStoreChooser;
+import com.icegreen.greenmail.internal.StoreChooser;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Rule;
 import org.junit.Test;
-
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.mail.search.*;
-import java.util.Date;
-
-import static org.junit.Assert.*;
 
 /**
  * @author Wael Chatila
@@ -27,10 +42,12 @@ import static org.junit.Assert.*;
  */
 public class ImapSearchTest {
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
+    public final GreenMailRuleWithStoreChooser greenMail = new GreenMailRuleWithStoreChooser(ServerSetupTest.ALL);
 
+    // Only execute this test with memory store, because the file store does not support user flags
     @Test
-    public void testSearch() throws Exception {
+    @StoreChooser(store="memory")
+    public void testSearchWithUserFlags() throws Exception {
         GreenMailUser user = greenMail.setUser("to1@localhost", "pwd");
         assertNotNull(greenMail.getImap());
 
@@ -51,7 +68,8 @@ public class ImapSearchTest {
             assertTrue(null != imapMessages && imapMessages.length == 2);
             Message m0 = imapMessages[0];
             Message m1 = imapMessages[1];
-            assertTrue(m0.getFlags().contains(Flags.Flag.ANSWERED));
+            Flags fl = m0.getFlags();
+            assertTrue(fl.contains(Flags.Flag.ANSWERED));
 
             // Search flags
             imapMessages = imapFolder.search(new FlagTerm(new Flags(Flags.Flag.ANSWERED), true));
@@ -114,8 +132,86 @@ public class ImapSearchTest {
         }
     }
 
+    @Test
+    @StoreChooser(store="file,memory")
+    public void testSearchWithoutUserFlags() throws Exception {
+        GreenMailUser user = greenMail.setUser("to1@localhost", "pwd");
+        assertNotNull(greenMail.getImap());
+
+        MailFolder folder = greenMail.getManagers().getImapHostManager().getFolder(user, "INBOX");
+        storeSearchTestMessages(greenMail.getImap().createSession(), folder, null);
+
+        greenMail.waitForIncomingEmail(2);
+
+        final Store store = greenMail.getImap().createStore();
+        store.connect("to1@localhost", "pwd");
+        try {
+            Folder imapFolder = store.getFolder("INBOX");
+            imapFolder.open(Folder.READ_WRITE);
+
+            Message[] imapMessages = imapFolder.getMessages();
+            assertTrue(null != imapMessages && imapMessages.length == 2);
+            Message m0 = imapMessages[0];
+            Message m1 = imapMessages[1];
+            Flags fl = m0.getFlags();
+            assertTrue(fl.contains(Flags.Flag.ANSWERED));
+
+            // Search flags
+            imapMessages = imapFolder.search(new FlagTerm(new Flags(Flags.Flag.ANSWERED), true));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m0);
+
+            // Search header ids
+            String id = m0.getHeader("Message-ID")[0];
+            imapMessages = imapFolder.search(new HeaderTerm("Message-ID", id));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m0);
+
+            id = m1.getHeader("Message-ID")[0];
+            imapMessages = imapFolder.search(new HeaderTerm("Message-ID", id));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m1);
+
+            // Search FROM
+            imapMessages = imapFolder.search(new FromTerm(new InternetAddress("from2@localhost")));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m0);
+
+            imapMessages = imapFolder.search(new FromTerm(new InternetAddress("from3@localhost")));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m1);
+
+            // Search TO
+            imapMessages = imapFolder.search(new RecipientTerm(Message.RecipientType.TO, new InternetAddress("to2@localhost")));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m0);
+
+            imapMessages = imapFolder.search(new RecipientTerm(Message.RecipientType.TO, new InternetAddress("to3@localhost")));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m1);
+
+            // Search Subject
+            imapMessages = imapFolder.search(new SubjectTerm("test0Search"));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m0);
+            imapMessages = imapFolder.search(new SubjectTerm("TeSt0Search")); // Case insensitive
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m0);
+            imapMessages = imapFolder.search(new SubjectTerm("0S"));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m0);
+            imapMessages = imapFolder.search(new SubjectTerm("not found"));
+            assertTrue(imapMessages.length == 0);
+            imapMessages = imapFolder.search(new SubjectTerm("test"));
+            assertTrue(imapMessages.length == 2);
+        } finally {
+            store.close();
+        }
+    }
+
     // Test an unsupported search term for exception. Should be ignored.
     @Test
+    @StoreChooser(store="file,memory")
     public void testUnsupportedSearchWarnsButDoesNotThrowException() throws MessagingException {
         try {
             SearchKey.valueOf("SENTDATE");
@@ -154,7 +250,9 @@ public class ImapSearchTest {
         setRecipients(message1, Message.RecipientType.BCC, "bcc", 1, 2);
         message1.setFrom(new InternetAddress("from2@localhost"));
         message1.setFlag(Flags.Flag.ANSWERED, true);
-        message1.setFlags(flags, true);
+        if (flags != null) {
+            message1.setFlags(flags, true);
+        }
         folder.store(message1);
 
         MimeMessage message2 = new MimeMessage(session);

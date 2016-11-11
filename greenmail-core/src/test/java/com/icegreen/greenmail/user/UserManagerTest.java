@@ -1,19 +1,18 @@
 package com.icegreen.greenmail.user;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.imap.ImapHostManagerImpl;
 import com.icegreen.greenmail.store.InMemoryStore;
-
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 
 public class UserManagerTest {
     @Test
     public void testListUsers() throws UserException {
-        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
+        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore(null));
         UserManager userManager = new UserManager(imapHostManager);
 
         assertEquals(0, userManager.listUser().size());
@@ -31,7 +30,7 @@ public class UserManagerTest {
 
     @Test
     public void testFindByEmailAndLogin() throws UserException {
-        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
+        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore(null));
         UserManager userManager = new UserManager(imapHostManager);
         GreenMailUser u1 = userManager.createUser("foo@bar.com", "foo", "pwd");
 
@@ -47,7 +46,7 @@ public class UserManagerTest {
 
     @Test
     public void testCreateAndDeleteUser() throws UserException {
-        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
+        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore(null));
         UserManager userManager = new UserManager(imapHostManager);
 
         assertTrue(userManager.listUser().isEmpty());
@@ -61,7 +60,7 @@ public class UserManagerTest {
 
     @Test
     public void testNoAuthRequired() {
-        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
+        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore(null));
         UserManager userManager = new UserManager(imapHostManager);
         userManager.setAuthRequired(false);
 
@@ -71,7 +70,7 @@ public class UserManagerTest {
 
     @Test
     public void testNoAuthRequiredWithExistingUser() throws UserException {
-        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
+        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore(null));
         UserManager userManager = new UserManager(imapHostManager);
         userManager.setAuthRequired(false);
 
@@ -82,7 +81,7 @@ public class UserManagerTest {
 
     @Test
     public void testAuthRequired() {
-        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
+        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore(null));
         UserManager userManager = new UserManager(imapHostManager);
         userManager.setAuthRequired(true);
 
@@ -92,7 +91,7 @@ public class UserManagerTest {
 
     @Test
     public void testAuthRequiredWithExistingUser() throws UserException {
-        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
+        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore(null));
         UserManager userManager = new UserManager(imapHostManager);
         userManager.setAuthRequired(true);
         userManager.createUser("foo@example.com","foo","bar");

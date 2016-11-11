@@ -6,8 +6,10 @@
  */
 package com.icegreen.greenmail.store;
 
-import javax.mail.Quota;
 import java.util.Collection;
+import javax.mail.Quota;
+
+import com.icegreen.greenmail.user.GreenMailUser;
 
 /**
  * Represents the complete mail store for an IMAP server, providing access to
@@ -134,4 +136,15 @@ public interface Store {
      * @param pQuotaSupported true, if supported.
      */
     void setQuotaSupported(boolean pQuotaSupported);
+
+    /**
+     * The store is no longer used, Greenmail is about to be stopped.
+     */
+    void stop();
+
+    /**
+     * The user has logged out.
+     */
+    void logout(GreenMailUser user);
+
 }

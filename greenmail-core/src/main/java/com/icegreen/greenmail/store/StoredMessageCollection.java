@@ -4,10 +4,10 @@
 */
 package com.icegreen.greenmail.store;
 
+import java.util.List;
+
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import com.icegreen.greenmail.imap.commands.IdRange;
-
-import java.util.List;
 
 /**
  * @author Raimund Klein <raimund.klein@gmx.de>
@@ -28,6 +28,14 @@ public interface StoredMessageCollection extends Iterable<StoredMessage> {
     List<StoredMessage> getMessages();
 
     long[] getMessageUids();
+
+    /**
+     * Returns the message UID of the last message in the mailbox, or -1L to show that no such message exist (e.g. when the
+     * mailbox is empty).
+     *
+     * @return - a valid UID of the last message or -1
+     */
+    long getLastMessageUid();
 
     void expunge(List<FolderListener> folderListeners);
 

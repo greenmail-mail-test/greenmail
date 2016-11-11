@@ -4,7 +4,30 @@
  */
 package com.icegreen.greenmail.test;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static javax.mail.Flags.Flag.DELETED;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.ByteArrayOutputStream;
+import java.util.Date;
+import javax.mail.BodyPart;
+import javax.mail.Flags;
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Quota;
+import javax.mail.QuotaAwareStore;
+import javax.mail.Transport;
+import javax.mail.UIDFolder;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
+import com.icegreen.greenmail.internal.GreenMailRuleWithStoreChooser;
+import com.icegreen.greenmail.internal.StoreChooser;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetup;
@@ -15,15 +38,6 @@ import com.sun.mail.imap.IMAPStore;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.mail.*;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import java.io.ByteArrayOutputStream;
-import java.util.Date;
-
-import static javax.mail.Flags.Flag.DELETED;
-import static org.junit.Assert.*;
-
 /**
  * @author Wael Chatila
  * @version $Id: $
@@ -31,8 +45,9 @@ import static org.junit.Assert.*;
  */
 public class ImapServerTest {
     private static final String UMLAUTS = "öäü \u00c4 \u00e4";
+
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(new ServerSetup[]{
+    public final GreenMailRuleWithStoreChooser greenMail = new GreenMailRuleWithStoreChooser(new ServerSetup[]{
             ServerSetupTest.IMAP,
             ServerSetupTest.IMAPS,
             ServerSetupTest.SMTP,
@@ -45,6 +60,7 @@ public class ImapServerTest {
      * @throws Exception on error.
      */
     @Test
+    @StoreChooser(store="file,memory")
     public void testRetreiveSimple() throws Exception {
         assertNotNull(greenMail.getImap());
         final String subject = GreenMailUtil.random() + UMLAUTS;
@@ -72,6 +88,7 @@ public class ImapServerTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testImapsReceive() throws Throwable {
         assertNotNull(greenMail.getImaps());
         final String subject = GreenMailUtil.random();
@@ -89,6 +106,7 @@ public class ImapServerTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testRetreiveSimpleWithNonDefaultPassword() throws Exception {
         assertNotNull(greenMail.getImap());
         final String to = "test@localhost.com";
@@ -115,6 +133,7 @@ public class ImapServerTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testRetriveMultipart() throws Exception {
         assertNotNull(greenMail.getImap());
 
@@ -147,7 +166,9 @@ public class ImapServerTest {
         }
     }
 
+    //TODO: Implement quota on Filebase store as well and then add "file" to the list of StoreChooser here
     @Test
+    @StoreChooser(store="memory")
     public void testQuota() throws Exception {
         greenMail.setUser("foo@localhost", "pwd");
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject", "Test message", ServerSetupTest.SMTP);
@@ -188,7 +209,9 @@ public class ImapServerTest {
         }
     }
 
+    //TODO: Implement quota on Filebase store as well and then add "file" to the list of StoreChooser here
     @Test
+    @StoreChooser(store="memory")
     public void testQuotaCapability() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
         greenMail.setQuotaSupported(false);
@@ -208,8 +231,10 @@ public class ImapServerTest {
         }
     }
 
+    // User flags not implemented in file-storage
     @Test
-    public void testSetGetFlags() throws MessagingException, InterruptedException {
+    @StoreChooser(store="memory")
+    public void testSetGetFlagsWithUserFlags() throws MessagingException, InterruptedException {
         greenMail.setUser("foo@localhost", "pwd");
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject", "Test message", ServerSetupTest.SMTP);
         greenMail.waitForIncomingEmail(1);
@@ -259,6 +284,56 @@ public class ImapServerTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
+    public void testSetGetFlagsWithOnlySystemFlags() throws MessagingException, InterruptedException {
+        greenMail.setUser("foo@localhost", "pwd");
+        GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject", "Test message", ServerSetupTest.SMTP);
+        greenMail.waitForIncomingEmail(1);
+
+        final IMAPStore store = greenMail.getImap().createStore();
+        store.connect("foo@localhost", "pwd");
+        try {
+
+            // Set some flags
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+            try {
+                Message[] msgs = folder.getMessages();
+                assertTrue(null != msgs && msgs.length == 1);
+
+                Message m = msgs[0];
+
+                Flags f = m.getFlags();
+                assertFalse(f.contains(Flags.Flag.DRAFT));
+                assertFalse(f.contains(Flags.Flag.FLAGGED));
+                m.setFlag(Flags.Flag.DRAFT, true);
+                m.setFlag(Flags.Flag.FLAGGED, true);
+                assertTrue(m.getFlags().contains(Flags.Flag.DRAFT));
+                assertTrue(m.getFlags().contains(Flags.Flag.FLAGGED));
+            } finally {
+                folder.close(true);
+            }
+
+            // Re-read and validate
+            folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+            try {
+                Message[] msgs = folder.getMessages();
+                assertTrue(null != msgs && msgs.length == 1);
+                Message m = msgs[0];
+                Flags f = m.getFlags();
+                assertTrue(m.getFlags().contains(Flags.Flag.DRAFT));
+                assertTrue(m.getFlags().contains(Flags.Flag.FLAGGED));
+            } finally {
+                folder.close(true);
+            }
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
+    @StoreChooser(store="file,memory")
     public void testNestedFolders() throws MessagingException, InterruptedException {
         greenMail.setUser("foo@localhost", "pwd");
         final IMAPStore store = greenMail.getImap().createStore();
@@ -268,6 +343,8 @@ public class ImapServerTest {
             // Create some folders
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
             IMAPFolder newFolder = (IMAPFolder) folder.getFolder("foo-folder");
+
+
             assertTrue(!newFolder.exists());
 
             assertTrue(newFolder.create(Folder.HOLDS_FOLDERS | Folder.HOLDS_MESSAGES));
@@ -281,7 +358,9 @@ public class ImapServerTest {
         }
     }
 
+    // TODO: Renaming a folder is not yet supported with file-storage
     @Test
+    @StoreChooser(store="memory")
     public void testRenameFolder() throws MessagingException, InterruptedException {
         greenMail.setUser("foo@localhost", "pwd");
 
@@ -331,6 +410,7 @@ public class ImapServerTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testFolderRequiringEscaping() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
         GreenMailUtil.sendTextEmail("foo@localhost", "foo@localhost", "test subject", "", greenMail.getSmtp().getServerSetup());
@@ -360,6 +440,7 @@ public class ImapServerTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testUIDFolder() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
 
@@ -391,6 +472,7 @@ public class ImapServerTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testUIDExpunge() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
 
@@ -424,7 +506,6 @@ public class ImapServerTest {
 
             // ... and expunge (with UID)
             folder.expunge(msgsForDeletion);
-
             // Check
             for (int i = 0; i < uids.length; i++) {
                 final Message message = folder.getMessageByUID(uids[i]);
@@ -441,6 +522,7 @@ public class ImapServerTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testAppend() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
 
@@ -483,6 +565,7 @@ public class ImapServerTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testUIDFetchWithWildcard() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
 
@@ -517,6 +600,7 @@ public class ImapServerTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testExpunge() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
 

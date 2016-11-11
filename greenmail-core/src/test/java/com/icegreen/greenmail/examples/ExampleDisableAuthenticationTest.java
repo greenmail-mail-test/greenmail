@@ -1,5 +1,11 @@
 package com.icegreen.greenmail.examples;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
+
+import javax.mail.Message;
+
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.Retriever;
@@ -7,20 +13,14 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.mail.Message;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertEquals;
-
 /**
  * Created by Youssuf ElKalay.
  * Example using GreenMailConfiguration to test authenticating against SMTP/IMAP/POP3 with no password required.
  */
 public class ExampleDisableAuthenticationTest {
+
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_POP3_IMAP)
-            .withConfiguration(GreenMailConfiguration.aConfig().withDisabledAuthentication());
+    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_POP3_IMAP, GreenMailConfiguration.aConfig().withDisabledAuthentication());
 
     @Test
     public void testNoAuthIMAP() {

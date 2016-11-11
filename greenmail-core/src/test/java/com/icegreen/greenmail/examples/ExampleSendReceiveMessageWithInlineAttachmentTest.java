@@ -1,21 +1,29 @@
 package com.icegreen.greenmail.examples;
 
+import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import javax.mail.BodyPart;
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Part;
+import javax.mail.Session;
+import javax.mail.Store;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
-
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-
-import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * See https://github.com/greenmail-mail-test/greenmail/issues/113

@@ -1,7 +1,22 @@
 package com.icegreen.greenmail.test.commands;
 
-import com.icegreen.greenmail.imap.commands.SearchKey;
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import javax.mail.Address;
+import javax.mail.Flags;
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Store;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.mail.search.FlagTerm;
+
+import com.icegreen.greenmail.internal.GreenMailRuleWithStoreChooser;
+import com.icegreen.greenmail.internal.StoreChooser;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.ServerSetupTest;
@@ -9,13 +24,6 @@ import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.imap.SortTerm;
 import org.junit.Rule;
 import org.junit.Test;
-
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.mail.search.*;
-
-import static org.junit.Assert.*;
 
 /**
  * Created on 10/03/2016.
@@ -25,9 +33,10 @@ import static org.junit.Assert.*;
 public class ImapSortTest {
 
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
+    public final GreenMailRuleWithStoreChooser greenMail = new GreenMailRuleWithStoreChooser(ServerSetupTest.ALL);
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testSort() throws Exception {
         GreenMailUser user = greenMail.setUser("to1@localhost", "pwd");
         assertNotNull(greenMail.getImap());

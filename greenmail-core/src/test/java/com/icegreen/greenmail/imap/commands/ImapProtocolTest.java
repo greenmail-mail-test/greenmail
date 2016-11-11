@@ -1,6 +1,13 @@
 package com.icegreen.greenmail.imap.commands;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import javax.mail.Folder;
+import javax.mail.MessagingException;
+
+import com.icegreen.greenmail.internal.GreenMailRuleWithStoreChooser;
+import com.icegreen.greenmail.internal.StoreChooser;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.sun.mail.iap.ProtocolException;
@@ -12,20 +19,15 @@ import com.sun.mail.imap.protocol.IMAPProtocol;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.mail.Folder;
-import javax.mail.MessagingException;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 /**
  * Low level IMAP protocol test cases.
  */
 public class ImapProtocolTest {
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
+    public final GreenMailRuleWithStoreChooser greenMail = new GreenMailRuleWithStoreChooser(ServerSetupTest.SMTP_IMAP);
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testFetchUidsAndSize() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test UIDFolder",

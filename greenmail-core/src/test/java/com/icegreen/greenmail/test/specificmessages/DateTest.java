@@ -1,6 +1,18 @@
 package com.icegreen.greenmail.test.specificmessages;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
+import static org.junit.Assert.assertThat;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
+import com.icegreen.greenmail.internal.GreenMailRuleWithStoreChooser;
+import com.icegreen.greenmail.internal.StoreChooser;
 import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
@@ -8,25 +20,15 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import java.io.IOException;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThan;
-import static org.junit.Assert.assertThat;
-
 /**
  * Tests date handling for received messages
  */
 public class DateTest {
     @Rule
-    public GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_POP3_IMAP);
+    public GreenMailRuleWithStoreChooser greenMail = new GreenMailRuleWithStoreChooser(ServerSetupTest.SMTP_POP3_IMAP);
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testDatesCorrect() throws MessagingException, IOException {
         String to = "to@localhost";
         greenMail.setUser(to, to);

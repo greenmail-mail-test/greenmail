@@ -6,15 +6,15 @@
  */
 package com.icegreen.greenmail.store;
 
-import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
-import com.icegreen.greenmail.imap.commands.IdRange;
-import com.icegreen.greenmail.mail.MovingMessage;
-
+import java.util.Date;
+import java.util.List;
 import javax.mail.Flags;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
-import java.util.Date;
-import java.util.List;
+
+import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
+import com.icegreen.greenmail.imap.commands.IdRange;
+import com.icegreen.greenmail.mail.MovingMessage;
 
 /**
  * Represents a mailbox within an {@link com.icegreen.greenmail.store.Store}.
@@ -78,7 +78,39 @@ public interface MailFolder {
 
     StoredMessage getMessage(long uid);
 
+    /**
+     * Return all message UIDS of all messages in the mailbox.
+     *
+     * @return - an array of uids, which can be empty
+     */
     long[] getMessageUids();
+
+    /**
+     * Return all message UIDS of all messages in the mailbox which match the UID range.
+     *
+     * @param uidRange - Range of UIDS
+     *
+     * @return - an array of uids, which can be empty
+     */
+    long[] getMessageUidsByUidRange(IdRange[] uidRange);
+
+    /**
+     * Return all message UIDS of all messages in the mailbox which match the msgNum range.
+     *
+     * @param msgNumRange - Range of message numbers
+     *
+     * @return - an array of uids, which can be empty
+     * @throws FolderException
+     */
+    long[] getMessageUidsByMsgNumRange(IdRange[] msgNumRange) throws FolderException;
+
+    /**
+     * Returns the message UID of the last message in the mailbox, or -1L to show that no such message exist (e.g. when the
+     * mailbox is empty).
+     *
+     * @return - a valid UID of the last message or -1
+     */
+    long getMessageUidOfLastMessage();
 
     long[] search(SearchTerm searchTerm);
 
@@ -94,6 +126,6 @@ public interface MailFolder {
     void signalDeletion();
 
     List<StoredMessage> getMessages(MsgRangeFilter msgRangeFilter);
-    List<StoredMessage> getMessages();
+    List<StoredMessage> getMessageEntries();
     List<StoredMessage> getNonDeletedMessages();
 }

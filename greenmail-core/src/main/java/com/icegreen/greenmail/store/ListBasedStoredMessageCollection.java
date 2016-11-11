@@ -4,16 +4,24 @@
 */
 package com.icegreen.greenmail.store;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import javax.mail.Flags;
+
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import com.icegreen.greenmail.imap.commands.IdRange;
-
-import javax.mail.Flags;
-import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Raimund Klein <raimund.klein@gmx.de>
  */
 public class ListBasedStoredMessageCollection implements StoredMessageCollection {
+    final Logger log = LoggerFactory.getLogger(ListBasedStoredMessageCollection.class);
+
     private final List<StoredMessage> mailMessages = Collections.synchronizedList(new ArrayList<StoredMessage>());
 
     @Override
@@ -32,10 +40,13 @@ public class ListBasedStoredMessageCollection implements StoredMessageCollection
     }
 
     private void expungeMessage(int msn, Collection<FolderListener> mailboxListeners) {
+        log.debug("Expunge message with messageNumber: " + msn);
         // Notify all the listeners of the pending delete
         synchronized (mailboxListeners) {
             deleteMessage(msn);
+            log.debug("Deleted message with messageNumber: " + msn);
             for (FolderListener expungeListener : mailboxListeners) {
+                log.debug("Informed listener: " + expungeListener);
                 expungeListener.expunged(msn);
             }
         }
@@ -106,6 +117,23 @@ public class ListBasedStoredMessageCollection implements StoredMessageCollection
             }
             return uids;
         }
+    }
+
+    /**
+     * Returns the message UID of the last message in the mailbox, or -1L to show that no such message exist (e.g. when the
+     * mailbox is empty).
+     *
+     * @return - a valid UID of the last message or -1
+     */
+    @Override
+    public long getLastMessageUid() {
+        long result = -1;
+        synchronized (mailMessages) {
+            if (!this.mailMessages.isEmpty()) {
+                result = this.mailMessages.get(this.mailMessages.size() - 1).getUid();
+            }
+        }
+        return result;
     }
 
     @Override

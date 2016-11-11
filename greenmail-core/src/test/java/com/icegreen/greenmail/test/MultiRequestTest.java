@@ -5,7 +5,15 @@
 */
 package com.icegreen.greenmail.test;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.icegreen.greenmail.internal.GreenMailRuleWithStoreChooser;
+import com.icegreen.greenmail.internal.StoreChooser;
 import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
@@ -15,11 +23,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.*;
-
 /**
  * Test multiple senders and receivers using all available protocols
  */
@@ -27,7 +30,7 @@ public class MultiRequestTest {
     protected final static Logger log = LoggerFactory.getLogger(MultiRequestTest.class);
 
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
+    public final GreenMailRuleWithStoreChooser greenMail = new GreenMailRuleWithStoreChooser(ServerSetupTest.ALL);
 
     //~ INNER CLASSES -----------------------------------------------
     private static class SenderThread extends Thread {
@@ -89,17 +92,19 @@ public class MultiRequestTest {
     //~ END INNER CLASSES -----------------------------------------------
 
     @Test
+    @StoreChooser(store="file,memory")
     public void test20Senders() throws InterruptedException {
         final int num = 20;
         addUsers(num);
         startSenderThreads(num);
         final int tot = (num * (num + 1) / 2);
-        assertTrue(greenMail.waitForIncomingEmail(15000, tot));
+        assertTrue(greenMail.waitForIncomingEmail(50000, tot));
         // No more mails can arrive now
         assertFalse(greenMail.waitForIncomingEmail(1000, tot + 1));
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void test20Senders20x4Retrievers() throws InterruptedException {
         final int num = 20;
         addUsers(num);
@@ -107,13 +112,13 @@ public class MultiRequestTest {
 
         // Now wait for senders to finish and mails to arrive
         final int sentMessages = (num * (num + 1) / 2);
-        assertTrue(greenMail.waitForIncomingEmail(15000, sentMessages));
+        assertTrue(greenMail.waitForIncomingEmail(25000, sentMessages));
 
         // Then start receivers
         ThreadGroup group = new ThreadGroup(RetrieverThread.class.getName());
         List<RetrieverThread> retrieverThreads = new ArrayList<RetrieverThread>();
         startRetrieverThreads(num, group, retrieverThreads);
-        waitForThreadGroup(group, 20000);
+        waitForThreadGroup(group, 50000);
 
         // Every message is received four times since there are four receivers for every mail account
         checkRetrieverThreadsMessagesArrived(sentMessages * 4, retrieverThreads);
@@ -123,6 +128,7 @@ public class MultiRequestTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void test20Senders20x4RetrieversAtTheSameTime() throws InterruptedException {
         final int num = 20;
         addUsers(num);
@@ -132,7 +138,7 @@ public class MultiRequestTest {
         List<RetrieverThread> retrieverThreads = new ArrayList<RetrieverThread>();
         ThreadGroup group = new ThreadGroup(RetrieverThread.class.getName());
         startRetrieverThreads(num, group, retrieverThreads);
-        waitForThreadGroup(group, 30000);
+        waitForThreadGroup(group, 120000);
 
         final int sentMessages = (num * (num + 1) / 2);
         // Every message is received four times since there are four receivers for every mail account

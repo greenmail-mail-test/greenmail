@@ -1,7 +1,15 @@
 package com.icegreen.greenmail.test;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.internal.GreenMailRuleWithStoreChooser;
+import com.icegreen.greenmail.internal.StoreChooser;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetup;
@@ -9,19 +17,14 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import java.io.IOException;
-
-import static org.junit.Assert.assertEquals;
-
 public class AuthenticationDisabledTest {
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(new ServerSetup[]{ServerSetupTest.SMTP, ServerSetupTest.IMAP})
-            .withConfiguration(GreenMailConfiguration.aConfig().withDisabledAuthentication());
+    public final GreenMailRuleWithStoreChooser
+            greenMail = new GreenMailRuleWithStoreChooser(new ServerSetup[]{ServerSetupTest.SMTP, ServerSetupTest
+            .IMAP}, GreenMailConfiguration.aConfig().withDisabledAuthentication());
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testSendMailAndReceiveWithAuthDisabled() throws MessagingException, IOException {
         final String to = "to@localhost.com";
         final String subject = "subject";
@@ -43,6 +46,7 @@ public class AuthenticationDisabledTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testReceiveWithAuthDisabled() throws MessagingException, IOException {
         final String to = "to@localhost.com";
 
@@ -55,6 +59,7 @@ public class AuthenticationDisabledTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testReceiveWithAuthDisabledAndProvisionedUser() throws MessagingException, IOException {
         final String to = "to@localhost.com";
         greenMail.setUser(to,"to","secret");

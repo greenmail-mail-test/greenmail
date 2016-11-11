@@ -1,6 +1,20 @@
 package com.icegreen.greenmail.test.specificmessages;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import javax.mail.Address;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
+import com.icegreen.greenmail.internal.GreenMailRuleWithStoreChooser;
+import com.icegreen.greenmail.internal.StoreChooser;
 import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
@@ -9,26 +23,13 @@ import com.icegreen.greenmail.util.UserUtil;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.mail.Address;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-
 /**
  * Tests if senders and recipients of received messages are set correctly and if messages are received by the correct
  * receivers.
  */
 public class SenderRecipientTest {
     @Rule
-    public GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_POP3_IMAP);
+    public GreenMailRuleWithStoreChooser greenMail = new GreenMailRuleWithStoreChooser(ServerSetupTest.SMTP_POP3_IMAP);
 
     private static final InternetAddress[] TO_ADDRESSES;
     private static final InternetAddress[] CC_ADDRESSES;
@@ -57,6 +58,7 @@ public class SenderRecipientTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testSendersAndRecipients() throws MessagingException, IOException {
         UserUtil.createUsers(greenMail, TO_ADDRESSES);
         UserUtil.createUsers(greenMail, CC_ADDRESSES);
@@ -85,6 +87,7 @@ public class SenderRecipientTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testSendWithoutSubject() throws MessagingException {
         GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com",
                 null, "some subjectless body");
@@ -97,7 +100,7 @@ public class SenderRecipientTest {
      * @param greenMail Greenmail instance to read from
      * @param addr      Address of account to retrieve
      */
-    private void retrieveAndCheck(GreenMailRule greenMail, InternetAddress addr) throws IOException, MessagingException {
+    private void retrieveAndCheck(GreenMailRuleWithStoreChooser greenMail, InternetAddress addr) throws IOException, MessagingException {
         String address = addr.getAddress();
         retrieveAndCheck(greenMail.getPop3(), address);
         retrieveAndCheck(greenMail.getImap(), address);

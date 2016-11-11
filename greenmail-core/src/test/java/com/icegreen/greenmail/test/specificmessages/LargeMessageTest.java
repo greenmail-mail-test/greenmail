@@ -1,6 +1,20 @@
 package com.icegreen.greenmail.test.specificmessages;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMultipart;
+
+import com.icegreen.greenmail.internal.GreenMailRuleWithStoreChooser;
+import com.icegreen.greenmail.internal.StoreChooser;
 import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
@@ -9,25 +23,15 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMultipart;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-
-import static org.junit.Assert.*;
-
 /**
  * Tests sending and receiving large messages
  */
 public class LargeMessageTest {
     @Rule
-    public GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_POP3_IMAP);
+    public GreenMailRuleWithStoreChooser greenMail = new GreenMailRuleWithStoreChooser(ServerSetupTest.SMTP_POP3_IMAP);
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testLargeMessageTextAndAttachment() throws MessagingException, IOException {
         String to = "to@localhost";
         GreenMailUtil.sendAttachmentEmail(to, "from@localhost", "Subject", createLargeString(),
@@ -40,6 +44,7 @@ public class LargeMessageTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testLargeMessageBody() throws MessagingException, IOException {
         String to = "to@localhost";
         GreenMailUtil.sendMessageBody(to, "from@localhost", "Subject", createLargeByteArray(), "application/blubb",

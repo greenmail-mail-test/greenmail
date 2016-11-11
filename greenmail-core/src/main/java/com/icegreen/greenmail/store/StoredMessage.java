@@ -6,10 +6,10 @@
  */
 package com.icegreen.greenmail.store;
 
+import java.util.Date;
 import javax.mail.Flags;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.util.Date;
 
 /**
  * A mail message with all of the extra stuff that IMAP requires.
@@ -43,7 +43,7 @@ public class StoredMessage {
         }
     }
 
-    StoredMessage(MimeMessage mimeMessage,
+    public StoredMessage(MimeMessage mimeMessage,
                   Date receivedDate, long uid) {
         this.receivedDate = receivedDate;
         this.uid = uid;

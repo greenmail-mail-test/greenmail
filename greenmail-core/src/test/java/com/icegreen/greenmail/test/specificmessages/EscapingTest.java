@@ -1,6 +1,16 @@
 package com.icegreen.greenmail.test.specificmessages;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
+import java.io.IOException;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+
+import com.icegreen.greenmail.internal.GreenMailRuleWithStoreChooser;
+import com.icegreen.greenmail.internal.StoreChooser;
 import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.test.util.GreenMailMimeMessage;
 import com.icegreen.greenmail.util.GreenMailUtil;
@@ -9,23 +19,15 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import java.io.IOException;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-
 /**
  * Tests escaping of message parts
  */
 public class EscapingTest {
     @Rule
-    public GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_POP3_IMAP);
+    public GreenMailRuleWithStoreChooser greenMail = new GreenMailRuleWithStoreChooser(ServerSetupTest.SMTP_POP3_IMAP);
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testEscapeSubject() throws MessagingException, IOException {
         String to = "to@localhost";
         String subject = "Subject?<>/|\\\\.%\\\"*?:{[]}!";
@@ -39,6 +41,7 @@ public class EscapingTest {
     }
 
     @Test
+    @StoreChooser(store="file,memory")
     public void testEscapeMessageID() throws MessagingException, IOException {
         String to = "foo@localhost";
         String from = "bar`bar <bar@localhost>";
