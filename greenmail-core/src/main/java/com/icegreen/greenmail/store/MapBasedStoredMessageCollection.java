@@ -4,14 +4,18 @@
 */
 package com.icegreen.greenmail.store;
 
+import static java.lang.String.format;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import javax.mail.Flags;
+
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import com.icegreen.greenmail.imap.commands.IdRange;
 import com.icegreen.greenmail.util.MaxSizeLinkedHashMap;
-
-import javax.mail.Flags;
-import java.util.*;
-
-import static java.lang.String.format;
 
 /**
  * @author Raimund Klein <raimund.klein@gmx.de>
@@ -101,6 +105,26 @@ public class MapBasedStoredMessageCollection implements StoredMessageCollection 
             }
             return uids;
         }
+    }
+
+    /**
+     * Returns the message UID of the last message in the mailbox, or -1L to show that no such message exist (e.g. when the
+     * mailbox is empty).
+     *
+     * @return - a valid UID of the last message or -1
+     */
+    @Override
+    public long getLastMessageUid() {
+        long result = -1;
+        synchronized (mailMessages) {
+            if (!this.mailMessages.isEmpty()) {
+                StoredMessage[] msgList = this.mailMessages.values().toArray(new StoredMessage[0]);
+                if (msgList.length != 0) {
+                    result = msgList[msgList.length - 1].getUid();
+                }
+            }
+        }
+        return result;
     }
 
     @Override

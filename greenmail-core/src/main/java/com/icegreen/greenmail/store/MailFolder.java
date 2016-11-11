@@ -78,7 +78,39 @@ public interface MailFolder {
 
     StoredMessage getMessage(long uid);
 
+    /**
+     * Return all message UIDS of all messages in the mailbox.
+     *
+     * @return - an array of uids, which can be empty
+     */
     long[] getMessageUids();
+
+    /**
+     * Return all message UIDS of all messages in the mailbox which match the UID range.
+     *
+     * @param uidRange - Range of UIDS
+     *
+     * @return - an array of uids, which can be empty
+     */
+    long[] getMessageUidsByUidRange(IdRange[] uidRange);
+
+    /**
+     * Return all message UIDS of all messages in the mailbox which match the msgNum range.
+     *
+     * @param msgNumRange - Range of message numbers
+     *
+     * @return - an array of uids, which can be empty
+     * @throws FolderException
+     */
+    long[] getMessageUidsByMsgNumRange(IdRange[] msgNumRange) throws FolderException;
+
+    /**
+     * Returns the message UID of the last message in the mailbox, or -1L to show that no such message exist (e.g. when the
+     * mailbox is empty).
+     *
+     * @return - a valid UID of the last message or -1
+     */
+    long getMessageUidOfLastMessage();
 
     long[] search(SearchTerm searchTerm);
 

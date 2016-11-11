@@ -11,7 +11,6 @@ import org.junit.Test;
  */
 public class FileStoreUtilTest {
 
-
 	@Test
 	public void testConvertPathToFullName() {
 		String name = "a.b.c";

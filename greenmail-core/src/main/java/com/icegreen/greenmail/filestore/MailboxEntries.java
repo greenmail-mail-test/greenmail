@@ -1,7 +1,5 @@
 package com.icegreen.greenmail.filestore;
 
-import static com.icegreen.greenmail.filestore.OneMessagePerFileStore.FILE_ENDING;
-import static com.icegreen.greenmail.filestore.OneMessagePerFileStore.FILE_ENDING_LEN;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
@@ -9,7 +7,7 @@ import static java.nio.file.StandardOpenOption.WRITE;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -19,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
+import com.icegreen.greenmail.filestore.fs.MessageToFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +52,6 @@ class MailboxEntries {
             try (OutputStream os = Files.newOutputStream(this.mailboxEntriesFile, CREATE, WRITE, TRUNCATE_EXISTING);
                     DataOutputStream
                             dos = new DataOutputStream(os)) {
-                dos.writeInt(this.list.size());
                 for (MessageEntry me : list) {
                     this.writeToDOS(me, dos);
                 }
@@ -81,9 +79,10 @@ class MailboxEntries {
                 toWriteBuffer = ByteBuffer.wrap(bos.toByteArray());
             }
 
-            try (FileChannel fc = (FileChannel.open(this.mailboxEntriesFile, WRITE))) {
+            try (FileChannel fc = (FileChannel.open(this.mailboxEntriesFile, WRITE, CREATE))) {
                 ByteBuffer copy = ByteBuffer.allocate(MessageEntry.MSG_ENTRY_SIZE);
-                fc.position(MessageEntry.COUNTER_SIZE + (index * MessageEntry.MSG_ENTRY_SIZE));
+                long pos = index * MessageEntry.MSG_ENTRY_SIZE;
+                fc.position(pos);
                 fc.write(toWriteBuffer);
             }
         }
@@ -98,51 +97,36 @@ class MailboxEntries {
     /**
      * Load the settings from the settings file from the file system.
      */
-    void loadFileFromFS() {
+    void loadFileFromFS(MessageToFS mtf) {
         synchronized (this.syncLock) {
             if (Files.isRegularFile(this.mailboxEntriesFile)) {
                 try {
+
+                    boolean changedEntries = false;
                     try (InputStream is = Files.newInputStream(this.mailboxEntriesFile);
                             DataInputStream dis = new DataInputStream(is)) {
-                        // First entry: Number of list
-                        int numEntries = dis.readInt();
-                        for (int i = 0; i < numEntries; i++) {
-                            // Then, the list begin:
-                            MessageEntry e = new MessageEntry();
-                            this.readFromDIS(e, dis);
-                            this.list.add(e);
+                        while (true) {
+                            try {
+                                MessageEntry e = new MessageEntry();
+                                this.readFromDIS(e, dis);
+                                this.list.add(e);
+                            } catch (EOFException eof) {
+                                // Good to know, let's get out of the loop now.
+                                break;
+                            }
                         }
                     }
 
-                    // FIXME: Now, we still rely on different file names in the directory, so we need to match the filenames
-                    // with the list in list
-                    for (File f : this.mailboxEntriesFile.getParent().toFile().listFiles()) {
-                        if (f.isFile()) {
-                            String fName = f.getName();
-                            if (fName.endsWith(FILE_ENDING)) {
-                                String uidStr = fName.substring(0, fName.length() - FILE_ENDING_LEN);
-                                try {
-                                    long uid = Long.parseLong(uidStr);
+                   changedEntries = mtf.cleanupAfterLoading(this.list);
 
-                                    // Store the filename in the list:
-                                    for (MessageEntry e : this.list) {
-                                        if (uid == e.uid) {
-                                            e.shortFilename = f.getName();
-                                            break;
-                                        }
-                                    }
-                                }
-                                catch (NumberFormatException nfe) {
-                                    // Ignore files which do not match naming convention and continue with next file.
-                                }
-                            }
-                        }
+                    if (changedEntries) {
+                        // cleanupAfterLoading changed the entries in the file, store them immediatly back to the FS
+                        this.storeFileToFSWithoutSync();
                     }
                 }
                 catch (IOException e) {
                     throw new UncheckedFileStoreException(
-                            "IOException happened while trying to read message file: " + this.mailboxEntriesFile,
-                            e);
+                            "IOException happened while trying to read message file: " + this.mailboxEntriesFile,e);
                 }
             }
         }
@@ -168,10 +152,13 @@ class MailboxEntries {
      */
     private void writeToDOS(MessageEntry me, DataOutputStream dos) throws IOException {
         // Make sure that writing is not exceeding MessageEntry.MSG_ENTRY_SIZE bytes
-        dos.writeInt(me.msgNum);
-        dos.writeLong(me.uid);
-        dos.writeInt(me.flagBitSet);
-        dos.writeLong(me.recDateMillis);
+        dos.writeInt(me.getMsgNum());
+        dos.writeLong(me.getUid());
+        dos.writeInt(me.getFlagBitSet());
+        dos.writeLong(me.getRecDateMillis());
+
+        dos.writeLong(me.getPositionInMboxFile());
+        dos.writeInt(me.getLenInMboxFile());
         // Do this in a backward compatible way: Only add additional properties at the end!
     }
 
@@ -180,25 +167,15 @@ class MailboxEntries {
      */
     private void readFromDIS(MessageEntry me, DataInputStream dis) throws IOException {
         // Make sure that writing is not exceeding MessageEntry.MSG_ENTRY_SIZE bytes
-        me.msgNum = dis.readInt();
-        me.uid = dis.readLong();
-        me.flagBitSet = dis.readInt();
-        me.recDateMillis = dis.readLong();
+        me.setMsgNum(dis.readInt());
+        me.setUid(dis.readLong());
+        me.setFlagBitSet(dis.readInt());
+        me.setRecDateMillis(dis.readLong());
+
+        me.setPositionInMboxFile(dis.readLong());
+        me.setLenInMboxFile(dis.readInt());
         // Do this in a backward compatible way: Only add additional properties at the end!
     }
 
-    /**
-     * Internal class to describe a message entry in memory.
-     */
-    static class MessageEntry {
-        static final int MSG_ENTRY_SIZE = 20;
-        static final int COUNTER_SIZE = 4;
-
-        int msgNum;
-        long uid;
-        int flagBitSet;
-        long recDateMillis;
-        String shortFilename;
-    }
 
 }

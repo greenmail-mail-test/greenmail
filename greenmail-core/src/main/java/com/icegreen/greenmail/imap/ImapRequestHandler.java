@@ -6,14 +6,14 @@
  */
 package com.icegreen.greenmail.imap;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import com.icegreen.greenmail.imap.commands.CommandParser;
 import com.icegreen.greenmail.imap.commands.ImapCommand;
 import com.icegreen.greenmail.imap.commands.ImapCommandFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.InputStream;
-import java.io.OutputStream;
 
 /**
  * @author Darrell DeBoer <darrell@apache.org>
@@ -39,6 +39,10 @@ public final class ImapRequestHandler {
                                  OutputStream output,
                                  ImapSession session)
             throws ProtocolException {
+
+        long beforeMillis = System.currentTimeMillis();
+        log.debug("Entering IMAP request now:");
+
         ImapRequestLineReader request = new ImapRequestLineReader(input, output);
         try {
             request.nextChar();
@@ -54,6 +58,8 @@ public final class ImapRequestHandler {
         // to clean up after a protocol error.
         request.consumeLine();
 
+        long timeUsed = System.currentTimeMillis() - beforeMillis;
+        log.debug("Leaving IMAP request now, took # of millis: " + timeUsed);
         return true;
     }
 
@@ -77,6 +83,7 @@ public final class ImapRequestHandler {
             response.commandError(REQUEST_SYNTAX);
             return;
         }
+
 
         if (log.isDebugEnabled()) {
             log.debug("C: tag=" + tag + ", command=" + commandName);

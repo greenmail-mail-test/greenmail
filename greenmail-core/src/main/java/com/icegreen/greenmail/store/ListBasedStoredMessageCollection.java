@@ -119,6 +119,23 @@ public class ListBasedStoredMessageCollection implements StoredMessageCollection
         }
     }
 
+    /**
+     * Returns the message UID of the last message in the mailbox, or -1L to show that no such message exist (e.g. when the
+     * mailbox is empty).
+     *
+     * @return - a valid UID of the last message or -1
+     */
+    @Override
+    public long getLastMessageUid() {
+        long result = -1;
+        synchronized (mailMessages) {
+            if (!this.mailMessages.isEmpty()) {
+                result = this.mailMessages.get(this.mailMessages.size() - 1).getUid();
+            }
+        }
+        return result;
+    }
+
     @Override
     public void expunge(List<FolderListener> folderListeners) {
         expunge(folderListeners, null);
