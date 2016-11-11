@@ -45,6 +45,7 @@ public final class ImapRequestHandler {
 
         ImapRequestLineReader request = new ImapRequestLineReader(input, output);
         try {
+            // This call will block for as long as we have (normally) the whole IMAP command line in "input"
             request.nextChar();
         } catch (ProtocolException e) {
             return false;
