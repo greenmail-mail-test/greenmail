@@ -18,6 +18,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 
+import static com.icegreen.greenmail.util.GreenMailUtil.createTextEmail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -137,5 +138,22 @@ public class SmtpServerTest {
         assertEquals(1, emails.length);
         assertEquals("subject", emails[0].getSubject());
         assertEquals(body, GreenMailUtil.getBody(emails[0]));
+    }
+
+    @Test
+    public void testSendAndWaitForIncomingMailsInBcc() throws Throwable {
+        String subject = GreenMailUtil.random();
+        String body = GreenMailUtil.random();
+        final MimeMessage message = createTextEmail("test@localhost", "from@localhost", subject, body, greenMail.getSmtp().getServerSetup());
+        message.addRecipients(Message.RecipientType.BCC, "bcc1@localhost,bcc2@localhost");
+
+        assertEquals(0, greenMail.getReceivedMessages().length);
+
+        GreenMailUtil.sendMimeMessage(message);
+
+        assertTrue(greenMail.waitForIncomingEmail(1500, 3));
+
+        MimeMessage[] emails = greenMail.getReceivedMessages();
+        assertEquals(3, emails.length);
     }
 }
