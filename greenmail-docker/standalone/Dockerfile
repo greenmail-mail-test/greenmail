@@ -1,4 +1,4 @@
-FROM java:7
+FROM openjdk:7-jdk-alpine
 MAINTAINER https://github.com/greenmail-mail-test/greenmail (marcel.may.de@gmail.com)
 
 # Expose ports:
@@ -11,7 +11,7 @@ MAINTAINER https://github.com/greenmail-mail-test/greenmail (marcel.may.de@gmail
 EXPOSE 3025 3465 3110 3995 3143 3993
 
 # Run as user greenmail
-RUN addgroup greenmail && useradd -g  greenmail -m  greenmail
+RUN addgroup greenmail && adduser -G greenmail -D greenmail
 # Note: If using Dockerfile without Maven, you must manually copy the JAR
 ADD target/greenmail-standalone.jar /home/greenmail/greenmail-standalone.jar
 RUN chown greenmail:greenmail /home/greenmail/greenmail-standalone.jar

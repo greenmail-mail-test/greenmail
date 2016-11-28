@@ -193,7 +193,7 @@
         <plugin>
           <groupId>io.fabric8</groupId>
           <artifactId>docker-maven-plugin</artifactId>
-          <version>0.16.3</version>
+          <version>0.16.9</version>
         </plugin>
         <!-- IDE plugins -->
         <plugin>

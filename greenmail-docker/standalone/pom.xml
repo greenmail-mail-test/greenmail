@@ -56,7 +56,7 @@
         <groupId>io.fabric8</groupId>
         <artifactId>docker-maven-plugin</artifactId>
         <configuration>
-          <autoPull>false</autoPull>
+          <autoPull>true</autoPull>
           <verbose>true</verbose>
           <images>
             <image>
