@@ -8,6 +8,7 @@ package com.icegreen.greenmail.mail;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import java.util.regex.Pattern;
 
 public class MailAddress {
     String host;
@@ -15,9 +16,13 @@ public class MailAddress {
     String email;
     String name;
 
+    static final Pattern RFC6531_VALIDATION_PATTERN = Pattern.compile("[^\\s@]+@[^\\s@]+\\.[^\\s@]+");
+
     public MailAddress(String str)
             throws AddressException {
-        InternetAddress address = new InternetAddress(str);
+        assertValidEmailAddress(str);
+        InternetAddress address = new InternetAddress();
+        address.setAddress(str);
         email = address.getAddress();
         name = address.getPersonal();
 
@@ -49,6 +54,13 @@ public class MailAddress {
 
     public String getEmail() {
         return email;
+    }
+
+    private void assertValidEmailAddress(String str) {
+
+        if (str == null || !RFC6531_VALIDATION_PATTERN.matcher(str).matches()) {
+            new AddressException("Invalid email address!");
+        }
     }
 
 }
