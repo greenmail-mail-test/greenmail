@@ -3,7 +3,6 @@ package com.icegreen.greenmail.test;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import com.sun.mail.util.PropUtil;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -37,7 +36,7 @@ public class SendReceiveWithInternationalAddress {
     public void testSend() throws MessagingException, UnsupportedEncodingException {
 
         Session session = GreenMailUtil.getSession(ServerSetupTest.SMTP, properties);
-        MimeMessage mimeMessage = new InternationalizedMimeMessage(session);
+        MimeMessage mimeMessage = new MockInternationalizedMimeMessage(session);
         mimeMessage.setSubject("subject");
         mimeMessage.setSentDate(new Date());
         mimeMessage.setFrom("múchätįldé@tìldę.oœ");
@@ -55,9 +54,11 @@ public class SendReceiveWithInternationalAddress {
         assertEquals("用户@例子", decodedText);
     }
 
-    private static class InternationalizedMimeMessage extends MimeMessage {
+    // This is a mock message that doesn't implement the full functionality from MimeMessage.
+    // This is only to illustrate the changes needed to make the test work.
+    private static class MockInternationalizedMimeMessage extends MimeMessage {
 
-        public InternationalizedMimeMessage(Session session) {
+        public MockInternationalizedMimeMessage(Session session) {
             super(session);
         }
 
@@ -69,28 +70,9 @@ public class SendReceiveWithInternationalAddress {
         @Override
         public void setRecipients(Message.RecipientType type, String addresses) throws MessagingException {
 
-            if (type == RecipientType.NEWSGROUPS) {
-
-                if (addresses == null || addresses.length() == 0)
-                    removeHeader("Newsgroups");
-                else
-                    setHeader("Newsgroups", addresses);
-
-            } else {
-
-                if (!isStrict()) {
-
-                    InternetAddress address = new InternetAddress();
-                    address.setAddress(addresses);
-                    setAddressHeader(getHeaderName(type), new InternetAddress[]{address});
-
-                } else {
-
-                    setAddressHeader(getHeaderName(type),
-
-                            addresses == null ? null : InternetAddress.parse(addresses));
-                }
-            }
+            InternetAddress address = new InternetAddress();
+            address.setAddress(addresses);
+            setAddressHeader(getHeaderName(type), new InternetAddress[]{address});
         }
 
         // Current Java Mail version does not respect the "mail.mime.address.strict"
@@ -101,26 +83,9 @@ public class SendReceiveWithInternationalAddress {
         @Override
         public void setFrom(String address) throws MessagingException {
 
-            if (address == null)
-                    removeHeader("From");
-
-            else {
-
-                if (!isStrict()) {
-
-                    InternetAddress internetAddress = new InternetAddress();
-                    internetAddress.setAddress(address);
-                    setAddressHeader("From", new InternetAddress[]{internetAddress});
-
-                } else {
-
-                    setAddressHeader("From", InternetAddress.parse(address));
-                }
-            }
-        }
-
-        private boolean isStrict() {
-            return PropUtil.getBooleanSessionProperty(session, "mail.mime.address.strict", true);
+            InternetAddress internetAddress = new InternetAddress();
+            internetAddress.setAddress(address);
+            setAddressHeader("From", new InternetAddress[]{internetAddress});
         }
 
         // Convenience method to set addresses
@@ -157,8 +122,6 @@ public class SendReceiveWithInternationalAddress {
                 headerName = "Cc";
             else if (type == Message.RecipientType.BCC)
                 headerName = "Bcc";
-            else if (type == MimeMessage.RecipientType.NEWSGROUPS)
-                headerName = "Newsgroups";
             else
                 throw new MessagingException("Invalid Recipient Type");
             return headerName;
