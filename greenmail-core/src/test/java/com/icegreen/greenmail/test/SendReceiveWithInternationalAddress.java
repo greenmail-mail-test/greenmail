@@ -103,10 +103,7 @@ public class SendReceiveWithInternationalAddress {
                 }
 
                 String s = InternetAddress.toString(addresses, name.length() + 2);
-                if (s == null)
-                    removeHeader(name);
-                else
-                    setHeader(name, s);
+                setHeader(name, s);
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException(e);
             }
