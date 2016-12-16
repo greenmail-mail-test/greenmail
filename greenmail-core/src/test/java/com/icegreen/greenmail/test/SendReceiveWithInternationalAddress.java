@@ -1,4 +1,4 @@
-package com.icegreen.greenmail.examples;
+package com.icegreen.greenmail.test;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
@@ -20,7 +20,7 @@ import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
-public class ExampleSendReceiveWithInternationalAddress {
+public class SendReceiveWithInternationalAddress {
 
     static final Properties properties;
 
@@ -37,11 +37,13 @@ public class ExampleSendReceiveWithInternationalAddress {
     public void testSend() throws MessagingException, UnsupportedEncodingException {
 
         Session session = GreenMailUtil.getSession(ServerSetupTest.SMTP, properties);
-        MimeMessage mimeMessage = new ExampleMimeMessage(session);
+        MimeMessage mimeMessage = new InternationalizedMimeMessage(session);
         mimeMessage.setSubject("subject");
         mimeMessage.setSentDate(new Date());
         mimeMessage.setFrom("múchätįldé@tìldę.oœ");
         mimeMessage.setRecipients(Message.RecipientType.TO, "用户@例子.广告");
+        mimeMessage.setRecipients(Message.RecipientType.CC, "θσερεχα@μπλε.ψομ");
+        mimeMessage.setRecipients(Message.RecipientType.BCC, "राममो@हन.ईन्फो");
 
         // The body text needs to be encoded if it contains non us-ascii characters
         mimeMessage.setText(MimeUtility.encodeText("用户@例子"));
@@ -53,9 +55,9 @@ public class ExampleSendReceiveWithInternationalAddress {
         assertEquals("用户@例子", decodedText);
     }
 
-    private static class ExampleMimeMessage extends MimeMessage {
+    private static class InternationalizedMimeMessage extends MimeMessage {
 
-        public ExampleMimeMessage(Session session) {
+        public InternationalizedMimeMessage(Session session) {
             super(session);
         }
 
