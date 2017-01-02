@@ -19,7 +19,7 @@ import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
-public class SendReceiveWithInternationalAddress {
+public class SendReceiveWithInternationalAddressTest {
 
     static final Properties properties;
 
