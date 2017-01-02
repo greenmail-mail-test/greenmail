@@ -82,6 +82,7 @@
                 </ports>
                 <wait>
                   <tcp>
+                    <host>0.0.0.0</host>
                     <ports>
                       <port>3025</port>
                       <port>3110</port>
