@@ -168,6 +168,8 @@ public class ServerSetup {
      * <li>https://javamail.java.net/nonav/docs/api/com/sun/mail/pop3/package-summary.html for valid POP3 properties.</li>
      * </ul
      *
+     * @param properties additional and optional properties which overwrite automatically added properties. Can be null.
+     * @param debug      sets JavaMail debug properties
      * @return default properties.
      */
     public Properties configureJavaMailSessionProperties(Properties properties, boolean debug) {
@@ -200,7 +202,7 @@ public class ServerSetup {
             props.setProperty("mail." + getProtocol() + ".writetimeout", Long.toString(getWriteTimeout()));
         }
 
-        // Protocol specifc extensions
+        // Protocol specific extensions
         if (getProtocol().startsWith(PROTOCOL_SMTP)) {
             props.setProperty("mail.transport.protocol", getProtocol());
             props.setProperty("mail.transport.protocol.rfc822", getProtocol());
