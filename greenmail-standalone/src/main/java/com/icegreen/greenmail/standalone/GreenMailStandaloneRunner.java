@@ -15,7 +15,7 @@ import java.util.Properties;
 
 /**
  * Enables GreenMail to run in standalone mode.
- *
+ * <p>
  * Example: java  -Dgreenmail.smtp -Dgreenmail.users=test1:pwd1 -jar greenmail.jar
  *
  * @see PropertiesBasedServerSetupBuilder
@@ -23,6 +23,7 @@ import java.util.Properties;
  */
 public class GreenMailStandaloneRunner {
     private final Logger log = LoggerFactory.getLogger(GreenMailStandaloneRunner.class);
+    private GreenMail greenMail;
 
     /**
      * Start and configure GreenMail using given properties.
@@ -36,10 +37,29 @@ public class GreenMailStandaloneRunner {
             printUsage(System.out);
 
         } else {
-            GreenMail greenMail = new GreenMail(serverSetup);
+            greenMail = new GreenMail(serverSetup);
             log.info("Starting GreenMail standalone using " + Arrays.toString(serverSetup));
             greenMail.withConfiguration(new PropertiesBasedGreenMailConfigurationBuilder().build(properties))
                     .start();
+        }
+    }
+
+    protected static void configureLogging(Properties properties) {
+        // Init logging: Try standard log4j configuration mechanism before falling back to
+        // provided logging configuration
+        String log4jConfig = System.getProperty("log4j.configuration");
+        if (null == log4jConfig) {
+            if (properties.containsKey(PropertiesBasedServerSetupBuilder.GREENMAIL_VERBOSE)) {
+                DOMConfigurator.configure(GreenMailStandaloneRunner.class.getResource("/log4j-verbose.xml"));
+            } else {
+                DOMConfigurator.configure(GreenMailStandaloneRunner.class.getResource("/log4j.xml"));
+            }
+        } else {
+            if (log4jConfig.toLowerCase().endsWith(".xml")) {
+                DOMConfigurator.configure(log4jConfig);
+            } else {
+                PropertyConfigurator.configure(log4jConfig);
+            }
         }
     }
 
@@ -58,8 +78,9 @@ public class GreenMailStandaloneRunner {
                 {"-Dgreenmail.<protocol|all>.port=...", "Specifies port. Requires additional hostname parameter."},
                 {"-Dgreenmail.users=<logon:pwd@domain>[,...]", "Specifies mail users, eg foo:pwd@bar.com,foo2:pwd@bar2.com."},
                 {"Note: domain must be DNS resolvable!"},
-                {"-Dgreenmail.auth.disabled ","Disables authentication check so that any password works."},
+                {"-Dgreenmail.auth.disabled ", "Disables authentication check so that any password works."},
                 {"Also automatically provisions previously non-existent users."},
+                {"-Dgreenmail.verbose ", "Enables verbose mode, including JavaMail debug output"},
         };
         for (String[] opt : options) {
             if (opt.length == 1) {
@@ -81,20 +102,13 @@ public class GreenMailStandaloneRunner {
         out.println("       Starts SMTP on 0.0.0.0:3025 and IMAP on 0.0.0.0:3143");
     }
 
-    public static void main(String[] args) {
-        // Init logging: Try standard log4j configuration mechanism before falling back to
-        // provided logging configuration
-        String log4jConfig = System.getProperty("log4j.configuration");
-        if (null == log4jConfig) {
-            DOMConfigurator.configure(GreenMailStandaloneRunner.class.getResource("/log4j.xml"));
-        } else {
-            if (log4jConfig.toLowerCase().endsWith(".xml")) {
-                DOMConfigurator.configure(log4jConfig);
-            } else {
-                PropertyConfigurator.configure(log4jConfig);
-            }
-        }
+    GreenMail getGreenMail() {
+        return greenMail;
+    }
 
-        new GreenMailStandaloneRunner().doRun(System.getProperties());
+    public static void main(String[] args) {
+        final Properties properties = System.getProperties();
+        configureLogging(properties);
+        new GreenMailStandaloneRunner().doRun(properties);
     }
 }

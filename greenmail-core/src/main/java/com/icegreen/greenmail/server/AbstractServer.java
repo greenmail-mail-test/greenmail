@@ -308,7 +308,7 @@ public abstract class AbstractServer extends Thread implements Service {
      * @return the session.
      */
     public Session createSession(Properties properties) {
-        return createSession(properties, false);
+        return createSession(properties, setup.isVerbose());
     }
 
     /**

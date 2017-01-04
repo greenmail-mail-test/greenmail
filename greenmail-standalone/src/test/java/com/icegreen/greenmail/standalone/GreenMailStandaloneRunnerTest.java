@@ -2,16 +2,15 @@ package com.icegreen.greenmail.standalone;
 
 import com.icegreen.greenmail.configuration.PropertiesBasedGreenMailConfigurationBuilder;
 import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.PropertiesBasedServerSetupBuilder;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Test;
 
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Store;
+import javax.mail.*;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class GreenMailStandaloneRunnerTest {
 
@@ -19,6 +18,7 @@ public class GreenMailStandaloneRunnerTest {
     public void testDoRun() throws MessagingException {
         GreenMailStandaloneRunner runner = new GreenMailStandaloneRunner();
         final Properties properties = new Properties();
+        properties.setProperty(PropertiesBasedServerSetupBuilder.GREENMAIL_VERBOSE, "");
         properties.setProperty("greenmail.setup.test.smtp", "");
         properties.setProperty("greenmail.setup.test.imap", "");
         properties.setProperty(PropertiesBasedGreenMailConfigurationBuilder.GREENMAIL_USERS,
@@ -28,7 +28,9 @@ public class GreenMailStandaloneRunnerTest {
         GreenMailUtil.sendTextEmail("test2@localhost", "test1@localhost", "Standalone test", "It worked",
                 ServerSetupTest.SMTP);
 
-        Store store = GreenMailUtil.getSession(ServerSetupTest.IMAP).getStore("imap");
+        final Session session = runner.getGreenMail().getImap().createSession();
+        assertTrue(session.getDebug());
+        Store store = session.getStore("imap");
         try {
             store.connect("test2", "pwd2");
             final Folder folder = store.getFolder("INBOX");

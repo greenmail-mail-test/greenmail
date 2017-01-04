@@ -72,6 +72,8 @@ public class ServerSetup {
     private long readTimeout = -1L;
     private long connectionTimeout = -1L;
     private long writeTimeout = -1L;
+    private boolean verbose = false;
+
     /**
      * Timeout when GreenMail starts a server, in milliseconds.
      */
@@ -145,6 +147,17 @@ public class ServerSetup {
 
     public long getServerStartupTimeout() {
         return serverStartupTimeout;
+    }
+
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    /**
+     * @param verbose if true enables JavaMail debug output by setting JavaMail property  'mail.debug'
+     */
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
     /**
@@ -258,6 +271,7 @@ public class ServerSetup {
                 ", connectionTimeout=" + connectionTimeout +
                 ", writeTimeout=" + writeTimeout +
                 ", serverStartupTimeout=" + serverStartupTimeout +
+                ", verbose=" + isVerbose() +
                 '}';
     }
 
@@ -282,6 +296,7 @@ public class ServerSetup {
         setup.setConnectionTimeout(getConnectionTimeout());
         setup.setReadTimeout(getReadTimeout());
         setup.setWriteTimeout(getWriteTimeout());
+        setup.setVerbose(isVerbose());
 
         return setup;
     }

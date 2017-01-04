@@ -563,6 +563,15 @@ java [OPTIONS] -jar greenmail-standalone.jar
                         </td>
                     </tr>
                     <tr>
+                        <td class="text-nowrap">-Dgreenmail.verbose</td>
+                        <td>Enables verbose mode.
+                            Useful if you want to see debug and protocol level output.
+                            <div class="bs-example">
+                                Example: <code>-Dgreenmail.verbose</code>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
                         <td class="text-nowrap">-Dlog4j.configuration</td>
                         <td><p>Configures log4j using given configuration file.</p>
                             <p>
@@ -891,6 +900,9 @@ GreenMailUser user2 = greenMail.setUser("foo@localhost", "login-id", "some secre
 greenMail.getManagers().getUserManager().deleteUser(user1); // Delete user
 </code></pre><!-- @formatter:on -->
 
+                <h4>How can I get more verbose output?</h4>
+                <p>Enable the verbose mode, which prints debug output and protocol level communication.<br/>
+                   See <a href="http://www.icegreen.com/greenmail/javadocs/com/icegreen/greenmail/util/ServerSetup.html#setVerbose">ServerSetup.setVerbose(boolean)</a> or GreenMail standalone runner option <a href="#deploy_standalone">greenmail.verbose</a> option.
             </div>
 
             <div id="download" class="bs-docs-section anchor">
