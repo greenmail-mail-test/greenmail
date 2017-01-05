@@ -311,7 +311,11 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         List<StoredMessage> matchedMessages = new ArrayList<>();
 
         synchronized (mailMessages) {
-            for (StoredMessage mailMessage : mailMessages) {
+            for (int i = 0; i<mailMessages.size();i++) {
+                StoredMessage mailMessage = mailMessages.get(i);
+                // Update message sequence number for potential sequence set search
+                // https://tools.ietf.org/html/rfc3501#page-10
+                mailMessage.updateMessageNumber(i+1);
                 if (searchTerm.match(mailMessage.getMimeMessage())) {
                     matchedMessages.add(mailMessage);
                 }
