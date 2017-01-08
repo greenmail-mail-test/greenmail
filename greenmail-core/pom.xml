@@ -62,4 +62,29 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>de.m3y.maven</groupId>
+        <artifactId>inject-maven-plugin</artifactId>
+        <configuration>
+          <injections>
+            <injection>
+              <value>${project.version}</value>
+              <pointCut>com.icegreen.greenmail.server.BuildInfo.getProjectVersion</pointCut>
+            </injection>
+          </injections>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>inject</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>

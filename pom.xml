@@ -282,6 +282,12 @@
           <artifactId>maven-shade-plugin</artifactId>
           <version>2.4.3</version>
         </plugin>
+        <!-- Inject POM version and scm version -->
+        <plugin>
+          <groupId>de.m3y.maven</groupId>
+          <artifactId>inject-maven-plugin</artifactId>
+          <version>1.0</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 

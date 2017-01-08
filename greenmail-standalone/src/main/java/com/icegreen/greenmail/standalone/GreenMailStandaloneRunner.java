@@ -1,6 +1,7 @@
 package com.icegreen.greenmail.standalone;
 
 import com.icegreen.greenmail.configuration.PropertiesBasedGreenMailConfigurationBuilder;
+import com.icegreen.greenmail.server.BuildInfo;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.PropertiesBasedServerSetupBuilder;
 import com.icegreen.greenmail.util.ServerSetup;
@@ -38,7 +39,8 @@ public class GreenMailStandaloneRunner {
 
         } else {
             greenMail = new GreenMail(serverSetup);
-            log.info("Starting GreenMail standalone using " + Arrays.toString(serverSetup));
+            log.info("Starting GreenMail standalone v" + BuildInfo.INSTANCE.getProjectVersion() +
+                    " using " + Arrays.toString(serverSetup));
             greenMail.withConfiguration(new PropertiesBasedGreenMailConfigurationBuilder().build(properties))
                     .start();
         }
