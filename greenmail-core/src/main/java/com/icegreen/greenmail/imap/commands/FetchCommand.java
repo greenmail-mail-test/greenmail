@@ -221,11 +221,11 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         } else if ("TEXT".equalsIgnoreCase(sectionSpecifier)) {
             handleBodyFetchForText(mimeMessage, partial, response);
         } else {
-            String contentType = mimeMessage.getContentType();
-            if (contentType.toLowerCase().startsWith("text/plain") && "1".equals(sectionSpecifier)) {
+            Object content = mimeMessage.getContent();
+            if (content instanceof String) {
                 handleBodyFetchForText(mimeMessage, partial, response);
             } else {
-                MimeMultipart mp = (MimeMultipart) mimeMessage.getContent();
+                MimeMultipart mp = (MimeMultipart) content;
                 BodyPart part = null;
 
                 // Find part by number spec, eg "1" or "2.1" or "4.3.1" ...
