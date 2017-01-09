@@ -1,6 +1,7 @@
 FROM openjdk:7-jdk-alpine
 MAINTAINER https://github.com/greenmail-mail-test/greenmail (marcel.may.de@gmail.com)
 
+#######################
 # Expose ports:
 # - smtp  : 3025
 # - smtps : 3465
@@ -8,8 +9,18 @@ MAINTAINER https://github.com/greenmail-mail-test/greenmail (marcel.may.de@gmail
 # - pop3s : 3995
 # - imap  : 3143
 # - imaps : 3993
+#######################
 EXPOSE 3025 3465 3110 3995 3143 3993
 
+#######################
+# Configuration options
+#######################
+ENV JAVA_OPTS      -Djava.net.preferIPv4Stack=true
+ENV GREENMAIL_OPTS -Dgreenmail.setup.test.all \
+    -Dgreenmail.hostname=0.0.0.0 \
+    -Dgreenmail.auth.disabled
+
+#######################
 # Run as user greenmail
 RUN addgroup greenmail && adduser -G greenmail -D greenmail
 # Note: If using Dockerfile without Maven, you must manually copy the JAR
