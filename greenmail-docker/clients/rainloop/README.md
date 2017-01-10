@@ -28,8 +28,3 @@ docker run -t -i --name greenmail \
 
 `docker run -t -i --link greenmail -p 3080:80 greenmail/client-rainloop`
 
-How to run with docker-compose
---------
-
-You can - as a As an alternative to starting each container individually you can use docker-compose.
-Check and modify the greenmail image version in [docker-compose.yml] and run `docker-compose up`.
