@@ -563,6 +563,15 @@ java [OPTIONS] -jar greenmail-standalone.jar
                         </td>
                     </tr>
                     <tr>
+                        <td class="text-nowrap">-Dgreenmail.verbose</td>
+                        <td>Enables verbose mode.
+                            Useful if you want to see debug and protocol level output.
+                            <div class="bs-example">
+                                Example: <code>-Dgreenmail.verbose</code>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
                         <td class="text-nowrap">-Dlog4j.configuration</td>
                         <td><p>Configures log4j using given configuration file.</p>
                             <p>
@@ -657,10 +666,10 @@ java -Dgreenmail.smtp.hostname=127.0.0.1 -Dgreenmail.smtp.port=4025 \
 docker pull greenmail/standalone:1.5.2
 docker run -t -i -p 3025:3025 -p 3110:3110 -p 3143:3143 \
                  -p 3465:3465 -p 3993:3993 -p 3995:3995 \
-                 greenmail/standalone
+                 greenmail/standalone:1.5.3
                 </code></pre><!-- @formatter:on -->
                 <div class="alert alert-info" role="alert">
-                    You might want to modify your mapped ports.
+                    You might want to modify your mapped ports
                 </div>
                 <p>
                     If you want to test it, you can do a quick check with telnet (or any other mail program)
@@ -669,6 +678,18 @@ docker run -t -i -p 3025:3025 -p 3110:3110 -p 3143:3143 \
                 <img src="images/greenmail_docker_telnet_smtp.png" class="img-rounded"
                      alt="Connecting with telnet to GreenMail docker SMTP service" />
 
+                <h5>Passing configuration options to GreenMail Standalone Docker image</h5>
+                <p>You can also configure the JVM and GreenMail configuration options via the Docker environment
+                   variables JAVA_OPTS and GREENMAIL_OPTS:
+                </p>
+                <pre><code class="language-bash"><!-- @formatter:off -->
+docker run -t -i \
+           -e GREENMAIL_OPTS='-Dgreenmail.setup.test.all -Dgreenmail.hostname=0.0.0.0 -Dgreenmail.auth.disabled -Dgreenmail.verbose' \
+           -e JAVA_OPTS='-Djava.net.preferIPv4Stack=true -Xmx512m' \
+           -p 3025:3025 -p 3110:3110 -p 3143:3143 \
+           -p 3465:3465 -p 3993:3993 -p 3995:3995 \
+           greenmail/standalone:1.5.3
+                </code></pre><!-- @formatter:on -->
 
                 <h3 id="deploy_webapp" class="anchor">Deploy as a webapp (WAR)</h3>
 
@@ -891,6 +912,9 @@ GreenMailUser user2 = greenMail.setUser("foo@localhost", "login-id", "some secre
 greenMail.getManagers().getUserManager().deleteUser(user1); // Delete user
 </code></pre><!-- @formatter:on -->
 
+                <h4>How can I get more verbose output?</h4>
+                <p>Enable the verbose mode, which prints debug output and protocol level communication.<br/>
+                   See <a href="http://www.icegreen.com/greenmail/javadocs/com/icegreen/greenmail/util/ServerSetup.html#setVerbose">ServerSetup.setVerbose(boolean)</a> or GreenMail standalone runner option <a href="#deploy_standalone">greenmail.verbose</a> option.
             </div>
 
             <div id="download" class="bs-docs-section anchor">

@@ -7,6 +7,7 @@
 package com.icegreen.greenmail.smtp;
 
 import com.icegreen.greenmail.foedus.util.Workspace;
+import com.icegreen.greenmail.server.BuildInfo;
 import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.smtp.commands.SmtpCommand;
 import com.icegreen.greenmail.smtp.commands.SmtpCommandRegistry;
@@ -73,7 +74,7 @@ class SmtpHandler implements ProtocolHandler {
 
     protected void sendGreetings() {
         _conn.send("220 " + _conn.getServerGreetingsName() +
-                " GreenMail SMTP Service Ready at port " + _conn.sock.getLocalPort());
+                " GreenMail SMTP Service v" + BuildInfo.INSTANCE.getProjectVersion() + " ready");
     }
 
     protected void handleCommand()

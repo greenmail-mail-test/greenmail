@@ -72,6 +72,8 @@ public class ServerSetup {
     private long readTimeout = -1L;
     private long connectionTimeout = -1L;
     private long writeTimeout = -1L;
+    private boolean verbose = false;
+
     /**
      * Timeout when GreenMail starts a server, in milliseconds.
      */
@@ -147,6 +149,17 @@ public class ServerSetup {
         return serverStartupTimeout;
     }
 
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    /**
+     * @param verbose if true enables JavaMail debug output by setting JavaMail property  'mail.debug'
+     */
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
+    }
+
     /**
      * Sets the server startup timeout in milliseconds.
      *
@@ -168,6 +181,8 @@ public class ServerSetup {
      * <li>https://javamail.java.net/nonav/docs/api/com/sun/mail/pop3/package-summary.html for valid POP3 properties.</li>
      * </ul
      *
+     * @param properties additional and optional properties which overwrite automatically added properties. Can be null.
+     * @param debug      sets JavaMail debug properties
      * @return default properties.
      */
     public Properties configureJavaMailSessionProperties(Properties properties, boolean debug) {
@@ -200,7 +215,7 @@ public class ServerSetup {
             props.setProperty("mail." + getProtocol() + ".writetimeout", Long.toString(getWriteTimeout()));
         }
 
-        // Protocol specifc extensions
+        // Protocol specific extensions
         if (getProtocol().startsWith(PROTOCOL_SMTP)) {
             props.setProperty("mail.transport.protocol", getProtocol());
             props.setProperty("mail.transport.protocol.rfc822", getProtocol());
@@ -256,6 +271,7 @@ public class ServerSetup {
                 ", connectionTimeout=" + connectionTimeout +
                 ", writeTimeout=" + writeTimeout +
                 ", serverStartupTimeout=" + serverStartupTimeout +
+                ", verbose=" + isVerbose() +
                 '}';
     }
 
@@ -280,6 +296,7 @@ public class ServerSetup {
         setup.setConnectionTimeout(getConnectionTimeout());
         setup.setReadTimeout(getReadTimeout());
         setup.setWriteTimeout(getWriteTimeout());
+        setup.setVerbose(isVerbose());
 
         return setup;
     }

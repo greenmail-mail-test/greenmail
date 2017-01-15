@@ -9,6 +9,7 @@ package com.icegreen.greenmail.pop3;
 
 import com.icegreen.greenmail.pop3.commands.Pop3Command;
 import com.icegreen.greenmail.pop3.commands.Pop3CommandRegistry;
+import com.icegreen.greenmail.server.BuildInfo;
 import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.user.UserManager;
 
@@ -63,7 +64,7 @@ public class Pop3Handler implements ProtocolHandler {
     }
 
     void sendGreetings() {
-        _conn.println("+OK POP3 GreenMail Server ready");
+        _conn.println("+OK POP3 GreenMail Server v" + BuildInfo.INSTANCE.getProjectVersion() + " ready");
     }
 
     void handleCommand()

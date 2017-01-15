@@ -6,6 +6,7 @@
  */
 package com.icegreen.greenmail.imap;
 
+import com.icegreen.greenmail.server.BuildInfo;
 import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.user.UserManager;
 import org.slf4j.Logger;
@@ -58,7 +59,8 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
             response = new ImapResponse(outs);
 
             // Write welcome message
-            String responseBuffer = VERSION + " Server GreenMail ready";
+            String responseBuffer = VERSION + " Server GreenMail v" +
+                    BuildInfo.INSTANCE.getProjectVersion() + " ready";
             response.okResponse(null, responseBuffer);
 
             session = new ImapSessionImpl(imapHost,

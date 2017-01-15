@@ -15,6 +15,8 @@ import javax.mail.search.AndTerm;
 import javax.mail.search.NotTerm;
 import javax.mail.search.SearchTerm;
 
+import static com.icegreen.greenmail.imap.commands.IdRange.SEQUENCE;
+
 /**
  * Handles processing for the SEARCH imap command.
  *
@@ -50,7 +52,7 @@ class SearchCommandParser extends CommandParser {
                     continue;
                 }
             }
-            if (!quoted && (next == 32 || next == '\n')) {
+            if (!quoted && (next == 32 || next == '\n') && sb.length()>0) {
                 if (log.isDebugEnabled()) {
                     log.debug("Search request is '" + sb.toString() + '\'');
                 }
@@ -65,11 +67,29 @@ class SearchCommandParser extends CommandParser {
                                 && keyValue.charAt(keyValue.length() - 1) == ')') {
                             keyValue = keyValue.substring(1, keyValue.length() - 1);
                         }
-                        SearchKey key = SearchKey.valueOf(keyValue);
-                        if (SearchKey.NOT == key) {
-                            negated = true;
+
+                        // Message set?
+                        if (SEQUENCE.matcher(keyValue).matches()) {
+                            b = SearchTermBuilder.create(SearchKey.SEQUENCE_SET);
+
+                            // Try to get additional number sequences.
+                            // Sequence can be a whitespace separated list of either a number or number range
+                            // Example: '2 5:9 9'
+                            next = request.nextChar();
+                            while(next == 32 || (next >= '0' && next <= '9') || next == ':') {
+                                request.consume();
+                                sb.append(next);
+                                next = request.nextChar();
+                            }
+                            b.addParameter(sb.toString());
                         } else {
-                            b = SearchTermBuilder.create(key);
+                            // Term?
+                            SearchKey key = SearchKey.valueOf(keyValue);
+                            if (SearchKey.NOT == key) {
+                                negated = true;
+                            } else {
+                                b = SearchTermBuilder.create(key);
+                            }
                         }
                     } catch (IllegalArgumentException ex) {
                         // Ignore for now instead of breaking. See issue#35 .

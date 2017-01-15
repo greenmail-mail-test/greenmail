@@ -100,6 +100,9 @@ public abstract class SearchTermBuilder {
             case UNKEYWORD:
                 builder = createKeywordSearchTermBuilder(key);
                 break;
+            case SEQUENCE_SET:
+                builder = createSequenceSetTermBuilder();
+                break;
             default:
                 throw new IllegalStateException("Unsupported search term '" + key + '\'');
         }
@@ -225,6 +228,16 @@ public abstract class SearchTermBuilder {
         };
     }
 
+    private static SearchTermBuilder createSequenceSetTermBuilder() {
+        return new SearchTermBuilder() {
+            @Override
+            public SearchTerm build() {
+                final List<IdRange> idRanges = IdRange.parseRangeSequence(getParameter(0));
+                return new MessageNumberSearchTerm(idRanges);
+            }
+        };
+    }
+
     private static javax.mail.Flags.Flag toFlag(String pFlag) {
         if (pFlag == null || pFlag.trim().length() < 1) {
             throw new IllegalArgumentException("Can not convert empty string to mail flag");
@@ -271,14 +284,73 @@ public abstract class SearchTermBuilder {
         }
     }
 
-    // Not very efficient due to underlying JavaMail based impl.
-    // The term compares each mail if matching.
-    public static class UidSearchTerm extends SearchTerm {
-        private static final long serialVersionUID = 1135219503729412087L;
-        private final List<IdRange> uidSetList;
+    /**
+     * Supports general searching by id sequences such as MSN or UID.
+     *
+     * Note:
+     * Not very efficient due to underlying JavaMail based impl.
+     * The term compares each mail if matching.
+     *
+     * @see MessageNumberSearchTerm
+     * @see UidSearchTerm
+     */
+    public abstract static class AbstractIdSearchTerm extends SearchTerm {
+        private static final long serialVersionUID = -5935470270189992292L;
+        private final List<IdRange> idRanges;
 
-        public UidSearchTerm(List<IdRange> uidSetList) {
-            this.uidSetList = uidSetList;
+        public AbstractIdSearchTerm(final List<IdRange> idRanges) {
+            this.idRanges = idRanges;
+        }
+
+        @Override
+        public abstract boolean match(Message msg);
+
+        /**
+         * Matches id against sequence numbers.
+         *
+         * @param id the identifier
+         * @return true, if matching
+         */
+        public boolean match(final long id) {
+            for (IdRange idRange : idRanges) {
+                if (idRange.includes(id)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    /**
+     * Term for searching by message number ids.
+     */
+    public static class MessageNumberSearchTerm extends AbstractIdSearchTerm {
+        private static final long serialVersionUID = -2792493451441320161L;
+
+        /**
+         * @param idRanges the MSNs to search for.
+         */
+        public MessageNumberSearchTerm(List<IdRange> idRanges) {
+            super(idRanges);
+        }
+
+        @Override
+        public boolean match(Message msg) {
+            return match(msg.getMessageNumber());
+        }
+    }
+
+    /**
+     * Term for searching uids.
+     */
+    public static class UidSearchTerm extends AbstractIdSearchTerm {
+        private static final long serialVersionUID = 1135219503729412087L;
+
+        /**
+         * @param idRanges the UIDs to search for.
+         */
+        public UidSearchTerm(List<IdRange> idRanges) {
+            super(idRanges);
         }
 
         @Override
@@ -291,15 +363,6 @@ public abstract class SearchTermBuilder {
                 log.warn("No uid support for message " + msg + ", failing to match.");
                 return false;
             }
-        }
-
-        public boolean match(long uid) {
-            for (IdRange uidSet : uidSetList) {
-                if (uidSet.includes(uid)) {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 }

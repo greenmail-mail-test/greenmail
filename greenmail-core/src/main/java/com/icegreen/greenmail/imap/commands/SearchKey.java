@@ -10,6 +10,7 @@ package com.icegreen.greenmail.imap.commands;
  * Read more: https://tools.ietf.org/html/rfc3501
  * </p>
  * <ul>
+ * <li>SEQUENCE_SET &lt;SEQUENCE SET&gt; of message ids</li>
  * <li>ALL All messages in the mailbox; the default initial key for ANDing</li>
  * <li>ANSWERED Messages with the \Answered flag set.</li>
  * <li>BCC Messages that contain the specified string in the envelope structure's BCC field.</li>
@@ -88,7 +89,12 @@ public enum SearchKey {
     UNDRAFT(),
     UNFLAGGED(),
     UNKEYWORD(1),
-    UNSEEN();
+    UNSEEN(),
+    /**
+     * &lt;sequence set&gt; - Messages with message sequence numbers corresponding
+     * to the specified message sequence number set.
+     */
+    SEQUENCE_SET(1);
 
     private int minArgs = 0; // expected additional arguments
     private boolean operator = false; // Is an operator, such as AND, OR, NOT ...

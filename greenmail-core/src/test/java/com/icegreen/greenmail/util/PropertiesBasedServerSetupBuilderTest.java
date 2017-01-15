@@ -5,6 +5,8 @@ import org.junit.Test;
 import java.util.Properties;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class PropertiesBasedServerSetupBuilderTest {
     @Test
@@ -35,6 +37,15 @@ public class PropertiesBasedServerSetupBuilderTest {
         assert setups != null;
         assertArrayEquals(setups, new ServerSetup[]{ServerSetupTest.SMTP});
 
+        // With debug
+        properties.clear();
+        properties.setProperty("greenmail.setup.test.smtp", "");
+        properties.setProperty(PropertiesBasedServerSetupBuilder.GREENMAIL_VERBOSE, "");
+        setups = setupBuilder.build(properties);
+        assert setups != null;
+        assertArrayEquals(setups, new ServerSetup[]{ServerSetupTest.SMTP});
+        assertTrue(setups[0].isVerbose());
+
         // With hostname
         properties.clear();
         properties.setProperty("greenmail.setup.test.smtp", "");
@@ -42,6 +53,8 @@ public class PropertiesBasedServerSetupBuilderTest {
         setups = setupBuilder.build(properties);
         assert setups != null;
         assertArrayEquals(setups, new ServerSetup[]{ServerSetupTest.SMTP.createCopy("0.0.0.0")});
+        assertFalse(setups[0].isVerbose());
+
 
         // Default test setups
         for(ServerSetup setup: ServerSetupTest.ALL) {

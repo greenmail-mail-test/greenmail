@@ -8,12 +8,14 @@ package com.icegreen.greenmail.imap.commands;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Represents a range of UID values.
  */
 public class IdRange implements Serializable {
-
+    /** Matches a sequence of a single id or id range */
+    public static final Pattern SEQUENCE = Pattern.compile("\\d+|\\d+\\:\\d+");
     private long lowVal;
     private long highVal;
 
@@ -48,7 +50,7 @@ public class IdRange implements Serializable {
      * @return a list of ranges, never null.
      */
     public static List<IdRange> parseRangeSequence(String idRangeSequence) {
-        StringTokenizer tokenizer = new StringTokenizer(idRangeSequence, ",");
+        StringTokenizer tokenizer = new StringTokenizer(idRangeSequence, " ");
         List<IdRange> ranges = new ArrayList<>();
         while (tokenizer.hasMoreTokens()) {
             ranges.add(parseRange(tokenizer.nextToken()));

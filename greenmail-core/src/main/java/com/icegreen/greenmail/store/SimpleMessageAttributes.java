@@ -78,11 +78,13 @@ public class SimpleMessageAttributes
     SimpleMessageAttributes(MimeMessage msg, Date receivedDate) throws MessagingException {
         Date sentDate = getSentDate(msg, receivedDate);
 
-        this.receivedDate = receivedDate;
         if(null != receivedDate) {
+            this.receivedDate = receivedDate;
             receivedDateString = new MailDateFormat().format(receivedDate);
         }
-        sentDateEnvelopeString = new MailDateFormat().format(sentDate);
+        if(null != sentDate) {
+            sentDateEnvelopeString = new MailDateFormat().format(sentDate);
+        }
 
         if (msg != null) {
             parseMimePart(msg);
@@ -253,7 +255,9 @@ public class SimpleMessageAttributes
                 parts = new SimpleMessageAttributes[1];
                 try {
                     MimeMessage wrappedMessage = (MimeMessage) part.getContent();
-                    log.error("message type : "+wrappedMessage.getContentType());
+                    if(log.isDebugEnabled()) {
+                        log.debug("message type : " + wrappedMessage.getContentType());
+                    }
                     parts[0] = new SimpleMessageAttributes(wrappedMessage, null);
                 } catch (Exception e) {
                     throw new IllegalStateException("Can not extract part for "+primaryType+"/"+secondaryType, e);

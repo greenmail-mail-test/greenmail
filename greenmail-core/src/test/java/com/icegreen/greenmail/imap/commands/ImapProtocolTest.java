@@ -7,16 +7,19 @@ import com.sun.mail.iap.ProtocolException;
 import com.sun.mail.iap.Response;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.imap.IMAPStore;
-import com.sun.mail.imap.protocol.FetchResponse;
-import com.sun.mail.imap.protocol.IMAPProtocol;
+import com.sun.mail.imap.protocol.*;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
 import javax.mail.Folder;
+import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.NoSuchProviderException;
+import java.util.HashMap;
+import java.util.Map;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Low level IMAP protocol test cases.
@@ -24,18 +27,28 @@ import static org.junit.Assert.assertTrue;
 public class ImapProtocolTest {
     @Rule
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
+    private IMAPStore store;
+
+    @Before
+    public void beforeEachTest() throws NoSuchProviderException {
+        greenMail.setUser("foo@localhost", "pwd");
+
+        int numberOfMails = 10;
+        for (int i = 0; i < numberOfMails; i++) {
+            GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test search " + i,
+                    "Test message", ServerSetupTest.SMTP);
+        }
+        greenMail.waitForIncomingEmail(numberOfMails);
+
+        store = greenMail.getImap().createStore();
+    }
 
     @Test
     public void testFetchUidsAndSize() throws MessagingException {
-        greenMail.setUser("foo@localhost", "pwd");
-        GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test UIDFolder",
-                "Test message", ServerSetupTest.SMTP);
-
-        final IMAPStore store = greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
         try {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
-            folder.open(Folder.READ_WRITE);
+            folder.open(Folder.READ_ONLY);
             Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
                 @Override
                 public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
@@ -44,9 +57,138 @@ public class ImapProtocolTest {
             });
             FetchResponse fetchResponse = (FetchResponse) ret[0];
             assertFalse(fetchResponse.isBAD());
-            assertTrue(fetchResponse.getItemCount() > 0); // At least UID and SIZE
+            assertEquals(2, fetchResponse.getItemCount()); // UID and SIZE
+            RFC822SIZE size = fetchResponse.getItem(RFC822SIZE.class);
+            assertNotNull(size);
+            assertTrue(size.size > 0);
+            UID uid = fetchResponse.getItem(UID.class);
+            assertEquals(folder.getUID(folder.getMessage(1)), uid.uid);
         } finally {
             store.close();
         }
+    }
+
+    @Test
+    public void testSearchSequenceSet() throws MessagingException {
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+            Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                @Override
+                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                    return protocol.command("SEARCH 1", null);
+                }
+            });
+            IMAPResponse response = (IMAPResponse) ret[0];
+            assertFalse(response.isBAD());
+            assertEquals("1", response.getRest());
+
+            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                @Override
+                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                    return protocol.command("SEARCH 2:2", null);
+                }
+            });
+            response = (IMAPResponse) ret[0];
+            assertFalse(response.isBAD());
+            assertTrue(ret[1].isOK());
+            assertEquals("2", response.getRest());
+
+            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                @Override
+                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                    return protocol.command("SEARCH 2:4", null);
+                }
+            });
+            response = (IMAPResponse) ret[0];
+            assertFalse(response.isBAD());
+            assertEquals("2 3 4", response.getRest());
+            assertTrue(ret[1].isOK());
+
+            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                @Override
+                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                    return protocol.command("SEARCH 1 2:4 8", null);
+                }
+            });
+            response = (IMAPResponse) ret[0];
+            assertFalse(response.isBAD());
+            assertEquals("1 2 3 4 8", response.getRest());
+            assertTrue(ret[1].isOK());
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
+    public void testUidSearchSequenceSet() throws MessagingException {
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+
+            final Message[] messages = folder.getMessages();
+            Map<Integer, Long> uids = new HashMap<>();
+            for (Message msg : messages) {
+                uids.put(msg.getMessageNumber(), folder.getUID(msg));
+            }
+
+            Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                @Override
+                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                    return protocol.command("UID SEARCH 1", null);
+                }
+            });
+            IMAPResponse response = (IMAPResponse) ret[0];
+            assertFalse(response.isBAD());
+            assertEquals(uids.get(1).toString(), response.getRest());
+
+            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                @Override
+                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                    return protocol.command("UID SEARCH 2:2", null);
+                }
+            });
+            response = (IMAPResponse) ret[0];
+            assertFalse(response.isBAD());
+            assertTrue(ret[1].isOK());
+            assertEquals(uids.get(2).toString(), response.getRest());
+
+            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                @Override
+                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                    return protocol.command("UID SEARCH 2:4", null);
+                }
+            });
+            response = (IMAPResponse) ret[0];
+            assertFalse(response.isBAD());
+            assertEquals(msnListToUidString(uids, 2, 3, 4), response.getRest());
+            assertTrue(ret[1].isOK());
+
+            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                @Override
+                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                    return protocol.command("UID SEARCH 1 2:4 8", null);
+                }
+            });
+            response = (IMAPResponse) ret[0];
+            assertFalse(response.isBAD());
+            assertEquals(msnListToUidString(uids, 1, 2, 3, 4, 8), response.getRest());
+            assertTrue(ret[1].isOK());
+        } finally {
+            store.close();
+        }
+    }
+
+    private String msnListToUidString(Map<Integer, Long> uids, int... msnList) {
+        StringBuilder buf = new StringBuilder();
+        for (int msn : msnList) {
+            if (buf.length() > 0) {
+                buf.append(' ');
+            }
+            buf.append(uids.get(msn));
+        }
+        return buf.toString();
     }
 }

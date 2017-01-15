@@ -20,7 +20,7 @@ import java.util.Date;
  * @version $Revision: 109034 $
  */
 public class StoredMessage {
-    private MimeMessage mimeMessage;
+    private UidAwareMimeMessage mimeMessage;
     private Date receivedDate;
     private long uid;
     private SimpleMessageAttributes attributes;
@@ -38,8 +38,20 @@ public class StoredMessage {
             this.uid = uid;
         }
 
+        /**
+         * @return the UID.
+         */
         public long getUid() {
             return uid;
+        }
+
+        /**
+         * Updates the MSN.
+         *
+         * @param messageNumber the MSN.
+         */
+        public void updateMessageNumber(int messageNumber) {
+            setMessageNumber(messageNumber);
         }
     }
 
@@ -101,5 +113,14 @@ public class StoredMessage {
 
     public MailMessageAttributes getAttributes() throws FolderException {
         return attributes;
+    }
+
+    /**
+     * Updates the MSN.
+     *
+     * @param messageNumber the MSN.
+     */
+    public void updateMessageNumber(int messageNumber) {
+        mimeMessage.updateMessageNumber(messageNumber);
     }
 }

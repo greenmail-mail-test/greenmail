@@ -30,13 +30,18 @@ import java.util.Properties;
  * </ul>
  * <p/>
  * <h2>Protocol specific setups</h2>
- * Replace PROTOCOL with a value from {@value com.icegreen.greenmail.util.ServerSetup#PROTOCOLS}:
+ * Replace PROTOCOL with a value from {@link com.icegreen.greenmail.util.ServerSetup#PROTOCOLS}:
  * <ul>
  * <li>greenmail.PROTOCOL.port</li>
  * <li>greenmail.PROTOCOL.hostname (defaults to {@link ServerSetup#getLocalHostAddress()}</li>
  * </ul>
  */
 public class PropertiesBasedServerSetupBuilder {
+
+    /**
+     * Enables verbose JavaMail debug output by setting JavaMail 'mail.debug' property.
+     */
+    public static final String GREENMAIL_VERBOSE = "greenmail.verbose";
 
     /**
      * Creates a server setup based on provided properties.
@@ -58,6 +63,12 @@ public class PropertiesBasedServerSetupBuilder {
         // Default setups
         for (String protocol : ServerSetup.PROTOCOLS) {
             addSetup(hostname, protocol, properties, serverSetups);
+        }
+
+        for(ServerSetup setup: serverSetups) {
+            if(properties.containsKey(GREENMAIL_VERBOSE)) {
+                setup.setVerbose(true);
+            }
         }
 
         return serverSetups.toArray(new ServerSetup[serverSetups.size()]);
