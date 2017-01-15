@@ -3,11 +3,11 @@ GreenMail test setup with Rainloop
 
 Extends [solidnerd/rainloop:1.10.5.192](https://github.com/solidnerd/docker-rainloop) Docker image with a configured GreenMail domain.
 
-Run `docker-compose up .` and access Rainloop in your browser.
+Run `docker-compose up` and access Rainloop in your browser.
 
 |Port|Description|
 |----|-----------|
-|3080| Rainloop  | 
+|3080| Rainloop Client| 
 |3025| GreenMail SMTP | 
 |3143| GreenMail IMAP | 
 

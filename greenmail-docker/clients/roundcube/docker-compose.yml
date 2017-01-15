@@ -1,0 +1,17 @@
+version: '2'
+services:
+  greenmail:
+    image: greenmail/standalone:1.6.0-SNAPSHOT
+    environment:
+    # Enable GreenMail verbose mode
+    - GREENMAIL_OPTS=-Dgreenmail.setup.test.all -Dgreenmail.hostname=0.0.0.0 -Dgreenmail.auth.disabled -Dgreenmail.verbose
+    ports:
+    - "3025:3025"
+    - "3143:3143"
+  roundcube:
+    build:
+      context: .
+    ports:
+    - "4080:80"
+    links:
+    - greenmail
