@@ -5,7 +5,9 @@
 
   <artifactId>greenmail-docker-standalone</artifactId>
   <version>1.6.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
+  <!-- Does not actually provide a JAR, but requires the JAR Maven lifecycle
+       for unit test -->
+  <packaging>jar</packaging>
 
   <properties>
     <greenmail.docker.tags>${project.version}</greenmail.docker.tags>
@@ -21,7 +23,18 @@
   <dependencies>
     <dependency>
       <groupId>com.icegreen</groupId>
-      <artifactId>greenmail-standalone</artifactId>
+      <artifactId>greenmail</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -63,12 +76,6 @@
               <name>greenmail/standalone:${project.version}</name>
               <build>
                 <tags>${greenmail.docker.tags}</tags>
-                <!--
-                <tags>
-                    <tag>${project.version}</tag>
-                    <tag>${greenmail.docker.latest}</tag>
-                </tags>
-                -->
                 <dockerFileDir>${basedir}</dockerFileDir>
               </build>
               <run>
@@ -102,7 +109,7 @@
         <executions>
           <execution>
             <id>docker-package</id>
-            <phase>package</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>build</goal>
             </goals>
@@ -114,6 +121,20 @@
               <goal>push</goal>
             </goals>
           </execution>
+          <execution>
+            <id>docker-it-start</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>start</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>docker-it-stop</id>
+            <phase>post-integration-test</phase>
+            <goals>
+              <goal>stop</goal>
+            </goals>
+          </execution>
         </executions>
       </plugin>
 
@@ -122,6 +143,14 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <systemPropertyVariables>
+            <greenmail.host.address>${docker.host.address}</greenmail.host.address>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
     </plugins>
