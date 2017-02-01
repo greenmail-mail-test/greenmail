@@ -39,7 +39,7 @@ package com.icegreen.greenmail.imap.commands;
  * <li>TODO: SINCE &lt;date&gt; Messages whose internal date (disregarding time and timezone) is within or later than the specified date.</li>
  * <li>TODO: SMALLER &lt;n&gt; Messages with an [RFC-2822] size smaller than the specified number of octets.</li>
  * <li>SUBJECT &lt;string&gt; Messages that contain the specified string in the envelope structure's SUBJECT field.</li>
- * <li>TODO: TEXT &lt;string&gt; Messages that contain the specified string in the header or body of the message.</li>
+ * <li>TEXT &lt;string&gt; Messages that contain the specified string in the header or body of the message.</li>
  * <li>TO &lt;string&gt; Messages that contain the specified string in the envelope structure's TO field.</li>
  * <li>UID &lt;sequence set&gt; Messages with unique identifiers corresponding to the specified unique identifier set. Sequence set ranges are permitted.
  * <ul>
@@ -83,6 +83,7 @@ public enum SearchKey {
     SEEN(),
     SUBJECT(1),
     TO(1),
+    TEXT(1),
     UID(1),
     UNANSWERED(),
     UNDELETED(),
