@@ -16,6 +16,7 @@ import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class ImapProtocolTest {
         int numberOfMails = 10;
         for (int i = 0; i < numberOfMails; i++) {
             GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test search " + i,
-                    "Test message", ServerSetupTest.SMTP);
+                    "Test message content" + i, ServerSetupTest.SMTP);
         }
         greenMail.waitForIncomingEmail(numberOfMails);
 
@@ -176,6 +177,48 @@ public class ImapProtocolTest {
             assertFalse(response.isBAD());
             assertEquals(msnListToUidString(uids, 1, 2, 3, 4, 8), response.getRest());
             assertTrue(ret[1].isOK());
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
+    public void testUidSearchText() throws MessagingException, IOException {
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+
+            final Message[] messages = folder.getMessages();
+            Map<Integer, String> uids = new HashMap<>();
+            for (Message msg : messages) {
+                uids.put(msg.getMessageNumber(), Long.toString(folder.getUID(msg)));
+            }
+
+            // messages[2] contains content with search text, match must be case insensitive
+            final String searchText1 = "conTEnt2";
+            Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                @Override
+                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                    return protocol.command("UID SEARCH TEXT " + searchText1, null);
+                }
+            });
+            IMAPResponse response = (IMAPResponse) ret[0];
+            assertFalse(response.isBAD());
+            assertEquals(uids.get(messages[2].getMessageNumber()), response.getRest());
+
+            // messages[2] contains search text in CC, with different upper case
+            final String searchText2 = "foo@localHOST";
+            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                @Override
+                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                    return protocol.command("UID SEARCH TEXT " + searchText2, null);
+                }
+            });
+            response = (IMAPResponse) ret[0];
+            assertFalse(response.isBAD());
+            // Match all
+            assertArrayEquals(uids.values().toArray(), response.getRest().split(" "));
         } finally {
             store.close();
         }
