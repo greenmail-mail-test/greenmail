@@ -39,14 +39,29 @@ public class ImapHostManagerImpl
 
     @Override
     public List<StoredMessage> getAllMessages() {
-        List<StoredMessage> ret = new ArrayList<>();
         try {
-            Collection<MailFolder> boxes = store.listMailboxes("*");
-            for (MailFolder boxe : boxes) {
-                ret.addAll(boxe.getMessages());
-            }
+            return getAllMessages(store.listMailboxes("*"));
         } catch (FolderException e) {
-            throw new IllegalStateException(e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<StoredMessage> getAllMessages(GreenMailUser user) {
+        try {
+            return getAllMessages(listMailboxes(user, "*"));
+        } catch (FolderException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private List<StoredMessage> getAllMessages(Collection<MailFolder> boxes) {
+        List<StoredMessage> ret = new ArrayList<>();
+        for (MailFolder folder : boxes) {
+            List<StoredMessage> messages = folder.getMessages();
+            for (StoredMessage message : messages) {
+                ret.add(message);
+            }
         }
         return ret;
     }
@@ -57,13 +72,21 @@ public class ImapHostManagerImpl
     }
 
     /**
+     * @throws FolderException
      * @see ImapHostManager#getFolder
      */
-    @Override
-    public MailFolder getFolder(GreenMailUser user, String mailboxName) {
+    public MailFolder getFolder(GreenMailUser user, String mailboxName) throws FolderException {
         String name = getQualifiedMailboxName(user, mailboxName);
+        if (user.isAdmin() && !mailboxName.startsWith(NAMESPACE_PREFIX)) {
+            Collection<MailFolder> mailboxes = store.listMailboxes(ALL);
+            for (MailFolder folder : mailboxes) {
+                if (folder.getFullName().endsWith(mailboxName)) {
+                    return folder;
+                }
+            }
+        }
         MailFolder folder = store.getMailbox(name);
-        return checkViewable(folder);
+        return (checkViewable(folder));
     }
 
     @Override

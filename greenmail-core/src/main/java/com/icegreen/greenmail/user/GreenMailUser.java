@@ -16,6 +16,8 @@ public interface GreenMailUser {
     void deliver(MovingMessage msg);
     void deliver(MimeMessage msg);
 
+    boolean isAdmin();
+
     void create();
 
     void delete();
