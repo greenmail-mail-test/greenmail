@@ -263,15 +263,33 @@ public class GreenMail extends ConfiguredGreenMail {
 
     @Override
     public GreenMailUser setUser(String login, String password) {
-        return setUser(login, login, password);
+        return _setUser(login, login, password, false);
     }
 
     @Override
     public GreenMailUser setUser(String email, String login, String password) {
+        return _setUser(email, login, password, false);
+    }
+
+    @Override
+    public GreenMailUser setAdmin(String login, String password) {
+        return _setUser(login, login, password, true);
+    }
+
+    @Override
+    public GreenMailUser setAdmin(String email, String login, String password) {
+        return _setUser(email, login, password, true);
+    }
+
+    private GreenMailUser _setUser(String email, String login, String password, boolean admin) {
         GreenMailUser user = managers.getUserManager().getUser(login);
         if (null == user) {
             try {
-                user = managers.getUserManager().createUser(email, login, password);
+                if(admin){
+                    user = managers.getUserManager().createAdmin(email, login, password);
+                } else {
+                    user = managers.getUserManager().createUser(email, login, password);
+                }
             } catch (UserException e) {
                 throw new RuntimeException(e);
             }
@@ -291,7 +309,7 @@ public class GreenMail extends ConfiguredGreenMail {
         for (Object o : users.keySet()) {
             String email = (String) o;
             String password = users.getProperty(email);
-            setUser(email, email, password);
+            _setUser(email, email, password, false);
         }
     }
 

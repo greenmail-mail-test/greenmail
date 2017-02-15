@@ -24,6 +24,7 @@ public interface ImapConstants {
     char NAMESPACE_PREFIX_CHAR = '#';
     String HIERARCHY_DELIMITER = String.valueOf(HIERARCHY_DELIMITER_CHAR);
     String NAMESPACE_PREFIX = String.valueOf(NAMESPACE_PREFIX_CHAR);
+    String ALL = "*";
 
     String INBOX_NAME = "INBOX";
     String STORAGE = "STORAGE";
