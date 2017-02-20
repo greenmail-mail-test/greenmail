@@ -160,7 +160,8 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         for (BodyFetchElement fetchElement : elements) {
             response.append(SP);
             response.append(fetchElement.getResponseName());
-            if (null == fetchElement.getPartial()) {
+            final Partial partial = fetchElement.getPartial();
+            if (null == partial) {
                 response.append(SP);
             }
 
@@ -169,7 +170,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
             MimeMessage mimeMessage = message.getMimeMessage();
             try {
-                handleBodyFetch(mimeMessage, sectionSpecifier, fetchElement.getPartial(), response);
+                handleBodyFetch(mimeMessage, sectionSpecifier, partial, response);
             } catch (Exception e) {
                 throw new FolderException(e);
             }
@@ -186,7 +187,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
     private void handleBodyFetch(MimeMessage mimeMessage,
                                  String sectionSpecifier,
-                                 String partial,
+                                 Partial partial,
                                  StringBuilder response) throws IOException, MessagingException {
         if (log.isDebugEnabled()) {
             log.debug("Fetching body part for section specifier " + sectionSpecifier +
@@ -202,15 +203,15 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             addLiteral(bytes, response);
         } else if ("HEADER".equalsIgnoreCase(sectionSpecifier)) {
             Enumeration<?> inum = mimeMessage.getAllHeaderLines();
-            addHeaders(inum, response);
+            addHeaders(inum, response, partial);
         } else if (sectionSpecifier.startsWith("HEADER.FIELDS.NOT")) {
             String[] excludeNames = extractHeaderList(sectionSpecifier, "HEADER.FIELDS.NOT".length());
             Enumeration<?> inum = mimeMessage.getNonMatchingHeaderLines(excludeNames);
-            addHeaders(inum, response);
+            addHeaders(inum, response, partial);
         } else if (sectionSpecifier.startsWith("HEADER.FIELDS ")) {
             String[] includeNames = extractHeaderList(sectionSpecifier, "HEADER.FIELDS ".length());
             Enumeration<?> inum = mimeMessage.getMatchingHeaderLines(includeNames);
-            addHeaders(inum, response);
+            addHeaders(inum, response, partial);
         } else if (sectionSpecifier.endsWith("MIME")) {
             String[] strs = sectionSpecifier.trim().split("\\.");
             int partNumber = Integer.parseInt(strs[0]) - 1;
@@ -269,7 +270,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         }
     }
 
-    private void handleBodyFetchForText(MimeMessage mimeMessage, String partial, StringBuilder response) {
+    private void handleBodyFetchForText(MimeMessage mimeMessage, Partial partial, StringBuilder response) {
         // TODO - need to use an InputStream from the response here.
         // TODO - this is a hack. To get just the body content, I'm using a null
         // input stream to take the headers. Need to have a way of ignoring headers.
@@ -279,24 +280,14 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         addLiteral(bytes, response);
     }
 
-    private byte[] doPartial(String partial, byte[] bytes, StringBuilder response) {
+    private byte[] doPartial(Partial partial, byte[] bytes, StringBuilder response) {
         if (null != partial) {
-            String[] strs = partial.split("\\.");
-            int start = Integer.parseInt(strs[0]);
-            int len;
-            if (2 == strs.length) {
-                len = Integer.parseInt(strs[1]);
-            } else {
-                len = bytes.length;
-            }
-            start = Math.min(start, bytes.length);
-            len = Math.min(len, bytes.length - start);
+            int len = partial.computeLength(bytes.length);
+            int start = partial.computeStart(bytes.length);
             byte[] newBytes = new byte[len];
             System.arraycopy(bytes, start, newBytes, 0, len);
             bytes = newBytes;
-            response.append('<');
-            response.append(start);
-            response.append("> ");
+            response.append('<').append(partial.start).append('>');
         }
         return bytes;
     }
@@ -334,25 +325,36 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         return strings.toArray(new String[strings.size()]);
     }
 
-    private void addHeaders(Enumeration<?> inum, StringBuilder response) {
-        List<String> lines = new ArrayList<>();
+    private void addHeaders(Enumeration<?> inum, StringBuilder response, Partial partial) {
+        StringBuilder buf = new StringBuilder();
+
         int count = 0;
         while (inum.hasMoreElements()) {
             String line = (String) inum.nextElement();
             count += line.length() + 2;
-            lines.add(line);
+            buf.append(line).append("\r\n");
         }
-        response.append('{');
-        response.append(count + 2);
-        response.append('}');
-        response.append("\r\n");
 
-        for (Object line1 : lines) {
-            String line = (String) line1;
-            response.append(line);
+        if(null != partial) {
+            final String partialContent = buf.toString();
+            int len = partial.computeLength(partialContent.length()); // TODO : Charset?
+            int start = partial.computeStart(partialContent.length());
+
+            response.append('<').append(partial.start).append('>');
+            response.append(" {");
+            response.append(len);
+            response.append('}');
             response.append("\r\n");
+
+            response.append(partialContent.substring(start,start + len));
+        } else {
+            response.append("{");
+            response.append(count);
+            response.append('}');
+            response.append("\r\n");
+
+            response.append(buf);
         }
-        response.append("\r\n");
     }
 
     private static class FetchCommandParser extends CommandParser {
@@ -446,31 +448,33 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
                 String parameter = sectionIdentifier.toString();
 
-                StringBuilder partial = null;
+                Partial partial = null;
                 next = command.nextChar(); // Can be end of line if single option
-                if ('<' == next) {
-                    partial = new StringBuilder();
-                    consumeChar(command, '<');
-                    next = nextCharInLine(command);
-                    while (next != '>') {
-                        partial.append(next);
-                        command.consume();
-                        next = nextCharInLine(command);
-                    }
-                    consumeChar(command, '>');
-                    next = nextCharInLine(command);
+                if ('<' == next) { // Partial eg <2000> or <0.1000>
+                    partial = parsePartial(command);
                 }
 
                 if ("BODY".equalsIgnoreCase(name)) {
-                    fetch.add(new BodyFetchElement("BODY[" + parameter + ']', parameter,
-                            null == partial ? null : partial.toString()), false);
+                    fetch.add(new BodyFetchElement("BODY[" + parameter + ']', parameter, partial), false);
                 } else if ("BODY.PEEK".equalsIgnoreCase(name)) {
-                    fetch.add(new BodyFetchElement("BODY[" + parameter + ']', parameter,
-                            null == partial ? null : partial.toString()), true);
+                    fetch.add(new BodyFetchElement("BODY[" + parameter + ']', parameter, partial), true);
                 } else {
-                    throw new ProtocolException("Invalid fetch attibute: " + name + "[]");
+                    throw new ProtocolException("Invalid fetch attribute: " + name + "[]");
                 }
             }
+        }
+
+        private Partial parsePartial(ImapRequestLineReader command) throws ProtocolException {
+            consumeChar(command, '<');
+            int size = (int) consumeLong(command); // Assume <start>
+            int start = 0;
+            if (command.nextChar() == '.') {
+                consumeChar(command, '.');
+                start = size; // Assume <start.size> , so switch fields
+                size = (int) consumeLong(command);
+            }
+            consumeChar(command, '>');
+            return Partial.as(start, size);
         }
 
         private char nextCharInLine(ImapRequestLineReader request)
@@ -523,17 +527,42 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             bodyElements.add(element);
         }
     }
+    /** See https://tools.ietf.org/html/rfc3501#page-55 : partial */
+    private static class Partial {
+        int start,
+            size;
+
+        int computeLength(final int contentSize) {
+            if ( size > 0) {
+                return Math.min(size, contentSize - start); // Only up to max available bytes
+            } else {
+                // First len bytes
+                return contentSize;
+            }
+        }
+
+        int computeStart(final int contentSize) {
+            return Math.min(start, contentSize);
+        }
+
+        public static Partial as(int start, int size) {
+            Partial p = new Partial();
+            p.start = start;
+            p.size = size;
+            return p;
+        }
+    }
 
     private static class BodyFetchElement {
         private String name;
         private String sectionIdentifier;
-        private String partial;
+        private Partial partial;
 
         public BodyFetchElement(String name, String sectionIdentifier) {
             this(name, sectionIdentifier, null);
         }
 
-        public BodyFetchElement(String name, String sectionIdentifier, String partial) {
+        public BodyFetchElement(String name, String sectionIdentifier, Partial partial) {
             this.name = name;
             this.sectionIdentifier = sectionIdentifier;
             this.partial = partial;
@@ -547,7 +576,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             return this.name;
         }
 
-        public String getPartial() {
+        public Partial getPartial() {
             return partial;
         }
     }

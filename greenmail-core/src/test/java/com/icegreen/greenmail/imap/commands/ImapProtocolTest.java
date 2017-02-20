@@ -3,6 +3,7 @@ package com.icegreen.greenmail.imap.commands;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import com.sun.mail.iap.ByteArray;
 import com.sun.mail.iap.ProtocolException;
 import com.sun.mail.iap.Response;
 import com.sun.mail.imap.IMAPFolder;
@@ -55,13 +56,101 @@ public class ImapProtocolTest {
                     return protocol.command("UID FETCH 1:* RFC822.SIZE", null);
                 }
             });
+
             FetchResponse fetchResponse = (FetchResponse) ret[0];
             assertFalse(fetchResponse.isBAD());
             assertEquals(2, fetchResponse.getItemCount()); // UID and SIZE
+
             RFC822SIZE size = fetchResponse.getItem(RFC822SIZE.class);
             assertNotNull(size);
             assertTrue(size.size > 0);
+
             UID uid = fetchResponse.getItem(UID.class);
+            assertEquals(folder.getUID(folder.getMessage(1)), uid.uid);
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
+    public void testFetchSpaceBeforeSize() throws MessagingException {
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+
+            // Fetch without partial as reference
+            Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                @Override
+                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                    return protocol.command("UID FETCH 1 (BODY[HEADER])", null);
+                }
+            });
+            FetchResponse fetchResponse = (FetchResponse) ret[0];
+            assertFalse(fetchResponse.isBAD());
+            assertEquals(3, fetchResponse.getItemCount()); // UID, BODY, FLAGS
+
+            BODY body = fetchResponse.getItem(BODY.class);
+            assertTrue(body.isHeader());
+            final String content = new String(body.getByteArray().getNewBytes());
+
+            UID uid = fetchResponse.getItem(UID.class);
+            assertEquals(folder.getUID(folder.getMessage(1)), uid.uid);
+
+            // partial size only
+            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                @Override
+                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                    return protocol.command("UID FETCH 1 (BODY[HEADER]<50>)", null);
+                }
+            });
+            fetchResponse = (FetchResponse) ret[0];
+            assertFalse(fetchResponse.isBAD());
+            assertEquals(2, fetchResponse.getItemCount()); // UID, BODY
+
+            body = fetchResponse.getItem(BODY.class);
+            assertTrue(body.isHeader());
+            assertEquals(50, body.getByteArray().getCount());
+
+            uid = fetchResponse.getItem(UID.class);
+            assertEquals(folder.getUID(folder.getMessage(1)), uid.uid);
+
+            // partial size and zero offset
+            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                @Override
+                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                    return protocol.command("UID FETCH 1 (BODY[HEADER]<0.30>)", null);
+                }
+            });
+            fetchResponse = (FetchResponse) ret[0];
+            assertFalse(fetchResponse.isBAD());
+            assertEquals(2, fetchResponse.getItemCount()); // UID , BODY
+
+            body = fetchResponse.getItem(BODY.class);
+            assertTrue(body.isHeader());
+            assertEquals(30, body.getByteArray().getCount());
+
+            uid = fetchResponse.getItem(UID.class);
+            assertEquals(folder.getUID(folder.getMessage(1)), uid.uid);
+
+            // partial size and non zero offset
+            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                @Override
+                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                    return protocol.command("UID FETCH 1 (BODY[HEADER]<10.30>)", null);
+                }
+            });
+            fetchResponse = (FetchResponse) ret[0];
+            assertFalse(fetchResponse.isBAD());
+            assertEquals(2, fetchResponse.getItemCount()); // UID and SIZE
+
+            body = fetchResponse.getItem(BODY.class);
+            assertTrue(body.isHeader());
+            final ByteArray byteArray = body.getByteArray();
+            assertEquals(30, byteArray.getCount());
+            assertEquals(content.substring(10, 10 + 30), new String(byteArray.getNewBytes()));
+
+            uid = fetchResponse.getItem(UID.class);
             assertEquals(folder.getUID(folder.getMessage(1)), uid.uid);
         } finally {
             store.close();
