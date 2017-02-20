@@ -915,6 +915,11 @@ greenMail.getManagers().getUserManager().deleteUser(user1); // Delete user
                 <h4>How can I get more verbose output?</h4>
                 <p>Enable the verbose mode, which prints debug output and protocol level communication.<br/>
                    See <a href="http://www.icegreen.com/greenmail/javadocs/com/icegreen/greenmail/util/ServerSetup.html#setVerbose">ServerSetup.setVerbose(boolean)</a> or GreenMail standalone runner option <a href="#deploy_standalone">greenmail.verbose</a> option.
+                <p>Example of activating verbose mode when configuring via GreenMailRule:</p>
+<pre><code class="language-java"><!-- @formatter:off -->
+@Rule
+public final GreenMailRule greenMail = new GreenMailRule(ServerSetup.verbose(ServerSetupTest.SMTP_IMAP));
+</code></pre><!-- @formatter:on -->
             </div>
 
             <div id="download" class="bs-docs-section anchor">
