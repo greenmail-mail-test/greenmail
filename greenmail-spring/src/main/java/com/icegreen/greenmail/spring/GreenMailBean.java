@@ -141,7 +141,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
         synchronized (greenMail) {
             if (started) {
                 greenMail.stop();
-                started = true;
+                started = false;
             } else {
                 log.warn("Can not stop server (not started).");
             }
