@@ -2,14 +2,14 @@ package com.icegreen.greenmail.test.specificmessages;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.server.AbstractServer;
-import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.Retriever;
-import com.icegreen.greenmail.util.ServerSetupTest;
-import com.icegreen.greenmail.util.UserUtil;
+import com.icegreen.greenmail.util.*;
+import com.sun.mail.imap.IMAPFolder;
+import com.sun.mail.imap.IMAPStore;
 import org.junit.Rule;
 import org.junit.Test;
 
 import javax.mail.Address;
+import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
@@ -19,8 +19,7 @@ import java.io.UnsupportedEncodingException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 /**
  * Tests if senders and recipients of received messages are set correctly and if messages are received by the correct
@@ -89,6 +88,37 @@ public class SenderRecipientTest {
         GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com",
                 null, "some subjectless body");
         assertEquals("some subjectless body", GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
+    }
+
+    @Test
+    public void testSendAndReceiveWithQuotedAddress() throws MessagingException {
+        // See https://en.wikipedia.org/wiki/Email_address#Local-part
+        String[] toList = {"\"John..Doe\"@localhost",
+                "abc.\"defghi\".xyz@localhost",
+                "\"abcdefghixyz\"@localhost",
+                "\"Foo Bar\"admin@localhost"
+        };
+        for(String to: toList) {
+            greenMail.setUser(to, "pwd");
+            InternetAddress[] toAddress = InternetAddress.parse(to);
+
+            GreenMailUtil.sendTextEmailTest(to, "from@localhost",
+                    null, "some body");
+
+            assertTrue(greenMail.waitForIncomingEmail(5000, 1));
+
+            final IMAPStore store = greenMail.getImap().createStore();
+            store.connect(to, "pwd");
+            try {
+                IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+                folder.open(Folder.READ_ONLY);
+                Message[] msgs = folder.getMessages();
+                assertTrue(null != msgs && msgs.length == 1);
+                assertArrayEquals(toAddress, msgs[0].getRecipients(Message.RecipientType.TO));
+            } finally {
+                store.close();
+            }
+        }
     }
 
     /**

@@ -369,6 +369,7 @@ public class SimpleMessageAttributes
             try {
                 netAddr = new InternetAddress(address);
             } catch (AddressException ae) {
+                log.warn("Can not parse address " + address + " - ignored.", ae);
                 return null;
             }
             String personal = netAddr.getPersonal();
@@ -382,7 +383,7 @@ public class SimpleMessageAttributes
             buf.append(SP);
             try {
                 // Remove quotes to avoid double quoting
-                MailAddress mailAddr = new MailAddress(netAddr.getAddress().replaceAll("\"", ""));
+                MailAddress mailAddr = new MailAddress(netAddr.getAddress().replaceAll("\"", "\\\\\""));
                 buf.append(Q).append(mailAddr.getUser()).append(Q);
                 buf.append(SP);
                 buf.append(Q).append(mailAddr.getHost()).append(Q);
