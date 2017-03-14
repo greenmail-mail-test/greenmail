@@ -91,7 +91,7 @@ public class SenderRecipientTest {
     }
 
     @Test
-    public void testSendAndReceiveWithQuotedAddress() throws MessagingException {
+    public void testSendAndReceiveWithQuotedAddress() throws MessagingException, IOException {
         // See https://en.wikipedia.org/wiki/Email_address#Local-part
         String[] toList = {"\"John..Doe\"@localhost",
                 "abc.\"defghi\".xyz@localhost",
@@ -101,9 +101,12 @@ public class SenderRecipientTest {
         for(String to: toList) {
             greenMail.setUser(to, "pwd");
             InternetAddress[] toAddress = InternetAddress.parse(to);
+            String from = to; // Same from and to address for testing correct escaping of both
 
-            GreenMailUtil.sendTextEmailTest(to, "from@localhost",
-                    null, "some body");
+            final String subject = "testSendAndReceiveWithQuotedAddress";
+            final String content = "some body";
+            GreenMailUtil.sendTextEmailTest(to, from,
+                    subject, content);
 
             assertTrue(greenMail.waitForIncomingEmail(5000, 1));
 
@@ -114,7 +117,12 @@ public class SenderRecipientTest {
                 folder.open(Folder.READ_ONLY);
                 Message[] msgs = folder.getMessages();
                 assertTrue(null != msgs && msgs.length == 1);
-                assertArrayEquals(toAddress, msgs[0].getRecipients(Message.RecipientType.TO));
+                final Message msg = msgs[0];
+                assertEquals(to, ((InternetAddress)msg.getRecipients(Message.RecipientType.TO)[0]).getAddress());
+                assertEquals(from, ((InternetAddress)msg.getFrom()[0]).getAddress());
+                assertEquals(subject, msg.getSubject());
+                assertEquals(content, msg.getContent().toString());
+                assertArrayEquals(toAddress, msg.getRecipients(Message.RecipientType.TO));
             } finally {
                 store.close();
             }
