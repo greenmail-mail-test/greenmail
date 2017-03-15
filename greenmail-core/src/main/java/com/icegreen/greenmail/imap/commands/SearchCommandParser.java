@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.mail.search.AndTerm;
 import javax.mail.search.NotTerm;
+import javax.mail.search.OrTerm;
 import javax.mail.search.SearchTerm;
 
 import static com.icegreen.greenmail.imap.commands.IdRange.SEQUENCE;
@@ -34,6 +35,8 @@ class SearchCommandParser extends CommandParser {
             throws ProtocolException {
         SearchTerm resultTerm = null;
         SearchTermBuilder b = null;
+        SearchKey key = null;
+		boolean Orkey = false;
         boolean negated = false;
         // Dummy implementation
         // Consume to the end of the line.
@@ -84,7 +87,7 @@ class SearchCommandParser extends CommandParser {
                             b.addParameter(sb.toString());
                         } else {
                             // Term?
-                            SearchKey key = SearchKey.valueOf(keyValue);
+                            key = SearchKey.valueOf(keyValue);
                             if (SearchKey.NOT == key) {
                                 negated = true;
                             } else {
@@ -107,8 +110,27 @@ class SearchCommandParser extends CommandParser {
                         negated = false;
                     }
                     b = null;
+					if (key.toString().contains("OR")) {
+						if (SearchKey.OR == key) {
+						resultTerm = resultTerm == null ? searchTerm : new OrTerm(resultTerm, searchTerm);
+						Orkey = true;
+						}
+
+					} else {
+						if (Orkey) {
+							if (key.toString().contains("ALL")) {
                     resultTerm = resultTerm == null ? searchTerm : new AndTerm(resultTerm, searchTerm);
-                }
+
+							} else {
+								resultTerm = resultTerm == null ? searchTerm : new OrTerm(resultTerm, searchTerm);
+
+							}
+
+						} else {
+							resultTerm = resultTerm == null ? searchTerm : new AndTerm(resultTerm, searchTerm);
+
+						}
+					}                }
                 sb = new StringBuilder();
                 next = request.nextChar();
             }
