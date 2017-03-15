@@ -36,7 +36,7 @@ class SearchCommandParser extends CommandParser {
         SearchTerm resultTerm = null;
         SearchTermBuilder b = null;
         SearchKey key = null;
-		boolean Orkey = false;
+	boolean Orkey = false;
         boolean negated = false;
         // Dummy implementation
         // Consume to the end of the line.
