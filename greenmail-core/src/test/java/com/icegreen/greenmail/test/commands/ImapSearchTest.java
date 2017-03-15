@@ -109,6 +109,17 @@ public class ImapSearchTest {
             assertTrue(imapMessages.length == 0);
             imapMessages = imapFolder.search(new SubjectTerm("test"));
             assertTrue(imapMessages.length == 2);
+            
+            //Search Orterm - Search Subject which contains String1 OR String2
+            imapMessages = imapFolder.search(new OrTerm(new SubjectTerm("String1"),new SubjectTerm("String2")));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m0);
+            
+            //Search Orterm - Search Subject which contains String1 AND String2
+            imapMessages = imapFolder.search(new AndTerm(new SubjectTerm("String1"),new SubjectTerm("String2")));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m0);
+            
         } finally {
             store.close();
         }
