@@ -36,7 +36,7 @@ class SearchCommandParser extends CommandParser {
         SearchTerm resultTerm = null;
         SearchTermBuilder b = null;
         SearchKey key = null;
-	boolean Orkey = false;
+	boolean orKey = false;
         boolean negated = false;
         // Dummy implementation
         // Consume to the end of the line.
@@ -102,7 +102,6 @@ class SearchCommandParser extends CommandParser {
                 } else if (b.expectsParameter()) {
                     b = b.addParameter(sb.toString());
                 }
-
                 if (b != null && !b.expectsParameter()) {
                     SearchTerm searchTerm = b.build();
                     if (negated) {
@@ -110,32 +109,25 @@ class SearchCommandParser extends CommandParser {
                         negated = false;
                     }
                     b = null;
-					if (key.toString().contains("OR")) {
-						if (SearchKey.OR == key) {
-						resultTerm = resultTerm == null ? searchTerm : new OrTerm(resultTerm, searchTerm);
-						Orkey = true;
-						}
-
+					if (SearchKey.OR == key) {
+					resultTerm = resultTerm == null ? searchTerm : new OrTerm(resultTerm, searchTerm);
+					orKey = true;
 					} else {
-						if (Orkey) {
-							if (key.toString().contains("ALL")) {
+						if (orKey) {
+							if (SearchKey.ALL == key) {
                     resultTerm = resultTerm == null ? searchTerm : new AndTerm(resultTerm, searchTerm);
 
 							} else {
 								resultTerm = resultTerm == null ? searchTerm : new OrTerm(resultTerm, searchTerm);
-
 							}
-
 						} else {
 							resultTerm = resultTerm == null ? searchTerm : new AndTerm(resultTerm, searchTerm);
-
 						}
 					}                }
                 sb = new StringBuilder();
                 next = request.nextChar();
             }
         }
-
         return resultTerm;
     }
 
