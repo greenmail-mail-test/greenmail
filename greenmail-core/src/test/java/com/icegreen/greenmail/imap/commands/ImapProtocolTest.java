@@ -2,6 +2,7 @@ package com.icegreen.greenmail.imap.commands;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.sun.mail.iap.ByteArray;
 import com.sun.mail.iap.ProtocolException;
@@ -265,6 +266,40 @@ public class ImapProtocolTest {
             assertFalse(response.isBAD());
             assertEquals(msnListToUidString(uids, 1, 2, 3, 4, 8), response.getRest());
             assertTrue(ret[1].isOK());
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
+    public void testRenameFolder() throws MessagingException {
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_WRITE);
+            Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                @Override
+                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                    return protocol.command("CREATE foo", null);
+                }
+            });
+
+            IMAPResponse response = (IMAPResponse) ret[0];
+            assertFalse(response.isBAD());
+
+            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                @Override
+                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                    return protocol.command("RENAME foo bar", null);
+                }
+            });
+
+            Response response2 = ret[0];
+            assertTrue(response2.isOK());
+
+            final Folder bar = store.getFolder("bar");
+            bar.open(Folder.READ_ONLY);
+            assertTrue(bar.exists());
         } finally {
             store.close();
         }

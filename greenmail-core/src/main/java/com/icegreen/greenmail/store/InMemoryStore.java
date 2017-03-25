@@ -54,7 +54,7 @@ public class InMemoryStore
                                     boolean selectable)
             throws FolderException {
         if (mailboxName.indexOf(HIERARCHY_DELIMITER_CHAR) != -1) {
-            throw new FolderException("Invalid mailbox name.");
+            throw new FolderException("Invalid mailbox name "+mailboxName);
         }
         HierarchicalFolder castParent = (HierarchicalFolder) parent;
         HierarchicalFolder child = new HierarchicalFolder(castParent, mailboxName);
@@ -101,7 +101,7 @@ public class InMemoryStore
         } else {
             // Hierarchy change
             parent.getChildren().remove(toRename);
-            HierarchicalFolder userFolder = findParentByName(toRename, ImapConstants.INBOX_NAME).getParent();
+            HierarchicalFolder userFolder = getInboxOrUserRootFolder(toRename);
             String[] path = newName.split('\\' + ImapConstants.HIERARCHY_DELIMITER);
             HierarchicalFolder newParent = userFolder;
             for (int i = 0; i < path.length - 1; i++) {
@@ -112,9 +112,17 @@ public class InMemoryStore
         }
     }
 
-    private HierarchicalFolder findParentByName(HierarchicalFolder folder, String parentName) {
+    private HierarchicalFolder getInboxOrUserRootFolder(HierarchicalFolder folder) {
+        final HierarchicalFolder inboxFolder = findParentByName(folder, ImapConstants.INBOX_NAME);
+        if(null==inboxFolder) {
+            return folder.getParent();
+        }
+        return inboxFolder.getParent();
+    }
+
+    private HierarchicalFolder findParentByName(HierarchicalFolder folder, String name) {
         HierarchicalFolder currentFolder = folder;
-        while (null != currentFolder && !parentName.equals(currentFolder.getName())) {
+        while (null != currentFolder && !name.equals(currentFolder.getName())) {
             currentFolder = currentFolder.getParent();
         }
         return currentFolder;
