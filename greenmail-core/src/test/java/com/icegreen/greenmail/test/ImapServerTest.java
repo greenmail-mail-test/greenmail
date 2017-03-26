@@ -281,6 +281,54 @@ public class ImapServerTest {
         }
     }
 
+    /**
+     * 
+     * https://tools.ietf.org/html/rfc3501#page-37 :
+     * <q>
+     *     Renaming INBOX is permitted, and has special behavior.  It moves
+     *     all messages in INBOX to a new mailbox with the given name,
+     *     leaving INBOX empty.  If the server implementation supports
+     *     inferior hierarchical names of INBOX, these are unaffected by a
+     *     rename of INBOX.
+     *  </q>
+     *
+     * @throws MessagingException
+     * @throws InterruptedException
+     */
+    @Test
+    public void testRenameINBOXFolder() throws MessagingException, InterruptedException {
+        greenMail.setUser("foo@localhost", "pwd");
+        GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject",
+                "Test message", greenMail.getSmtp().getServerSetup());
+
+        final IMAPStore store = greenMail.getImap().createStore();
+        store.connect("foo@localhost", "pwd");
+        try {
+
+            // Create some folders
+            Folder inboxFolder = store.getFolder("INBOX");
+            assertTrue(inboxFolder.exists());
+            inboxFolder.open(Folder.READ_ONLY);
+            assertEquals(1, inboxFolder.getMessages().length);
+
+            Folder inboxRenamedFolder = store.getFolder("INBOX-renamed");
+            assertFalse(inboxRenamedFolder.exists());
+
+            inboxFolder.close(true);
+            inboxFolder.renameTo(inboxRenamedFolder);
+            assertTrue(inboxRenamedFolder.exists());
+            inboxRenamedFolder.open(Folder.READ_ONLY);
+            assertEquals(1, inboxRenamedFolder.getMessages().length);
+
+            inboxFolder = store.getFolder("INBOX");
+            assertTrue(inboxFolder.exists());
+            inboxFolder.open(Folder.READ_ONLY);
+            assertEquals(0, inboxFolder.getMessages().length);
+        } finally {
+            store.close();
+        }
+    }
+
     @Test
     public void testRenameFolder() throws MessagingException, InterruptedException {
         greenMail.setUser("foo@localhost", "pwd");

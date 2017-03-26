@@ -156,8 +156,9 @@ public class ServerSetup {
     /**
      * @param verbose if true enables JavaMail debug output by setting JavaMail property  'mail.debug'
      */
-    public void setVerbose(boolean verbose) {
+    public ServerSetup setVerbose(boolean verbose) {
         this.verbose = verbose;
+        return this;
     }
 
     /**
@@ -299,5 +300,19 @@ public class ServerSetup {
         setup.setVerbose(isVerbose());
 
         return setup;
+    }
+
+    /**
+     * Creates a copy with verbose mode enabled.
+     *
+     * @param serverSetups the server setups.
+     * @return copies of server setups with verbose mode enabled.
+     */
+    public static ServerSetup[] verbose(ServerSetup[] serverSetups) {
+        ServerSetup[] copies = new ServerSetup[serverSetups.length];
+        for (int i = 0; i < serverSetups.length; i++) {
+            copies[i] = serverSetups[i].createCopy().setVerbose(true);
+        }
+        return copies;
     }
 }
