@@ -2,9 +2,9 @@ package com.icegreen.greenmail.imap.commands;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.sun.mail.iap.ByteArray;
+import com.sun.mail.iap.Argument;
 import com.sun.mail.iap.ProtocolException;
 import com.sun.mail.iap.Response;
 import com.sun.mail.imap.IMAPFolder;
@@ -18,6 +18,8 @@ import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
+import javax.mail.internet.MimeMessage;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +40,8 @@ public class ImapProtocolTest {
         int numberOfMails = 10;
         for (int i = 0; i < numberOfMails; i++) {
             GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test search " + i,
-                    "Test message", ServerSetupTest.SMTP);
+                    "Test message content" + i,
+                    greenMail.getSmtp().getServerSetup());
         }
         greenMail.waitForIncomingEmail(numberOfMails);
 
@@ -272,6 +275,48 @@ public class ImapProtocolTest {
     }
 
     @Test
+    public void testUidSearchText() throws MessagingException, IOException {
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+
+            final Message[] messages = folder.getMessages();
+            Map<Integer, String> uids = new HashMap<>();
+            for (Message msg : messages) {
+                uids.put(msg.getMessageNumber(), Long.toString(folder.getUID(msg)));
+            }
+
+            // messages[2] contains content with search text, match must be case insensitive
+            final String searchText1 = "conTEnt2";
+            Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                @Override
+                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                    return protocol.command("UID SEARCH TEXT " + searchText1, null);
+                }
+            });
+            IMAPResponse response = (IMAPResponse) ret[0];
+            assertFalse(response.isBAD());
+            assertEquals(uids.get(messages[2].getMessageNumber()), response.getRest());
+
+            // messages[2] contains search text in CC, with different upper case
+            final String searchText2 = "foo@localHOST";
+            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                @Override
+                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                    return protocol.command("UID SEARCH TEXT " + searchText2, null);
+                }
+            });
+            response = (IMAPResponse) ret[0];
+            assertFalse(response.isBAD());
+            // Match all
+            assertArrayEquals(uids.values().toArray(), response.getRest().split(" "));
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
     public void testRenameFolder() throws MessagingException {
         store.connect("foo@localhost", "pwd");
         try {
@@ -300,6 +345,51 @@ public class ImapProtocolTest {
             final Folder bar = store.getFolder("bar");
             bar.open(Folder.READ_ONLY);
             assertTrue(bar.exists());
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
+    public void testUidSearchTextWithCharset() throws MessagingException, IOException {
+        greenMail.setUser("foo2@localhost", "pwd");
+        store.connect("foo2@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+
+            final MimeMessage email = GreenMailUtil.createTextEmail("foo2@localhost", "foo@localhost",
+                    "some subject", "some content",
+                    greenMail.getSmtp().getServerSetup());
+
+            String[][] s = {
+                    {"US-ASCII", "ABC", "1"},
+                    {"ISO-8859-15", "\u00c4\u00e4\u20AC", "2"},
+                    {"UTF-8", "\u00c4\u00e4\u03A0", "3"}
+            };
+
+            for (String[] charsetAndQuery : s) {
+                final String charset = charsetAndQuery[0];
+                final String search = charsetAndQuery[1];
+
+                email.setSubject("subject " + search, charset);
+                GreenMailUtil.sendMimeMessage(email);
+
+                // messages[2] contains content with search text, match must be case insensitive
+                final byte[] searchBytes = search.getBytes(charset);
+                final Argument arg = new Argument();
+                arg.writeBytes(searchBytes);
+                Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                    @Override
+                    public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                        return protocol.command("UID SEARCH CHARSET " + charset + " TEXT", arg);
+                    }
+                });
+                IMAPResponse response = (IMAPResponse) ret[0];
+                assertFalse(response.isBAD());
+                String number = response.getRest();
+                assertEquals(charsetAndQuery[2], number);
+            }
         } finally {
             store.close();
         }

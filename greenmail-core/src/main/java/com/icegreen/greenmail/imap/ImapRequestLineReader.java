@@ -142,9 +142,9 @@ public class ImapRequestLineReader {
 
     /**
      * Reads and consumes a number of characters from the underlying reader,
-     * filling the char array provided.
+     * filling the byte array provided.
      *
-     * @param holder A char array which will be filled with chars read from the underlying reader.
+     * @param holder A byte array which will be filled with bytes read from the underlying reader.
      * @throws ProtocolException If a char can't be read into each array element.
      */
     public void read(byte[] holder) throws ProtocolException {

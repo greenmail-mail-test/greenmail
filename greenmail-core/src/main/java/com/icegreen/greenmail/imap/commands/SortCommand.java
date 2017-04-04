@@ -5,6 +5,7 @@ import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.StoredMessage;
 
+import java.nio.charset.CharacterCodingException;
 import java.util.*;
 
 /**
@@ -38,7 +39,14 @@ class SortCommand extends SelectedStateCommand implements UidEnabledCommand {
                           ImapResponse response,
                           ImapSession session,
                           boolean useUids) throws ProtocolException, FolderException {
-        final SortTerm sortTerm = sortCommandParser.sortTerm(request);
+        final SortTerm sortTerm;
+        try {
+            sortTerm = sortCommandParser.sortTerm(request);
+        } catch (CharacterCodingException e) {
+            // Not support => return "BAD"
+            response.badResponse("Sort/search command does not support charset "+e.getMessage());
+            return;
+        }
 
         final MailFolder folder = session.getSelected();
 

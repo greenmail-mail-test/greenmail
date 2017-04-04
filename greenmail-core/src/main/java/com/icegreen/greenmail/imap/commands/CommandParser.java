@@ -26,6 +26,15 @@ import java.util.Locale;
  */
 public class CommandParser {
     /**
+     * SPACE character
+     */
+    static final char CHR_SPACE = ' ';
+    /**
+     * Carriage-Return '\r' character
+     */
+    static final char CHR_CR = '\r';
+
+    /**
      * Reads an argument of type "atom" from the request.
      */
     public String atom(ImapRequestLineReader request) throws ProtocolException {
@@ -439,14 +448,10 @@ public class CommandParser {
     private static class MessageSetCharValidator implements CharacterValidator {
         @Override
         public boolean isValid(char chr) {
-            return isDigit(chr) ||
+            return Character.isDigit(chr) ||
                     chr == ':' ||
                     chr == '*' ||
                     chr == ',';
-        }
-
-        private boolean isDigit(char chr) {
-            return '0' <= chr && chr <= '9';
         }
     }
 

@@ -9,6 +9,7 @@ import javax.mail.Message;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.search.*;
+import javax.mail.search.RecipientStringTerm;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -74,6 +75,9 @@ public abstract class SearchTermBuilder {
                 break;
             case SUBJECT:
                 builder = createSubjectTermBuilder();
+                break;
+            case TEXT:
+                builder = createTextSearchTermBuilder();
                 break;
             case TO:
                 builder = createRecipientSearchTermBuilder(Message.RecipientType.TO);
@@ -143,6 +147,10 @@ public abstract class SearchTermBuilder {
         return parameters.size() < key.getNumberOfParameters();
     }
 
+    boolean isCharsetAware() {
+        return key.isCharsetAware();
+    }
+
     public abstract SearchTerm build();
 
     private static SearchTermBuilder createSearchTermBuilder(final SearchTerm pSearchTerm) {
@@ -163,6 +171,24 @@ public abstract class SearchTermBuilder {
                 } catch (AddressException e) {
                     throw new IllegalArgumentException("Address is not correct", e);
                 }
+            }
+        };
+    }
+
+    private static SearchTermBuilder createTextSearchTermBuilder() {
+        return new SearchTermBuilder() {
+            @Override
+            public SearchTerm build() {
+                String query = getParameters().get(0);
+                SearchTerm[] terms = {
+                  new RecipientStringTerm(Message.RecipientType.TO, query),
+                  new RecipientStringTerm(Message.RecipientType.CC, query),
+                  new RecipientStringTerm(Message.RecipientType.BCC, query),
+                  new FromStringTerm(query),
+                  new SubjectTerm(query),
+                  new BodyTerm(query)
+                };
+                return new OrTerm(terms);
             }
         };
     }
