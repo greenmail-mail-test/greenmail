@@ -68,22 +68,22 @@ package com.icegreen.greenmail.imap.commands;
 public enum SearchKey {
     ALL(),
     ANSWERED(),
-    BCC(1),
-    CC(1),
+    BCC(1, true),
+    CC(1, true),
     DELETED(),
     DRAFT(),
     FLAGGED(),
-    FROM(1),
-    HEADER(2),
+    FROM(1, true),
+    HEADER(2, true),
     KEYWORD(1),
     NEW(),
     NOT(true),
     OLD(),
     RECENT(),
     SEEN(),
-    SUBJECT(1),
-    TO(1),
-    TEXT(1),
+    SUBJECT(1, true),
+    TO(1, true),
+    TEXT(1, true),
     UID(1),
     UNANSWERED(),
     UNDELETED(),
@@ -99,6 +99,7 @@ public enum SearchKey {
 
     private int minArgs = 0; // expected additional arguments
     private boolean operator = false; // Is an operator, such as AND, OR, NOT ...
+    private boolean charsetAware = false;
 
     SearchKey() {
         // Nothing
@@ -106,6 +107,11 @@ public enum SearchKey {
 
     SearchKey(int pMinArgs) {
         minArgs = pMinArgs;
+    }
+
+    SearchKey(int pMinArgs, boolean charsetAware) {
+        this(pMinArgs);
+        this.charsetAware = charsetAware;
     }
 
     SearchKey(boolean pOperator) {
@@ -118,5 +124,9 @@ public enum SearchKey {
 
     public boolean isOperator() {
         return operator;
+    }
+
+    public boolean isCharsetAware() {
+        return charsetAware;
     }
 }

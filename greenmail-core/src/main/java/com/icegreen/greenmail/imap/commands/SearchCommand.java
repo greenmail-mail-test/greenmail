@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.mail.search.SearchTerm;
+import java.nio.charset.CharacterCodingException;
 
 /**
  * Handles processing for the SEARCH imap command.
@@ -54,6 +55,10 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
         } catch(IllegalArgumentException ex) {
             // Not support => return "BAD"
             response.badResponse("Search command not supported");
+            return;
+        } catch (CharacterCodingException e) {
+            // Not support => return "BAD"
+            response.badResponse("Search command does not support charset "+e.getMessage());
             return;
         }
 

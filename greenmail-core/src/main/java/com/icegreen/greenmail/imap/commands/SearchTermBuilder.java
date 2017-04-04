@@ -147,6 +147,10 @@ public abstract class SearchTermBuilder {
         return parameters.size() < key.getNumberOfParameters();
     }
 
+    boolean isCharsetAware() {
+        return key.isCharsetAware();
+    }
+
     public abstract SearchTerm build();
 
     private static SearchTermBuilder createSearchTermBuilder(final SearchTerm pSearchTerm) {
