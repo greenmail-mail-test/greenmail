@@ -90,7 +90,7 @@ class SearchCommandParser extends CommandParser {
                             b.addParameter(sb.toString());
                         }
                         else if (CHARSET_TOKEN.equals(keyValue)) { // Charset handling
-                            next = request.nextWordChar();
+                            request.nextWordChar(); // Skip spaces
                             String c = this.atom(request);
                             if (log.isDebugEnabled()) {
                                 log.debug("Searching with given CHARSET <" + c + '>');
@@ -129,7 +129,6 @@ class SearchCommandParser extends CommandParser {
                         ByteBuffer bb = ByteBuffer.allocate(capacity);
                         while (next != CHR_CR) {
                             request.consume(); // \n
-                            //   bb.putChar(next);
                             sb.append(next);
                             next = request.nextChar();
                         }

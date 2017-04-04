@@ -44,7 +44,7 @@ class SortCommand extends SelectedStateCommand implements UidEnabledCommand {
             sortTerm = sortCommandParser.sortTerm(request);
         } catch (CharacterCodingException e) {
             // Not support => return "BAD"
-            response.badResponse("Sort/search command does not support charset "+e.getMessage());
+            response.commandError("Sort/search command does not support charset "+e.getMessage());
             return;
         }
 
