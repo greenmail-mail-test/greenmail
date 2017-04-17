@@ -11,7 +11,7 @@ Go to the [project site][greenmail_project_site] for details:
 * [JavaDoc][greenmail_javadoc]
 * [FAQ][greenmail_faq]
 * [Download][greenmail_download]
-* [Maven coordinates][maven_repository_com]: com.icegreen:greenmail:1.5.3
+* [Maven coordinates][maven_repository_com]: com.icegreen:greenmail:1.5.4
 
 The GreenMail project welcomes any contribution, so go ahead and fork/open a pull request! See the guidelines below.
 
@@ -34,6 +34,11 @@ Development [![Build status](https://circleci.com/gh/greenmail-mail-test/greenma
   `mvn site -Psite`
 
 * Build and deploy a release
+
+  For rolling a release including version increment and release upload, do
+
+  `mvn clean release:prepare -Prelease,release-ossrh,docker,docker-tag-latest`
+  `mvn release:perform -Prelease,release-ossrh,docker,docker-tag-latest`
 
   For a tagged release and deployment to [Sonatype OpenSource Repository Hosting][ossrh_maven] and later syncing to [Maven Central][maven_repository_release], do
 
