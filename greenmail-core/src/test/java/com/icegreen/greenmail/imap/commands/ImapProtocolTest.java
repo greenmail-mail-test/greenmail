@@ -1,10 +1,12 @@
 package com.icegreen.greenmail.imap.commands;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.store.FolderException;
+import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import com.sun.mail.iap.ByteArray;
 import com.sun.mail.iap.Argument;
+import com.sun.mail.iap.ByteArray;
 import com.sun.mail.iap.ProtocolException;
 import com.sun.mail.iap.Response;
 import com.sun.mail.imap.IMAPFolder;
@@ -31,11 +33,12 @@ import static org.junit.Assert.*;
 public class ImapProtocolTest {
     @Rule
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
+    private GreenMailUser user;
     private IMAPStore store;
 
     @Before
     public void beforeEachTest() throws NoSuchProviderException {
-        greenMail.setUser("foo@localhost", "pwd");
+        user = greenMail.setUser("foo@localhost", "pwd");
 
         int numberOfMails = 10;
         for (int i = 0; i < numberOfMails; i++) {
@@ -269,6 +272,23 @@ public class ImapProtocolTest {
             assertFalse(response.isBAD());
             assertEquals(msnListToUidString(uids, 1, 2, 3, 4, 8), response.getRest());
             assertTrue(ret[1].isOK());
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
+    public void testGetMessageByUnknownUidInEmptyINBOX() throws MessagingException, FolderException {
+        greenMail.getManagers()
+            .getImapHostManager()
+            .getInbox(user)
+            .deleteAllMessages();
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+            Message message = folder.getMessageByUID(666);
+            assertEquals(null, message);
         } finally {
             store.close();
         }
