@@ -80,7 +80,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
         // a wildcard search must include the last message if the folder is not empty,
         // as per https://tools.ietf.org/html/rfc3501#section-6.4.8
-        long lastMessageUid = uids[uids.length - 1];
+        long lastMessageUid = uids.length > 0 ? uids[uids.length - 1] : -1L;
         if (mailbox.getMessageCount() > 0 && includes(idSet, Long.MAX_VALUE) && !includes(idSet, lastMessageUid)) {
             String msgData = getMessageData(useUids, fetch, mailbox, lastMessageUid);
             response.fetchResponse(mailbox.getMsn(lastMessageUid), msgData);
