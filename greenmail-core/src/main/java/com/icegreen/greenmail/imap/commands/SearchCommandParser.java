@@ -105,7 +105,7 @@ class SearchCommandParser extends CommandParser {
                                 b = SearchTermBuilder.create(key);
                             }
 
-                            if (b.expectsParameter() && key.isCharsetAware() && null != charset && next == CHR_SPACE) {
+                            if (null!=b && b.expectsParameter() && key.isCharsetAware() && null != charset && next == CHR_SPACE) {
                                 next = request.nextWordChar();
                                 if (next == '{') {
                                     String textOfCharset = new String(consumeLiteralAsBytes(request), charset);
