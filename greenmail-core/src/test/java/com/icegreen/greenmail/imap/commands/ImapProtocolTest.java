@@ -278,11 +278,33 @@ public class ImapProtocolTest {
     }
 
     @Test
+    public void testSearchNotFlags() throws MessagingException {
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_WRITE);
+            folder.setFlags(new int[]{2,3}, new Flags(Flags.Flag.ANSWERED), true);
+            Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                @Override
+                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                    return protocol.command("SEARCH NOT (ANSWERED) NOT (DELETED) NOT (SEEN) NOT (FLAGGED) ALL", null);
+                }
+            });
+            IMAPResponse response = (IMAPResponse) ret[0];
+            assertFalse(response.isBAD());
+            assertEquals("1 4 5 6 7 8 9 10" /* 2 and 3 set to answered */, response.getRest());
+        } finally {
+            store.close();
+        }
+    }
+
+
+    @Test
     public void testGetMessageByUnknownUidInEmptyINBOX() throws MessagingException, FolderException {
         greenMail.getManagers()
-            .getImapHostManager()
-            .getInbox(user)
-            .deleteAllMessages();
+                .getImapHostManager()
+                .getInbox(user)
+                .deleteAllMessages();
         store.connect("foo@localhost", "pwd");
         try {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
