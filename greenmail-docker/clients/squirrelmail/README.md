@@ -9,14 +9,14 @@ Run `docker-compose up` and access SquirrelMail in your browser.
 
 |Port|Description|
 |----|-----------|
-|5080| SquirrelMail Client| 
-|3025| GreenMail SMTP | 
-|3143| GreenMail IMAP | 
+|5080| SquirrelMail Client|
+|3025| GreenMail SMTP |
+|3143| GreenMail IMAP |
 
 How to run with docker (instead of docker-compose)
 --------
 
-1. Build configured SquirrelMail image  
+1. Build configured SquirrelMail image
    `docker build -t greenmail/client-squirrelmail .`
 
 2. Start GreenMail
