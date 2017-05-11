@@ -21,7 +21,7 @@ How to run with docker (instead of docker-compose)
 ```
 docker run -t -i --name greenmail \
            -e GREENMAIL_OPTS='-Dgreenmail.setup.test.all -Dgreenmail.hostname=0.0.0.0 -Dgreenmail.auth.disabled -Dgreenmail.verbose' \
-           -p 3025:3025 -p 3143:3143 greenmail/standalon:<VERSION>`
+           -p 3025:3025 -p 3143:3143 greenmail/standalone:<VERSION>`
 ```
 
 3. Start configured Rainloop image
