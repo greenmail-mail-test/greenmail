@@ -11,7 +11,7 @@
   <artifactId>greenmail-parent</artifactId>
   <packaging>pom</packaging>
   <!-- This version should get inherited to all subprojects. -->
-  <version>1.5.5</version>
+  <version>1.5.6-SNAPSHOT</version>
 
   <prerequisites>
     <maven>3.2.1</maven>
@@ -35,7 +35,7 @@
     <url>
       https://github.com/greenmail-mail-test/greenmail
     </url>
-    <tag>release-1.5.5</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <issueManagement>
@@ -327,27 +327,27 @@
       <dependency>
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail</artifactId>
-        <version>1.5.5</version>
+        <version>1.5.6-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail-standalone</artifactId>
-        <version>1.5.5</version>
+        <version>1.5.6-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail-webapp</artifactId>
-        <version>1.5.5</version>
+        <version>1.5.6-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail-spring</artifactId>
-        <version>1.5.5</version>
+        <version>1.5.6-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail-jboss-service</artifactId>
-        <version>1.5.5</version>
+        <version>1.5.6-SNAPSHOT</version>
       </dependency>
 
       <!-- Compile scope (=default) -->
