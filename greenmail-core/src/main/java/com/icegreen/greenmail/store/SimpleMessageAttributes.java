@@ -148,7 +148,7 @@ public class SimpleMessageAttributes
 //            if (DEBUG) getLogger().debug("Messaging Exception for getHeader(Sender): " + me);
         }
         try {
-            replyTo = part.getHeader("Reply To");
+            replyTo = part.getHeader("Reply-To");
         } catch (MessagingException me) {
 //            if (DEBUG) getLogger().debug("Messaging Exception for getHeader(Reply To): " + me);
         }
