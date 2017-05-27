@@ -70,7 +70,8 @@ public class SenderRecipientTest {
         msg.setText("text");
 
         GreenMailUtil.sendMimeMessage(msg);
-        greenMail.waitForIncomingEmail(5000, 1);
+        assertTrue(greenMail.waitForIncomingEmail(5000,
+                TO_ADDRESSES.length + CC_ADDRESSES.length + BCC_ADDRESSES.length));
 
         for (InternetAddress address : TO_ADDRESSES) {
             retrieveAndCheck(greenMail, address);
