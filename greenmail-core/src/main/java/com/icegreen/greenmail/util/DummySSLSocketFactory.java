@@ -4,14 +4,6 @@
  */
 package com.icegreen.greenmail.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.net.SocketFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -20,17 +12,28 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Random;
 
+import javax.net.SocketFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * DummySSLSocketFactory - NOT SECURE
  */
 public class DummySSLSocketFactory extends SSLSocketFactory {
     protected static final Logger log = LoggerFactory.getLogger(DummySSLSocketFactory.class);
     private SSLSocketFactory factory;
+    final private GreenMailKeyStoreManager keyStoreManager = new GreenMailKeyStoreManager();
 
     public DummySSLSocketFactory() {
         try {
+        	System.setProperty("https.protocols", "SSLv3");
             SSLContext sslcontext = SSLContext.getInstance("TLS");
-            sslcontext.init(null,
+            sslcontext.init(keyStoreManager.getKeyManagers(),
                     new TrustManager[]{new DummyTrustManager()},
                     null);
             factory = sslcontext.getSocketFactory();

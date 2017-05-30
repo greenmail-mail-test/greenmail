@@ -4,17 +4,19 @@
  */
 package com.icegreen.greenmail.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.net.ServerSocketFactory;
-import javax.net.ssl.*;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.security.KeyStore;
+
+import javax.net.ServerSocketFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.TrustManager;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -36,26 +38,12 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
     };
     public static final String GREENMAIL_JKS = "greenmail.jks";
     private SSLServerSocketFactory factory;
-    private KeyStore ks;
+    private GreenMailKeyStoreManager keyStoreManager = new GreenMailKeyStoreManager();
 
     public DummySSLServerSocketFactory() {
         try {
             SSLContext sslcontext = SSLContext.getInstance("TLS");
-            String defaultAlg = KeyManagerFactory.getDefaultAlgorithm();
-            KeyManagerFactory km = KeyManagerFactory.getInstance(defaultAlg);
-            ks = KeyStore.getInstance(KeyStore.getDefaultType());
-            char[] pass = "changeit".toCharArray();
-            try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(GREENMAIL_JKS)) {
-                ks.load(is, pass);
-            } catch (IOException ex) {
-                // Try hard coded default keystore
-                log.warn("Can not load greenmail keystore from '" + GREENMAIL_JKS +
-                        "' in classpath. Falling back to hard coded keystore.", ex);
-                ks.load(new ByteArrayInputStream(HARD_CODED_KEY_STORE), pass);
-            }
-            km.init(ks, pass);
-            KeyManager[] kma = km.getKeyManagers();
-            sslcontext.init(kma,
+            sslcontext.init(keyStoreManager.getKeyManagers(),
                     new TrustManager[]{new DummyTrustManager()},
                     null);
             factory = sslcontext.getServerSocketFactory();
@@ -118,6 +106,6 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
     }
 
     public KeyStore getKeyStore() {
-        return ks;
+        return keyStoreManager.getKeyStore();
     }
 }
