@@ -60,6 +60,20 @@ public class UserManagerTest {
     }
 
     @Test
+    public void testCreateAndDeleteAdmin() throws UserException {
+        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
+        UserManager userManager = new UserManager(imapHostManager);
+
+        assertTrue(userManager.listUser().isEmpty());
+
+        GreenMailUser user = userManager.createAdmin("foo@bar.com", "foo", "pwd");
+        assertEquals(1, userManager.listUser().size());
+
+        userManager.deleteUser(user);
+        assertTrue(userManager.listUser().isEmpty());
+    }
+
+    @Test
     public void testNoAuthRequired() {
         ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
         UserManager userManager = new UserManager(imapHostManager);

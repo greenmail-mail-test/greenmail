@@ -21,15 +21,21 @@ public class UserImpl implements GreenMailUser {
     private final String cachedHashCodeAsString;
     String login;
     String password;
+    private boolean admin;
     private ImapHostManager imapHostManager;
 
-    public UserImpl(String email, String login, String password, ImapHostManager imapHostManager) {
+    public UserImpl(String email, String login, String password, boolean admin, ImapHostManager imapHostManager) {
         this.email = email;
         cachedHashCode = email.hashCode();
         cachedHashCodeAsString = String.valueOf(cachedHashCode);
         this.login = login;
         this.password = password;
+        this.admin = admin;
         this.imapHostManager = imapHostManager;
+    }
+
+    public boolean isAdmin() {
+        return admin;
     }
 
     @Override

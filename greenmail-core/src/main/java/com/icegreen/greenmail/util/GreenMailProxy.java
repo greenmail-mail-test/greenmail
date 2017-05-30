@@ -90,6 +90,16 @@ public abstract class GreenMailProxy extends ConfiguredGreenMail {
     }
 
     @Override
+    public GreenMailUser setAdmin(String login, String password) {
+        return getGreenMail().setAdmin(login, password);
+    }
+
+    @Override
+    public GreenMailUser setAdmin(String email, String login, String password) {
+        return getGreenMail().setAdmin(email, login, password);
+    }
+
+    @Override
     public void setUsers(Properties users) {
         getGreenMail().setUsers(users);
     }
