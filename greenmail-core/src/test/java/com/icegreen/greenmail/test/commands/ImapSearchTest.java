@@ -97,28 +97,28 @@ public class ImapSearchTest {
 
             // Search Subject
             imapMessages = imapFolder.search(new SubjectTerm("test0Search"));
-            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages.length == 2);
             assertTrue(imapMessages[0] == m0);
             imapMessages = imapFolder.search(new SubjectTerm("TeSt0Search")); // Case insensitive
-            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages.length == 2);
             assertTrue(imapMessages[0] == m0);
             imapMessages = imapFolder.search(new SubjectTerm("0S"));
-            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages.length == 2);
             assertTrue(imapMessages[0] == m0);
             imapMessages = imapFolder.search(new SubjectTerm("not found"));
             assertTrue(imapMessages.length == 0);
             imapMessages = imapFolder.search(new SubjectTerm("test"));
             assertTrue(imapMessages.length == 2);
             
-            //Search Orterm - Search Subject which contains String1 OR String2
-            imapMessages = imapFolder.search(new OrTerm(new SubjectTerm("String1"),new SubjectTerm("String2")));
-            assertTrue(imapMessages.length == 1);
+            //Search OrTerm - Search Subject which contains String1 OR String2
+            imapMessages = imapFolder.search(new OrTerm(new SubjectTerm("test0Search"),new SubjectTerm("String2")));
+            assertTrue(imapMessages.length == 2);
             assertTrue(imapMessages[0] == m0);
             
-            //Search Orterm - Search Subject which contains String1 AND String2
-            imapMessages = imapFolder.search(new AndTerm(new SubjectTerm("String1"),new SubjectTerm("String2")));
+            //Search AndTerm - Search Subject which contains String1 AND String2
+            imapMessages = imapFolder.search(new AndTerm(new SubjectTerm("test0Search"),new SubjectTerm("test1Search")));
             assertTrue(imapMessages.length == 1);
-            assertTrue(imapMessages[0] == m0);
+            assertTrue(imapMessages[0] == m1);
             
         } finally {
             store.close();
@@ -169,7 +169,7 @@ public class ImapSearchTest {
         folder.store(message1);
 
         MimeMessage message2 = new MimeMessage(session);
-        message2.setSubject("test1Search");
+        message2.setSubject("test0Search test1Search");
         message2.setText("content");
         setRecipients(message2, Message.RecipientType.TO, "to", 1, 3);
         setRecipients(message2, Message.RecipientType.CC, "cc", 1, 3);
