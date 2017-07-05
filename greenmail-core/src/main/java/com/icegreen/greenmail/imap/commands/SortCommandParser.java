@@ -3,6 +3,8 @@ package com.icegreen.greenmail.imap.commands;
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ProtocolException;
 
+import java.nio.charset.CharacterCodingException;
+
 /**
  * Created on 10/03/2016.
  *
@@ -12,7 +14,7 @@ class SortCommandParser extends CommandParser {
 
     private SearchCommandParser searchCommandParser = new SearchCommandParser();
 
-    public SortTerm sortTerm(ImapRequestLineReader request) throws ProtocolException {
+    public SortTerm sortTerm(ImapRequestLineReader request) throws ProtocolException, CharacterCodingException {
         SortTerm sortTerm = new SortTerm();
 
         /* Sort criteria */

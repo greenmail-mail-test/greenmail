@@ -15,6 +15,9 @@ import javax.mail.search.AndTerm;
 import javax.mail.search.NotTerm;
 import javax.mail.search.OrTerm;
 import javax.mail.search.SearchTerm;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
 
 import static com.icegreen.greenmail.imap.commands.IdRange.SEQUENCE;
 
@@ -25,6 +28,7 @@ import static com.icegreen.greenmail.imap.commands.IdRange.SEQUENCE;
  */
 class SearchCommandParser extends CommandParser {
     private final Logger log = LoggerFactory.getLogger(SearchCommandParser.class);
+    private static final String CHARSET_TOKEN = "CHARSET";
 
     /**
      * Parses the request argument into a valid search term. Not yet fully implemented - see SearchKey enum.
@@ -32,7 +36,7 @@ class SearchCommandParser extends CommandParser {
      * Other searches will return everything for now.
      */
     public SearchTerm searchTerm(ImapRequestLineReader request)
-            throws ProtocolException {
+            throws ProtocolException, CharacterCodingException {
         SearchTerm resultTerm = null;
         SearchTermBuilder b = null;
         SearchKey key = null;
@@ -43,19 +47,21 @@ class SearchCommandParser extends CommandParser {
         char next = request.nextChar();
         StringBuilder sb = new StringBuilder();
         boolean quoted = false;
+        Charset charset = null;
+
         while (next != '\n') {
-            if (next != '\"' && (quoted || (next != '\"' && next != 32 /* space */ && next != 13 /* cr */ ))) {
+            if (next != '\"' && (quoted || (next != '\"' && next != CHR_SPACE && next != CHR_CR))) {
                 sb.append(next);
             }
             request.consume();
             next = request.nextChar();
-            if(next == '\"') {
+            if (next == '\"') {
                 quoted = !quoted;
-                if(quoted) {
+                if (quoted) {
                     continue;
                 }
             }
-            if (!quoted && (next == 32 || next == '\n') && sb.length()>0) {
+            if (!quoted && (next == CHR_SPACE || next == '\n') && sb.length() > 0) {
                 if (log.isDebugEnabled()) {
                     log.debug("Search request is '" + sb.toString() + '\'');
                 }
@@ -79,12 +85,20 @@ class SearchCommandParser extends CommandParser {
                             // Sequence can be a whitespace separated list of either a number or number range
                             // Example: '2 5:9 9'
                             next = request.nextChar();
-                            while(next == 32 || (next >= '0' && next <= '9') || next == ':') {
+                            while (next == CHR_SPACE || Character.isDigit(next) || next == ':') {
                                 request.consume();
                                 sb.append(next);
                                 next = request.nextChar();
                             }
                             b.addParameter(sb.toString());
+                        }
+                        else if (CHARSET_TOKEN.equals(keyValue)) { // Charset handling
+                            request.nextWordChar(); // Skip spaces
+                            String c = this.atom(request);
+                            if (log.isDebugEnabled()) {
+                                log.debug("Searching with given CHARSET <" + c + '>');
+                            }
+                            charset = Charset.forName(c);
                         } else {
                             // Term?
                             key = SearchKey.valueOf(keyValue);
@@ -93,6 +107,17 @@ class SearchCommandParser extends CommandParser {
                             } else {
                                 b = SearchTermBuilder.create(key);
                             }
+
+                            if (null!=b && b.expectsParameter() && key.isCharsetAware() && null != charset && next == CHR_SPACE) {
+                                next = request.nextWordChar();
+                                if (next == '{') {
+                                    String textOfCharset = new String(consumeLiteralAsBytes(request), charset);
+                                    b.addParameter(textOfCharset);
+                                    if(log.isDebugEnabled()) {
+                                        log.debug("Searching for text <"+textOfCharset+"> of charset "+charset);
+                                    }
+                                }
+                            }
                         }
                     } catch (IllegalArgumentException ex) {
                         // Ignore for now instead of breaking. See issue#35 .
@@ -100,7 +125,22 @@ class SearchCommandParser extends CommandParser {
                         negated = false;
                     }
                 } else if (b.expectsParameter()) {
-                    b = b.addParameter(sb.toString());
+                    if (b.isCharsetAware() && null != charset) {
+                        request.consume(); // \n
+                        next = request.nextChar();
+                        final Integer capacity = Integer.valueOf(sb.substring(1, sb.length() - 1));
+                        ByteBuffer bb = ByteBuffer.allocate(capacity);
+                        while (next != CHR_CR) {
+                            request.consume(); // \n
+                            sb.append(next);
+                            next = request.nextChar();
+                        }
+                        final String decoded = charset.decode(bb).toString();
+                        log.info("Decoded <" + bb + "> into <" + decoded + ">");
+                        b = b.addParameter(decoded);
+                    } else {
+                        b = b.addParameter(sb.toString());
+                    }
                 }
                 if (b != null && !b.expectsParameter()) {
                     SearchTerm searchTerm = b.build();
@@ -130,5 +170,4 @@ class SearchCommandParser extends CommandParser {
         }
         return resultTerm;
     }
-
 }

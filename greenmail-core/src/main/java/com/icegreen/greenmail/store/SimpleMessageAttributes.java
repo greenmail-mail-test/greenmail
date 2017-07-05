@@ -9,6 +9,7 @@ package com.icegreen.greenmail.store;
 
 import com.icegreen.greenmail.mail.MailAddress;
 import com.icegreen.greenmail.util.GreenMailUtil;
+import com.sun.mail.imap.protocol.INTERNALDATE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +81,7 @@ public class SimpleMessageAttributes
 
         if(null != receivedDate) {
             this.receivedDate = receivedDate;
-            receivedDateString = new MailDateFormat().format(receivedDate);
+            receivedDateString = INTERNALDATE.format(receivedDate);
         }
         if(null != sentDate) {
             sentDateEnvelopeString = new MailDateFormat().format(sentDate);
@@ -147,7 +148,7 @@ public class SimpleMessageAttributes
 //            if (DEBUG) getLogger().debug("Messaging Exception for getHeader(Sender): " + me);
         }
         try {
-            replyTo = part.getHeader("Reply To");
+            replyTo = part.getHeader("Reply-To");
         } catch (MessagingException me) {
 //            if (DEBUG) getLogger().debug("Messaging Exception for getHeader(Reply To): " + me);
         }

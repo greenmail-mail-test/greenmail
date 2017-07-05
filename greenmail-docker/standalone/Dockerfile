@@ -1,4 +1,4 @@
-FROM openjdk:7-jdk-alpine
+FROM openjdk:7-jre-alpine
 MAINTAINER https://github.com/greenmail-mail-test/greenmail (marcel.may.de@gmail.com)
 
 #######################

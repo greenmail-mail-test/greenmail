@@ -39,7 +39,7 @@ package com.icegreen.greenmail.imap.commands;
  * <li>TODO: SINCE &lt;date&gt; Messages whose internal date (disregarding time and timezone) is within or later than the specified date.</li>
  * <li>TODO: SMALLER &lt;n&gt; Messages with an [RFC-2822] size smaller than the specified number of octets.</li>
  * <li>SUBJECT &lt;string&gt; Messages that contain the specified string in the envelope structure's SUBJECT field.</li>
- * <li>TODO: TEXT &lt;string&gt; Messages that contain the specified string in the header or body of the message.</li>
+ * <li>TEXT &lt;string&gt; Messages that contain the specified string in the header or body of the message.</li>
  * <li>TO &lt;string&gt; Messages that contain the specified string in the envelope structure's TO field.</li>
  * <li>UID &lt;sequence set&gt; Messages with unique identifiers corresponding to the specified unique identifier set. Sequence set ranges are permitted.
  * <ul>
@@ -68,21 +68,22 @@ package com.icegreen.greenmail.imap.commands;
 public enum SearchKey {
     ALL(),
     ANSWERED(),
-    BCC(1),
-    CC(1),
+    BCC(1, true),
+    CC(1, true),
     DELETED(),
     DRAFT(),
     FLAGGED(),
-    FROM(1),
-    HEADER(2),
+    FROM(1, true),
+    HEADER(2, true),
     KEYWORD(1),
     NEW(),
     NOT(true),
     OLD(),
     RECENT(),
     SEEN(),
-    SUBJECT(1),
-    TO(1),
+    SUBJECT(1, true),
+    TO(1, true),
+    TEXT(1, true),
     UID(1),
     UNANSWERED(),
     UNDELETED(),
@@ -99,6 +100,7 @@ public enum SearchKey {
 
     private int minArgs = 0; // expected additional arguments
     private boolean operator = false; // Is an operator, such as AND, OR, NOT ...
+    private boolean charsetAware = false;
 
     SearchKey() {
         // Nothing
@@ -106,6 +108,11 @@ public enum SearchKey {
 
     SearchKey(int pMinArgs) {
         minArgs = pMinArgs;
+    }
+
+    SearchKey(int pMinArgs, boolean charsetAware) {
+        this(pMinArgs);
+        this.charsetAware = charsetAware;
     }
 
     SearchKey(boolean pOperator) {
@@ -118,5 +125,9 @@ public enum SearchKey {
 
     public boolean isOperator() {
         return operator;
+    }
+
+    public boolean isCharsetAware() {
+        return charsetAware;
     }
 }

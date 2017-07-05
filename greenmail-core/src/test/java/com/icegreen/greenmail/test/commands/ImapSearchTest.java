@@ -55,45 +55,45 @@ public class ImapSearchTest {
 
             // Search flags
             imapMessages = imapFolder.search(new FlagTerm(new Flags(Flags.Flag.ANSWERED), true));
-            assertTrue(imapMessages.length == 1);
-            assertTrue(imapMessages[0] == m0);
+            assertEquals(1, imapMessages.length);
+            assertEquals(m0, imapMessages[0]);
 
             imapMessages = imapFolder.search(new FlagTerm(fooFlags, true));
-            assertTrue(imapMessages.length == 1);
+            assertEquals(1, imapMessages.length);
             assertTrue(imapMessages[0].getFlags().contains("foo"));
 
             imapMessages = imapFolder.search(new FlagTerm(fooFlags, false));
-            assertTrue(imapMessages.length == 1);
+            assertEquals(1, imapMessages.length);
             assertTrue(!imapMessages[0].getFlags().contains(fooFlags));
 
             // Search header ids
             String id = m0.getHeader("Message-ID")[0];
             imapMessages = imapFolder.search(new HeaderTerm("Message-ID", id));
-            assertTrue(imapMessages.length == 1);
-            assertTrue(imapMessages[0] == m0);
+            assertEquals(1, imapMessages.length);
+            assertEquals(m0, imapMessages[0]);
 
             id = m1.getHeader("Message-ID")[0];
             imapMessages = imapFolder.search(new HeaderTerm("Message-ID", id));
-            assertTrue(imapMessages.length == 1);
-            assertTrue(imapMessages[0] == m1);
+            assertEquals(1, imapMessages.length);
+            assertEquals(m1, imapMessages[0]);
 
             // Search FROM
             imapMessages = imapFolder.search(new FromTerm(new InternetAddress("from2@localhost")));
-            assertTrue(imapMessages.length == 1);
-            assertTrue(imapMessages[0] == m0);
+            assertEquals(1, imapMessages.length);
+            assertEquals(m0, imapMessages[0]);
 
             imapMessages = imapFolder.search(new FromTerm(new InternetAddress("from3@localhost")));
-            assertTrue(imapMessages.length == 1);
-            assertTrue(imapMessages[0] == m1);
+            assertEquals(1, imapMessages.length);
+            assertEquals(m1, imapMessages[0]);
 
             // Search TO
             imapMessages = imapFolder.search(new RecipientTerm(Message.RecipientType.TO, new InternetAddress("to2@localhost")));
-            assertTrue(imapMessages.length == 1);
-            assertTrue(imapMessages[0] == m0);
+            assertEquals(1, imapMessages.length);
+            assertEquals(m0, imapMessages[0]);
 
             imapMessages = imapFolder.search(new RecipientTerm(Message.RecipientType.TO, new InternetAddress("to3@localhost")));
-            assertTrue(imapMessages.length == 1);
-            assertTrue(imapMessages[0] == m1);
+            assertEquals(1, imapMessages.length);
+            assertEquals(m1, imapMessages[0]);
 
             // Search Subject
             imapMessages = imapFolder.search(new SubjectTerm("test0Search"));
@@ -106,7 +106,7 @@ public class ImapSearchTest {
             assertTrue(imapMessages.length == 2);
             assertTrue(imapMessages[0] == m0);
             imapMessages = imapFolder.search(new SubjectTerm("not found"));
-            assertTrue(imapMessages.length == 0);
+            assertEquals(0, imapMessages.length);
             imapMessages = imapFolder.search(new SubjectTerm("test"));
             assertTrue(imapMessages.length == 2);
             
@@ -119,7 +119,12 @@ public class ImapSearchTest {
             imapMessages = imapFolder.search(new AndTerm(new SubjectTerm("test0Search"),new SubjectTerm("test1Search")));
             assertTrue(imapMessages.length == 1);
             assertTrue(imapMessages[0] == m1);
-            
+
+            // Content
+            final String pattern = "\u00e4\u03A0";
+            imapMessages = imapFolder.search(new SubjectTerm(pattern));
+            assertEquals(1, imapMessages.length);
+            assertTrue(imapMessages[0].getSubject().contains(pattern));
         } finally {
             store.close();
         }
@@ -169,8 +174,8 @@ public class ImapSearchTest {
         folder.store(message1);
 
         MimeMessage message2 = new MimeMessage(session);
-        message2.setSubject("test0Search test1Search");
-        message2.setText("content");
+        message2.setSubject("test0Search test1Search \u00c4\u00e4\u03A0", "UTF-8");
+        message2.setText("content \u00c4\u00e4\u03A0", "UTF-8");
         setRecipients(message2, Message.RecipientType.TO, "to", 1, 3);
         setRecipients(message2, Message.RecipientType.CC, "cc", 1, 3);
         setRecipients(message2, Message.RecipientType.BCC, "bcc", 1, 3);

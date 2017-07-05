@@ -72,11 +72,8 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
                 // Loop ...
             }
         } catch (Exception e) {
-            // Ignore if closed is invoked
-            if (null != socket && !socket.isClosed()) {
-                log.error("Can not handle IMAP connection", e);
-                throw new IllegalStateException("Can not handle IMAP connection", e);
-            }
+            log.error("Can not handle IMAP connection", e);
+            throw new IllegalStateException("Can not handle IMAP connection", e);
         } finally {
             close();
         }
