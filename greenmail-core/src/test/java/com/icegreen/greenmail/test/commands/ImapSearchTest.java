@@ -4,6 +4,12 @@
  */
 package com.icegreen.greenmail.test.commands;
 
+import java.util.Date;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.mail.search.*;
+
 import com.icegreen.greenmail.imap.commands.SearchKey;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.store.MailFolder;
@@ -11,12 +17,6 @@ import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Rule;
 import org.junit.Test;
-
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.mail.search.*;
-import java.util.Date;
 
 import static org.junit.Assert.*;
 
@@ -48,9 +48,16 @@ public class ImapSearchTest {
             imapFolder.open(Folder.READ_WRITE);
 
             Message[] imapMessages = imapFolder.getMessages();
-            assertTrue(null != imapMessages && imapMessages.length == 2);
+            assertEquals(4, imapMessages.length);
             Message m0 = imapMessages[0];
+            assertTrue(m0.getSubject().startsWith("#0"));
             Message m1 = imapMessages[1];
+            assertTrue(m1.getSubject().startsWith("#1"));
+            Message m2 = imapMessages[2];
+            assertTrue(m2.getSubject().startsWith("#2"));
+            Message m3 = imapMessages[3];
+            assertTrue(m3.getSubject().startsWith("#3"));
+
             assertTrue(m0.getFlags().contains(Flags.Flag.ANSWERED));
 
             // Search flags
@@ -63,8 +70,10 @@ public class ImapSearchTest {
             assertTrue(imapMessages[0].getFlags().contains("foo"));
 
             imapMessages = imapFolder.search(new FlagTerm(fooFlags, false));
-            assertEquals(1, imapMessages.length);
+            assertEquals(3, imapMessages.length);
             assertTrue(!imapMessages[0].getFlags().contains(fooFlags));
+            assertTrue(!imapMessages[1].getFlags().contains(fooFlags));
+            assertTrue(!imapMessages[2].getFlags().contains(fooFlags));
 
             // Search header ids
             String id = m0.getHeader("Message-ID")[0];
@@ -92,33 +101,44 @@ public class ImapSearchTest {
             assertEquals(m0, imapMessages[0]);
 
             imapMessages = imapFolder.search(new RecipientTerm(Message.RecipientType.TO, new InternetAddress("to3@localhost")));
-            assertEquals(1, imapMessages.length);
+            assertEquals(3, imapMessages.length);
             assertEquals(m1, imapMessages[0]);
 
             // Search Subject
             imapMessages = imapFolder.search(new SubjectTerm("test0Search"));
-            assertTrue(imapMessages.length == 2);
+            assertEquals(2, imapMessages.length);
             assertTrue(imapMessages[0] == m0);
             imapMessages = imapFolder.search(new SubjectTerm("TeSt0Search")); // Case insensitive
-            assertTrue(imapMessages.length == 2);
+            assertEquals(2, imapMessages.length);
             assertTrue(imapMessages[0] == m0);
             imapMessages = imapFolder.search(new SubjectTerm("0S"));
-            assertTrue(imapMessages.length == 2);
+            assertEquals(2, imapMessages.length);
             assertTrue(imapMessages[0] == m0);
             imapMessages = imapFolder.search(new SubjectTerm("not found"));
             assertEquals(0, imapMessages.length);
             imapMessages = imapFolder.search(new SubjectTerm("test"));
-            assertTrue(imapMessages.length == 2);
-            
-            //Search OrTerm - Search Subject which contains String1 OR String2
-            imapMessages = imapFolder.search(new OrTerm(new SubjectTerm("test0Search"),new SubjectTerm("String2")));
-            assertTrue(imapMessages.length == 2);
+            assertEquals(2, imapMessages.length);
+
+            //Search OrTerm - Search Subject which contains test0Search OR nonexistent
+            imapMessages = imapFolder.search(new OrTerm(new SubjectTerm("test0Search"), new SubjectTerm("nonexistent")));
+            assertEquals(2, imapMessages.length);
             assertTrue(imapMessages[0] == m0);
-            
-            //Search AndTerm - Search Subject which contains String1 AND String2
-            imapMessages = imapFolder.search(new AndTerm(new SubjectTerm("test0Search"),new SubjectTerm("test1Search")));
-            assertTrue(imapMessages.length == 1);
+
+            // OrTerm : two matching sub terms
+            imapMessages = imapFolder.search(new OrTerm(new SubjectTerm("foo"), new SubjectTerm("bar")));
+            assertEquals(2, imapMessages.length);
+            assertTrue(imapMessages[0] == m2);
+            assertTrue(imapMessages[1] == m3);
+
+            // OrTerm : no matching
+            imapMessages = imapFolder.search(new AndTerm(new SubjectTerm("nothing"), new SubjectTerm("nil")));
+            assertEquals(0, imapMessages.length);
+
+            //Search AndTerm - Search Subject which contains test0Search AND test1Search
+            imapMessages = imapFolder.search(new AndTerm(new SubjectTerm("test0Search"), new SubjectTerm("test1Search")));
+            assertEquals(1, imapMessages.length);
             assertTrue(imapMessages[0] == m1);
+
 
             // Content
             final String pattern = "\u00e4\u03A0";
@@ -162,26 +182,48 @@ public class ImapSearchTest {
      * @throws Exception
      */
     private void storeSearchTestMessages(Session session, MailFolder folder, Flags flags) throws Exception {
+        MimeMessage message0 = new MimeMessage(session);
+        message0.setSubject("#0 test0Search");
+        message0.setText("content");
+        setRecipients(message0, Message.RecipientType.TO, "to", 1, 2);
+        setRecipients(message0, Message.RecipientType.CC, "cc", 1, 2);
+        setRecipients(message0, Message.RecipientType.BCC, "bcc", 1, 2);
+        message0.setFrom(new InternetAddress("from2@localhost"));
+        message0.setFlag(Flags.Flag.ANSWERED, true);
+        message0.setFlags(flags, true);
+        folder.store(message0);
+
         MimeMessage message1 = new MimeMessage(session);
-        message1.setSubject("test0Search");
-        message1.setText("content");
-        setRecipients(message1, Message.RecipientType.TO, "to", 1, 2);
-        setRecipients(message1, Message.RecipientType.CC, "cc", 1, 2);
-        setRecipients(message1, Message.RecipientType.BCC, "bcc", 1, 2);
-        message1.setFrom(new InternetAddress("from2@localhost"));
-        message1.setFlag(Flags.Flag.ANSWERED, true);
-        message1.setFlags(flags, true);
+        message1.setSubject("#1 test0Search test1Search \u00c4\u00e4\u03A0", "UTF-8");
+        message1.setText("content \u00c4\u00e4\u03A0", "UTF-8");
+        setRecipients(message1, Message.RecipientType.TO, "to", 1, 3);
+        setRecipients(message1, Message.RecipientType.CC, "cc", 1, 3);
+        setRecipients(message1, Message.RecipientType.BCC, "bcc", 1, 3);
+        message1.setFrom(new InternetAddress("from3@localhost"));
+        message1.setFlag(Flags.Flag.ANSWERED, false);
         folder.store(message1);
 
         MimeMessage message2 = new MimeMessage(session);
-        message2.setSubject("test0Search test1Search \u00c4\u00e4\u03A0", "UTF-8");
-        message2.setText("content \u00c4\u00e4\u03A0", "UTF-8");
-        setRecipients(message2, Message.RecipientType.TO, "to", 1, 3);
-        setRecipients(message2, Message.RecipientType.CC, "cc", 1, 3);
-        setRecipients(message2, Message.RecipientType.BCC, "bcc", 1, 3);
-        message2.setFrom(new InternetAddress("from3@localhost"));
+        message2.setSubject("#2 OR search : foo");
+        message2.setText("content foo");
+        setRecipients(message2, Message.RecipientType.TO, "to", 3);
+        setRecipients(message2, Message.RecipientType.CC, "cc", 4);
+        setRecipients(message2, Message.RecipientType.BCC, "bcc", 5);
+        message2.setFrom(new InternetAddress("from4@localhost"));
         message2.setFlag(Flags.Flag.ANSWERED, false);
+        message2.setFlags(flags, false);
         folder.store(message2);
+
+        MimeMessage message3 = new MimeMessage(session);
+        message3.setSubject("#3 OR search : bar");
+        message3.setText("content bar");
+        setRecipients(message3, Message.RecipientType.TO, "to", 3);
+        setRecipients(message3, Message.RecipientType.CC, "cc", 4);
+        setRecipients(message3, Message.RecipientType.BCC, "bcc", 5);
+        message3.setFrom(new InternetAddress("from5@localhost"));
+        message3.setFlag(Flags.Flag.ANSWERED, false);
+        message3.setFlags(flags, false);
+        folder.store(message3);
     }
 
     /**
