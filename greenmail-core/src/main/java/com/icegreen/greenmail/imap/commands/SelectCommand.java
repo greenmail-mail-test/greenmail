@@ -70,7 +70,7 @@ class SelectCommand extends AuthenticatedStateCommand {
         MailFolder folder = getMailbox(mailboxName, session, true);
 
         if (!folder.isSelectable()) {
-            throw new FolderException("Nonselectable mailbox.");
+            throw new FolderException("Nonselectable mailbox " + mailboxName);
         }
 
         session.setSelected(folder, readOnly);
