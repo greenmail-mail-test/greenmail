@@ -107,13 +107,24 @@ public abstract class SearchTermBuilder {
             case SEQUENCE_SET:
                 builder = createSequenceSetTermBuilder();
                 break;
+            case OR:
+                builder = createORTermBuilder();
+                break;
             default:
                 throw new IllegalStateException("Unsupported search term '" + key + '\'');
         }
         builder.setSearchKey(key);
         return builder;
     }
-
+    
+	private static SearchTermBuilder createORTermBuilder() {
+			 return new SearchTermBuilder() {
+	            @Override
+	            public SearchTerm build() {
+                return new OrTerm(new SubjectTerm(getParameters().get(0)),new SubjectTerm(getParameters().get(1)));
+	            }
+	        };	}
+    
     private void setSearchKey(final SearchKey pKey) {
         key = pKey;
     }

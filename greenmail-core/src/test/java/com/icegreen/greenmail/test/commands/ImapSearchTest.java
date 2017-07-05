@@ -97,18 +97,28 @@ public class ImapSearchTest {
 
             // Search Subject
             imapMessages = imapFolder.search(new SubjectTerm("test0Search"));
-            assertEquals(1, imapMessages.length);
-            assertEquals(m0, imapMessages[0]);
+            assertTrue(imapMessages.length == 2);
+            assertTrue(imapMessages[0] == m0);
             imapMessages = imapFolder.search(new SubjectTerm("TeSt0Search")); // Case insensitive
-            assertEquals(1, imapMessages.length);
-            assertEquals(m0, imapMessages[0]);
+            assertTrue(imapMessages.length == 2);
+            assertTrue(imapMessages[0] == m0);
             imapMessages = imapFolder.search(new SubjectTerm("0S"));
-            assertEquals(1, imapMessages.length);
-            assertEquals(m0, imapMessages[0]);
+            assertTrue(imapMessages.length == 2);
+            assertTrue(imapMessages[0] == m0);
             imapMessages = imapFolder.search(new SubjectTerm("not found"));
             assertEquals(0, imapMessages.length);
             imapMessages = imapFolder.search(new SubjectTerm("test"));
-            assertEquals(2, imapMessages.length);
+            assertTrue(imapMessages.length == 2);
+            
+            //Search OrTerm - Search Subject which contains String1 OR String2
+            imapMessages = imapFolder.search(new OrTerm(new SubjectTerm("test0Search"),new SubjectTerm("String2")));
+            assertTrue(imapMessages.length == 2);
+            assertTrue(imapMessages[0] == m0);
+            
+            //Search AndTerm - Search Subject which contains String1 AND String2
+            imapMessages = imapFolder.search(new AndTerm(new SubjectTerm("test0Search"),new SubjectTerm("test1Search")));
+            assertTrue(imapMessages.length == 1);
+            assertTrue(imapMessages[0] == m1);
 
             // Content
             final String pattern = "\u00e4\u03A0";
@@ -164,7 +174,7 @@ public class ImapSearchTest {
         folder.store(message1);
 
         MimeMessage message2 = new MimeMessage(session);
-        message2.setSubject("test1Search \u00c4\u00e4\u03A0", "UTF-8");
+        message2.setSubject("test0Search test1Search \u00c4\u00e4\u03A0", "UTF-8");
         message2.setText("content \u00c4\u00e4\u03A0", "UTF-8");
         setRecipients(message2, Message.RecipientType.TO, "to", 1, 3);
         setRecipients(message2, Message.RecipientType.CC, "cc", 1, 3);

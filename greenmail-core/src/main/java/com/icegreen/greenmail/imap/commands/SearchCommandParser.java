@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.mail.search.AndTerm;
 import javax.mail.search.NotTerm;
+import javax.mail.search.OrTerm;
 import javax.mail.search.SearchTerm;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -38,6 +39,8 @@ class SearchCommandParser extends CommandParser {
             throws ProtocolException, CharacterCodingException {
         SearchTerm resultTerm = null;
         SearchTermBuilder b = null;
+        SearchKey key = null;
+	boolean orKey = false;
         boolean negated = false;
         // Dummy implementation
         // Consume to the end of the line.
@@ -98,7 +101,7 @@ class SearchCommandParser extends CommandParser {
                             charset = Charset.forName(c);
                         } else {
                             // Term?
-                            SearchKey key = SearchKey.valueOf(keyValue);
+                            key = SearchKey.valueOf(keyValue);
                             if (SearchKey.NOT == key) {
                                 negated = true;
                             } else {
@@ -139,7 +142,6 @@ class SearchCommandParser extends CommandParser {
                         b = b.addParameter(sb.toString());
                     }
                 }
-
                 if (b != null && !b.expectsParameter()) {
                     SearchTerm searchTerm = b.build();
                     if (negated) {
@@ -147,13 +149,25 @@ class SearchCommandParser extends CommandParser {
                         negated = false;
                     }
                     b = null;
+					if (SearchKey.OR == key) {
+					resultTerm = resultTerm == null ? searchTerm : new OrTerm(resultTerm, searchTerm);
+					orKey = true;
+					} else {
+						if (orKey) {
+							if (SearchKey.ALL == key) {
                     resultTerm = resultTerm == null ? searchTerm : new AndTerm(resultTerm, searchTerm);
-                }
+
+							} else {
+								resultTerm = resultTerm == null ? searchTerm : new OrTerm(resultTerm, searchTerm);
+							}
+						} else {
+							resultTerm = resultTerm == null ? searchTerm : new AndTerm(resultTerm, searchTerm);
+						}
+					}                }
                 sb = new StringBuilder();
                 next = request.nextChar();
             }
         }
-
         return resultTerm;
     }
 }
