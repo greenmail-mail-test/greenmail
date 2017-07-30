@@ -65,9 +65,7 @@ public class Pop3Connection {
     }
 
     public void println(String line) {
-        if(log.isDebugEnabled()) {
-            log.debug("S: " + line);
-        }
+        log.debug("S: {}", line);
         _out.print(line);
         println();
     }
@@ -86,11 +84,7 @@ public class Pop3Connection {
     public String readLine()
             throws IOException {
         String line = _in.readLine();
-        
-        if(log.isDebugEnabled()) {
-            log.debug("C: " + line);
-        }
-
+        log.debug("C: {}", line);
         return line;
     }
 

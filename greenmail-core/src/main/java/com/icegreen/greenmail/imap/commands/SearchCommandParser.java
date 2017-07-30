@@ -62,9 +62,7 @@ class SearchCommandParser extends CommandParser {
                 }
             }
             if (!quoted && (next == CHR_SPACE || next == '\n') && sb.length() > 0) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Search request is '" + sb.toString() + '\'');
-                }
+                log.debug("Search request is '{}'", sb);
                 // Examples:
                 // HEADER Message-ID <747621499.0.1264172476711.JavaMail.tbuchert@dev16.int.consol.de> ALL
                 // FLAG SEEN ALL
@@ -95,9 +93,7 @@ class SearchCommandParser extends CommandParser {
                         else if (CHARSET_TOKEN.equals(keyValue)) { // Charset handling
                             request.nextWordChar(); // Skip spaces
                             String c = this.atom(request);
-                            if (log.isDebugEnabled()) {
-                                log.debug("Searching with given CHARSET <" + c + '>');
-                            }
+                            log.debug("Searching with given CHARSET <{}>", c);
                             charset = Charset.forName(c);
                         } else {
                             // Term?
@@ -113,9 +109,7 @@ class SearchCommandParser extends CommandParser {
                                 if (next == '{') {
                                     String textOfCharset = new String(consumeLiteralAsBytes(request), charset);
                                     b.addParameter(textOfCharset);
-                                    if(log.isDebugEnabled()) {
-                                        log.debug("Searching for text <"+textOfCharset+"> of charset "+charset);
-                                    }
+                                    log.debug("Searching for text <{}> of charset {}", textOfCharset, charset);
                                 }
                             }
                         }

@@ -42,9 +42,7 @@ public class SmtpConnection {
     }
 
     public void send(String line) {
-        if (log.isTraceEnabled()) {
-            log.trace("S: " + line);
-        }
+        log.trace("S: {}", line);
         out.println(line);
     }
 
@@ -55,9 +53,7 @@ public class SmtpConnection {
     public String receiveLine()
             throws IOException {
         String line = in.readLine();
-        if (log.isTraceEnabled()) {
-            log.trace("C: " + line);
-        }
+        log.trace("C: {}", line);
 
         return line;
     }

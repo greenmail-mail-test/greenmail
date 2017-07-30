@@ -78,9 +78,7 @@ public final class ImapRequestHandler {
             return;
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("C: tag=" + tag + ", command=" + commandName);
-        }
+        log.debug("C: tag={}, command={}", tag, commandName);
 
         ImapCommand command = imapCommands.getCommand(commandName);
         if (command == null) {
