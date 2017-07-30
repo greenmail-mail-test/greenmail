@@ -56,9 +56,9 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
     private String hostname;
     /** If the server is started. */
     private boolean started;
-    /** Outoing mail server setup. */
+    /** Outgoing mail server setup. */
     private ServerSetup smtpServerSetup;
-    /** Outoing secure mail server setup. */
+    /** Outgoing secure mail server setup. */
     private ServerSetup smtpsServerSetup;
     /** Timeout to wait for server startup in millis */
     private long serverStartupTimeout = 1000L;
@@ -95,7 +95,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
     }
 
     /**
-     * Creates the server setup, depending on the protocoll flags.
+     * Creates the server setup, depending on the protocol flags.
      *
      * @return the configured server setups.
      */
