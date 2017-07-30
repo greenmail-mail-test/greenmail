@@ -93,9 +93,7 @@ public class GreenMail extends ConfiguredGreenMail {
 
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Started services, performing check if all up");
-        }
+        log.debug("Started services, performing check if all up");
         // Make sure if all services are up in a second loop, giving slow services more time.
         for (AbstractServer service : servers) {
             if (!service.isRunning()) {
@@ -110,15 +108,11 @@ public class GreenMail extends ConfiguredGreenMail {
 
     @Override
     public synchronized void stop() {
-        if (log.isDebugEnabled()) {
-            log.debug("Stopping GreenMail ...");
-        }
+        log.debug("Stopping GreenMail ...");
 
         if (services != null) {
             for (Service service : services.values()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Stopping service " + service.toString());
-                }
+                log.debug("Stopping service {}", service);
                 service.stopService();
             }
         }

@@ -60,9 +60,7 @@ public class UserManager {
     }
 
     public boolean test(String userId, String password) {
-        if (log.isDebugEnabled()) {
-            log.debug("Authenticating user "+userId);
-        }
+        log.debug("Authenticating user {}", userId);
         GreenMailUser u = getUser(userId);
 
         if (!authRequired) {

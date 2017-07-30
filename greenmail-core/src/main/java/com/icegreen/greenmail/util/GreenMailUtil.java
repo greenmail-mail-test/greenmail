@@ -379,9 +379,7 @@ public class GreenMailUtil {
     public static Session getSession(final ServerSetup setup, Properties mailProps) {
         Properties props = setup.configureJavaMailSessionProperties(mailProps, false);
 
-        if (log.isDebugEnabled()) {
-            log.debug("Mail session properties are " + props);
-        }
+        log.debug("Mail session properties are {}", props);
 
         return Session.getInstance(props, null);
     }

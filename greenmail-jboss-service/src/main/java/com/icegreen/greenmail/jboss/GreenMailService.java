@@ -244,9 +244,7 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
 
     private void startGreenMailService(ServiceProtocol pProtocol, Service pNewService) {
         services.put(pProtocol, pNewService);
-        if (log.isDebugEnabled()) {
-            log.debug("Starting " + pNewService);
-        }
+        log.debug("Starting {}", pNewService);
         pNewService.startService();
     }
 
@@ -255,9 +253,7 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
             for (Service service : services.values()) {
                 if (service.isRunning()) {
                     service.stopService();
-                    if (log.isDebugEnabled()) {
-                        log.debug("Stopped " + service);
-                    }
+                    log.debug("Stopped {}", service);
                 }
             }
         }

@@ -71,9 +71,7 @@ public abstract class AbstractServer extends Thread implements Service {
             try {
                 socket.close(); // Do close if bind failed!
             } catch (IOException nested) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Ignoring attempt to close connection", nested);
-                }
+                log.trace("Ignoring attempt to close connection", nested);
             }
             throw ex;
         }
@@ -85,9 +83,7 @@ public abstract class AbstractServer extends Thread implements Service {
         try {
             initServerSocket();
 
-            if (log.isDebugEnabled()) {
-                log.debug("Started " + getName());
-            }
+            log.debug("Started {}", getName());
 
             // Handle connections
             while (keepOn()) {
@@ -99,10 +95,7 @@ public abstract class AbstractServer extends Thread implements Service {
                         handleClientSocket(clientSocket);
                     }
                 } catch (IOException ignored) {
-                    //ignored
-                    if (log.isTraceEnabled()) {
-                        log.trace("Error while processing client socket for " + getName(), ignored);
-                    }
+                    log.trace("Error while processing client socket for {}", getName(), ignored);
                 }
             }
         } finally {
@@ -153,9 +146,7 @@ public abstract class AbstractServer extends Thread implements Service {
         final ProtocolHandler handler = createProtocolHandler(clientSocket);
         addHandler(handler);
         String threadName = getName() + "<-" + clientSocket.getInetAddress() + ":" + clientSocket.getPort();
-        if(log.isDebugEnabled()) {
-            log.debug("Handling new client connection "+threadName);
-        }
+        log.debug("Handling new client connection {}", threadName);
         final Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -193,9 +184,7 @@ public abstract class AbstractServer extends Thread implements Service {
      * Quits server by closing server socket and closing client socket handlers.
      */
     protected synchronized void quit() {
-        if (log.isDebugEnabled()) {
-            log.debug("Stopping " + getName());
-        }
+        log.debug("Stopping {}", getName());
         closeServerSocket();
 
         // Close all handlers. Handler threads terminate if run loop exits
@@ -205,9 +194,7 @@ public abstract class AbstractServer extends Thread implements Service {
             }
             handlers.clear();
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Stopped " + getName());
-        }
+        log.debug("Stopped {}", getName());
     }
 
     public String getBindTo() {
