@@ -264,7 +264,7 @@ public class SimpleMessageAttributes
                     throw new IllegalStateException("Can not extract part for "+primaryType+"/"+secondaryType, e);
                 }
             } else {
-                log.warn("Unknown/unhandled subtype " + secondaryType + " of message encountered.");
+                log.warn("Unknown/unhandled subtype {} of message encountered.", secondaryType);
             }
         }
     }
@@ -370,7 +370,7 @@ public class SimpleMessageAttributes
             try {
                 netAddr = new InternetAddress(address);
             } catch (AddressException ae) {
-                log.warn("Can not parse address " + address + " - ignored.", ae);
+                log.warn("Can not parse address {} - ignored.", address, ae);
                 return null;
             }
             String personal = netAddr.getPersonal();

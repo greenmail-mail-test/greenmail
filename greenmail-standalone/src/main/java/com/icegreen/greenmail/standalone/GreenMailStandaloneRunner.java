@@ -39,8 +39,8 @@ public class GreenMailStandaloneRunner {
 
         } else {
             greenMail = new GreenMail(serverSetup);
-            log.info("Starting GreenMail standalone v" + BuildInfo.INSTANCE.getProjectVersion() +
-                    " using " + Arrays.toString(serverSetup));
+            log.info("Starting GreenMail standalone v{} using {}",
+                    BuildInfo.INSTANCE.getProjectVersion(), Arrays.toString(serverSetup));
             greenMail.withConfiguration(new PropertiesBasedGreenMailConfigurationBuilder().build(properties))
                     .start();
         }
