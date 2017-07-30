@@ -65,7 +65,7 @@ abstract class CommandTemplate
         } catch (ProtocolException e) {
             String msg = e.getMessage() + " Command should be '" +
                     getExpectedMessage() + '\'';
-            log.warn("Error processing command: " + msg, e);
+            log.warn("Error processing command: {}", msg, e);
             response.commandError(msg);
         }
     }

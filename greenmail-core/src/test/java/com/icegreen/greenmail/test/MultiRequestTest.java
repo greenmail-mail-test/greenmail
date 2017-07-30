@@ -164,7 +164,7 @@ public class MultiRequestTest {
         ThreadGroup senders = new ThreadGroup("SenderThreads") {
             @Override
             public void uncaughtException(final Thread t, final Throwable e) {
-                log.error("Exception in thread \"" + t.getName(), e);
+                log.error("Exception in thread \"{}\"", t.getName(), e);
             }
         };
         for (int i = 1; i <= n; i++) {

@@ -84,13 +84,13 @@ public final class ImapRequestHandler {
 
         ImapCommand command = imapCommands.getCommand(commandName);
         if (command == null) {
-            log.error("Command '" + commandName + "' not valid");
+            log.error("Command '{}' not valid", commandName);
             response.commandError("Invalid command.");
             return;
         }
 
         if (!command.validForState(session.getState())) {
-            log.error("Command '" + commandName + "' not valid in this state " + session.getState());
+            log.error("Command '{}' not valid in this state {}", commandName, session.getState());
             response.commandFailed(command, "Command not valid in this state");
             return;
         }

@@ -200,7 +200,7 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
         // For start - start cycle
         stopGreenMailServices();
 
-        log.info("Starting "+getServiceName());
+        log.info("Starting {}", getServiceName());
         StringBuilder buf = new StringBuilder("GreenMail configuration: ")
                 .append(" hostname=")
                 .append(getHostname()).append(", ");

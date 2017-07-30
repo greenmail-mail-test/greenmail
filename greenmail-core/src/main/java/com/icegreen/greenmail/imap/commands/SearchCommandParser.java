@@ -121,7 +121,7 @@ class SearchCommandParser extends CommandParser {
                         }
                     } catch (IllegalArgumentException ex) {
                         // Ignore for now instead of breaking. See issue#35 .
-                        log.warn("Ignoring not yet implemented search command '" + sb.toString() + "'", ex);
+                        log.warn("Ignoring not yet implemented search command '{}'", sb, ex);
                         negated = false;
                     }
                 } else if (b.expectsParameter()) {
@@ -136,7 +136,7 @@ class SearchCommandParser extends CommandParser {
                             next = request.nextChar();
                         }
                         final String decoded = charset.decode(bb).toString();
-                        log.info("Decoded <" + bb + "> into <" + decoded + ">");
+                        log.info("Decoded <{}> into <{}>", bb, decoded);
                         b = b.addParameter(decoded);
                     } else {
                         b = b.addParameter(sb.toString());

@@ -136,7 +136,7 @@ public class SmtpManager {
 
                 user.deliver(msg);
             } catch (Exception e) {
-                log.error("Can not deliver message " + msg + " to " + mailAddress, e);
+                log.error("Can not deliver message {} to {}", msg, mailAddress, e);
                 throw new RuntimeException(e);
             }
 

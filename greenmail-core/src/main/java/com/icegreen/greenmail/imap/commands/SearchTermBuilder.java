@@ -397,7 +397,7 @@ public abstract class SearchTermBuilder {
                 return match(uid);
             } else {
                 final Logger log = LoggerFactory.getLogger(UidSearchTerm.class);
-                log.warn("No uid support for message " + msg + ", failing to match.");
+                log.warn("No uid support for message {}, failing to match.", msg);
                 return false;
             }
         }
