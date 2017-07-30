@@ -158,7 +158,7 @@ class SearchCommandParser extends CommandParser {
 							resultTerm = resultTerm == null ? searchTerm : new AndTerm(resultTerm, searchTerm);
 						}
 					}                }
-                sb = new StringBuilder();
+                sb.setLength(0);
                 next = request.nextChar();
             }
         }
