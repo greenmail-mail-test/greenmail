@@ -362,44 +362,42 @@ public class SimpleMessageAttributes
      * Parses a String email address to an IMAP address string.
      */
     private String parseAddress(String address) {
-        int comma = address.indexOf(',');
-        StringBuilder buf = new StringBuilder();
-        if (comma == -1) { //single address
-            buf.append(LB);
-            InternetAddress netAddr;
-            try {
-                netAddr = new InternetAddress(address);
-            } catch (AddressException ae) {
-                log.warn("Can not parse address {} - ignored.", address, ae);
-                return null;
-            }
-            String personal = netAddr.getPersonal();
-            if (personal != null && (personal.length() != 0)) {
-                buf.append(Q).append(personal).append(Q);
-            } else {
-                buf.append(NIL);
-            }
-            buf.append(SP);
-            buf.append(NIL); // should add route-addr
-            buf.append(SP);
-            try {
-                // Remove quotes to avoid double quoting
-                MailAddress mailAddr = new MailAddress(netAddr.getAddress().replaceAll("\"", "\\\\\""));
-                buf.append(Q).append(mailAddr.getUser()).append(Q);
-                buf.append(SP);
-                buf.append(Q).append(mailAddr.getHost()).append(Q);
-            } catch (Exception pe) {
-                buf.append(NIL + SP + NIL);
-            }
-            buf.append(RB);
-        } else {
-            buf.append(parseAddress(address.substring(0, comma)));
-            buf.append(SP);
-            buf.append(parseAddress(address.substring(comma + 1)));
-        }
-        return buf.toString();
-    }
+        try {
+            StringBuilder buf = new StringBuilder();
+            InternetAddress[] netAddrs = InternetAddress.parse(address);
+            for (InternetAddress netAddr : netAddrs) {
+                if (buf.length() > 0) {
+                    buf.append(SP);
+                }
 
+                buf.append(LB);
+
+                String personal = netAddr.getPersonal();
+                if (personal != null && (personal.length() != 0)) {
+                    buf.append(Q).append(personal).append(Q);
+                } else {
+                    buf.append(NIL);
+                }
+                buf.append(SP);
+                buf.append(NIL); // should add route-addr
+                buf.append(SP);
+                try {
+                    // Remove quotes to avoid double quoting
+                    MailAddress mailAddr = new MailAddress(netAddr.getAddress().replaceAll("\"", "\\\\\""));
+                    buf.append(Q).append(mailAddr.getUser()).append(Q);
+                    buf.append(SP);
+                    buf.append(Q).append(mailAddr.getHost()).append(Q);
+                } catch (Exception pe) {
+                    buf.append(NIL + SP + NIL);
+                }
+                buf.append(RB);
+            }
+
+            return buf.toString();
+        } catch (AddressException e) {
+            throw new RuntimeException("Failed to parse address: " + address, e);
+        }
+    }
 
     /**
      * Decode a content Type header line into types and parameters pairs

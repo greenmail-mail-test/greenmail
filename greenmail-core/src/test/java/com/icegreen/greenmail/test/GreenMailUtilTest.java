@@ -91,7 +91,7 @@ public class GreenMailUtilTest {
         try {
             greenMail.setUser("foo@localhost", "pwd");
             greenMail.start();
-            GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost",
+            GreenMailUtil.sendTextEmail("\"Foo, Bar\" <foo@localhost>", "\"Bar, Foo\" <bar@localhost>",
                     "Test subject", "Test message", ServerSetupTest.SMTP);
             greenMail.waitForIncomingEmail(1);
 
@@ -106,10 +106,10 @@ public class GreenMailUtilTest {
                 assertEquals("Test subject", m.getSubject());
                 Address a[] = m.getRecipients(Message.RecipientType.TO);
                 assertTrue(null != a && a.length == 1
-                        && a[0].toString().equals("foo@localhost"));
+                        && a[0].toString().equals("\"Foo, Bar\" <foo@localhost>"));
                 a = m.getFrom();
                 assertTrue(null != a && a.length == 1
-                        && a[0].toString().equals("bar@localhost"));
+                        && a[0].toString().equals("\"Bar, Foo\" <bar@localhost>"));
                 assertTrue(m.getContentType().toLowerCase()
                         .startsWith("text/plain"));
                 assertEquals("Test message", m.getContent());
