@@ -84,6 +84,43 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>keytool-maven-plugin</artifactId>
+        <version>1.5</version>
+        <executions>
+          <!-- delete jks -->
+          <execution>
+            <id>delete-jks</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+          </execution>
+
+          <!-- generate jks -->
+          <execution>
+            <id>generate-jks</id>
+            <goals>
+              <goal>generateKeyPair</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <dname>CN=GreenMail selfsigned Test Certificate, OU=GreenMail, O=Icegreen Technologies, C=US</dname>
+              <keypass>changeit</keypass>
+              <storepass>changeit</storepass>
+              <alias>greenmail</alias>
+              <sigalg>SHA256withRSA</sigalg>
+              <keyalg>RSA</keyalg>
+              <keysize>2048</keysize>
+              <validity>365</validity>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <keystore>${project.build.outputDirectory}/greenmail.jks</keystore>
+        </configuration> 
+      </plugin>
     </plugins>
   </build>
 
