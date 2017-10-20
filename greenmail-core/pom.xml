@@ -113,7 +113,7 @@
               <sigalg>SHA256withRSA</sigalg>
               <keyalg>RSA</keyalg>
               <keysize>2048</keysize>
-              <validity>365</validity>
+              <validity>825</validity>
             </configuration>
           </execution>
         </executions>
