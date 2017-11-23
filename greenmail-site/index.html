@@ -11,7 +11,10 @@
     <title>GreenMail</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
 
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -57,7 +60,7 @@
         <p class="lead">Open Source suite of lightweight and sand boxed email servers supporting SMTP, POP3 and
                         IMAP.</p>
 
-        <p class="version">Currently <a href="https://github.com/greenmail-mail-test/greenmail/releases">v1.5.5</a></p>
+        <p class="version">Currently <a href="https://github.com/greenmail-mail-test/greenmail/releases">v1.5.6</a></p>
     </div>
 </div>
 
@@ -663,10 +666,10 @@ java -Dgreenmail.smtp.hostname=127.0.0.1 -Dgreenmail.smtp.port=4025 \
 
                 <h4>Using docker to run the image</h4>
                 <pre><code class="language-bash"><!-- @formatter:off -->
-docker pull greenmail/standalone:1.5.5
+docker pull greenmail/standalone:1.5.6
 docker run -t -i -p 3025:3025 -p 3110:3110 -p 3143:3143 \
                  -p 3465:3465 -p 3993:3993 -p 3995:3995 \
-                 greenmail/standalone:1.5.5
+                 greenmail/standalone:1.5.6
                 </code></pre><!-- @formatter:on -->
                 <div class="alert alert-info" role="alert">
                     You might want to modify your mapped ports
@@ -930,6 +933,58 @@ public final GreenMailRule greenMail = new GreenMailRule(ServerSetup.verbose(Ser
                 </p>
                 <p>Docker images are availalbe on <a href="https://hub.docker.com/u/greenmail/">Docker Hub GreenMail Repository</a>,
                    such as for the GreenMail standalone runner.</p>
+
+                <h4 id="download_1_5_6" class="anchor"><a
+                         href="https://github.com/greenmail-mail-test/greenmail/releases" title="1.5.6 Release Notes">1.5.6</a>
+                     - Nov 23th, 2017</h4>
+
+                 <div class="alert alert-info" role="alert">
+                     <p>This version requires JDK 1.7+ and JavaMail 1.5+ .</p>
+                 </div>
+                 <table class="table table-condensed">
+                     <thead>
+                     <tr>
+                         <td>Name</td>
+                         <td>GAV</td>
+                     </tr>
+                     </thead>
+                     <tr>
+                         <td>GreenMail Core</td>
+                         <td>
+                             <a href="http://central.maven.org/maven2/com/icegreen/greenmail/1.5.6/greenmail-1.5.6.jar">com.icegreen:greenmail:1.5.6</a>
+                         </td>
+                     </tr>
+                     <tr>
+                         <td>GreenMail Standalone</td>
+                         <td>
+                             <a href="http://central.maven.org/maven2/com/icegreen/greenmail-standalone/1.5.6/greenmail-standalone-1.5.6.jar">com.icegreen:greenmail-standalone:1.5.6</a>
+                             (<a href="https://hub.docker.com/r/greenmail/standalone/">Docker Hub</a>)
+                         </td>
+                     </tr>
+                     <tr>
+                         <td>GreenMail Webapp</td>
+                         <td>
+                             <a href="http://central.maven.org/maven2/com/icegreen/greenmail-webapp/1.5.6/greenmail-webapp-1.5.6.war">com.icegreen:greenmail-webapp:1.5.6:war</a>
+                         </td>
+                     </tr>
+                     <tr>
+                         <td>GreenMail JBoss Service</td>
+                         <td>
+                             <a href="http://central.maven.org/maven2/com/icegreen/greenmail-jboss-service/1.5.6/greenmail-jboss-service-1.5.6.sar">com.icegreen:greenmail-jboss-service:1.5.6:jboss-sar</a>
+                         </td>
+                     </tr>
+                     <tr>
+                         <td>GreenMail Spring</td>
+                         <td>
+                             <a href="http://central.maven.org/maven2/com/icegreen/greenmail-spring/1.5.6/greenmail-spring-1.5.6.jar">com.icegreen:greenmail-spring:1.5.6</a>
+                         </td>
+                     </tr>
+                 </table>
+                 <p>Latest and recommended version is available via Maven repository or as a <a
+                         href="https://github.com/greenmail-mail-test/greenmail/archive/release-1.5.6.zip">ZIP from
+                                                                                                           GitHub</a>.
+                 </p>
+
                 <h4 id="download_1_5_5" class="anchor"><a
                         href="https://github.com/greenmail-mail-test/greenmail/releases" title="1.5.5 Release Notes">1.5.5</a>
                     - May 14th, 2017</h4>
@@ -1399,6 +1454,7 @@ public final GreenMailRule greenMail = new GreenMailRule(ServerSetup.verbose(Ser
                     <li>
                         <a href="#download">Download</a>
                         <ul class="nav">
+                            <li><a href="#download_1_5_6">1.5.6</a></li>
                             <li><a href="#download_1_5_5">1.5.5</a></li>
                             <li><a href="#download_1_5_4">1.5.4</a></li>
                             <li><a href="#download_1_5_3">1.5.3</a></li>
