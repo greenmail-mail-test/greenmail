@@ -1,7 +1,7 @@
 version: '2'
 services:
   greenmail:
-    image: greenmail/standalone:1.6.0-SNAPSHOT
+    image: greenmail/standalone:1.5.6-SNAPSHOT
     environment:
     # Enable GreenMail verbose mode
     - GREENMAIL_OPTS=-Dgreenmail.setup.test.all -Dgreenmail.hostname=0.0.0.0 -Dgreenmail.auth.disabled -Dgreenmail.verbose
