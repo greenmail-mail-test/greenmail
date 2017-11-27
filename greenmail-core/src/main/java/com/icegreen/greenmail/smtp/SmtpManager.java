@@ -66,7 +66,7 @@ public class SmtpManager {
     public synchronized WaitObject createAndAddNewWaitObject(int emailCount) {
         final int existingCount = imapHostManager.getAllMessages().size();
         if (existingCount >= emailCount) {
-            return null;
+            return WaitObject.ARRIVED;
         }
         WaitObject ret = new WaitObject(emailCount - existingCount);
         notifyList.add(ret);
@@ -113,7 +113,18 @@ public class SmtpManager {
                 }
             }
         }
+
+        /**
+         * Already arrived.
+         */
+        static WaitObject ARRIVED = new WaitObject(0) {
+            @Override
+            public boolean isArrived() {
+                return true;
+            }
+        };
     }
+
 
     private class Incoming {
         public void enqueue(MovingMessage msg) {

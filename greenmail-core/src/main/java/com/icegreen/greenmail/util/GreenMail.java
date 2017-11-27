@@ -4,6 +4,10 @@
  */
 package com.icegreen.greenmail.util;
 
+import java.util.*;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
 import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.configuration.ConfiguredGreenMail;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
@@ -21,10 +25,6 @@ import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import java.util.*;
 
 /**
  * Utility class that manages a greenmail server with support for multiple protocols
@@ -46,7 +46,7 @@ public class GreenMail extends ConfiguredGreenMail {
     /**
      * Call this constructor if you want to run one of the email servers only
      *
-     * @param config  Server setup to use
+     * @param config Server setup to use
      */
     public GreenMail(ServerSetup config) {
         this(new ServerSetup[]{config});
@@ -69,7 +69,7 @@ public class GreenMail extends ConfiguredGreenMail {
         if (managers == null) {
             managers = new Managers();
         }
-        if(services == null) {
+        if (services == null) {
             services = createServices(config, managers);
         }
     }
@@ -190,27 +190,23 @@ public class GreenMail extends ConfiguredGreenMail {
     //~ Convenience Methods, often needed while testing ---------------------------------------------------------------
     @Override
     public boolean waitForIncomingEmail(long timeout, int emailCount) {
-        final SmtpManager.WaitObject o = managers.getSmtpManager().createAndAddNewWaitObject(emailCount);
-        if (null == o) {
-            return true;
-        }
-
-        synchronized (o) {
-            long t0 = System.currentTimeMillis();
-            while (!o.isArrived()) {
+        final SmtpManager.WaitObject waitObject = managers.getSmtpManager().createAndAddNewWaitObject(emailCount);
+        final long endTime = System.currentTimeMillis() + timeout;
+        synchronized (waitObject) {
+            while (!waitObject.isArrived()) {
+                final long waitTime = endTime - System.currentTimeMillis();
+                if (waitTime < 0L) {
+                    return waitObject.isArrived();
+                }
                 //this loop is necessary to insure correctness, see documentation on Object.wait()
                 try {
-                    o.wait(timeout);
+                    waitObject.wait(waitTime);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException("Thread was interrupted while waiting", e);
+                    throw new IllegalStateException("Interrupted while waiting for incoming email", e);
                 }
-                if ((System.currentTimeMillis() - t0) > timeout) {
-                    return false;
-                }
-
             }
         }
-        return true;
+        return waitObject.isArrived();
     }
 
     @Override
