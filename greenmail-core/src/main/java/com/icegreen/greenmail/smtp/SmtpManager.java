@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 
 public class SmtpManager {
@@ -26,13 +27,13 @@ public class SmtpManager {
     Incoming _incomingQueue;
     UserManager userManager;
     private ImapHostManager imapHostManager;
-    List<WaitObject> notifyList;
+    List<CountDownLatch> notifyList;
 
     public SmtpManager(ImapHostManager imapHostManager, UserManager userManager) {
         this.imapHostManager = imapHostManager;
         this.userManager = userManager;
         _incomingQueue = new Incoming();
-        notifyList = Collections.synchronizedList(new ArrayList<WaitObject>());
+        notifyList = Collections.synchronizedList(new ArrayList<CountDownLatch>());
     }
 
 
@@ -53,9 +54,9 @@ public class SmtpManager {
 
     public synchronized void send(SmtpState state) {
         _incomingQueue.enqueue(state.getMessage());
-        for (WaitObject o : notifyList) {
+        for (CountDownLatch o : notifyList) {
             synchronized (o) {
-                o.emailReceived();
+                o.countDown();
             }
         }
     }
@@ -63,67 +64,19 @@ public class SmtpManager {
     /**
      * @return null if no need to wait. Otherwise caller must call wait() on the returned object
      */
-    public synchronized WaitObject createAndAddNewWaitObject(int emailCount) {
+    public synchronized CountDownLatch createAndAddNewWaitObject(int emailCount) {
         final int existingCount = imapHostManager.getAllMessages().size();
         if (existingCount >= emailCount) {
-            return WaitObject.ARRIVED;
+            return new CountDownLatch(0); // Requires no count down, therefore not added to notification list
         }
-        WaitObject ret = new WaitObject(emailCount - existingCount);
-        notifyList.add(ret);
-        return ret;
+        CountDownLatch latch = new CountDownLatch(emailCount - existingCount);
+        notifyList.add(latch);
+        return latch;
     }
 
     //~----------------------------------------------------------------------------------------------------------------
 
-    /**
-     * This Object is used by a thread to wait until a number of emails have arrived.
-     * (for example Server's waitForIncomingEmail method)
-     * <p/>
-     * Every time an email has arrived, the method emailReceived() must be called.
-     * <p/>
-     * The notify() or notifyALL() methods should not be called on this object unless
-     * you want to notify waiting threads even if not all the required emails have arrived.
-     */
-    public static class WaitObject {
-        private boolean arrived = false;
-        private int emailCount;
 
-        public WaitObject(int emailCount) {
-            this.emailCount = emailCount;
-        }
-
-        public int getEmailCount() {
-            return emailCount;
-        }
-
-        public boolean isArrived() {
-            return arrived;
-        }
-
-        private void setArrived() {
-            arrived = true;
-        }
-
-        public void emailReceived() {
-            emailCount--;
-            if (emailCount <= 0) {
-                setArrived();
-                synchronized (this) {
-                    notifyAll();
-                }
-            }
-        }
-
-        /**
-         * Already arrived.
-         */
-        static WaitObject ARRIVED = new WaitObject(0) {
-            @Override
-            public boolean isArrived() {
-                return true;
-            }
-        };
-    }
 
 
     private class Incoming {

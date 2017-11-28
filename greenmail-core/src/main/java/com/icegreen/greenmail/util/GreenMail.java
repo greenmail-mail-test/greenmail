@@ -5,6 +5,8 @@
 package com.icegreen.greenmail.util;
 
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
@@ -15,7 +17,6 @@ import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.imap.ImapServer;
 import com.icegreen.greenmail.pop3.Pop3Server;
 import com.icegreen.greenmail.server.AbstractServer;
-import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpServer;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.InMemoryStore;
@@ -190,23 +191,20 @@ public class GreenMail extends ConfiguredGreenMail {
     //~ Convenience Methods, often needed while testing ---------------------------------------------------------------
     @Override
     public boolean waitForIncomingEmail(long timeout, int emailCount) {
-        final SmtpManager.WaitObject waitObject = managers.getSmtpManager().createAndAddNewWaitObject(emailCount);
+        final CountDownLatch waitObject = managers.getSmtpManager().createAndAddNewWaitObject(emailCount);
         final long endTime = System.currentTimeMillis() + timeout;
-        synchronized (waitObject) {
-            while (!waitObject.isArrived()) {
+            while (waitObject.getCount() > 0) {
                 final long waitTime = endTime - System.currentTimeMillis();
                 if (waitTime < 0L) {
-                    return waitObject.isArrived();
+                    return waitObject.getCount() == 0;
                 }
-                //this loop is necessary to insure correctness, see documentation on Object.wait()
                 try {
-                    waitObject.wait(waitTime);
+                    waitObject.await(waitTime, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {
-                    throw new IllegalStateException("Interrupted while waiting for incoming email", e);
+                    // Continue loop, in case of premature interruption
                 }
             }
-        }
-        return waitObject.isArrived();
+        return waitObject.getCount() == 0;
     }
 
     @Override
