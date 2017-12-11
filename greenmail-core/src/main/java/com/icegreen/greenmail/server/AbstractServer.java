@@ -220,15 +220,15 @@ public abstract class AbstractServer extends Thread implements Service {
 
     @Override
     public boolean waitTillRunning(long timeoutInMs) throws InterruptedException {
-        long t = System.currentTimeMillis();
+        long endTime = System.currentTimeMillis() + timeoutInMs;
         synchronized (startupMonitor) {
             // Loop to avoid spurious wake ups, see
             // https://www.securecoding.cert.org/confluence/display/java/THI03-J.+Always+invoke+wait%28%29+and+await%28%29+methods+inside+a+loop
-            while (!isRunning() && System.currentTimeMillis() - t < timeoutInMs) {
-                startupMonitor.wait(timeoutInMs);
+            long waitTime;
+            while (!isRunning() && (waitTime = endTime - System.currentTimeMillis())>0) {
+                startupMonitor.wait(waitTime);
             }
         }
-
         return isRunning();
     }
 
