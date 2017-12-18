@@ -65,6 +65,10 @@ public class ServerSetup {
      * Default socket connection timeout. See JavaMail session properties.
      */
     public static final long CONNECTION_TIMEOUT = 15000L;
+    /**
+     * Default server startup timeout in milliseconds.
+     */
+    public static final long SERVER_STARTUP_TIMEOUT = 1000L;
 
     private final int port;
     private final String bindAddress;
@@ -77,7 +81,7 @@ public class ServerSetup {
     /**
      * Timeout when GreenMail starts a server, in milliseconds.
      */
-    private long serverStartupTimeout = 1000L;
+    private long serverStartupTimeout = SERVER_STARTUP_TIMEOUT;
 
     public ServerSetup(int port, String bindAddress, String protocol) {
         this.port = port;

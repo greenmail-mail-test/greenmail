@@ -575,6 +575,15 @@ java [OPTIONS] -jar greenmail-standalone.jar
                         </td>
                     </tr>
                     <tr>
+                        <td class="text-nowrap">-Dgreenmail.startup.timeout</td>
+                        <td>Overrides the default server startup timeout of 1000ms.
+                            Useful if you have a slow or overloaded environment.
+                            <div class="bs-example">
+                                Example with 2s startup timeout: <code>-Dgreenmail.startup.timeout=2000</code>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
                         <td class="text-nowrap">-Dlog4j.configuration</td>
                         <td><p>Configures log4j using given configuration file.</p>
                             <p>

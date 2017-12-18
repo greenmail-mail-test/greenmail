@@ -100,7 +100,8 @@ public class GreenMail extends ConfiguredGreenMail {
             if (!service.isRunning()) {
                 throw new IllegalStateException("Could not start mail server " + service
                         + ", try to set server startup timeout > " + service.getServerSetup().getServerStartupTimeout()
-                        + " via " + ServerSetup.class.getSimpleName() + ".setServerStartupTimeout(timeoutInMs)");
+                        + " via " + ServerSetup.class.getSimpleName() + ".setServerStartupTimeout(timeoutInMs) or " +
+                        "-Dgreenmail.startup.timeout");
             }
         }
 
