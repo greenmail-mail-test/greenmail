@@ -7,6 +7,11 @@
 package com.icegreen.greenmail.smtp;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+
 import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.mail.MailAddress;
 import com.icegreen.greenmail.mail.MovingMessage;
@@ -14,11 +19,6 @@ import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 
 public class SmtpManager {
@@ -55,9 +55,7 @@ public class SmtpManager {
     public synchronized void send(SmtpState state) {
         _incomingQueue.enqueue(state.getMessage());
         for (CountDownLatch o : notifyList) {
-            synchronized (o) {
-                o.countDown();
-            }
+            o.countDown();
         }
     }
 
@@ -75,8 +73,6 @@ public class SmtpManager {
     }
 
     //~----------------------------------------------------------------------------------------------------------------
-
-
 
 
     private class Incoming {
