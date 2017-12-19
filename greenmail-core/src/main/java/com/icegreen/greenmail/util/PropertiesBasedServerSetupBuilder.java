@@ -60,7 +60,7 @@ public class PropertiesBasedServerSetupBuilder {
 
         String hostname = properties.getProperty("greenmail.hostname", ServerSetup.getLocalHostAddress());
         long serverStartupTimeout =
-                Long.valueOf(properties.getProperty("greenmail.startup.timeout", "-1"));
+                Long.parseLong(properties.getProperty("greenmail.startup.timeout", "-1"));
 
         // Default setups
         addDefaultSetups(hostname, properties, serverSetups);
