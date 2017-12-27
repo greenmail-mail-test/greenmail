@@ -292,6 +292,11 @@
           <artifactId>inject-maven-plugin</artifactId>
           <version>1.0</version>
         </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>keytool-maven-plugin</artifactId>
+          <version>1.5</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
