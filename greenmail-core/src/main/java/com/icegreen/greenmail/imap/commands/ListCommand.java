@@ -28,7 +28,7 @@ class ListCommand extends AuthenticatedStateCommand {
     public static final String NAME = "LIST";
     public static final String ARGS = "<reference-name> <mailbox-name-with-wildcards>";
 
-    private ListCommandParser parser = new ListCommandParser();
+    private ListCommandParser listParser = new ListCommandParser();
 
     ListCommand() {
         super(NAME, ARGS);
@@ -46,9 +46,9 @@ class ListCommand extends AuthenticatedStateCommand {
                              ImapResponse response,
                              ImapSession session)
             throws ProtocolException, FolderException {
-        String referenceName = parser.mailbox(request);
-        String mailboxPattern = parser.listMailbox(request);
-        parser.endLine(request);
+        String referenceName = listParser.mailbox(request);
+        String mailboxPattern = listParser.listMailbox(request);
+        listParser.endLine(request);
 
         // Should the #user.userName section be removed from names returned?
         boolean removeUserPrefix;
@@ -187,7 +187,7 @@ class ListCommand extends AuthenticatedStateCommand {
             return BASE64MailboxDecoder.decode(name);
         }
 
-        private class ListCharValidator extends ATOM_CHARValidator {
+        private class ListCharValidator extends AtomCharValidator {
             @Override
             public boolean isValid(char chr) {
                 return isListWildcard(chr) || super.isValid(chr);

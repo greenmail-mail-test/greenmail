@@ -21,74 +21,74 @@ public class Pop3Connection {
     // Logger.
     protected final Logger log = LoggerFactory.getLogger(getClass());
     // protocol stuff
-    Pop3Handler _handler;
+    Pop3Handler handler;
 
     // networking stuff
     private static final int TIMEOUT_MILLIS = 1000 * 30;
-    Socket _socket;
-    InetAddress _clientAddress;
+    Socket socket;
+    InetAddress clientAddress;
 
     // IO stuff
-    BufferedReader _in;
-    InternetPrintWriter _out;
+    BufferedReader in;
+    InternetPrintWriter out;
 
     public Pop3Connection(Pop3Handler handler, Socket socket)
             throws IOException {
         configureSocket(socket);
         configureStreams();
 
-        _handler = handler;
+        this.handler = handler;
     }
 
     private void configureStreams()
             throws IOException {
-        OutputStream o = _socket.getOutputStream();
-        InputStream i = _socket.getInputStream();
-        _out = new InternetPrintWriter(o, true);
-        _in = new BufferedReader(new InputStreamReader(i));
+        OutputStream o = socket.getOutputStream();
+        InputStream i = socket.getInputStream();
+        out = new InternetPrintWriter(o, true);
+        in = new BufferedReader(new InputStreamReader(i));
     }
 
     private void configureSocket(Socket socket)
             throws SocketException {
-        _socket = socket;
-        _socket.setSoTimeout(TIMEOUT_MILLIS);
-        _clientAddress = _socket.getInetAddress();
+        this.socket = socket;
+        this.socket.setSoTimeout(TIMEOUT_MILLIS);
+        clientAddress = this.socket.getInetAddress();
     }
 
     public void close()
             throws IOException {
-        _socket.close();
+        socket.close();
     }
 
     public void quit() {
-        _handler.close();
+        handler.close();
     }
 
     public void println(String line) {
         log.debug("S: {}", line);
-        _out.print(line);
+        out.print(line);
         println();
     }
 
     public void println() {
-        _out.print("\r\n");
-        _out.flush();
+        out.print("\r\n");
+        out.flush();
     }
 
     public void print(Reader in)
             throws IOException {
-        StreamUtils.copy(in, _out);
-        _out.flush();
+        StreamUtils.copy(in, out);
+        out.flush();
     }
 
     public String readLine()
             throws IOException {
-        String line = _in.readLine();
+        String line = in.readLine();
         log.debug("C: {}", line);
         return line;
     }
 
     public String getClientAddress() {
-        return _clientAddress.toString();
+        return clientAddress.toString();
     }
 }

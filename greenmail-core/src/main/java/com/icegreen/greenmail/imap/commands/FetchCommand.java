@@ -38,7 +38,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
     private static final Flags FLAGS_SEEN = new Flags(Flags.Flag.SEEN);
     private static final Pattern NUMBER_MATCHER = Pattern.compile("^\\d+$");
 
-    private FetchCommandParser parser = new FetchCommandParser();
+    private FetchCommandParser fetchParser = new FetchCommandParser();
 
     FetchCommand() {
         super(NAME, ARGS);
@@ -58,9 +58,9 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
                           ImapSession session,
                           boolean useUids)
             throws ProtocolException, FolderException {
-        IdRange[] idSet = parser.parseIdRange(request);
-        FetchRequest fetch = parser.fetchRequest(request);
-        parser.endLine(request);
+        IdRange[] idSet = fetchParser.parseIdRange(request);
+        FetchRequest fetch = fetchParser.fetchRequest(request);
+        fetchParser.endLine(request);
 
         if (useUids) {
             fetch.uid = true;
@@ -529,8 +529,8 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
     }
     /** See https://tools.ietf.org/html/rfc3501#page-55 : partial */
     private static class Partial {
-        int start,
-            size;
+        int start;
+        int size;
 
         int computeLength(final int contentSize) {
             if ( size > 0) {

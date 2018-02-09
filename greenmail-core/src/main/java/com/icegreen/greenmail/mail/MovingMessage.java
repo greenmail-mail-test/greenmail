@@ -32,13 +32,13 @@ import java.util.List;
 public class MovingMessage {
     private MailAddress returnPath;
     private List<MailAddress> toAddresses = new LinkedList<>();
-    private Workspace _workspace;
-    private Resource _content;
+    private Workspace workspace;
+    private Resource content;
     private MimeMessage message;
-    private int _references = 0;
+    private int references = 0;
 
     public MovingMessage(Workspace workspace) {
-        _workspace = workspace;
+        this.workspace = workspace;
     }
 
     public List<MailAddress> getToAddresses() {
@@ -52,19 +52,19 @@ public class MovingMessage {
     public Reader getContent()
             throws IOException {
 
-        return _content.getReader();
+        return content.getReader();
     }
 
     public void acquire() {
-        _references++;
+        references++;
     }
 
     public void releaseContent() {
-        if (_references > 0) {
-            _references--;
-        } else if (_content != null) {
-            _workspace.release(_content);
-            _content = null;
+        if (references > 0) {
+            references--;
+        } else if (content != null) {
+            workspace.release(content);
+            content = null;
         }
     }
 
@@ -97,8 +97,8 @@ public class MovingMessage {
      */
     public void readDotTerminatedContent(BufferedReader in)
             throws IOException {
-        _content = _workspace.getTmpFile();
-        Writer data = _content.getWriter();
+        content = workspace.getTmpFile();
+        Writer data = content.getWriter();
         PrintWriter dataWriter = new InternetPrintWriter(data);
 
         while (true) {
@@ -117,7 +117,7 @@ public class MovingMessage {
             }
         }
         try {
-            message = GreenMailUtil.newMimeMessage(_content.getAsString());
+            message = GreenMailUtil.newMimeMessage(content.getAsString());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -4,6 +4,7 @@ import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.sun.mail.iap.Argument;
 import com.sun.mail.iap.ByteArray;
@@ -46,6 +47,32 @@ public class ImapProtocolTest {
         greenMail.waitForIncomingEmail(numberOfMails);
 
         store = greenMail.getImap().createStore();
+    }
+
+    @Test
+    public void testListAndStatusWithNonExistingFolder() throws MessagingException {
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+            assertFalse(folder.getFolder("non existent folder").exists());
+            for(final String cmd : new String[]{
+                    "STATUS \"non existent folder\" (MESSAGES UIDNEXT UIDVALIDITY UNSEEN)",
+                    "SELECT \"non existent folder\""
+            }) {
+                Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                    @Override
+                    public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                        return protocol.command(cmd, null);
+                    }
+                });
+
+                IMAPResponse response = (IMAPResponse) ret[0];
+                assertTrue(response.isNO());
+            }
+        } finally {
+            store.close();
+        }
     }
 
     @Test

@@ -12,25 +12,24 @@ import com.icegreen.greenmail.mail.MovingMessage;
 
 public class SmtpState {
     MovingMessage currentMessage;
-    Workspace _workspace;
+    Workspace workspace;
 
     public SmtpState(Workspace workspace) {
-        _workspace = workspace;
+        this.workspace = workspace;
         clearMessage();
     }
 
     public MovingMessage getMessage() {
-
         return currentMessage;
     }
 
     /**
-     * To destroy a half-contructed message.
+     * To destroy a half-constructed message.
      */
     public void clearMessage() {
-        if (currentMessage != null)
+        if (currentMessage != null) {
             currentMessage.releaseContent();
-
-        currentMessage = new MovingMessage(_workspace);
+        }
+        currentMessage = new MovingMessage(workspace);
     }
 }

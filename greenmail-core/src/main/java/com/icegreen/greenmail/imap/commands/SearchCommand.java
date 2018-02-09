@@ -12,8 +12,6 @@ import com.icegreen.greenmail.imap.ImapSession;
 import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.mail.search.SearchTerm;
 import java.nio.charset.CharacterCodingException;
@@ -24,11 +22,10 @@ import java.nio.charset.CharacterCodingException;
  * @author Darrell DeBoer <darrell@apache.org>
  */
 class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
     public static final String NAME = "SEARCH";
     public static final String ARGS = "<search term>";
 
-    private SearchCommandParser parser = new SearchCommandParser();
+    private SearchCommandParser searchParser = new SearchCommandParser();
 
     SearchCommand() {
         super(NAME, ARGS);
@@ -49,9 +46,9 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
                           boolean useUids)
             throws ProtocolException, FolderException {
         // Parse the search term from the request
-        SearchTerm searchTerm = null;
+        final SearchTerm searchTerm;
         try {
-            searchTerm = parser.searchTerm(request);
+            searchTerm = searchParser.searchTerm(request);
         } catch(IllegalArgumentException ex) {
             // Not support => return "BAD"
             response.commandError("Search command not supported");
@@ -68,7 +65,7 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
             return;
         }
 
-        parser.endLine(request);
+        searchParser.endLine(request);
 
         MailFolder folder = session.getSelected();
         long[] uids = folder.search(searchTerm);

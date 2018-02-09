@@ -321,7 +321,7 @@ public class GreenMailUtil {
      * @param description Description of the attachment
      * @return New multipart
      */
-    private static MimeMultipart createMultipartWithAttachment(String msg, final byte[] attachment, final String contentType,
+    public static MimeMultipart createMultipartWithAttachment(String msg, final byte[] attachment, final String contentType,
                                                                final String filename, String description) {
         try {
             MimeMultipart multiPart = new MimeMultipart();

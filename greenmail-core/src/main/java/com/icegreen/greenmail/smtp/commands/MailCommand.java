@@ -27,13 +27,13 @@ import java.util.regex.Pattern;
  */
 public class MailCommand
         extends SmtpCommand {
-    static final Pattern param = Pattern.compile("MAIL FROM:\\s?<(.*)>",
+    static final Pattern PARAM = Pattern.compile("MAIL FROM:\\s?<(.*)>",
             Pattern.CASE_INSENSITIVE);
 
     @Override
     public void execute(SmtpConnection conn, SmtpState state,
                         SmtpManager manager, String commandLine) {
-        Matcher m = param.matcher(commandLine);
+        Matcher m = PARAM.matcher(commandLine);
         try {
             if (m.matches()) {
                 String from = m.group(1);

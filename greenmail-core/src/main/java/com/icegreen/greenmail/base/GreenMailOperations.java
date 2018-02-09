@@ -85,9 +85,9 @@ public interface GreenMailOperations {
     MimeMessage[] getReceviedMessagesForDomain(String domain);
 
     /**
-     * This method can be used as an easy 'catch-all' mechanism.
+     * Gets all messages containing given domain.
      *
-     * @param domain the domain
+     * @param domain the domain, such as 'icegreen.com' or 'some.example.com'
      * @return Returns all received messages for given domain.
      */
     MimeMessage[] getReceivedMessagesForDomain(String domain);

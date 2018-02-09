@@ -11,7 +11,7 @@ Go to the [project site][greenmail_project_site] for details:
 * [JavaDoc][greenmail_javadoc]
 * [FAQ][greenmail_faq]
 * [Download][greenmail_download]
-* [Maven coordinates][maven_repository_com]: com.icegreen:greenmail:1.5.6
+* [Maven coordinates][maven_repository_com]: com.icegreen:greenmail:1.5.7
 
 The GreenMail project welcomes any contribution, so go ahead and fork/open a pull request! See the guidelines below.
 

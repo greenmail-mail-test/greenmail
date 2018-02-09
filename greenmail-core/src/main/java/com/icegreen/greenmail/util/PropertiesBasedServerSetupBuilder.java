@@ -35,6 +35,12 @@ import java.util.Properties;
  * <li>greenmail.PROTOCOL.port</li>
  * <li>greenmail.PROTOCOL.hostname (defaults to {@link ServerSetup#getLocalHostAddress()}</li>
  * </ul>
+ * <h2>General settings</h2>
+ * <ul>
+ * <li>greenmail.startup.timeout : timeout for server startup (defaults to {@link ServerSetup#SERVER_STARTUP_TIMEOUT}<</li>
+ * <li>greenmail.hostname : The default hostname to bind to, eg localhost or 0.0.0.0</li>
+ * <li>greenmail.verbose : Enables verbose mode including debug output</li>
+ * </ul>
  */
 public class PropertiesBasedServerSetupBuilder {
 
@@ -53,6 +59,8 @@ public class PropertiesBasedServerSetupBuilder {
         List<ServerSetup> serverSetups = new ArrayList<>();
 
         String hostname = properties.getProperty("greenmail.hostname", ServerSetup.getLocalHostAddress());
+        long serverStartupTimeout =
+                Long.parseLong(properties.getProperty("greenmail.startup.timeout", "-1"));
 
         // Default setups
         addDefaultSetups(hostname, properties, serverSetups);
@@ -65,9 +73,12 @@ public class PropertiesBasedServerSetupBuilder {
             addSetup(hostname, protocol, properties, serverSetups);
         }
 
-        for(ServerSetup setup: serverSetups) {
-            if(properties.containsKey(GREENMAIL_VERBOSE)) {
+        for (ServerSetup setup : serverSetups) {
+            if (properties.containsKey(GREENMAIL_VERBOSE)) {
                 setup.setVerbose(true);
+            }
+            if (serverStartupTimeout >= 0L) {
+                setup.setServerStartupTimeout(serverStartupTimeout);
             }
         }
 
@@ -86,7 +97,7 @@ public class PropertiesBasedServerSetupBuilder {
 
     protected void addTestSetups(String hostname, Properties properties, List<ServerSetup> serverSetups) {
         if (properties.containsKey("greenmail.setup.test.all")) {
-            for(ServerSetup setup : ServerSetupTest.ALL) {
+            for (ServerSetup setup : ServerSetupTest.ALL) {
                 serverSetups.add(setup.createCopy(hostname));
             }
         }
@@ -112,7 +123,7 @@ public class PropertiesBasedServerSetupBuilder {
 
     protected void addDefaultSetups(String hostname, Properties properties, List<ServerSetup> serverSetups) {
         if (properties.containsKey("greenmail.setup.all")) {
-            for(ServerSetup setup : ServerSetup.ALL) {
+            for (ServerSetup setup : ServerSetup.ALL) {
                 serverSetups.add(setup.createCopy(hostname));
             }
         }

@@ -4,6 +4,12 @@
  */
 package com.icegreen.greenmail.util;
 
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
 import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.configuration.ConfiguredGreenMail;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
@@ -11,7 +17,6 @@ import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.imap.ImapServer;
 import com.icegreen.greenmail.pop3.Pop3Server;
 import com.icegreen.greenmail.server.AbstractServer;
-import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpServer;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.InMemoryStore;
@@ -21,10 +26,6 @@ import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import java.util.*;
 
 /**
  * Utility class that manages a greenmail server with support for multiple protocols
@@ -46,7 +47,7 @@ public class GreenMail extends ConfiguredGreenMail {
     /**
      * Call this constructor if you want to run one of the email servers only
      *
-     * @param config  Server setup to use
+     * @param config Server setup to use
      */
     public GreenMail(ServerSetup config) {
         this(new ServerSetup[]{config});
@@ -69,7 +70,7 @@ public class GreenMail extends ConfiguredGreenMail {
         if (managers == null) {
             managers = new Managers();
         }
-        if(services == null) {
+        if (services == null) {
             services = createServices(config, managers);
         }
     }
@@ -88,6 +89,7 @@ public class GreenMail extends ConfiguredGreenMail {
             try {
                 service.waitTillRunning(service.getServerSetup().getServerStartupTimeout());
             } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
                 throw new IllegalStateException("Could not start mail service " + service, ex);
             }
 
@@ -99,7 +101,8 @@ public class GreenMail extends ConfiguredGreenMail {
             if (!service.isRunning()) {
                 throw new IllegalStateException("Could not start mail server " + service
                         + ", try to set server startup timeout > " + service.getServerSetup().getServerStartupTimeout()
-                        + " via " + ServerSetup.class.getSimpleName() + ".setServerStartupTimeout(timeoutInMs)");
+                        + " via " + ServerSetup.class.getSimpleName() + ".setServerStartupTimeout(timeoutInMs) or " +
+                        "-Dgreenmail.startup.timeout");
             }
         }
 
@@ -190,27 +193,20 @@ public class GreenMail extends ConfiguredGreenMail {
     //~ Convenience Methods, often needed while testing ---------------------------------------------------------------
     @Override
     public boolean waitForIncomingEmail(long timeout, int emailCount) {
-        final SmtpManager.WaitObject o = managers.getSmtpManager().createAndAddNewWaitObject(emailCount);
-        if (null == o) {
-            return true;
-        }
-
-        synchronized (o) {
-            long t0 = System.currentTimeMillis();
-            while (!o.isArrived()) {
-                //this loop is necessary to insure correctness, see documentation on Object.wait()
+        final CountDownLatch waitObject = managers.getSmtpManager().createAndAddNewWaitObject(emailCount);
+        final long endTime = System.currentTimeMillis() + timeout;
+            while (waitObject.getCount() > 0) {
+                final long waitTime = endTime - System.currentTimeMillis();
+                if (waitTime < 0L) {
+                    return waitObject.getCount() == 0;
+                }
                 try {
-                    o.wait(timeout);
+                    waitObject.await(waitTime, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException("Thread was interrupted while waiting", e);
+                    // Continue loop, in case of premature interruption
                 }
-                if ((System.currentTimeMillis() - t0) > timeout) {
-                    return false;
-                }
-
             }
-        }
-        return true;
+        return waitObject.getCount() == 0;
     }
 
     @Override

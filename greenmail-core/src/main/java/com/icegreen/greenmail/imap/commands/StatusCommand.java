@@ -30,7 +30,7 @@ class StatusCommand extends AuthenticatedStateCommand {
     private static final String UIDVALIDITY = "UIDVALIDITY";
     private static final String UNSEEN = "UNSEEN";
 
-    private StatusCommandParser parser = new StatusCommandParser();
+    private StatusCommandParser statusParser = new StatusCommandParser();
 
     StatusCommand() {
         super(NAME, ARGS);
@@ -44,11 +44,17 @@ class StatusCommand extends AuthenticatedStateCommand {
                              ImapResponse response,
                              ImapSession session)
             throws ProtocolException, FolderException {
-        String mailboxName = parser.mailbox(request);
-        StatusDataItems statusDataItems = parser.statusDataItems(request);
-        parser.endLine(request);
+        String mailboxName = statusParser.mailbox(request);
+        StatusDataItems statusDataItems = statusParser.statusDataItems(request);
+        statusParser.endLine(request);
 
-        MailFolder folder = getMailbox(mailboxName, session, true);
+        MailFolder folder;
+        try {
+            folder = getMailbox(mailboxName, session, true);
+        } catch (FolderException ex) {
+            response.commandFailed(this, "No such mailbox");
+            return;
+        }
 
         StringBuilder buffer = new StringBuilder();
         buffer.append('\"').append(BASE64MailboxEncoder.encode(mailboxName)).append('\"');

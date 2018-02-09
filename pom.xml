@@ -124,7 +124,7 @@
         <plugin>
           <!-- http://maven.apache.org/plugins/maven-compile-plugin/plugin-info.html -->
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.6.1</version>
+          <version>3.7.0</version>
           <configuration>
             <source>1.7</source>
             <target>1.7</target>
@@ -143,7 +143,7 @@
         <plugin>
           <!-- http://maven.apache.org/plugins/maven-surefire-plugin/plugin-info.html -->
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.20</version>
+          <version>2.20</version> <!-- 2.20.1 fails tests most of the time ??? -->
           <configuration>
             <forkCount>1</forkCount>
             <reuseForks>true</reuseForks>
@@ -153,7 +153,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>2.20</version>
+          <version>2.20</version> <!-- 2.20.1 fails tests??? -->
           <configuration>
             <forkCount>1</forkCount>
             <reuseForks>true</reuseForks>
@@ -180,11 +180,11 @@
         </plugin>
         <plugin>
           <artifactId>maven-war-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.2.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.0.1</version>
+          <version>3.0.2</version>
         </plugin>
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
@@ -193,7 +193,7 @@
         <plugin>
           <groupId>io.fabric8</groupId>
           <artifactId>docker-maven-plugin</artifactId>
-          <version>0.23.0</version>
+          <version>0.24.0</version>
         </plugin>
         <!-- IDE plugins -->
         <plugin>
@@ -216,24 +216,39 @@
         </plugin>
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.6</version>
+          <version>3.7</version>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-report-plugin</artifactId>
-          <version>2.20</version>
+          <version>2.20.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>2.9</version>
         </plugin>
         <plugin>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+        <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>findbugs-maven-plugin</artifactId>
-          <version>3.0.4</version>
+          <version>3.0.5</version>
+          <configuration>
+            <threshold>Normal</threshold>
+          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-pmd-plugin</artifactId>
-          <version>3.8</version>
+          <version>3.9.0</version>
+          <configuration>
+            <format>html</format>
+            <linkXRef>true</linkXRef>
+            <sourceEncoding>utf-8</sourceEncoding>
+            <minimumTokens>100</minimumTokens>
+            <targetJdk>1.7</targetJdk>
+            <analysisCache>true</analysisCache>
+          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-jxr-plugin</artifactId>
@@ -246,7 +261,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.10.4</version>
+          <version>3.0.0</version>
           <configuration>
             <links>
               <link>http://docs.oracle.com/javase/1.7.0/docs/api/</link>
@@ -284,13 +299,18 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.1.0</version>
         </plugin>
         <!-- Inject POM version and scm version -->
         <plugin>
           <groupId>de.m3y.maven</groupId>
           <artifactId>inject-maven-plugin</artifactId>
           <version>1.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>keytool-maven-plugin</artifactId>
+          <version>1.5</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -569,7 +589,7 @@
               <linkXRef>true</linkXRef>
               <sourceEncoding>utf-8</sourceEncoding>
               <minimumTokens>100</minimumTokens>
-              <targetJdk>1.6</targetJdk>
+              <targetJdk>1.7</targetJdk>
             </configuration>
           </plugin>
           <plugin>

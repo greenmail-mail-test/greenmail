@@ -38,7 +38,7 @@ public class CommandParser {
      * Reads an argument of type "atom" from the request.
      */
     public String atom(ImapRequestLineReader request) throws ProtocolException {
-        return consumeWord(request, new ATOM_CHARValidator());
+        return consumeWord(request, new AtomCharValidator());
     }
 
     /**
@@ -414,7 +414,7 @@ public class CommandParser {
         }
     }
 
-    protected class ATOM_CHARValidator implements CharacterValidator {
+    protected class AtomCharValidator implements CharacterValidator {
         @Override
         public boolean isValid(char chr) {
             return isCHAR(chr) && !isAtomSpecial(chr) &&
@@ -438,7 +438,7 @@ public class CommandParser {
         }
     }
 
-    private class TagCharValidator extends ATOM_CHARValidator {
+    private class TagCharValidator extends AtomCharValidator {
         @Override
         public boolean isValid(char chr) {
             return chr != '+' && super.isValid(chr);

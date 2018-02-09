@@ -11,29 +11,29 @@ package com.icegreen.greenmail.imap.commands;
  */
 public class MsnRange {
 
-    private int _lowVal;
-    private int _highVal;
+    private int lowVal;
+    private int highVal;
 
     public MsnRange(int singleVal) {
-        _lowVal = singleVal;
-        _highVal = singleVal;
+        lowVal = singleVal;
+        highVal = singleVal;
     }
 
     public MsnRange(int lowVal, int highVal) {
-        _lowVal = lowVal;
-        _highVal = highVal;
+        this.lowVal = lowVal;
+        this.highVal = highVal;
     }
 
     public int getLowVal() {
-        return _lowVal;
+        return lowVal;
     }
 
     public int getHighVal() {
-        return _highVal;
+        return highVal;
     }
 
     public boolean includes(int msn) {
-        return _lowVal <= msn && msn <= _highVal;
+        return lowVal <= msn && msn <= highVal;
     }
 
 }

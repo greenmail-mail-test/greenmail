@@ -17,6 +17,8 @@ import javax.mail.Store;
 import java.io.IOException;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Wael Chatila
@@ -32,7 +34,7 @@ public abstract class AbstractServer extends Thread implements Service {
     private final List<ProtocolHandler> handlers = Collections.synchronizedList(new ArrayList<ProtocolHandler>());
     private volatile boolean keepRunning = false;
     private volatile boolean running = false;
-    private final Object startupMonitor = new Object();
+    private final CountDownLatch startupMonitor = new CountDownLatch(1);
 
     protected AbstractServer(ServerSetup setup, Managers managers) {
         this.setup = setup;
@@ -114,9 +116,7 @@ public abstract class AbstractServer extends Thread implements Service {
         } finally {
             // Notify everybody that we're ready to accept connections or failed to start.
             // Otherwise will run into startup timeout, see #waitTillRunning(long).
-            synchronized (startupMonitor) {
-                startupMonitor.notifyAll();
-            }
+            startupMonitor.countDown();
         }
     }
 
@@ -220,15 +220,7 @@ public abstract class AbstractServer extends Thread implements Service {
 
     @Override
     public boolean waitTillRunning(long timeoutInMs) throws InterruptedException {
-        long t = System.currentTimeMillis();
-        synchronized (startupMonitor) {
-            // Loop to avoid spurious wake ups, see
-            // https://www.securecoding.cert.org/confluence/display/java/THI03-J.+Always+invoke+wait%28%29+and+await%28%29+methods+inside+a+loop
-            while (!isRunning() && System.currentTimeMillis() - t < timeoutInMs) {
-                startupMonitor.wait(timeoutInMs);
-            }
-        }
-
+        startupMonitor.await(timeoutInMs, TimeUnit.MILLISECONDS);
         return isRunning();
     }
 
@@ -277,6 +269,8 @@ public abstract class AbstractServer extends Thread implements Service {
         } catch (InterruptedException e) {
             //its possible that the thread exits between the lines keepRunning=false and interrupt above
             log.warn("Got interrupted while stopping {}", this, e);
+
+            Thread.currentThread().interrupt();
         }
     }
 

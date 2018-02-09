@@ -65,6 +65,12 @@ public class ServerSetup {
      * Default socket connection timeout. See JavaMail session properties.
      */
     public static final long CONNECTION_TIMEOUT = 15000L;
+    /**
+     * Default server startup timeout in milliseconds.
+     */
+    public static final long SERVER_STARTUP_TIMEOUT = 1000L;
+
+    private static final String MAIL_DOT = "mail.";
 
     private final int port;
     private final String bindAddress;
@@ -77,7 +83,7 @@ public class ServerSetup {
     /**
      * Timeout when GreenMail starts a server, in milliseconds.
      */
-    private long serverStartupTimeout = 1000L;
+    private long serverStartupTimeout = SERVER_STARTUP_TIMEOUT;
 
     public ServerSetup(int port, String bindAddress, String protocol) {
         this.port = port;
@@ -195,25 +201,25 @@ public class ServerSetup {
         }
 
         // Set local host address (makes tests much faster. If this is not set java mail always looks for the address)
-        props.setProperty("mail." + getProtocol() + ".localaddress", String.valueOf(ServerSetup.getLocalHostAddress()));
-        props.setProperty("mail." + getProtocol() + ".port", String.valueOf(getPort()));
-        props.setProperty("mail." + getProtocol() + ".host", String.valueOf(getBindAddress()));
+        props.setProperty(MAIL_DOT + getProtocol() + ".localaddress", String.valueOf(ServerSetup.getLocalHostAddress()));
+        props.setProperty(MAIL_DOT + getProtocol() + ".port", String.valueOf(getPort()));
+        props.setProperty(MAIL_DOT + getProtocol() + ".host", String.valueOf(getBindAddress()));
 
         if (isSecure()) {
-            props.put("mail." + getProtocol() + ".starttls.enable", Boolean.TRUE);
-            props.setProperty("mail." + getProtocol() + ".socketFactory.class", DummySSLSocketFactory.class.getName());
-            props.setProperty("mail." + getProtocol() + ".socketFactory.fallback", "false");
+            props.put(MAIL_DOT + getProtocol() + ".starttls.enable", Boolean.TRUE);
+            props.setProperty(MAIL_DOT + getProtocol() + ".socketFactory.class", DummySSLSocketFactory.class.getName());
+            props.setProperty(MAIL_DOT + getProtocol() + ".socketFactory.fallback", "false");
         }
 
         // Timeouts
-        props.setProperty("mail." + getProtocol() + ".connectiontimeout",
+        props.setProperty(MAIL_DOT + getProtocol() + ".connectiontimeout",
                 Long.toString(getConnectionTimeout() < 0L ? ServerSetup.CONNECTION_TIMEOUT : getConnectionTimeout()));
-        props.setProperty("mail." + getProtocol() + ".timeout",
+        props.setProperty(MAIL_DOT + getProtocol() + ".timeout",
                 Long.toString(getReadTimeout() < 0L ? ServerSetup.READ_TIMEOUT : getReadTimeout()));
         // Note: "mail." + setup.getProtocol() + ".writetimeout" breaks TLS/SSL Dummy Socket and makes tests run 6x slower!!!
         //       Therefore we do not by default configure writetimeout.
         if (getWriteTimeout() >= 0L) {
-            props.setProperty("mail." + getProtocol() + ".writetimeout", Long.toString(getWriteTimeout()));
+            props.setProperty(MAIL_DOT + getProtocol() + ".writetimeout", Long.toString(getWriteTimeout()));
         }
 
         // Protocol specific extensions
