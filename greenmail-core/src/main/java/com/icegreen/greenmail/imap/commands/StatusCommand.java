@@ -48,7 +48,13 @@ class StatusCommand extends AuthenticatedStateCommand {
         StatusDataItems statusDataItems = parser.statusDataItems(request);
         parser.endLine(request);
 
-        MailFolder folder = getMailbox(mailboxName, session, true);
+        MailFolder folder;
+        try {
+            folder = getMailbox(mailboxName, session, true);
+        } catch (FolderException ex) {
+            response.commandFailed(this, "No such mailbox");
+            return;
+        }
 
         StringBuilder buffer = new StringBuilder();
         buffer.append('\"').append(BASE64MailboxEncoder.encode(mailboxName)).append('\"');

@@ -39,7 +39,12 @@ class SelectCommand extends AuthenticatedStateCommand {
         session.deselect();
 
         final boolean isExamine = this instanceof ExamineCommand;
-        selectMailbox(mailboxName, session, isExamine);
+        try {
+            selectMailbox(mailboxName, session, isExamine);
+        } catch (FolderException ex) {
+            response.commandFailed(this, "No such mailbox");
+            return;
+        }
 
         ImapSessionFolder mailbox = session.getSelected();
         response.flagsResponse(mailbox.getPermanentFlags());
@@ -70,7 +75,7 @@ class SelectCommand extends AuthenticatedStateCommand {
         MailFolder folder = getMailbox(mailboxName, session, true);
 
         if (!folder.isSelectable()) {
-            throw new FolderException("Nonselectable mailbox " + mailboxName);
+            throw new FolderException("Non selectable mailbox " + mailboxName);
         }
 
         session.setSelected(folder, readOnly);

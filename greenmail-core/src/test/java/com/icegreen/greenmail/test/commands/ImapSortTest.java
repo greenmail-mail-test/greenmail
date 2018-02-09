@@ -1,6 +1,5 @@
 package com.icegreen.greenmail.test.commands;
 
-import com.icegreen.greenmail.imap.commands.SearchKey;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.user.GreenMailUser;
