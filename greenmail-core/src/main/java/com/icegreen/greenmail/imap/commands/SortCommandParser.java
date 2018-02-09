@@ -40,7 +40,7 @@ class SortCommandParser extends CommandParser {
         }
 
         /* Charset */
-        sortTerm.setCharset(consumeWord(request, new ATOM_CHARValidator()));
+        sortTerm.setCharset(consumeWord(request, new AtomCharValidator()));
 
         /* Search term */
         sortTerm.setSearchTerm(searchCommandParser.searchTerm(request));

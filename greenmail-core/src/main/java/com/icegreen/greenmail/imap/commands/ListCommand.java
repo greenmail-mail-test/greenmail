@@ -187,7 +187,7 @@ class ListCommand extends AuthenticatedStateCommand {
             return BASE64MailboxDecoder.decode(name);
         }
 
-        private class ListCharValidator extends ATOM_CHARValidator {
+        private class ListCharValidator extends AtomCharValidator {
             @Override
             public boolean isValid(char chr) {
                 return isListWildcard(chr) || super.isValid(chr);

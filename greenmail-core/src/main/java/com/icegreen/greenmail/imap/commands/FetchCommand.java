@@ -529,8 +529,8 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
     }
     /** See https://tools.ietf.org/html/rfc3501#page-55 : partial */
     private static class Partial {
-        int start,
-            size;
+        int start;
+        int size;
 
         int computeLength(final int contentSize) {
             if ( size > 0) {

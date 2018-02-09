@@ -116,7 +116,7 @@ public abstract class AbstractServer extends Thread implements Service {
         } finally {
             // Notify everybody that we're ready to accept connections or failed to start.
             // Otherwise will run into startup timeout, see #waitTillRunning(long).
-            startupMonitor.countDown();;
+            startupMonitor.countDown();
         }
     }
 

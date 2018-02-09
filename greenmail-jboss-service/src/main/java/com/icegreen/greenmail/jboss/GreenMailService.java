@@ -239,7 +239,9 @@ public class GreenMailService extends ServiceMBeanSupport implements GreenMailSe
             buf.append(serverSetup.getProtocol()).append('=').append(serverSetup.getPort()).append(' ');
         }
 
-        log.info(buf.toString());
+        if(log.isInfoEnabled()) {
+            log.info(buf.toString());
+        }
     }
 
     private void startGreenMailService(ServiceProtocol pProtocol, Service pNewService) {

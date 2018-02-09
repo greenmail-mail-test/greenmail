@@ -13,23 +13,24 @@ import java.io.*;
 
 public class StringBufferResource
         implements Resource {
-    StringWriter _currentWriter;
-    StringBuilder _contentBuffer;
+    StringWriter currentWriter;
+    StringBuilder contentBuffer;
 
     public StringBufferResource() {
         // Nothing
     }
 
     public StringBufferResource(String initalValue) {
-        _contentBuffer = new StringBuilder(initalValue);
+        contentBuffer = new StringBuilder(initalValue);
     }
 
     @Override
     public Writer getWriter()
             throws IOException {
-        _currentWriter = new StringWriter();
+        // TODO: Check if always returning new writer is not a bug
+        currentWriter = new StringWriter();
 
-        return _currentWriter;
+        return currentWriter;
     }
 
     @Override
@@ -37,7 +38,7 @@ public class StringBufferResource
             throws IOException {
         closeInput();
 
-        return new ByteArrayInputStream(_contentBuffer.toString().getBytes(EncodingUtil.CHARSET_EIGHT_BIT_ENCODING));
+        return new ByteArrayInputStream(contentBuffer.toString().getBytes(EncodingUtil.CHARSET_EIGHT_BIT_ENCODING));
     }
 
     @Override
@@ -45,35 +46,35 @@ public class StringBufferResource
             throws IOException {
         closeInput();
 
-        return new StringReader(_contentBuffer.toString());
+        return new StringReader(contentBuffer.toString());
     }
 
     private void closeInput()
             throws IOException {
-        if (_currentWriter != null) {
-            _contentBuffer = new StringBuilder(_currentWriter.getBuffer());
-            _currentWriter = null;
+        if (currentWriter != null) {
+            contentBuffer = new StringBuilder(currentWriter.getBuffer());
+            currentWriter = null;
         }
 
-        if (_contentBuffer == null)
+        if (contentBuffer == null)
             throw new IOException("No content has been written");
     }
 
     @Override
     public long getSize() {
-        return _contentBuffer.length();
+        return contentBuffer.length();
     }
 
     @Override
     public String getAsString() throws IOException {
         closeInput();
-        return _contentBuffer.toString();
+        return contentBuffer.toString();
     }
 
     @Override
     public void delete() {
-        _contentBuffer = null;
-        _currentWriter = null;
+        contentBuffer = null;
+        currentWriter = null;
     }
 
 }

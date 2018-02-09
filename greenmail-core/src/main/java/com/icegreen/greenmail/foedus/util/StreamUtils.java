@@ -43,32 +43,30 @@ public class StreamUtils {
      * chars have been read.
      */
     public static Reader limit(Reader in, long len) {
-
         return new LimitedReader(in, len);
     }
 
     public static Reader splice(Reader one, Reader two) {
-
         return new SpliceReader(one, two);
     }
 
     private static class SpliceReader
             extends Reader {
-        Reader _one;
-        Reader _two;
+        Reader one;
+        Reader two;
         boolean oneFinished;
 
         public SpliceReader(Reader one, Reader two) {
-            _one = one;
-            _two = two;
+            this.one = one;
+            this.two = two;
         }
 
         @Override
         public void close()
                 throws IOException {
-            _one.close();
+            one.close();
 
-            _two.close();
+            two.close();
         }
 
         @Override
@@ -76,9 +74,9 @@ public class StreamUtils {
                 throws IOException {
             while (true) {
                 if (oneFinished) {
-                    return _two.read();
+                    return two.read();
                 } else {
-                    int value = _one.read();
+                    int value = one.read();
                     if (value == -1) {
                         oneFinished = true;
                     } else
@@ -95,9 +93,9 @@ public class StreamUtils {
                 throws IOException {
             while (true) {
                 if (oneFinished) {
-                    return _two.read(buf, start, len);
+                    return two.read(buf, start, len);
                 } else {
-                    int value = _one.read(buf, start, len);
+                    int value = one.read(buf, start, len);
                     if (value == -1) {
                         oneFinished = true;
                     } else
@@ -114,9 +112,9 @@ public class StreamUtils {
                 throws IOException {
             while (true) {
                 if (oneFinished) {
-                    return _two.read(buf);
+                    return two.read(buf);
                 } else {
-                    int value = _one.read(buf);
+                    int value = one.read(buf);
                     if (value == -1) {
                         oneFinished = true;
                     } else
@@ -130,13 +128,13 @@ public class StreamUtils {
 
     private static class LimitedReader
             extends Reader {
-        Reader _in;
-        long _maxLen;
-        long _lenRead;
+        Reader in;
+        final long maxLen;
+        long lenread;
 
         public LimitedReader(Reader in, long len) {
-            _in = in;
-            _maxLen = len;
+            this.in = in;
+            maxLen = len;
         }
 
         @Override
@@ -148,10 +146,10 @@ public class StreamUtils {
         @Override
         public int read()
                 throws IOException {
-            if (_lenRead < _maxLen) {
-                _lenRead++;
+            if (lenread < maxLen) {
+                lenread++;
 
-                return _in.read();
+                return in.read();
             } else {
 
                 return -1;
@@ -161,11 +159,11 @@ public class StreamUtils {
         @Override
         public int read(char[] buf, int start, int len)
                 throws IOException {
-            if (_lenRead < _maxLen) {
-                int numAllowedToRead = (int) Math.min(_maxLen - _lenRead,
+            if (lenread < maxLen) {
+                int numAllowedToRead = (int) Math.min(maxLen - lenread,
                         len);
-                int count = _in.read(buf, start, numAllowedToRead);
-                _lenRead += count;
+                int count = in.read(buf, start, numAllowedToRead);
+                lenread += count;
 
                 return count;
             } else {

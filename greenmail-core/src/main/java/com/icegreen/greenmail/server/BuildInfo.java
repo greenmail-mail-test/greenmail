@@ -12,6 +12,6 @@ public enum BuildInfo {
      * @return the project version
      */
     public String getProjectVersion() {
-        return "<replaced>";
+        return "<replaced>"; // NOSONAR
     }
 }
