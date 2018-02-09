@@ -269,6 +269,8 @@ public abstract class AbstractServer extends Thread implements Service {
         } catch (InterruptedException e) {
             //its possible that the thread exits between the lines keepRunning=false and interrupt above
             log.warn("Got interrupted while stopping {}", this, e);
+
+            Thread.currentThread().interrupt();
         }
     }
 

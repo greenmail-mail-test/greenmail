@@ -89,6 +89,7 @@ public class GreenMail extends ConfiguredGreenMail {
             try {
                 service.waitTillRunning(service.getServerSetup().getServerStartupTimeout());
             } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
                 throw new IllegalStateException("Could not start mail service " + service, ex);
             }
 
