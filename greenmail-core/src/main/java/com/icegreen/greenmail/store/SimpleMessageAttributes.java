@@ -513,7 +513,11 @@ public class SimpleMessageAttributes
                 getParameters(buf);
                 //4. body id -------
                 buf.append(' ');
-                buf.append(NIL);
+                if (null != contentID ) {
+                    buf.append(Q).append(contentID).append(Q);
+                } else {
+                    buf.append(NIL);
+                }
                 //5. content desc -------
                 buf.append(' ');
                 if (null != contentDesc) {
