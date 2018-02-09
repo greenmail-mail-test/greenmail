@@ -227,13 +227,28 @@
           <version>2.9</version>
         </plugin>
         <plugin>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+        <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>findbugs-maven-plugin</artifactId>
           <version>3.0.5</version>
+          <configuration>
+            <threshold>Normal</threshold>
+          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-pmd-plugin</artifactId>
           <version>3.9.0</version>
+          <configuration>
+            <format>html</format>
+            <linkXRef>true</linkXRef>
+            <sourceEncoding>utf-8</sourceEncoding>
+            <minimumTokens>100</minimumTokens>
+            <targetJdk>1.7</targetJdk>
+            <analysisCache>true</analysisCache>
+          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-jxr-plugin</artifactId>
@@ -574,7 +589,7 @@
               <linkXRef>true</linkXRef>
               <sourceEncoding>utf-8</sourceEncoding>
               <minimumTokens>100</minimumTokens>
-              <targetJdk>1.6</targetJdk>
+              <targetJdk>1.7</targetJdk>
             </configuration>
           </plugin>
           <plugin>
