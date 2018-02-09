@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
  */
 public class ImapProtocolTest {
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetup.verbose(ServerSetupTest.SMTP_IMAP));
+    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
     private GreenMailUser user;
     private IMAPStore store;
 
