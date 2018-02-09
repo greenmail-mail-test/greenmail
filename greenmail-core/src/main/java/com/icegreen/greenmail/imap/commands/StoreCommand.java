@@ -23,7 +23,7 @@ class StoreCommand extends SelectedStateCommand implements UidEnabledCommand {
     public static final String NAME = "STORE";
     public static final String ARGS = "<Message-set> ['+'|'-']FLAG[.SILENT] <flag-list>";
 
-    private final StoreCommandParser parser = new StoreCommandParser();
+    private final StoreCommandParser storeParser = new StoreCommandParser();
 
     StoreCommand() {
         super(NAME, ARGS);
@@ -43,10 +43,10 @@ class StoreCommand extends SelectedStateCommand implements UidEnabledCommand {
                           ImapSession session,
                           boolean useUids)
             throws ProtocolException, FolderException {
-        IdRange[] idSet = parser.parseIdRange(request);
-        StoreDirective directive = parser.storeDirective(request);
-        Flags flags = parser.flagList(request);
-        parser.endLine(request);
+        IdRange[] idSet = storeParser.parseIdRange(request);
+        StoreDirective directive = storeParser.storeDirective(request);
+        Flags flags = storeParser.flagList(request);
+        storeParser.endLine(request);
 
         ImapSessionFolder mailbox = session.getSelected();
 //        IdRange[] uidSet;

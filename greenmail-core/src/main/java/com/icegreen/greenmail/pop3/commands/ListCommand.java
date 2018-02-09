@@ -19,7 +19,6 @@ public class ListCommand
         extends Pop3Command {
     @Override
     public boolean isValidForState(Pop3State state) {
-
         return state.isAuthenticated();
     }
 
