@@ -4,6 +4,7 @@
  */
 package com.icegreen.greenmail.test.commands;
 
+import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -34,6 +35,7 @@ import javax.mail.search.SubjectTerm;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.icegreen.greenmail.imap.commands.SearchKey;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.user.GreenMailUser;
@@ -203,6 +205,17 @@ public class ImapSearchTest {
         testDateTerm(imapFolder, new ReceivedDateTerm(ComparisonTerm.LT, getSampleDate(2)), m[4]);
         //TODO: less equals: does not work yet, is therefore not included, should only return sample mail
         //testDateTerm(imapFolder, new ReceivedDateTerm(ComparisonTerm.LE, getSampleDate(2)), m[4]);
+    }
+
+    // Test an unsupported search term for exception. Should be ignored.
+    @Test
+    public void testUnsupportedSearchWarnsButDoesNotThrowException() throws MessagingException {
+        try {
+            SearchKey.valueOf("SENTDATE");
+            fail("Expected IAE for unimplemented search");
+        } catch (IllegalArgumentException ex) {
+            // Expected
+        }
     }
 
     private Date getSampleDate(int day) {
