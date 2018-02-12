@@ -1,18 +1,35 @@
 package com.icegreen.greenmail.imap.commands;
 
-import com.icegreen.greenmail.store.StoredMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 import javax.mail.Flags;
 import javax.mail.Message;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.mail.search.*;
+import javax.mail.search.AndTerm;
+import javax.mail.search.BodyTerm;
+import javax.mail.search.ComparisonTerm;
+import javax.mail.search.FlagTerm;
+import javax.mail.search.FromStringTerm;
+import javax.mail.search.FromTerm;
+import javax.mail.search.HeaderTerm;
+import javax.mail.search.OrTerm;
+import javax.mail.search.ReceivedDateTerm;
 import javax.mail.search.RecipientStringTerm;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import javax.mail.search.RecipientTerm;
+import javax.mail.search.SearchTerm;
+import javax.mail.search.SubjectTerm;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.icegreen.greenmail.store.StoredMessage;
 
 /**
  * Builder for search terms.
@@ -22,13 +39,15 @@ import java.util.List;
 public abstract class SearchTermBuilder {
     private SearchKey key;
     private List<String> parameters = Collections.<String>emptyList();
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SearchTermBuilder.class);
+    
     public static SearchTermBuilder create(final String pTerm) {
         return create(SearchKey.valueOf(pTerm));
     }
 
     public static SearchTermBuilder create(final SearchKey key) {
         SearchTermBuilder builder;
+        LOGGER.debug("Creating search term for '{}'", key);
         switch (key) {
             // Non flags first
             case HEADER:
@@ -110,11 +129,37 @@ public abstract class SearchTermBuilder {
             case OR:
                 builder = createORTermBuilder();
                 break;
+            case SINCE:
+                builder = createReceivedDateTermBuilder(ComparisonTerm.GE);
+                break;
+            case ON:
+                builder = createReceivedDateTermBuilder(ComparisonTerm.EQ);
+                break;
+            case BEFORE:
+                builder = createReceivedDateTermBuilder(ComparisonTerm.LT);
+                break;
             default:
                 throw new IllegalStateException("Unsupported search term '" + key + '\'');
         }
         builder.setSearchKey(key);
         return builder;
+    }
+
+    private static SearchTermBuilder createReceivedDateTermBuilder(final int searchTerm) {
+
+        return new SearchTermBuilder() {
+            @Override
+            public SearchTerm build() {
+                try {
+                    DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+                    Date d = df.parse(getParameters().get(0));
+                    LOGGER.debug("Using search term '{}' for date '{}'.", searchTerm, d);
+                    return new ReceivedDateTerm(searchTerm, d);
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
     }
     
 	private static SearchTermBuilder createORTermBuilder() {
@@ -402,4 +447,5 @@ public abstract class SearchTermBuilder {
             }
         }
     }
+
 }

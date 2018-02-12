@@ -48,7 +48,7 @@ public class ImapSearchTest {
             imapFolder.open(Folder.READ_WRITE);
 
             Message[] imapMessages = imapFolder.getMessages();
-            assertEquals(4, imapMessages.length);
+            assertEquals(5, imapMessages.length);
             Message m0 = imapMessages[0];
             assertTrue(m0.getSubject().startsWith("#0"));
             Message m1 = imapMessages[1];
@@ -57,7 +57,9 @@ public class ImapSearchTest {
             assertTrue(m2.getSubject().startsWith("#2"));
             Message m3 = imapMessages[3];
             assertTrue(m3.getSubject().startsWith("#3"));
-
+            Message m4 = imapMessages[4];
+            assertTrue(m4.getSubject().startsWith("#4"));
+            
             assertTrue(m0.getFlags().contains(Flags.Flag.ANSWERED));
 
             // Search flags
@@ -70,7 +72,7 @@ public class ImapSearchTest {
             assertTrue(imapMessages[0].getFlags().contains("foo"));
 
             imapMessages = imapFolder.search(new FlagTerm(fooFlags, false));
-            assertEquals(3, imapMessages.length);
+            assertEquals(4, imapMessages.length);
             assertTrue(!imapMessages[0].getFlags().contains(fooFlags));
             assertTrue(!imapMessages[1].getFlags().contains(fooFlags));
             assertTrue(!imapMessages[2].getFlags().contains(fooFlags));
@@ -139,6 +141,7 @@ public class ImapSearchTest {
             assertEquals(1, imapMessages.length);
             assertTrue(imapMessages[0] == m1);
 
+            executeReceivedDateTermSearch(imapFolder, m0, m1, m2, m3, m4);
 
             // Content
             final String pattern = "\u00e4\u03A0";
@@ -148,6 +151,58 @@ public class ImapSearchTest {
         } finally {
             store.close();
         }
+    }
+
+    private Date getSampleReceivedDate(int day) {
+        return new Date(110, 1, day);
+    }
+
+    private Date getSampleReceivedDate() {
+        return getSampleReceivedDate(1);
+    }
+
+    private void executeReceivedDateTermSearch(Folder imapFolder, Message... fixtures) throws Exception {
+
+        //greater equals, returns all
+        Message[] imapMessages = imapFolder.search(new ReceivedDateTerm(ComparisonTerm.GE, getSampleReceivedDate()));
+        assertEquals(5, imapMessages.length);
+        assertTrue(imapMessages[0] == fixtures[0]);
+        assertTrue(imapMessages[1] == fixtures[1]);
+        assertTrue(imapMessages[2] == fixtures[2]);
+        assertTrue(imapMessages[3] == fixtures[3]);
+		
+        assertTrue(imapMessages[4] == fixtures[4]);
+
+        //greater than, does not return last sample mail
+        imapMessages = imapFolder.search(new ReceivedDateTerm(ComparisonTerm.GT, getSampleReceivedDate()));
+        assertEquals(4, imapMessages.length);
+        assertTrue(imapMessages[0] == fixtures[0]);
+        assertTrue(imapMessages[1] == fixtures[1]);
+        assertTrue(imapMessages[2] == fixtures[2]);
+        assertTrue(imapMessages[3] == fixtures[3]);
+
+        //equals, only returns sample mail
+        imapMessages = imapFolder.search(new ReceivedDateTerm(ComparisonTerm.EQ, getSampleReceivedDate()));
+        assertEquals(1, imapMessages.length);
+        assertTrue(imapMessages[0] == fixtures[4]);
+
+        //not equals, does not return sample mail
+        imapMessages = imapFolder.search(new ReceivedDateTerm(ComparisonTerm.NE, getSampleReceivedDate()));
+        assertTrue(imapMessages[0] == fixtures[0]);
+        assertTrue(imapMessages[1] == fixtures[1]);
+        assertTrue(imapMessages[2] == fixtures[2]);
+        assertTrue(imapMessages[3] == fixtures[3]);
+
+        //less than (sample mail + 1 day), only returns sample mail
+        imapMessages = imapFolder.search(new ReceivedDateTerm(ComparisonTerm.LT, getSampleReceivedDate(2)));
+        assertEquals(1, imapMessages.length);
+        assertTrue(imapMessages[0] == fixtures[4]);
+        
+        //TODO: less equals: does not work yet, is therefore not included, should only return sample mail
+        //imapMessages = imapFolder.search(new ReceivedDateTerm(ComparisonTerm.LE, getSampleReceivedDate(2)));
+        //assertEquals(1, imapMessages.length);
+        //assertTrue(imapMessages[0] == fixtures[4]);
+
     }
 
     // Test an unsupported search term for exception. Should be ignored.
@@ -224,6 +279,12 @@ public class ImapSearchTest {
         message3.setFlag(Flags.Flag.ANSWERED, false);
         message3.setFlags(flags, false);
         folder.store(message3);
+
+        MimeMessage message4 = new MimeMessage(session);
+        message4.setSubject("#4 with received date");
+        message4.setText("content received date");
+        folder.appendMessage(message4, new Flags(), getSampleReceivedDate());
+
     }
 
     /**
