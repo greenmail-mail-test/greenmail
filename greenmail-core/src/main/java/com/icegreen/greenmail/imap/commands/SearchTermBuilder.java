@@ -24,6 +24,7 @@ import javax.mail.search.ReceivedDateTerm;
 import javax.mail.search.RecipientStringTerm;
 import javax.mail.search.RecipientTerm;
 import javax.mail.search.SearchTerm;
+import javax.mail.search.SentDateTerm;
 import javax.mail.search.SubjectTerm;
 
 import org.slf4j.Logger;
@@ -138,6 +139,15 @@ public abstract class SearchTermBuilder {
             case BEFORE:
                 builder = createReceivedDateTermBuilder(ComparisonTerm.LT);
                 break;
+            case SENTSINCE:
+                builder = createSentDateTermBuilder(ComparisonTerm.GE);
+                break;
+            case SENTON:
+                builder = createSentDateTermBuilder(ComparisonTerm.EQ);
+                break;
+            case SENTBEFORE:
+                builder = createSentDateTermBuilder(ComparisonTerm.LT);
+                break;             
             default:
                 throw new IllegalStateException("Unsupported search term '" + key + '\'');
         }
@@ -145,23 +155,34 @@ public abstract class SearchTermBuilder {
         return builder;
     }
 
-    private static SearchTermBuilder createReceivedDateTermBuilder(final int searchTerm) {
-
+    private static SearchTermBuilder createSentDateTermBuilder(final int searchTerm) {
         return new SearchTermBuilder() {
             @Override
             public SearchTerm build() {
-                try {
-                    DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
-                    Date d = df.parse(getParameters().get(0));
-                    LOGGER.debug("Using search term '{}' for date '{}'.", searchTerm, d);
-                    return new ReceivedDateTerm(searchTerm, d);
-                } catch (ParseException e) {
-                    throw new RuntimeException(e);
-                }
+                return new SentDateTerm(searchTerm, parseDate(getParameters()));
             }
         };
     }
-    
+
+    private static SearchTermBuilder createReceivedDateTermBuilder(final int searchTerm) {
+        return new SearchTermBuilder() {
+            @Override
+            public SearchTerm build() {
+                return new ReceivedDateTerm(searchTerm, parseDate(getParameters()));
+            }
+        };
+    }
+
+    private static Date parseDate(List<String> parameters) {
+        DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+        try {
+            Date d = df.parse(parameters.get(0));
+            LOGGER.debug("Using date '{}'.", d);
+            return d;
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
 	private static SearchTermBuilder createORTermBuilder() {
 			 return new SearchTermBuilder() {
 	            @Override
