@@ -182,7 +182,7 @@ public abstract class SearchTermBuilder {
             LOGGER.debug("Using date '{}'.", d);
             return d;
         } catch (ParseException e) {
-            throw new IllegalStateException("Unable to parse date '" + date+"'",e);
+            throw new IllegalArgumentException("Unable to parse date '" + date+"'",e);
         }
     }
 	private static SearchTermBuilder createORTermBuilder() {
