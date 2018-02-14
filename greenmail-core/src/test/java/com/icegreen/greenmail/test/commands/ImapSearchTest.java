@@ -189,6 +189,7 @@ public class ImapSearchTest {
         //less than (sample mail + 1 day), only returns sample mail
         testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.LT, getSampleDate(2)), m[5]);
         //TODO: less equals: does not work yet, is therefore not included, should only return sample mail
+        //see https://github.com/greenmail-mail-test/greenmail/issues/234
         //testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.LE, getSampleDate(2)), m[5]);
     }
 
@@ -204,6 +205,7 @@ public class ImapSearchTest {
         //less than (sample mail + 1 day), only returns sample mail
         testDateTerm(imapFolder, new ReceivedDateTerm(ComparisonTerm.LT, getSampleDate(2)), m[4]);
         //TODO: less equals: does not work yet, is therefore not included, should only return sample mail
+        //see https://github.com/greenmail-mail-test/greenmail/issues/234
         //testDateTerm(imapFolder, new ReceivedDateTerm(ComparisonTerm.LE, getSampleDate(2)), m[4]);
     }
 

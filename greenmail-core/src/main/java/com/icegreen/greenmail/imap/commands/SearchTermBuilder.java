@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.mail.Flags;
 import javax.mail.Message;
@@ -174,13 +175,14 @@ public abstract class SearchTermBuilder {
     }
 
     private static Date parseDate(List<String> parameters) {
-        DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+        DateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+        String date = parameters.get(0);
         try {
-            Date d = df.parse(parameters.get(0));
+            Date d = df.parse(date);
             LOGGER.debug("Using date '{}'.", d);
             return d;
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Unable to parse date '" + date+"'",e);
         }
     }
 	private static SearchTermBuilder createORTermBuilder() {
