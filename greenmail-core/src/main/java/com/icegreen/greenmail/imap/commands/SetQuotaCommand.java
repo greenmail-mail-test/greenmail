@@ -17,7 +17,7 @@ import com.icegreen.greenmail.imap.ProtocolException;
 public class SetQuotaCommand extends AuthenticatedStateCommand {
     public static final String NAME = "SETQUOTA";
 
-    SetQuotaCommand() {
+    public SetQuotaCommand() {
         super(NAME, null);
     }
 

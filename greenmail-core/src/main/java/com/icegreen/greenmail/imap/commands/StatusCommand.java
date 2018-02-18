@@ -32,7 +32,7 @@ class StatusCommand extends AuthenticatedStateCommand {
 
     private StatusCommandParser statusParser = new StatusCommandParser();
 
-    StatusCommand() {
+    public StatusCommand() {
         super(NAME, ARGS);
     }
 

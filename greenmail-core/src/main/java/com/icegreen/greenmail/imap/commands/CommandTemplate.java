@@ -19,14 +19,14 @@ import org.slf4j.LoggerFactory;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-abstract class CommandTemplate
+public abstract class CommandTemplate
         implements ImapCommand, ImapConstants {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected CommandParser parser = new CommandParser();
     private String name;
     private String argSyntax;
 
-    CommandTemplate(String name, String argSyntax) {
+    public CommandTemplate(String name, String argSyntax) {
         this.name = name;
         this.argSyntax = argSyntax;
     }

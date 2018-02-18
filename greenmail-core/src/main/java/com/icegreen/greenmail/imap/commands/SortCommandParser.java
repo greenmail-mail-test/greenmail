@@ -10,7 +10,7 @@ import java.nio.charset.CharacterCodingException;
  *
  * @author Reda.Housni-Alaoui
  */
-class SortCommandParser extends CommandParser {
+public class SortCommandParser extends CommandParser {
 
     private SearchCommandParser searchCommandParser = new SearchCommandParser();
 

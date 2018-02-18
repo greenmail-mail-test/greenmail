@@ -21,13 +21,13 @@ import java.nio.charset.CharacterCodingException;
  *
  * @author Darrell DeBoer <darrell@apache.org>
  */
-class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
+public class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
     public static final String NAME = "SEARCH";
     public static final String ARGS = "<search term>";
 
     private SearchCommandParser searchParser = new SearchCommandParser();
 
-    SearchCommand() {
+    public SearchCommand() {
         super(NAME, ARGS);
     }
 

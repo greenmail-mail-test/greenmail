@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
+public class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
     public static final String NAME = "FETCH";
     public static final String ARGS = "<message-set> <fetch-profile>";
     private static final Flags FLAGS_SEEN = new Flags(Flags.Flag.SEEN);
@@ -40,7 +40,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
     private FetchCommandParser fetchParser = new FetchCommandParser();
 
-    FetchCommand() {
+    public FetchCommand() {
         super(NAME, ARGS);
     }
 

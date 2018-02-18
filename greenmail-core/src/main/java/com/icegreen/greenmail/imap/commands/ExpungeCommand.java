@@ -21,10 +21,10 @@ import com.icegreen.greenmail.store.MailFolder;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-class ExpungeCommand extends SelectedStateCommand implements UidEnabledCommand {
+public class ExpungeCommand extends SelectedStateCommand implements UidEnabledCommand {
     public static final String NAME = "EXPUNGE";
 
-    ExpungeCommand() {
+    public ExpungeCommand() {
         super(NAME, "<message-set>");
     }
 

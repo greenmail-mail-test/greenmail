@@ -15,14 +15,14 @@ import java.util.*;
  *
  * @author Reda.Housni-Alaoui
  */
-class SortCommand extends SelectedStateCommand implements UidEnabledCommand {
+public class SortCommand extends SelectedStateCommand implements UidEnabledCommand {
 
     public static final String NAME = "SORT";
     public static final String ARGS = "(<sort criteria>) <charset specification> <search term>";
 
     private SortCommandParser sortCommandParser = new SortCommandParser();
 
-    SortCommand() {
+    public SortCommand() {
         super(NAME, ARGS);
     }
 

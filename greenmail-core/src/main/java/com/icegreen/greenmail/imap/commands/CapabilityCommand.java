@@ -18,13 +18,13 @@ import com.icegreen.greenmail.store.FolderException;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-class CapabilityCommand extends CommandTemplate {
+public class CapabilityCommand extends CommandTemplate {
     public static final String NAME = "CAPABILITY";
     public static final String ARGS = null;
 
     public static final String CAPABILITY_RESPONSE = NAME + SP + VERSION + SP + CAPABILITIES;
 
-    CapabilityCommand() {
+    public CapabilityCommand() {
         super(NAME, ARGS);
     }
 

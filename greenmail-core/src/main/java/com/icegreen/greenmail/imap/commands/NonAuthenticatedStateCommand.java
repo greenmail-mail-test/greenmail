@@ -14,9 +14,9 @@ import com.icegreen.greenmail.imap.ImapSessionState;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-abstract class NonAuthenticatedStateCommand extends CommandTemplate {
+public abstract class NonAuthenticatedStateCommand extends CommandTemplate {
 
-    NonAuthenticatedStateCommand(String name, String argSyntax) {
+    public NonAuthenticatedStateCommand(String name, String argSyntax) {
         super(name, argSyntax);
     }
 

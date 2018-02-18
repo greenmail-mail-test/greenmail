@@ -15,11 +15,11 @@ import com.icegreen.greenmail.store.FolderException;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-class RenameCommand extends AuthenticatedStateCommand {
+public class RenameCommand extends AuthenticatedStateCommand {
     public static final String NAME = "RENAME";
     public static final String ARGS = "existing-mailbox-name SPACE new-mailbox-name";
 
-    RenameCommand() {
+    public RenameCommand() {
         super(NAME, ARGS);
     }
 

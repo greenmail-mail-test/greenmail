@@ -97,4 +97,7 @@ public class ImapCommandFactory {
         }
     }
 
+    protected Map<String, Class<? extends ImapCommand>> getImapCommands() {
+        return imapCommands;
+    }
 }

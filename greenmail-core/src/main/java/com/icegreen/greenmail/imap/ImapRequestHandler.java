@@ -19,7 +19,7 @@ import java.io.OutputStream;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-public final class ImapRequestHandler {
+public class ImapRequestHandler {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private ImapCommandFactory imapCommands = new ImapCommandFactory();
     private CommandParser parser = new CommandParser();
@@ -96,5 +96,11 @@ public final class ImapRequestHandler {
         command.process(request, response, session);
     }
 
+    public ImapCommandFactory getImapCommands() {
+        return imapCommands;
+    }
 
+    public void setImapCommands(ImapCommandFactory imapCommands) {
+        this.imapCommands = imapCommands;
+    }
 }

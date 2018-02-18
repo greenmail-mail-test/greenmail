@@ -17,11 +17,11 @@ import com.icegreen.greenmail.imap.ProtocolException;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-class LogoutCommand extends CommandTemplate {
+public class LogoutCommand extends CommandTemplate {
     public static final String NAME = "LOGOUT";
     public static final String BYE_MESSAGE = VERSION + SP + "Server logging out";
 
-    LogoutCommand() {
+    public LogoutCommand() {
         super(NAME, null);
     }
 

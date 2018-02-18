@@ -4,6 +4,9 @@
  */
 package com.icegreen.greenmail.util;
 
+import com.icegreen.greenmail.imap.ImapHandler;
+import com.icegreen.greenmail.server.ProtocolHandler;
+
 import java.util.Properties;
 
 /**
@@ -84,6 +87,7 @@ public class ServerSetup {
      * Timeout when GreenMail starts a server, in milliseconds.
      */
     private long serverStartupTimeout = SERVER_STARTUP_TIMEOUT;
+    private ImapHandler imapHandler;
 
     public ServerSetup(int port, String bindAddress, String protocol) {
         this.port = port;
@@ -239,6 +243,15 @@ public class ServerSetup {
         return props;
     }
 
+    public ServerSetup withImapHandler(ImapHandler imapHandler) {
+        this.imapHandler = imapHandler;
+        return this;
+    }
+    
+    public ImapHandler getImapHandler() {
+        return imapHandler;
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -303,6 +316,7 @@ public class ServerSetup {
         setup.setConnectionTimeout(getConnectionTimeout());
         setup.setReadTimeout(getReadTimeout());
         setup.setWriteTimeout(getWriteTimeout());
+        setup.withImapHandler(getImapHandler());
         setup.setVerbose(isVerbose());
 
         return setup;

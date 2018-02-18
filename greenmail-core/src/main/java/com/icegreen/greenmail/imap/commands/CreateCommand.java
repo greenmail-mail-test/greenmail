@@ -15,11 +15,11 @@ import com.icegreen.greenmail.store.FolderException;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-class CreateCommand extends AuthenticatedStateCommand {
+public class CreateCommand extends AuthenticatedStateCommand {
     public static final String NAME = "CREATE";
     public static final String ARGS = "<mailbox>";
 
-    CreateCommand() {
+    public CreateCommand() {
         super(NAME, ARGS);
     }
 

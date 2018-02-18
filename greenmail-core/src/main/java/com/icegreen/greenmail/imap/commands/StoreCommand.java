@@ -19,13 +19,13 @@ import javax.mail.Flags;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-class StoreCommand extends SelectedStateCommand implements UidEnabledCommand {
+public class StoreCommand extends SelectedStateCommand implements UidEnabledCommand {
     public static final String NAME = "STORE";
     public static final String ARGS = "<Message-set> ['+'|'-']FLAG[.SILENT] <flag-list>";
 
     private final StoreCommandParser storeParser = new StoreCommandParser();
 
-    StoreCommand() {
+    public StoreCommand() {
         super(NAME, ARGS);
     }
 

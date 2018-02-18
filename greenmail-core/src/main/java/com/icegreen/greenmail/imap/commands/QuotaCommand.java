@@ -19,7 +19,7 @@ import com.icegreen.greenmail.store.FolderException;
 public class QuotaCommand extends AuthenticatedStateCommand {
     public static final String NAME = "QUOTA";
 
-    QuotaCommand() {
+    public QuotaCommand() {
         super(NAME, null);
     }
 

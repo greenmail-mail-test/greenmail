@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @author Reda.Housni-Alaoui
  */
-class SortTerm {
+public class SortTerm {
     private final List<SortKey> sortCriteria = new ArrayList<>();
     private String charset;
     private SearchTerm searchTerm;

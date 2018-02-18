@@ -17,11 +17,11 @@ import com.icegreen.greenmail.imap.ProtocolException;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-class AuthenticateCommand extends NonAuthenticatedStateCommand {
+public class AuthenticateCommand extends NonAuthenticatedStateCommand {
     public static final String NAME = "AUTHENTICATE";
     public static final String ARGS = "<auth_type> *(CRLF base64)";
 
-    AuthenticateCommand() {
+    public AuthenticateCommand() {
         super(NAME, ARGS);
     }
 

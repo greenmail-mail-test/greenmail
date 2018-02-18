@@ -18,10 +18,10 @@ import com.icegreen.greenmail.store.FolderException;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-class SubscribeCommand extends AuthenticatedStateCommand {
+public class SubscribeCommand extends AuthenticatedStateCommand {
     public static final String NAME = "SUBSCRIBE";
 
-    SubscribeCommand() {
+    public SubscribeCommand() {
         super(NAME, "<mailbox>");
     }
 

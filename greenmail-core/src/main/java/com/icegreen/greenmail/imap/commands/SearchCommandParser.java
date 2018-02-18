@@ -26,7 +26,7 @@ import static com.icegreen.greenmail.imap.commands.IdRange.SEQUENCE;
  *
  * @author Darrell DeBoer <darrell@apache.org>
  */
-class SearchCommandParser extends CommandParser {
+public class SearchCommandParser extends CommandParser {
     private final Logger log = LoggerFactory.getLogger(SearchCommandParser.class);
     private static final String CHARSET_TOKEN = "CHARSET";
 

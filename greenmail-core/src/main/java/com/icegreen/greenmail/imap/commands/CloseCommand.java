@@ -19,10 +19,10 @@ import com.icegreen.greenmail.store.MailFolder;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-class CloseCommand extends SelectedStateCommand {
+public class CloseCommand extends SelectedStateCommand {
     public static final String NAME = "CLOSE";
 
-    CloseCommand() {
+    public CloseCommand() {
         super(NAME, null);
     }
 

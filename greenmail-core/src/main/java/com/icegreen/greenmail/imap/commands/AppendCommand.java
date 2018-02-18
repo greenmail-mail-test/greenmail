@@ -25,13 +25,13 @@ import java.util.Date;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-class AppendCommand extends AuthenticatedStateCommand {
+public class AppendCommand extends AuthenticatedStateCommand {
     public static final String NAME = "APPEND";
     public static final String ARGS = "<mailbox> [<flag_list>] [<date_time>] literal";
 
     private AppendCommandParser appendCommandParser = new AppendCommandParser();
 
-    AppendCommand() {
+    public AppendCommand() {
         super(NAME, ARGS);
     }
 

@@ -18,11 +18,11 @@ import com.icegreen.greenmail.store.FolderException;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-class CheckCommand extends SelectedStateCommand {
+public class CheckCommand extends SelectedStateCommand {
     public static final String NAME = "CHECK";
     public static final String ARGS = null;
 
-    CheckCommand() {
+    public CheckCommand() {
         super(NAME, ARGS);
     }
 

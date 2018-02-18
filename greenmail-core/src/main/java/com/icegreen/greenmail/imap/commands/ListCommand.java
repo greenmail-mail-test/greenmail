@@ -24,17 +24,17 @@ import java.util.Collection;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-class ListCommand extends AuthenticatedStateCommand {
+public class ListCommand extends AuthenticatedStateCommand {
     public static final String NAME = "LIST";
     public static final String ARGS = "<reference-name> <mailbox-name-with-wildcards>";
 
     private ListCommandParser listParser = new ListCommandParser();
 
-    ListCommand() {
+    public ListCommand() {
         super(NAME, ARGS);
     }
 
-    ListCommand(String name) {
+    public ListCommand(String name) {
         super(name, null);
     }
 
