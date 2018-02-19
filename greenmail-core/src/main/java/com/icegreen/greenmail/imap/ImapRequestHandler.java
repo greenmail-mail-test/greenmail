@@ -6,7 +6,7 @@
  */
 package com.icegreen.greenmail.imap;
 
-import com.icegreen.greenmail.imap.commands.CommandParser;
+import com.icegreen.greenmail.imap.commands.parsers.CommandParser;
 import com.icegreen.greenmail.imap.commands.ImapCommand;
 import com.icegreen.greenmail.imap.commands.ImapCommandFactory;
 import org.slf4j.Logger;

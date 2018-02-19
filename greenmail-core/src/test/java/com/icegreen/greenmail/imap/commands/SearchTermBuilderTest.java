@@ -1,5 +1,6 @@
 package com.icegreen.greenmail.imap.commands;
 
+import com.icegreen.greenmail.imap.commands.parsers.search.SearchTermBuilder;
 import org.junit.Test;
 
 import java.util.List;

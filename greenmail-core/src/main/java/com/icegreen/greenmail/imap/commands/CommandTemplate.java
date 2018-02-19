@@ -7,6 +7,7 @@
 package com.icegreen.greenmail.imap.commands;
 
 import com.icegreen.greenmail.imap.*;
+import com.icegreen.greenmail.imap.commands.parsers.CommandParser;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
 import org.slf4j.Logger;

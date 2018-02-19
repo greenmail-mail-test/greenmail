@@ -7,6 +7,8 @@
 package com.icegreen.greenmail.imap.commands;
 
 import com.icegreen.greenmail.imap.*;
+import com.icegreen.greenmail.imap.commands.parsers.StoreCommandParser;
+import com.icegreen.greenmail.imap.commands.parsers.store.StoreDirective;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.FolderListener;
 
@@ -90,52 +92,6 @@ public class StoreCommand extends SelectedStateCommand implements UidEnabledComm
         boolean omitExpunged = !useUids;
         session.unsolicitedResponses(response, omitExpunged);
         response.commandComplete(this);
-    }
-
-    private static class StoreCommandParser extends CommandParser {
-        StoreDirective storeDirective(ImapRequestLineReader request) throws ProtocolException {
-            int sign = 0;
-            boolean silent = false;
-
-            char next = request.nextWordChar();
-            if (next == '+') {
-                sign = 1;
-                request.consume();
-            } else if (next == '-') {
-                sign = -1;
-                request.consume();
-            } else {
-                sign = 0;
-            }
-
-            String directive = consumeWord(request, new NoopCharValidator());
-            if ("FLAGS".equalsIgnoreCase(directive)) {
-                silent = false;
-            } else if ("FLAGS.SILENT".equalsIgnoreCase(directive)) {
-                silent = true;
-            } else {
-                throw new ProtocolException("Invalid Store Directive: '" + directive + '\'');
-            }
-            return new StoreDirective(sign, silent);
-        }
-    }
-
-    private static class StoreDirective {
-        private int sign;
-        private boolean silent;
-
-        public StoreDirective(int sign, boolean silent) {
-            this.sign = sign;
-            this.silent = silent;
-        }
-
-        public int getSign() {
-            return sign;
-        }
-
-        public boolean isSilent() {
-            return silent;
-        }
     }
 }
 

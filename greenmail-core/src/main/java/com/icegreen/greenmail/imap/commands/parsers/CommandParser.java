@@ -4,11 +4,12 @@
  * This file has been modified by the copyright holder.
  * Original file can be found at http://james.apache.org
  */
-package com.icegreen.greenmail.imap.commands;
+package com.icegreen.greenmail.imap.commands.parsers;
 
 import com.icegreen.greenmail.imap.ImapConstants;
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ProtocolException;
+import com.icegreen.greenmail.imap.commands.IdRange;
 import com.icegreen.greenmail.store.MessageFlags;
 import com.sun.mail.imap.protocol.BASE64MailboxDecoder; // NOSONAR
 
@@ -234,7 +235,7 @@ public class CommandParser {
      * Consumes the next character in the request, checking that it matches the
      * expected one. This method should be used when the
      */
-    protected void consumeChar(ImapRequestLineReader request, char expected)
+    public void consumeChar(ImapRequestLineReader request, char expected)
             throws ProtocolException {
         char consumed = request.consume();
         if (consumed != expected) {
