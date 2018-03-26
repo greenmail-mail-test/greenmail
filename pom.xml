@@ -335,6 +335,7 @@
     <slf4j.version>1.7.21</slf4j.version>
     <hamcrest.version>1.3</hamcrest.version>
     <spring.version>4.2.6.RELEASE</spring.version>
+    <junit5.version>5.1.0</junit5.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <!-- Allow JaCoCo agent modifications for Surefire -->
@@ -433,6 +434,18 @@
       </dependency>
 
       <!-- Test scope -->
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>${junit5.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>${junit5.version}</version>
+        <scope>test</scope>
+      </dependency>
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
