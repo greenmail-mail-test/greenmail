@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<!--
+   | For more configuration information and examples see the Jakarta Log4j
+   | website http://jakarta.apache.org/log4j and for the output pattern format
+   | http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html
+ -->
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+  <appender name="FILE" class="org.apache.log4j.FileAppender">
+    <param name="File" value="test.log"/>
+    <param name="Append" value="false"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{HH:mm:ss,SSS} (%t) %-5.5p %30.30c{2}| %m%n"/>
+    </layout>
+  </appender>
+
+  <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+    <param name="Target" value="System.out"/>
+    <param name="Threshold" value="INFO"/>
+
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%-7.7r %-5.5p %25.25c{2}| %m%n"/>
+    </layout>
+  </appender>
+
+  <root>
+    <level value="TRACE" />
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </root>
+
+</log4j:configuration>
