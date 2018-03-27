@@ -32,6 +32,9 @@ public class Retriever implements AutoCloseable {
      * @param server the POP3 or IMAP server
      */
     public Retriever(AbstractServer server) {
+        if (null == server) {
+            throw new IllegalArgumentException("Expected non null server argument");
+        }
         this.server = server;
     }
 
