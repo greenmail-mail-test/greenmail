@@ -25,7 +25,7 @@ jobs:
       - restore_cache:
           key: greenmail-{{ checksum "pom.xml" }}
       
-      - run: mvn dependency:go-offline
+      - run: mvn clean package -DskipTests dependency:go-offline
       
       - save_cache:
           paths:
