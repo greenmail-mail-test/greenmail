@@ -134,6 +134,51 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
+  "openjdk-10":
+    working_directory: ~/circleci-greenmail
+
+    docker:
+        - image: openjdk:10-ea-jdk-slim
+          environment:
+            TZ: UTC
+
+    environment:
+      MAVEN_HOME: /usr/share/maven
+      MAVEN_OPTS: "--add-modules java.xml.bind"
+    steps:
+      - checkout
+
+      - run: >
+          apt-get update && apt-get install -y curl
+          && mkdir -p /usr/share/maven
+          && curl -fsSL -o /tmp/apache-maven.tar.gz http://www-us.apache.org/dist/maven/maven-3/3.5.3/binaries/apache-maven-3.5.3-bin.tar.gz
+          && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
+          && rm -f /tmp/apache-maven.tar.gz
+          && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+
+      - restore_cache:
+          key: greenmail-{{ checksum "pom.xml" }}
+
+      - run: mvn -V clean package -DskipTests dependency:go-offline
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: greenmail-{{ checksum "pom.xml" }}
+
+      - run: mvn -V clean install
+
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/junit/
+            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/junit/ \;
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
+
 workflows:
   version: 2
   build:
