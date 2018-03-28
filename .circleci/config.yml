@@ -4,7 +4,7 @@ jobs:
     working_directory: ~/circleci-greenmail
 
     docker:
-      - image: openjdk/7u151-jdk-alpine3.7
+        - image: openjdk:7u151-jdk-alpine3.7
         environment:
             TZ: UTC
 
