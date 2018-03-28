@@ -16,7 +16,8 @@ jobs:
 
       - run: >
           apk add --no-cache curl openrc docker
-          && rc-update add docker boot && docker ps
+          && rc-update add docker boot && service docker start
+          && docker ps
           && mkdir -p /usr/share/maven
           && curl -fsSL -o /tmp/apache-maven.tar.gz http://www-us.apache.org/dist/maven/maven-3/3.5.3/binaries/apache-maven-3.5.3-bin.tar.gz
           && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
