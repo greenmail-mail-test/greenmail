@@ -15,7 +15,7 @@ jobs:
       - checkout
 
       - run: >
-          apk add --no-cache curl openrc docker
+          apk add --no-cache curl
           && mkdir -p /usr/share/maven
           && curl -fsSL -o /tmp/apache-maven.tar.gz http://www-us.apache.org/dist/maven/maven-3/3.5.3/binaries/apache-maven-3.5.3-bin.tar.gz
           && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
@@ -25,16 +25,14 @@ jobs:
       - restore_cache:
           key: greenmail-{{ checksum "pom.xml" }}
      
-      - setup_remote_docker
-
-      - run: mvn -V clean package -DskipTests dependency:go-offline -pl "!greenmail-junit5" -P docker
+      - run: mvn -V clean package -DskipTests dependency:go-offline -pl "!greenmail-junit5"
       
       - save_cache:
           paths:
             - ~/.m2
           key: greenmail-{{ checksum "pom.xml" }}
       
-      - run: mvn -V -pl "!greenmail-junit5" clean install -P docker
+      - run: mvn -V -pl "!greenmail-junit5" clean install
 
       - run:
           name: Save test results
