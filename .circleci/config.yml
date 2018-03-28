@@ -24,14 +24,14 @@ jobs:
 
       - restore_cache:
           key: greenmail-{{ checksum "pom.xml" }}
-     
+
       - run: mvn -V clean package -DskipTests dependency:go-offline -pl "!greenmail-junit5"
-      
+
       - save_cache:
           paths:
             - ~/.m2
           key: greenmail-{{ checksum "pom.xml" }}
-      
+
       - run: mvn -V -pl "!greenmail-junit5" clean install
 
       - run:
@@ -68,15 +68,61 @@ jobs:
 
       - restore_cache:
           key: greenmail-{{ checksum "pom.xml" }}
-      
+
       - run: mvn -V clean package -DskipTests dependency:go-offline
-      
+
       - save_cache:
           paths:
             - ~/.m2
           key: greenmail-{{ checksum "pom.xml" }}
-      
-      - run: mvn -V clean install 
+
+      - run: mvn -V clean install
+
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/junit/
+            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/junit/ \;
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
+
+  "openjdk-9":
+    working_directory: ~/circleci-greenmail
+
+    docker:
+        - image: openjdk:9.0.4-12-jdk-slim-sid
+          environment:
+            TZ: UTC
+
+    environment:
+      MAVEN_HOME: /usr/share/maven
+    steps:
+      - checkout
+
+      - run: >
+          apt-get update && apt-get install -y curl
+          && mkdir -p /usr/share/maven
+          && curl -fsSL -o /tmp/apache-maven.tar.gz http://www-us.apache.org/dist/maven/maven-3/3.5.3/binaries/apache-maven-3.5.3-bin.tar.gz
+          && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
+          && rm -f /tmp/apache-maven.tar.gz
+          && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+
+      - run: echo 'MAVEN_OPTS="--add-modules java.xml.bind"' >> $BASH_ENV
+
+      - restore_cache:
+          key: greenmail-{{ checksum "pom.xml" }}
+
+      - run: mvn -V clean package -DskipTests dependency:go-offline
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: greenmail-{{ checksum "pom.xml" }}
+
+      - run: mvn -V clean install
 
       - run:
           name: Save test results
@@ -95,3 +141,4 @@ workflows:
     jobs:
       - "openjdk-7"
       - "openjdk-8"
+      - "openjdk-9"
