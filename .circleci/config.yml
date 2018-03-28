@@ -99,6 +99,7 @@ jobs:
 
     environment:
       MAVEN_HOME: /usr/share/maven
+      MAVEN_OPTS: "--add-modules java.xml.bind"
     steps:
       - checkout
 
@@ -109,8 +110,6 @@ jobs:
           && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
           && rm -f /tmp/apache-maven.tar.gz
           && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
-
-      - run: echo 'MAVEN_OPTS="--add-modules java.xml.bind"' >> $BASH_ENV
 
       - restore_cache:
           key: greenmail-{{ checksum "pom.xml" }}
