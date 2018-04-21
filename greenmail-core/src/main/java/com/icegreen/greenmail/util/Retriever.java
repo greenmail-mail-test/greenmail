@@ -35,6 +35,11 @@ public class Retriever implements AutoCloseable {
         if (null == server) {
             throw new IllegalArgumentException("Expected non null server argument");
         }
+        if (!(server.getProtocol().startsWith(ServerSetup.PROTOCOL_IMAP)
+                || server.getProtocol().startsWith(ServerSetup.PROTOCOL_POP3))) {
+            throw new IllegalArgumentException("Requires a " + ServerSetup.PROTOCOL_POP3 + " or " +
+                    ServerSetup.PROTOCOL_IMAP + " server but got " + server.getProtocol());
+        }
         this.server = server;
     }
 
@@ -65,8 +70,8 @@ public class Retriever implements AutoCloseable {
      * Closes the underlying store.
      * Make sure you finished processing any fetched messages before closing!
      *
-     * @deprecated use {@link #close()} instead.
      * @since 1.5
+     * @deprecated use {@link #close()} instead.
      */
     @Deprecated
     public void logout() {
