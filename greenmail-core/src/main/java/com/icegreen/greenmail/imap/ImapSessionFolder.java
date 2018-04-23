@@ -172,7 +172,7 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
      */
     private int correctForExpungedMessages(int absoluteMsn) {
         int correctedMsn = absoluteMsn;
-        // Loop throught the expunged list backwards, adjusting the msn as we go.
+        // Loop through the expunged list backwards, adjusting the msn as we go.
         for (int i = expungedMsns.size() - 1; i >= 0; i--) {
             int expunged = expungedMsns.get(i);
             if (expunged <= absoluteMsn) {
