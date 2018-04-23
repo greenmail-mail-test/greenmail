@@ -120,7 +120,7 @@ public class ImapHostManagerImpl
         String namespaceRoot = tokens.nextToken();
         MailFolder folder = store.getMailbox(namespaceRoot);
         if (folder == null) {
-            throw new FolderException("Invalid namespace.");
+            throw new FolderException("Invalid namespace " + namespaceRoot);
         }
 
         while (tokens.hasMoreTokens()) {

@@ -277,13 +277,13 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     }
 
     @Override
-    public void store(MovingMessage mail) throws Exception {
+    public void store(MovingMessage mail) {
         store(mail.getMessage());
     }
 
 
     @Override
-    public void store(MimeMessage message) throws Exception {
+    public void store(MimeMessage message) {
         Date receivedDate = new Date();
         Flags flags = new Flags();
         appendMessage(message, flags, receivedDate);
@@ -311,11 +311,11 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         List<StoredMessage> matchedMessages = new ArrayList<>();
 
         synchronized (mailMessages) {
-            for (int i = 0; i<mailMessages.size();i++) {
+            for (int i = 0; i < mailMessages.size(); i++) {
                 StoredMessage mailMessage = mailMessages.get(i);
                 // Update message sequence number for potential sequence set search
                 // https://tools.ietf.org/html/rfc3501#page-10
-                mailMessage.updateMessageNumber(i+1);
+                mailMessage.updateMessageNumber(i + 1);
                 if (searchTerm.match(mailMessage.getMimeMessage())) {
                     matchedMessages.add(mailMessage);
                 }
@@ -346,7 +346,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     }
 
     @Override
-    public void expunge() throws FolderException {
+    public void expunge() {
         mailMessages.expunge(_mailboxListeners);
     }
 
@@ -379,17 +379,17 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     }
 
     @Override
-    public long getUIDValidity() throws MessagingException {
+    public long getUIDValidity() {
         return getUidValidity();
     }
 
     @Override
-    public Message getMessageByUID(long uid) throws MessagingException {
+    public Message getMessageByUID(long uid) {
         return getMessage(uid).getMimeMessage();
     }
 
     @Override
-    public Message[] getMessagesByUID(long start, long end) throws MessagingException {
+    public Message[] getMessagesByUID(long start, long end) {
         synchronized (mailMessages) {
             List<Message> messages = new ArrayList<>();
             for (StoredMessage mailMessage : mailMessages) {
@@ -403,7 +403,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     }
 
     @Override
-    public Message[] getMessagesByUID(long[] uids) throws MessagingException {
+    public Message[] getMessagesByUID(long[] uids) {
         synchronized (mailMessages) {
             List<Message> messages = new ArrayList<>(uids.length);
             Map<Long, StoredMessage> uid2Msg = new HashMap<>(mailMessages.size());
@@ -421,7 +421,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     }
 
     @Override
-    public long getUID(Message message) throws MessagingException {
+    public long getUID(Message message) {
         // Check if we have a message with same object reference ... otherwise, not supported.
         synchronized (mailMessages) {
             for (StoredMessage mailMessage : mailMessages) {
@@ -432,4 +432,5 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         }
         throw new IllegalStateException("No match found for " + message);
     }
+
 }
