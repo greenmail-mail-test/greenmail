@@ -57,8 +57,7 @@ public class InMemoryStore
             throw new FolderException("Invalid mailbox name "+mailboxName);
         }
         HierarchicalFolder castParent = (HierarchicalFolder) parent;
-        HierarchicalFolder child = new HierarchicalFolder(castParent, mailboxName);
-        castParent.getChildren().add(child);
+        HierarchicalFolder child = castParent.createChild(mailboxName);
         child.setSelectable(selectable);
         return child;
     }
@@ -67,7 +66,7 @@ public class InMemoryStore
     public void deleteMailbox(MailFolder folder) throws FolderException {
         HierarchicalFolder toDelete = (HierarchicalFolder) folder;
 
-        if (!toDelete.getChildren().isEmpty()) {
+        if (toDelete.hasChildren()) {
             throw new FolderException("Cannot delete mailbox with children.");
         }
 
@@ -76,7 +75,7 @@ public class InMemoryStore
         }
 
         HierarchicalFolder parent = toDelete.getParent();
-        parent.getChildren().remove(toDelete);
+        parent.removeChild(toDelete);
     }
 
     @Override
@@ -100,7 +99,7 @@ public class InMemoryStore
             toRename.setName(newFolderName);
         } else {
             // Hierarchy change
-            parent.getChildren().remove(toRename);
+            parent.removeChild(toRename);
             HierarchicalFolder userFolder = getInboxOrUserRootFolder(toRename);
             String[] path = newName.split('\\' + ImapConstants.HIERARCHY_DELIMITER);
             HierarchicalFolder newParent = userFolder;
@@ -130,8 +129,7 @@ public class InMemoryStore
 
     @Override
     public Collection<MailFolder> getChildren(MailFolder parent) {
-        Collection<HierarchicalFolder> children = ((HierarchicalFolder) parent).getChildren();
-        return Collections.<MailFolder>unmodifiableCollection(children);
+        return Collections.<MailFolder>unmodifiableCollection(((HierarchicalFolder) parent).getChildren());
     }
 
     @Override
