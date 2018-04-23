@@ -1,14 +1,17 @@
 package com.icegreen.greenmail.user;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.imap.ImapHostManagerImpl;
+import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.InMemoryStore;
-
+import com.icegreen.greenmail.store.MailFolder;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 public class UserManagerTest {
     @Test
@@ -66,7 +69,7 @@ public class UserManagerTest {
         userManager.setAuthRequired(false);
 
         assertTrue(userManager.listUser().isEmpty());
-        assertTrue(userManager.test("foo@localhost",null));
+        assertTrue(userManager.test("foo@localhost", null));
     }
 
     @Test
@@ -75,9 +78,9 @@ public class UserManagerTest {
         UserManager userManager = new UserManager(imapHostManager);
         userManager.setAuthRequired(false);
 
-        userManager.createUser("foo@example.com","foo",null);
+        userManager.createUser("foo@example.com", "foo", null);
         assertFalse(userManager.listUser().isEmpty());
-        assertTrue(userManager.test("foo",null));
+        assertTrue(userManager.test("foo", null));
     }
 
     @Test
@@ -87,7 +90,7 @@ public class UserManagerTest {
         userManager.setAuthRequired(true);
 
         assertTrue(userManager.listUser().isEmpty());
-        assertFalse(userManager.test("foo@localhost",null));
+        assertFalse(userManager.test("foo@localhost", null));
     }
 
     @Test
@@ -95,9 +98,89 @@ public class UserManagerTest {
         ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
         UserManager userManager = new UserManager(imapHostManager);
         userManager.setAuthRequired(true);
-        userManager.createUser("foo@example.com","foo","bar");
+        userManager.createUser("foo@example.com", "foo", "bar");
 
         assertFalse(userManager.listUser().isEmpty());
-        assertTrue(userManager.test("foo","bar"));
+        assertTrue(userManager.test("foo", "bar"));
+    }
+
+    @Test
+    public void testMultithreadedUserCreationAndDeletionWithSync() {
+        ConcurrencyTest concurrencyTest = new ConcurrencyTest(true);
+        concurrencyTest.performTest();
+    }
+
+    @Test
+    public void testMultithreadedUserCreationAndDeletion() {
+        ConcurrencyTest concurrencyTest = new ConcurrencyTest(false);
+        concurrencyTest.performTest();
+    }
+
+    class ConcurrencyTest {
+        private static final int NO_THREADS = 5;
+        private static final int NO_ACCOUNTS_PER_THREAD = 20;
+
+        private final UserManager userManager;
+        private final ImapHostManager imapHostManager;
+        private final boolean creationSynchronized;
+
+        public ConcurrencyTest(boolean creationSynchronized) {
+            imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
+            userManager = new UserManager(imapHostManager);
+            this.creationSynchronized = creationSynchronized;
+        }
+
+        private void createMailbox(String email) throws UserException {
+            userManager.createUser(email, email, email);
+        }
+
+        private void deleteMailbox(String email) throws FolderException {
+            GreenMailUser user = userManager.getUserByEmail(email);
+            MailFolder inbox = imapHostManager.getInbox(user);
+            inbox.deleteAllMessages();
+            userManager.deleteUser(user);
+        }
+
+        public void performTest() {
+            final List<Exception> exceptions = Collections.synchronizedList(new ArrayList<Exception>());
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    for (int counter = 0; counter < NO_ACCOUNTS_PER_THREAD; counter++) {
+                        String email = "email_" + Thread.currentThread().getName() + "_" + counter;
+                        try {
+                            if (creationSynchronized) {
+                                synchronized (ConcurrencyTest.class) {
+                                    createMailbox(email);
+                                }
+                            } else {
+                                createMailbox(email);
+                            }
+                            deleteMailbox(email);
+                        } catch (Exception e) {
+                            exceptions.add(e);
+                        }
+                    }
+                }
+            };
+
+            Thread[] threads = new Thread[NO_THREADS];
+            for (int i = 0; i < threads.length; i++) {
+                threads[i] = new Thread(task);
+                threads[i].start();
+            }
+
+            for (int i = 0; i < threads.length; i++) {
+                try {
+                    threads[i].join();
+                } catch (InterruptedException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+
+            if (!exceptions.isEmpty()) {
+                fail("Exception was thrown: " + exceptions);
+            }
+        }
     }
 }

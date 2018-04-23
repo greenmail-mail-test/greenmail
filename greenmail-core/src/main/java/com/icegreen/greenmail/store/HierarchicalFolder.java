@@ -1,21 +1,21 @@
 /* -------------------------------------------------------------------
-* This software is released under the Apache license 2.0
-* -------------------------------------------------------------------
-*/
+ * This software is released under the Apache license 2.0
+ * -------------------------------------------------------------------
+ */
 package com.icegreen.greenmail.store;
 
-import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
-import com.icegreen.greenmail.imap.ImapConstants;
-import com.icegreen.greenmail.imap.commands.IdRange;
-import com.icegreen.greenmail.mail.MovingMessage;
-
+import java.util.*;
 import javax.mail.Flags;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.UIDFolder;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
-import java.util.*;
+
+import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
+import com.icegreen.greenmail.imap.ImapConstants;
+import com.icegreen.greenmail.imap.commands.IdRange;
+import com.icegreen.greenmail.mail.MovingMessage;
 
 /**
  * @author Raimund Klein <raimund.klein@gmx.de>
@@ -34,42 +34,71 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     private final StoredMessageCollection mailMessages = new ListBasedStoredMessageCollection();
     private final List<FolderListener> _mailboxListeners = Collections.synchronizedList(new ArrayList<FolderListener>());
     protected String name;
-    private Collection<HierarchicalFolder> children;
+    private final Collection<HierarchicalFolder> children;
     private HierarchicalFolder parent;
     private boolean isSelectable = false;
     private long nextUid = 1;
     private long uidValidity;
 
-    public HierarchicalFolder(HierarchicalFolder parent,
-                              String name) {
+    protected HierarchicalFolder(HierarchicalFolder parent, String name) {
         this.name = name;
-        this.children = new ArrayList<>();
         this.parent = parent;
-        this.uidValidity = System.currentTimeMillis();
+        children = new ArrayList<>();
+        uidValidity = System.currentTimeMillis();
     }
 
+    /**
+     * An immutable collection of children.
+     *
+     * @return the children.
+     */
     public Collection<HierarchicalFolder> getChildren() {
-        return children;
+        return Collections.unmodifiableCollection(children);
     }
 
     public HierarchicalFolder getParent() {
         return parent;
     }
 
-    public void moveToNewParent(HierarchicalFolder newParent) {
-        if (!newParent.getChildren().contains(this)) {
-            parent = newParent;
-            parent.getChildren().add(this);
+    void moveToNewParent(HierarchicalFolder newParent) {
+        synchronized (newParent.children) {
+            if (!newParent.children.contains(this)) {
+                parent = newParent;
+                parent.children.add(this);
+            }
         }
     }
 
-    public HierarchicalFolder getChild(String name) {
-        for (HierarchicalFolder child : children) {
-            if (child.getName().equalsIgnoreCase(name)) {
-                return child;
+    HierarchicalFolder getChild(String name) {
+        synchronized (children) {
+            for (HierarchicalFolder child : children) {
+                if (child.getName().equalsIgnoreCase(name)) {
+                    return child;
+                }
             }
         }
         return null;
+    }
+
+
+    HierarchicalFolder createChild(String mailboxName) {
+        HierarchicalFolder child = new HierarchicalFolder(this, mailboxName);
+        synchronized (children) {
+            children.add(child);
+        }
+        return child;
+    }
+
+    void removeChild(HierarchicalFolder toDelete) {
+        synchronized (children) {
+            children.remove(toDelete);
+        }
+    }
+
+    boolean hasChildren() {
+        synchronized (children) {
+            return !children.isEmpty();
+        }
     }
 
     @Override
