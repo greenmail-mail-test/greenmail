@@ -4,21 +4,21 @@
  */
 package com.icegreen.greenmail.server;
 
+import java.io.IOException;
+import java.net.*;
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import javax.mail.NoSuchProviderException;
+import javax.mail.Session;
+import javax.mail.Store;
+
 import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.util.DummySSLServerSocketFactory;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.mail.NoSuchProviderException;
-import javax.mail.Session;
-import javax.mail.Store;
-import java.io.IOException;
-import java.net.*;
-import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Wael Chatila
@@ -29,8 +29,8 @@ public abstract class AbstractServer extends Thread implements Service {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final InetAddress bindTo;
     protected ServerSocket serverSocket = null;
-    protected Managers managers;
-    protected ServerSetup setup;
+    protected final Managers managers;
+    protected final ServerSetup setup;
     private final List<ProtocolHandler> handlers = Collections.synchronizedList(new ArrayList<ProtocolHandler>());
     private volatile boolean keepRunning = false;
     private volatile boolean running = false;

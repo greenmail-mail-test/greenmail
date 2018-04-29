@@ -1,5 +1,10 @@
 package com.icegreen.greenmail.test;
 
+import java.io.IOException;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
@@ -8,11 +13,6 @@ import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Rule;
 import org.junit.Test;
-
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -23,10 +23,10 @@ public class AuthenticationDisabledTest {
 
     @Test
     public void testSendMailAndReceiveWithAuthDisabled() throws MessagingException, IOException {
-        final String to = "to@localhost.com";
+        final String to = "to@localhost";
         final String subject = "subject";
         final String body = "body";
-        GreenMailUtil.sendTextEmailTest(to, "from@localhost.com", subject, body);
+        GreenMailUtil.sendTextEmailTest(to, "from@localhost", subject, body);
         MimeMessage[] emails = greenMail.getReceivedMessages();
         assertEquals(1, emails.length);
         assertEquals(subject, emails[0].getSubject());
@@ -43,10 +43,10 @@ public class AuthenticationDisabledTest {
     }
 
     @Test
-    public void testReceiveWithAuthDisabled() throws MessagingException, IOException {
-        final String to = "to@localhost.com";
+    public void testReceiveWithAuthDisabled() {
+        final String to = "to@localhost";
 
-        greenMail.waitForIncomingEmail(5000, 1);
+        greenMail.waitForIncomingEmail(500, 1);
 
         try (Retriever retriever = new Retriever(greenMail.getImap())) {
             Message[] messages = retriever.getMessages(to);
@@ -55,11 +55,11 @@ public class AuthenticationDisabledTest {
     }
 
     @Test
-    public void testReceiveWithAuthDisabledAndProvisionedUser() throws MessagingException, IOException {
-        final String to = "to@localhost.com";
+    public void testReceiveWithAuthDisabledAndProvisionedUser() {
+        final String to = "to@localhost";
         greenMail.setUser(to,"to","secret");
 
-        greenMail.waitForIncomingEmail(5000, 1);
+        greenMail.waitForIncomingEmail(500, 1);
 
         try (Retriever retriever = new Retriever(greenMail.getImap())) {
             Message[] messages = retriever.getMessages(to);

@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 public class SmtpManager {
     protected static final Logger log = LoggerFactory.getLogger(SmtpManager.class);
 
-    Incoming _incomingQueue;
+    Incoming incomingQueue;
     UserManager userManager;
     private ImapHostManager imapHostManager;
     List<CountDownLatch> notifyList;
@@ -32,7 +32,7 @@ public class SmtpManager {
     public SmtpManager(ImapHostManager imapHostManager, UserManager userManager) {
         this.imapHostManager = imapHostManager;
         this.userManager = userManager;
-        _incomingQueue = new Incoming();
+        incomingQueue = new Incoming();
         notifyList = Collections.synchronizedList(new ArrayList<CountDownLatch>());
     }
 
@@ -53,7 +53,7 @@ public class SmtpManager {
     }
 
     public synchronized void send(SmtpState state) {
-        _incomingQueue.enqueue(state.getMessage());
+        incomingQueue.enqueue(state.getMessage());
         for (CountDownLatch o : notifyList) {
             o.countDown();
         }
@@ -96,8 +96,7 @@ public class SmtpManager {
 
                 user.deliver(msg);
             } catch (Exception e) {
-                log.error("Can not deliver message {} to {}", msg, mailAddress, e);
-                throw new RuntimeException(e);
+                throw new IllegalStateException("Can not deliver message " + msg + " to " + mailAddress, e);
             }
 
             msg.releaseContent();
