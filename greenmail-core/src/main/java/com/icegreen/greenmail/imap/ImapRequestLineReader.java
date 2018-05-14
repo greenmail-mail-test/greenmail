@@ -173,6 +173,9 @@ public class ImapRequestLineReader {
             throws ProtocolException {
         try {
             output.write('+');
+            output.write(' ');
+            output.write('O');
+            output.write('K');
             output.write('\r');
             output.write('\n');
             output.flush();
