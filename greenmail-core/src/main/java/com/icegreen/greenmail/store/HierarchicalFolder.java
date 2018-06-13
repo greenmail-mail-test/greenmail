@@ -44,7 +44,16 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         this.name = name;
         this.parent = parent;
         children = new ArrayList<>();
-        uidValidity = System.currentTimeMillis();
+        // From https://tools.ietf.org/html/rfc3501#section-2.3.1.1 :
+        // "A good UIDVALIDITY value to use in this case
+        //  is a 32-bit representation of the creation date/time of
+        //  the mailbox."
+        uidValidity = System.currentTimeMillis()/1000L; // Must fit in unsigned 32bit, which works till > 2100
+        if(uidValidity >= 2L * Integer.MAX_VALUE) { // Enforce max
+            throw new IllegalStateException(
+                    "UIDVALIDITY value " + uidValidity + " does not fit as unsigned 32 bit int " +
+                            2L * Integer.MAX_VALUE);
+        }
     }
 
     /**
