@@ -44,8 +44,8 @@
   </issueManagement>
 
   <ciManagement>
-    <system>Travis</system>
-    <url>https://travis-ci.org/greenmail-mail-test/greenmail/</url>
+    <system>CircleCI</system>
+    <url>https://circleci.com/gh/greenmail-mail-test/greenmail</url>
     <notifiers />
   </ciManagement>
 
