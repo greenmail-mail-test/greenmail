@@ -96,13 +96,12 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
         }
     }
 
-    public List<ImapSessionFolder.FlagUpdate> getFlagUpdates() throws FolderException {
+    public List<ImapSessionFolder.FlagUpdate> getFlagUpdates() {
         if (modifiedFlags.isEmpty()) {
             return Collections.emptyList();
         }
 
-        List<FlagUpdate> retVal = new ArrayList<>();
-        retVal.addAll(modifiedFlags.values());
+        List<FlagUpdate> retVal = new ArrayList<>(modifiedFlags.values());
         modifiedFlags.clear();
         return retVal;
     }
