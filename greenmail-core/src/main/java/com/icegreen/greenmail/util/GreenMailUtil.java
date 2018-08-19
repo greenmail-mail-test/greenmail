@@ -4,20 +4,20 @@
  */
 package com.icegreen.greenmail.util;
 
-import com.icegreen.greenmail.user.GreenMailUser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.io.*;
+import java.util.Date;
+import java.util.Properties;
+import java.util.Random;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.*;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import java.io.*;
-import java.util.Date;
-import java.util.Properties;
-import java.util.Random;
+
+import com.icegreen.greenmail.user.GreenMailUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Wael Chatila
@@ -104,23 +104,22 @@ public class GreenMailUtil {
     }
 
     /**
-     * @return Returns the number of lines in any string
+     * Counts the number of lines.
+     *
+     * @param str the input string
+     * @return Returns the number of lines terminated by '\n' in string
      */
     public static int getLineCount(String str) {
-        LineNumberReader reader = new LineNumberReader(new StringReader(str));
-        try {
-            reader.skip(Long.MAX_VALUE);
-            return reader.getLineNumber();
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        } finally {
-            try {
-                reader.close();
-            } catch (IOException e) {
-                // Ignore but warn
-                log.warn("Can not close reader", e);
+        if (null == str || str.isEmpty()) {
+            return 0;
+        }
+        int count = 1;
+        for (char c : str.toCharArray()) {
+            if ('\n' == c) {
+                count++;
             }
         }
+        return count;
     }
 
     /**

@@ -124,7 +124,8 @@ public class SimpleMessageAttributes
      * TODO this is a mess, and should be completely revamped.
      */
     void parseMimePart(MimePart part) throws MessagingException {
-        size = GreenMailUtil.getBody(part).length();
+        final String body = GreenMailUtil.getBody(part);
+        size = body.length();
 
         // Section 1 - Message Headers
         if (part instanceof MimeMessage) {
@@ -222,7 +223,7 @@ public class SimpleMessageAttributes
 
         try {
             // TODO this doesn't work
-            lineCount = getLineCount(part);
+            lineCount = GreenMailUtil.getLineCount(body);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.debug("Can not get line count for part " + part, e);
@@ -267,10 +268,6 @@ public class SimpleMessageAttributes
                 log.warn("Unknown/unhandled subtype {} of message encountered.", secondaryType);
             }
         }
-    }
-
-    private int getLineCount(MimePart part) throws MessagingException {
-        return GreenMailUtil.getLineCount(GreenMailUtil.getBody(part));
     }
 
     /**
