@@ -6,6 +6,14 @@
  */
 package com.icegreen.greenmail.imap;
 
+import java.util.*;
+import javax.mail.Flags;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.UIDFolder;
+import javax.mail.internet.MimeMessage;
+import javax.mail.search.SearchTerm;
+
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import com.icegreen.greenmail.imap.commands.IdRange;
 import com.icegreen.greenmail.mail.MovingMessage;
@@ -13,14 +21,6 @@ import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.FolderListener;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.StoredMessage;
-
-import javax.mail.Flags;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.UIDFolder;
-import javax.mail.internet.MimeMessage;
-import javax.mail.search.SearchTerm;
-import java.util.*;
 
 public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder {
     private MailFolder folder;
@@ -52,7 +52,7 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
                 return i + 1;
             }
         }
-        throw new FolderException("No such message.");
+        throw new FolderException("No such message with uid " + uid + " in folder " + folder.getName());
     }
 
     @Override
