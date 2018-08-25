@@ -6,14 +6,14 @@
  */
 package com.icegreen.greenmail.smtp;
 
+import java.io.*;
+import java.net.InetAddress;
+import java.net.Socket;
+
 import com.icegreen.greenmail.util.EncodingUtil;
 import com.icegreen.greenmail.util.InternetPrintWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.net.InetAddress;
-import java.net.Socket;
 
 public class SmtpConnection {
 
@@ -27,6 +27,7 @@ public class SmtpConnection {
     BufferedReader in;
     SmtpHandler handler;
     String heloName;
+    boolean authenticated; // Was there a successful authentication?
 
     public SmtpConnection(SmtpHandler handler, Socket sock)
             throws IOException {
@@ -84,5 +85,23 @@ public class SmtpConnection {
 
     public void quit() {
         handler.close();
+    }
+
+    /**
+     * Checks if there was a successful authentication for this connection.
+     *
+     * @return true, if authenticated
+     */
+    public boolean isAuthenticated() {
+        return authenticated;
+    }
+
+    /**
+     * Sets the authentication state of this connection.
+     *
+     * @param authenticated true,
+     */
+    public void setAuthenticated(boolean authenticated) {
+        this.authenticated = authenticated;
     }
 }

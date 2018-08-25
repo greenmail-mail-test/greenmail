@@ -14,6 +14,7 @@ public class SmtpCommandRegistry {
     private static final Map<String, SmtpCommand> commands = new HashMap<>();
 
     static {
+        commands.put("AUTH", new AuthCommand());
         commands.put("HELO", new HeloCommand());
         commands.put("EHLO", new HeloCommand());
         commands.put("NOOP", new NoopCommand());
