@@ -4,19 +4,18 @@
  */
 package com.icegreen.greenmail.test;
 
+import java.io.ByteArrayOutputStream;
+import javax.mail.*;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
 import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.smtp.commands.AuthCommand;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Rule;
 import org.junit.Test;
-
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import java.io.ByteArrayOutputStream;
 
 import static com.icegreen.greenmail.util.GreenMailUtil.createTextEmail;
 import static org.junit.Assert.assertEquals;
@@ -70,7 +69,7 @@ public class SmtpServerTest {
 
         String subject = GreenMailUtil.random();
         String body = GreenMailUtil.random();
-        GreenMailUtil.sendTextEmailSecureTest("test@localhost.com", "from@localhost.com", subject, body);
+        GreenMailUtil.sendTextEmailSecureTest("test@localhost.com", "from@localhost", subject, body);
         greenMail.waitForIncomingEmail(1500, 1);
         MimeMessage[] emails = greenMail.getReceivedMessages();
         assertEquals(1, emails.length);
@@ -86,7 +85,7 @@ public class SmtpServerTest {
             public void run() {
                 try {
                     Thread.sleep(700);
-                    GreenMailUtil.sendTextEmailTest("test@localhost.com", "from@localhost.com", "abc", "def");
+                    GreenMailUtil.sendTextEmailTest("test@localhost.com", "from@localhost", "abc", "def");
                 } catch (Throwable e) {
                     throw new RuntimeException(e);
                 }
@@ -155,5 +154,31 @@ public class SmtpServerTest {
 
         MimeMessage[] emails = greenMail.getReceivedMessages();
         assertEquals(3, emails.length);
+    }
+
+    @Test
+    public void testAuth() throws Throwable {
+        assertEquals(0, greenMail.getReceivedMessages().length);
+
+        String subject = GreenMailUtil.random();
+        String body = GreenMailUtil.random();
+        final MimeMessage message = GreenMailUtil.createTextEmail("test@localhost", "from@localhost",
+                subject, body, greenMail.getSmtp().getServerSetup());
+        Transport.send(message);
+        try {
+            Transport.send(message, "foo", "bar");
+        } catch (AuthenticationFailedException ex) {
+            assertTrue(ex.getMessage().contains(AuthCommand.AUTH_CREDENTIALS_INVALID));
+        }
+        greenMail.setUser("foo", "bar");
+        Transport.send(message, "foo", "bar");
+
+        greenMail.waitForIncomingEmail(1500, 3);
+        MimeMessage[] emails = greenMail.getReceivedMessages();
+        assertEquals(2, emails.length);
+        for (MimeMessage receivedMsg : emails) {
+            assertEquals(subject, receivedMsg.getSubject());
+            assertEquals(body, GreenMailUtil.getBody(receivedMsg).trim());
+        }
     }
 }
