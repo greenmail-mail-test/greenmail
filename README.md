@@ -11,13 +11,13 @@ Go to the [project site][greenmail_project_site] for details:
 * [JavaDoc][greenmail_javadoc]
 * [FAQ][greenmail_faq]
 * [Download][greenmail_download]
-* [Maven coordinates][maven_repository_com]: com.icegreen:greenmail:1.5.7
+* [Maven coordinates][maven_repository_com]: com.icegreen:greenmail:1.5.8
 
 The GreenMail project welcomes any contribution, so go ahead and fork/open a pull request! See the guidelines below.
 
 ***Note***: GreenMail recently moved to Github and was previously hosted on [SF][greenmail_sf_site].
 
-Development [![Build status](https://circleci.com/gh/greenmail-mail-test/greenmail/tree/master.svg?style=shield)](https://circleci.com/gh/greenmail-mail-test/greenmail/tree/master) [![Maven Central](https://img.shields.io/maven-central/v/com.icegreen/greenmail.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.icegreen%22%20AND%20a%3A%22greenmail%22) [![StackOverflow](http://img.shields.io/badge/stackoverflow-greenmail-green.svg)](http://stackoverflow.com/questions/tagged/greenmail)
+Development [![Build status](https://circleci.com/gh/greenmail-mail-test/greenmail/tree/master.svg?style=shield)](https://circleci.com/gh/greenmail-mail-test/greenmail/tree/master) [![Maven Central](https://img.shields.io/maven-central/v/com.icegreen/greenmail.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.icegreen%22%20AND%20a%3A%22greenmail%22) [![StackOverflow](http://img.shields.io/badge/stackoverflow-greenmail-green.svg)](http://stackoverflow.com/questions/tagged/greenmail) [![Docker Pulls](https://img.shields.io/docker/pulls/greenmail/standalone.svg?maxAge=604800)][docker-hub]
 -----------
 
 * Build GreenMail from source 
@@ -68,6 +68,7 @@ Development [![Build status](https://circleci.com/gh/greenmail-mail-test/greenma
 [github_fork]: https://help.github.com/articles/fork-a-repo/
 [github_pull_request]: https://help.github.com/articles/creating-a-pull-request/
 [sonar]: http://nemo.sonarqube.org/dashboard/index?id=com.icegreen%3Agreenmail-parent
+[docker-hub]: https://hub.docker.com/r/greenmail/standalone/
 
 Contribution guidelines
 -----------------------
