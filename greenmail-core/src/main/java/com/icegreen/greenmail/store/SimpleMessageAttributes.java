@@ -7,16 +7,16 @@
 package com.icegreen.greenmail.store;
 
 
+import java.util.*;
+import javax.mail.BodyPart;
+import javax.mail.MessagingException;
+import javax.mail.internet.*;
+
 import com.icegreen.greenmail.mail.MailAddress;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.sun.mail.imap.protocol.INTERNALDATE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.mail.BodyPart;
-import javax.mail.MessagingException;
-import javax.mail.internet.*;
-import java.util.*;
 
 /**
  * Attributes of a Message in IMAP4rev1 style. Message
@@ -124,7 +124,8 @@ public class SimpleMessageAttributes
      * TODO this is a mess, and should be completely revamped.
      */
     void parseMimePart(MimePart part) throws MessagingException {
-        size = GreenMailUtil.getBody(part).length();
+        final String body = GreenMailUtil.getBody(part);
+        size = body.length();
 
         // Section 1 - Message Headers
         if (part instanceof MimeMessage) {
@@ -222,7 +223,7 @@ public class SimpleMessageAttributes
 
         try {
             // TODO this doesn't work
-            lineCount = getLineCount(part);
+            lineCount = GreenMailUtil.getLineCount(body);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.debug("Can not get line count for part " + part, e);
@@ -267,10 +268,6 @@ public class SimpleMessageAttributes
                 log.warn("Unknown/unhandled subtype {} of message encountered.", secondaryType);
             }
         }
-    }
-
-    private int getLineCount(MimePart part) throws MessagingException {
-        return GreenMailUtil.getLineCount(GreenMailUtil.getBody(part));
     }
 
     /**
@@ -645,14 +642,14 @@ public class SimpleMessageAttributes
 
         public Header(String line) {
             String[] strs = line.split(";");
-            value = strs[0];
             if (0 != strs.length) {
+                value = strs[0];
                 params = new HashSet<>(strs.length);
                 for (int i = 1; i < strs.length; i++) {
                     String p = strs[i].trim();
                     int e = p.indexOf('=');
                     String key = p.substring(0, e);
-                    String val = p.substring(e + 1, p.length());
+                    String val = p.substring(e + 1);
                     p = Q + strip(key) + Q + SP + Q + strip(val) + Q;
                     params.add(p);
                 }

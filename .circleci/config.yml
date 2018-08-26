@@ -1,0 +1,189 @@
+version: 2
+
+jobs:
+  "openjdk-7":
+    working_directory: ~/circleci-greenmail
+
+    docker:
+        - image: openjdk:7u151-jdk-alpine3.7
+          environment:
+            TZ: UTC
+
+    environment:
+      MAVEN_HOME: /usr/share/maven
+    steps:
+      - checkout
+
+      - run: >
+          apk add --no-cache curl
+          && mkdir -p /usr/share/maven
+          && curl -fsSL -o /tmp/apache-maven.tar.gz http://www-us.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz
+          && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
+          && rm -f /tmp/apache-maven.tar.gz
+          && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+
+      - restore_cache:
+          key: greenmail-{{ checksum "pom.xml" }}
+
+      - run: mvn -V clean package -DskipTests dependency:resolve-plugins dependency:go-offline -pl "!greenmail-junit5"
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: greenmail-{{ checksum "pom.xml" }}
+
+      - run: mvn -V -pl "!greenmail-junit5" clean install
+
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/junit/
+            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/junit/ \;
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
+
+  "openjdk-8":
+    working_directory: ~/circleci-greenmail
+
+    docker:
+        - image: openjdk:8u171-jdk-alpine3.7
+          environment:
+            TZ: UTC
+
+    environment:
+      MAVEN_HOME: /usr/share/maven
+    steps:
+      - checkout
+
+      - run: >
+          apk add --no-cache curl
+          && mkdir -p /usr/share/maven
+          && curl -fsSL -o /tmp/apache-maven.tar.gz http://www-us.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz
+          && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
+          && rm -f /tmp/apache-maven.tar.gz
+          && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+
+      - restore_cache:
+          key: greenmail-{{ checksum "pom.xml" }}
+
+      - run: mvn -V clean package -DskipTests dependency:resolve-plugins dependency:go-offline
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: greenmail-{{ checksum "pom.xml" }}
+
+      - run: mvn -V clean install
+
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/junit/
+            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/junit/ \;
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
+
+  "openjdk-9":
+    working_directory: ~/circleci-greenmail
+
+    docker:
+        - image: openjdk:9.0.4-12-jdk-slim-sid
+          environment:
+            TZ: UTC
+
+    environment:
+      MAVEN_HOME: /usr/share/maven
+      MAVEN_OPTS: "--add-modules java.xml.bind"
+    steps:
+      - checkout
+
+      - run: >
+          apt-get update && apt-get install -y curl
+          && mkdir -p /usr/share/maven
+          && curl -fsSL -o /tmp/apache-maven.tar.gz http://www-us.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz
+          && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
+          && rm -f /tmp/apache-maven.tar.gz
+          && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+
+      - restore_cache:
+          key: greenmail-{{ checksum "pom.xml" }}
+
+      - run: mvn -V clean package -DskipTests dependency:resolve-plugins dependency:go-offline
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: greenmail-{{ checksum "pom.xml" }}
+
+      - run: mvn -V clean install
+
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/junit/
+            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/junit/ \;
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
+
+  "openjdk-10":
+    working_directory: ~/circleci-greenmail
+
+    docker:
+        - image: openjdk:10.0.1-10-jdk-slim-sid
+          environment:
+            TZ: UTC
+
+    environment:
+      MAVEN_HOME: /usr/share/maven
+      MAVEN_OPTS: "--add-modules java.xml.bind"
+    steps:
+      - checkout
+
+      - run: >
+          apt-get update && apt-get install -y curl
+          && mkdir -p /usr/share/maven
+          && curl -fsSL -o /tmp/apache-maven.tar.gz http://www-us.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz
+          && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
+          && rm -f /tmp/apache-maven.tar.gz
+          && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+
+      - restore_cache:
+          key: greenmail-{{ checksum "pom.xml" }}
+
+      - run: mvn -V clean package -DskipTests dependency:resolve-plugins dependency:go-offline
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: greenmail-{{ checksum "pom.xml" }}
+
+      - run: mvn -V clean install
+
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/junit/
+            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/junit/ \;
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - "openjdk-7"
+      - "openjdk-8"
+      - "openjdk-9"
+      - "openjdk-10"

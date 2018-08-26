@@ -1,5 +1,9 @@
 package com.icegreen.greenmail.spring;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.mail.internet.MimeMessage;
+
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
@@ -8,10 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-
-import javax.mail.internet.MimeMessage;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Spring bean for GreenMail server.
@@ -83,7 +83,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
                 String pwd = user.substring(posColon + 1, posAt);
                 String domain = user.substring(posAt + 1);
                 if (log.isDebugEnabled()) {
-                    log.debug("Adding user " + login + ':' + pwd + '@' + domain);
+                    log.debug("Adding user {}:{}@{}" ,login, pwd, domain);
                 }
                 greenMail.setUser(login + '@' + domain, login, pwd);
             }

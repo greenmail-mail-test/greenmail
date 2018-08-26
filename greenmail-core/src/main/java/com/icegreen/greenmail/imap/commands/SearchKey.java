@@ -96,7 +96,13 @@ public enum SearchKey {
      * to the specified message sequence number set.
      */
     SEQUENCE_SET(1),
-    OR(2);
+    OR(2),
+    SINCE(1),
+    ON(1),
+    BEFORE(1),
+    SENTSINCE(1),
+    SENTON(1),
+    SENTBEFORE(1);
 
     private int minArgs = 0; // expected additional arguments
     private boolean operator = false; // Is an operator, such as AND, OR, NOT ...

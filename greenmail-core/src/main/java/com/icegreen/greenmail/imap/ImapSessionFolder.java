@@ -6,6 +6,14 @@
  */
 package com.icegreen.greenmail.imap;
 
+import java.util.*;
+import javax.mail.Flags;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.UIDFolder;
+import javax.mail.internet.MimeMessage;
+import javax.mail.search.SearchTerm;
+
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import com.icegreen.greenmail.imap.commands.IdRange;
 import com.icegreen.greenmail.mail.MovingMessage;
@@ -13,14 +21,6 @@ import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.FolderListener;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.StoredMessage;
-
-import javax.mail.Flags;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.UIDFolder;
-import javax.mail.internet.MimeMessage;
-import javax.mail.search.SearchTerm;
-import java.util.*;
 
 public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder {
     private MailFolder folder;
@@ -52,7 +52,7 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
                 return i + 1;
             }
         }
-        throw new FolderException("No such message.");
+        throw new FolderException("No such message with uid " + uid + " in folder " + folder.getName());
     }
 
     @Override
@@ -96,13 +96,12 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
         }
     }
 
-    public List<ImapSessionFolder.FlagUpdate> getFlagUpdates() throws FolderException {
+    public List<ImapSessionFolder.FlagUpdate> getFlagUpdates() {
         if (modifiedFlags.isEmpty()) {
             return Collections.emptyList();
         }
 
-        List<FlagUpdate> retVal = new ArrayList<>();
-        retVal.addAll(modifiedFlags.values());
+        List<FlagUpdate> retVal = new ArrayList<>(modifiedFlags.values());
         modifiedFlags.clear();
         return retVal;
     }
@@ -172,7 +171,7 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
      */
     private int correctForExpungedMessages(int absoluteMsn) {
         int correctedMsn = absoluteMsn;
-        // Loop throught the expunged list backwards, adjusting the msn as we go.
+        // Loop through the expunged list backwards, adjusting the msn as we go.
         for (int i = expungedMsns.size() - 1; i >= 0; i--) {
             int expunged = expungedMsns.get(i);
             if (expunged <= absoluteMsn) {

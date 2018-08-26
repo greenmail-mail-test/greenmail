@@ -57,7 +57,7 @@ class ExpungeCommand extends SelectedStateCommand implements UidEnabledCommand {
 
         MailFolder folder = session.getSelected();
         if (log.isDebugEnabled() && useUids) {
-            log.debug("Expunging messages matching uids " + IdRange.idRangesToString(idSet) + " from " + folder.getFullName());
+            log.debug("Expunging messages matching uids {} from {}", IdRange.idRangesToString(idSet) ,folder.getFullName());
         }
 
         if (useUids) {

@@ -4,21 +4,42 @@
  */
 package com.icegreen.greenmail.test.commands;
 
+import static junit.framework.TestCase.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Date;
-import javax.mail.*;
+
+import javax.mail.Address;
+import javax.mail.Flags;
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Store;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.mail.search.*;
+import javax.mail.search.AndTerm;
+import javax.mail.search.ComparisonTerm;
+import javax.mail.search.DateTerm;
+import javax.mail.search.FlagTerm;
+import javax.mail.search.FromTerm;
+import javax.mail.search.HeaderTerm;
+import javax.mail.search.OrTerm;
+import javax.mail.search.ReceivedDateTerm;
+import javax.mail.search.RecipientTerm;
+import javax.mail.search.SentDateTerm;
+import javax.mail.search.SubjectTerm;
+
+import org.junit.Rule;
+import org.junit.Test;
 
 import com.icegreen.greenmail.imap.commands.SearchKey;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Rule;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * @author Wael Chatila
@@ -48,8 +69,9 @@ public class ImapSearchTest {
             imapFolder.open(Folder.READ_WRITE);
 
             Message[] imapMessages = imapFolder.getMessages();
-            assertEquals(4, imapMessages.length);
+            assertEquals(6, imapMessages.length);
             Message m0 = imapMessages[0];
+            assertTrue(m0.getFlags().contains(Flags.Flag.ANSWERED));
             assertTrue(m0.getSubject().startsWith("#0"));
             Message m1 = imapMessages[1];
             assertTrue(m1.getSubject().startsWith("#1"));
@@ -57,8 +79,10 @@ public class ImapSearchTest {
             assertTrue(m2.getSubject().startsWith("#2"));
             Message m3 = imapMessages[3];
             assertTrue(m3.getSubject().startsWith("#3"));
-
-            assertTrue(m0.getFlags().contains(Flags.Flag.ANSWERED));
+            Message m4 = imapMessages[4];
+            assertTrue(m4.getSubject().startsWith("#4"));
+            Message m5 = imapMessages[5];
+            assertTrue(m5.getSubject().startsWith("#5"));
 
             // Search flags
             imapMessages = imapFolder.search(new FlagTerm(new Flags(Flags.Flag.ANSWERED), true));
@@ -70,7 +94,7 @@ public class ImapSearchTest {
             assertTrue(imapMessages[0].getFlags().contains("foo"));
 
             imapMessages = imapFolder.search(new FlagTerm(fooFlags, false));
-            assertEquals(3, imapMessages.length);
+            assertEquals(5, imapMessages.length);
             assertTrue(!imapMessages[0].getFlags().contains(fooFlags));
             assertTrue(!imapMessages[1].getFlags().contains(fooFlags));
             assertTrue(!imapMessages[2].getFlags().contains(fooFlags));
@@ -139,6 +163,9 @@ public class ImapSearchTest {
             assertEquals(1, imapMessages.length);
             assertTrue(imapMessages[0] == m1);
 
+            testReceivedDateTerms(imapFolder, m0, m1, m2, m3, m4, m5);
+
+            testSentDateTerms(imapFolder, m0, m1, m2, m3, m4, m5);
 
             // Content
             final String pattern = "\u00e4\u03A0";
@@ -150,6 +177,38 @@ public class ImapSearchTest {
         }
     }
 
+    private void testSentDateTerms(Folder imapFolder, Message... m) throws Exception {
+        //greater equals, returns all
+        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.GE, getSampleDate()), m[5]);
+        //greater than, does not return sample sent mail
+        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.GT, getSampleDate()));
+        //equals, only returns sample mail
+        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.EQ, getSampleDate()), m[5]);
+        //not equals, does not return sample mail, but all other mails
+        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.NE, getSampleDate()), m[0], m[1], m[2], m[3], m[4]);
+        //less than (sample mail + 1 day), only returns sample mail
+        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.LT, getSampleDate(2)), m[5]);
+        //TODO: less equals: does not work yet, is therefore not included, should only return sample mail
+        //see https://github.com/greenmail-mail-test/greenmail/issues/234
+        //testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.LE, getSampleDate(2)), m[5]);
+    }
+
+    private void testReceivedDateTerms(Folder imapFolder, Message... m) throws Exception {
+        //greater equals, returns all
+        testDateTerm(imapFolder, new ReceivedDateTerm(ComparisonTerm.GE, getSampleDate()), m[0], m[1], m[2], m[3], m[4], m[5]);
+        //greater than, does not return received sample mail
+        testDateTerm(imapFolder, new ReceivedDateTerm(ComparisonTerm.GT, getSampleDate()), m[0], m[1], m[2], m[3], m[5]);
+        //equals, only returns sample mail
+        testDateTerm(imapFolder, new ReceivedDateTerm(ComparisonTerm.EQ, getSampleDate()), m[4]);
+        //not equals, does not return sample mail
+        testDateTerm(imapFolder, new ReceivedDateTerm(ComparisonTerm.NE, getSampleDate()), m[0], m[1], m[2], m[3], m[5]);
+        //less than (sample mail + 1 day), only returns sample mail
+        testDateTerm(imapFolder, new ReceivedDateTerm(ComparisonTerm.LT, getSampleDate(2)), m[4]);
+        //TODO: less equals: does not work yet, is therefore not included, should only return sample mail
+        //see https://github.com/greenmail-mail-test/greenmail/issues/234
+        //testDateTerm(imapFolder, new ReceivedDateTerm(ComparisonTerm.LE, getSampleDate(2)), m[4]);
+    }
+
     // Test an unsupported search term for exception. Should be ignored.
     @Test
     public void testUnsupportedSearchWarnsButDoesNotThrowException() throws MessagingException {
@@ -159,18 +218,23 @@ public class ImapSearchTest {
         } catch (IllegalArgumentException ex) {
             // Expected
         }
+    }
 
-        greenMail.setUser("to1@localhost", "pwd"); // Create user
+    private Date getSampleDate(int day) {
+        return new Date(110, 1, day);
+    }
 
-        final Store store = greenMail.getImap().createStore();
-        store.connect("to1@localhost", "pwd");
-        try {
-            Folder imapFolder = store.getFolder("INBOX");
-            imapFolder.open(Folder.READ_WRITE);
-            imapFolder.search(new SentDateTerm(ComparisonTerm.LT, new Date()));
-        } finally {
-            store.close();
+    private Date getSampleDate() {
+        return getSampleDate(1);
+    }
+
+    private void testDateTerm(Folder imapFolder, DateTerm term, Message... expectedResults) throws Exception {
+        Message[] imapMessages = imapFolder.search(term);
+        assertEquals(expectedResults.length, imapMessages.length);
+        for (int i = 0; i < expectedResults.length; i++) {
+            assertTrue(imapMessages[i] == expectedResults[i]);
         }
+
     }
 
     /**
@@ -224,6 +288,18 @@ public class ImapSearchTest {
         message3.setFlag(Flags.Flag.ANSWERED, false);
         message3.setFlags(flags, false);
         folder.store(message3);
+
+        MimeMessage message4 = new MimeMessage(session);
+        message4.setSubject("#4 with received date");
+        message4.setText("content received date");
+        folder.appendMessage(message4, new Flags(), getSampleDate());
+
+        MimeMessage message5 = new MimeMessage(session);
+        message5.setSubject("#5 with sent date");
+        message5.setText("content sent date");
+        message5.setSentDate(getSampleDate());
+        folder.store(message5);
+
     }
 
     /**

@@ -1,21 +1,21 @@
 /* -------------------------------------------------------------------
-* This software is released under the Apache license 2.0
-* -------------------------------------------------------------------
-*/
+ * This software is released under the Apache license 2.0
+ * -------------------------------------------------------------------
+ */
 package com.icegreen.greenmail.store;
 
-import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
-import com.icegreen.greenmail.imap.ImapConstants;
-import com.icegreen.greenmail.imap.commands.IdRange;
-import com.icegreen.greenmail.mail.MovingMessage;
-
+import java.util.*;
 import javax.mail.Flags;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.UIDFolder;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
-import java.util.*;
+
+import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
+import com.icegreen.greenmail.imap.ImapConstants;
+import com.icegreen.greenmail.imap.commands.IdRange;
+import com.icegreen.greenmail.mail.MovingMessage;
 
 /**
  * @author Raimund Klein <raimund.klein@gmx.de>
@@ -34,42 +34,80 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     private final StoredMessageCollection mailMessages = new ListBasedStoredMessageCollection();
     private final List<FolderListener> _mailboxListeners = Collections.synchronizedList(new ArrayList<FolderListener>());
     protected String name;
-    private Collection<HierarchicalFolder> children;
+    private final Collection<HierarchicalFolder> children;
     private HierarchicalFolder parent;
     private boolean isSelectable = false;
     private long nextUid = 1;
     private long uidValidity;
 
-    public HierarchicalFolder(HierarchicalFolder parent,
-                              String name) {
+    protected HierarchicalFolder(HierarchicalFolder parent, String name) {
         this.name = name;
-        this.children = new ArrayList<>();
         this.parent = parent;
-        this.uidValidity = System.currentTimeMillis();
+        children = new ArrayList<>();
+        // From https://tools.ietf.org/html/rfc3501#section-2.3.1.1 :
+        // "A good UIDVALIDITY value to use in this case
+        //  is a 32-bit representation of the creation date/time of
+        //  the mailbox."
+        uidValidity = System.currentTimeMillis()/1000L; // Must fit in unsigned 32bit, which works till > 2100
+        if(uidValidity >= 2L * Integer.MAX_VALUE) { // Enforce max
+            throw new IllegalStateException(
+                    "UIDVALIDITY value " + uidValidity + " does not fit as unsigned 32 bit int " +
+                            2L * Integer.MAX_VALUE);
+        }
     }
 
+    /**
+     * An immutable collection of children.
+     *
+     * @return the children.
+     */
     public Collection<HierarchicalFolder> getChildren() {
-        return children;
+        return Collections.unmodifiableCollection(children);
     }
 
     public HierarchicalFolder getParent() {
         return parent;
     }
 
-    public void moveToNewParent(HierarchicalFolder newParent) {
-        if (!newParent.getChildren().contains(this)) {
-            parent = newParent;
-            parent.getChildren().add(this);
+    void moveToNewParent(HierarchicalFolder newParent) {
+        synchronized (newParent.children) {
+            if (!newParent.children.contains(this)) {
+                parent = newParent;
+                parent.children.add(this);
+            }
         }
     }
 
-    public HierarchicalFolder getChild(String name) {
-        for (HierarchicalFolder child : children) {
-            if (child.getName().equalsIgnoreCase(name)) {
-                return child;
+    HierarchicalFolder getChild(String name) {
+        synchronized (children) {
+            for (HierarchicalFolder child : children) {
+                if (child.getName().equalsIgnoreCase(name)) {
+                    return child;
+                }
             }
         }
         return null;
+    }
+
+
+    HierarchicalFolder createChild(String mailboxName) {
+        HierarchicalFolder child = new HierarchicalFolder(this, mailboxName);
+        synchronized (children) {
+            children.add(child);
+        }
+        return child;
+    }
+
+    void removeChild(HierarchicalFolder toDelete) {
+        synchronized (children) {
+            children.remove(toDelete);
+        }
+    }
+
+    boolean hasChildren() {
+        synchronized (children) {
+            return !children.isEmpty();
+        }
     }
 
     @Override
@@ -277,13 +315,13 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     }
 
     @Override
-    public void store(MovingMessage mail) throws Exception {
+    public void store(MovingMessage mail) {
         store(mail.getMessage());
     }
 
 
     @Override
-    public void store(MimeMessage message) throws Exception {
+    public void store(MimeMessage message) {
         Date receivedDate = new Date();
         Flags flags = new Flags();
         appendMessage(message, flags, receivedDate);
@@ -311,11 +349,11 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         List<StoredMessage> matchedMessages = new ArrayList<>();
 
         synchronized (mailMessages) {
-            for (int i = 0; i<mailMessages.size();i++) {
+            for (int i = 0; i < mailMessages.size(); i++) {
                 StoredMessage mailMessage = mailMessages.get(i);
                 // Update message sequence number for potential sequence set search
                 // https://tools.ietf.org/html/rfc3501#page-10
-                mailMessage.updateMessageNumber(i+1);
+                mailMessage.updateMessageNumber(i + 1);
                 if (searchTerm.match(mailMessage.getMimeMessage())) {
                     matchedMessages.add(mailMessage);
                 }
@@ -346,7 +384,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     }
 
     @Override
-    public void expunge() throws FolderException {
+    public void expunge() {
         mailMessages.expunge(_mailboxListeners);
     }
 
@@ -379,17 +417,17 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     }
 
     @Override
-    public long getUIDValidity() throws MessagingException {
+    public long getUIDValidity() {
         return getUidValidity();
     }
 
     @Override
-    public Message getMessageByUID(long uid) throws MessagingException {
+    public Message getMessageByUID(long uid) {
         return getMessage(uid).getMimeMessage();
     }
 
     @Override
-    public Message[] getMessagesByUID(long start, long end) throws MessagingException {
+    public Message[] getMessagesByUID(long start, long end) {
         synchronized (mailMessages) {
             List<Message> messages = new ArrayList<>();
             for (StoredMessage mailMessage : mailMessages) {
@@ -403,7 +441,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     }
 
     @Override
-    public Message[] getMessagesByUID(long[] uids) throws MessagingException {
+    public Message[] getMessagesByUID(long[] uids) {
         synchronized (mailMessages) {
             List<Message> messages = new ArrayList<>(uids.length);
             Map<Long, StoredMessage> uid2Msg = new HashMap<>(mailMessages.size());
@@ -421,7 +459,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     }
 
     @Override
-    public long getUID(Message message) throws MessagingException {
+    public long getUID(Message message) {
         // Check if we have a message with same object reference ... otherwise, not supported.
         synchronized (mailMessages) {
             for (StoredMessage mailMessage : mailMessages) {
@@ -432,4 +470,5 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         }
         throw new IllegalStateException("No match found for " + message);
     }
+
 }

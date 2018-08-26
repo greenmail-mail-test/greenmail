@@ -6,10 +6,11 @@
  */
 package com.icegreen.greenmail.store;
 
+import java.util.Date;
+
 import javax.mail.Flags;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.util.Date;
 
 /**
  * A mail message with all of the extra stuff that IMAP requires.
@@ -33,9 +34,17 @@ public class StoredMessage {
      */
     public static class UidAwareMimeMessage extends MimeMessage {
         private long uid;
-        public UidAwareMimeMessage(MimeMessage source, long uid) throws MessagingException {
+        private Date receivedDate;
+
+        public UidAwareMimeMessage(MimeMessage source, long uid, Date receivedDate) throws MessagingException {
             super(source);
             this.uid = uid;
+            this.receivedDate = receivedDate;
+        }
+
+        @Override
+        public Date getReceivedDate() {
+            return receivedDate;
         }
 
         /**
@@ -56,11 +65,11 @@ public class StoredMessage {
     }
 
     StoredMessage(MimeMessage mimeMessage,
-                  Date receivedDate, long uid) {
+            Date receivedDate, long uid) {
         this.receivedDate = receivedDate;
         this.uid = uid;
         try {
-            this.mimeMessage = new UidAwareMimeMessage(mimeMessage, uid);
+            this.mimeMessage = new UidAwareMimeMessage(mimeMessage, uid, receivedDate);
             this.attributes = new SimpleMessageAttributes(mimeMessage, receivedDate);
         } catch (MessagingException e) {
             throw new IllegalStateException("Could not parse mime message " + mimeMessage + " with uid " + uid, e);
