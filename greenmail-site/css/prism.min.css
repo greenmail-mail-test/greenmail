@@ -1,4 +1,5 @@
-/* http://prismjs.com/download.html?themes=prism-coy&languages=clike+bash+git+java&plugins=autolinker+file-highlight */
+/* PrismJS 1.15.0
+https://prismjs.com/download.html?#themes=prism-coy&languages=clike+bash+git+java&plugins=autolinker+file-highlight */
 /**
  * prism.js Coy theme for JavaScript, CoffeeScript, CSS and HTML
  * Based on https://github.com/tshedor/workshop-wp-theme (Example: http://workshop.kansan.com/category/sessions/basics or http://workshop.timshedor.com/category/sessions/basics);
@@ -31,25 +32,29 @@ pre[class*="language-"] {
 pre[class*="language-"] {
 	position: relative;
 	margin: .5em 0;
-	box-shadow: -1px 0px 0px 0px #358ccb, 0px 0px 0px 1px #dfdfdf;
+	overflow: visible;
+	padding: 0;
+}
+pre[class*="language-"]>code {
+	position: relative;
 	border-left: 10px solid #358ccb;
+	box-shadow: -1px 0px 0px 0px #358ccb, 0px 0px 0px 1px #dfdfdf;
 	background-color: #fdfdfd;
 	background-image: linear-gradient(transparent 50%, rgba(69, 142, 209, 0.04) 50%);
 	background-size: 3em 3em;
 	background-origin: content-box;
-	overflow: visible;
-	padding: 0;
+	background-attachment: local;
 }
 
 code[class*="language"] {
 	max-height: inherit;
-	height: 100%;
+	height: inherit;
 	padding: 0 1em;
 	display: block;
 	overflow: auto;
 }
 
-/* Margin bottom to accomodate shadow */
+/* Margin bottom to accommodate shadow */
 :not(pre) > code[class*="language-"],
 pre[class*="language-"] {
 	background-color: #fdfdfd;
@@ -195,15 +200,15 @@ pre[class*="language-"]:after {
 }
 
 /* Plugin styles: Line Numbers */
-pre[class*="language-"].line-numbers {
+pre[class*="language-"].line-numbers.line-numbers {
 	padding-left: 0;
 }
 
-pre[class*="language-"].line-numbers code {
+pre[class*="language-"].line-numbers.line-numbers code {
 	padding-left: 3.8em;
 }
 
-pre[class*="language-"].line-numbers .line-numbers-rows {
+pre[class*="language-"].line-numbers.line-numbers .line-numbers-rows {
 	left: 0;
 }
 
