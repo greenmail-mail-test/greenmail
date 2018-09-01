@@ -4,17 +4,13 @@
  */
 package com.icegreen.greenmail.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.net.ServerSocketFactory;
-import javax.net.ssl.*;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.security.KeyStore;
+import javax.net.ServerSocketFactory;
+import javax.net.ssl.*;
 
 
 /**
@@ -30,10 +26,9 @@ import java.security.KeyStore;
  * @since Feb 2006
  */
 public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
-    private static final Logger log = LoggerFactory.getLogger(DummySSLServerSocketFactory.class);
     public static final String GREENMAIL_JKS = "greenmail.jks";
-    private SSLServerSocketFactory factory;
-    private KeyStore ks;
+    private final SSLServerSocketFactory factory;
+    private final KeyStore ks;
 
     public DummySSLServerSocketFactory() {
         try {
@@ -56,7 +51,6 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
                     null);
             factory = sslcontext.getServerSocketFactory();
         } catch (Exception e) {
-            log.error("Can not create and initialize SSL", e);
             throw new IllegalStateException("Can not create and initialize SSL", e);
         }
     }
