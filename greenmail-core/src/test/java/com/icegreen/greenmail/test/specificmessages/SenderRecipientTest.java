@@ -1,21 +1,24 @@
 package com.icegreen.greenmail.test.specificmessages;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.server.AbstractServer;
-import com.icegreen.greenmail.util.*;
-import com.sun.mail.imap.IMAPFolder;
-import com.sun.mail.imap.IMAPStore;
-import org.junit.Rule;
-import org.junit.Test;
-
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import javax.mail.Address;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+
+import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.server.AbstractServer;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.Retriever;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import com.icegreen.greenmail.util.UserUtil;
+import com.sun.mail.imap.IMAPFolder;
+import com.sun.mail.imap.IMAPStore;
+import org.junit.Rule;
+import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -85,10 +88,10 @@ public class SenderRecipientTest {
     }
 
     @Test
-    public void testSendWithoutSubject() throws MessagingException {
+    public void testSendWithoutSubject() {
         GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com",
-                null, "some subjectless body");
-        assertEquals("some subjectless body", GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
+                null, "some subject less body");
+        assertEquals("some subject less body", GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
     }
 
     @Test
