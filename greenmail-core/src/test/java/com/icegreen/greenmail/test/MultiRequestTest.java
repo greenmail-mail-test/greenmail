@@ -5,6 +5,9 @@
 */
 package com.icegreen.greenmail.test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.util.GreenMailUtil;
@@ -14,9 +17,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -51,7 +51,7 @@ public class MultiRequestTest {
 
     private static class RetrieverThread extends Thread {
         String to;
-        int count;
+        volatile int count;
         private int expectedCount;
         private AbstractServer server;
 

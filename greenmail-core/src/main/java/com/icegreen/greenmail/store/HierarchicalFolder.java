@@ -5,6 +5,7 @@
 package com.icegreen.greenmail.store;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 import javax.mail.Flags;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -33,17 +34,16 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
 
     private final StoredMessageCollection mailMessages = new ListBasedStoredMessageCollection();
     private final List<FolderListener> _mailboxListeners = Collections.synchronizedList(new ArrayList<FolderListener>());
-    protected String name;
-    private final Collection<HierarchicalFolder> children;
+    protected volatile String name;
+    private final Collection<HierarchicalFolder> children = Collections.synchronizedList(new ArrayList<HierarchicalFolder>());
     private HierarchicalFolder parent;
     private boolean isSelectable = false;
-    private long nextUid = 1;
+    private AtomicLong nextUid = new AtomicLong(1);
     private long uidValidity;
 
     protected HierarchicalFolder(HierarchicalFolder parent, String name) {
         this.name = name;
         this.parent = parent;
-        children = new ArrayList<>();
         // From https://tools.ietf.org/html/rfc3501#section-2.3.1.1 :
         // "A good UIDVALIDITY value to use in this case
         //  is a 32-bit representation of the creation date/time of
@@ -116,7 +116,9 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     }
 
     public void setName(String name) {
-        this.name = name;
+        synchronized (children) { // Access to children via name - see getChild(String)
+            this.name = name;
+        }
     }
 
     @Override
@@ -143,7 +145,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
 
     @Override
     public long getUidNext() {
-        return nextUid;
+        return nextUid.get();
     }
 
     @Override
@@ -239,8 +241,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     public long appendMessage(MimeMessage message,
                               Flags flags,
                               Date receivedDate) {
-        long uid = nextUid;
-        nextUid++;
+        final long uid = nextUid.getAndIncrement();
 
         try {
             message.setFlags(flags, true);
