@@ -19,11 +19,11 @@ import java.util.List;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-class CopyCommand extends SelectedStateCommand implements UidEnabledCommand {
+public class CopyCommand extends SelectedStateCommand implements UidEnabledCommand {
     public static final String NAME = "COPY";
     public static final String ARGS = "<message-set> <mailbox>";
 
-    CopyCommand() {
+    public CopyCommand() {
         super(NAME, ARGS);
     }
 

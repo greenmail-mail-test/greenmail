@@ -6,6 +6,8 @@
  */
 package com.icegreen.greenmail.store;
 
+import com.icegreen.greenmail.imap.commands.parsers.search.SearchTermBuilder;
+
 import java.util.Date;
 
 import javax.mail.Flags;
@@ -30,7 +32,7 @@ public class StoredMessage {
      * Wraps a mime message and provides support for uid.
      * Required for searching.
      *
-     * @see com.icegreen.greenmail.imap.commands.SearchTermBuilder.UidSearchTerm
+     * @see SearchTermBuilder.UidSearchTerm
      */
     public static class UidAwareMimeMessage extends MimeMessage {
         private long uid;

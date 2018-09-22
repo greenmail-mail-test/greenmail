@@ -10,6 +10,7 @@ import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ImapResponse;
 import com.icegreen.greenmail.imap.ImapSession;
 import com.icegreen.greenmail.imap.ProtocolException;
+import com.icegreen.greenmail.imap.commands.parsers.SearchCommandParser;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
 
@@ -21,13 +22,13 @@ import java.nio.charset.CharacterCodingException;
  *
  * @author Darrell DeBoer <darrell@apache.org>
  */
-class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
+public class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
     public static final String NAME = "SEARCH";
     public static final String ARGS = "<search term>";
 
     private SearchCommandParser searchParser = new SearchCommandParser();
 
-    SearchCommand() {
+    public SearchCommand() {
         super(NAME, ARGS);
     }
 

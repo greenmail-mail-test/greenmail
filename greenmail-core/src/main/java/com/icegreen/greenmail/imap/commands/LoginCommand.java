@@ -18,11 +18,11 @@ import com.icegreen.greenmail.user.GreenMailUser;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-class LoginCommand extends NonAuthenticatedStateCommand {
+public class LoginCommand extends NonAuthenticatedStateCommand {
     public static final String NAME = "LOGIN";
     public static final String ARGS = "<userid> <password>";
 
-    LoginCommand() {
+    public LoginCommand() {
         super(NAME, ARGS);
     }
 

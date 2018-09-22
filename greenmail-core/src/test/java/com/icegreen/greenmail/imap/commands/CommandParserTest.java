@@ -1,5 +1,6 @@
 package com.icegreen.greenmail.imap.commands;
 
+import com.icegreen.greenmail.imap.commands.parsers.CommandParser;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

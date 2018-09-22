@@ -16,11 +16,11 @@ import com.icegreen.greenmail.store.MailFolder;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-class SelectCommand extends AuthenticatedStateCommand {
+public class SelectCommand extends AuthenticatedStateCommand {
     public static final String NAME = "SELECT";
     public static final String ARGS = "mailbox";
 
-    SelectCommand() {
+    public SelectCommand() {
         super(NAME, ARGS);
     }
 

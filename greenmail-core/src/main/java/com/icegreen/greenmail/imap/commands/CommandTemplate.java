@@ -7,6 +7,7 @@
 package com.icegreen.greenmail.imap.commands;
 
 import com.icegreen.greenmail.imap.*;
+import com.icegreen.greenmail.imap.commands.parsers.CommandParser;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
 import org.slf4j.Logger;
@@ -19,14 +20,14 @@ import org.slf4j.LoggerFactory;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-abstract class CommandTemplate
+public abstract class CommandTemplate
         implements ImapCommand, ImapConstants {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected CommandParser parser = new CommandParser();
     private String name;
     private String argSyntax;
 
-    CommandTemplate(String name, String argSyntax) {
+    public CommandTemplate(String name, String argSyntax) {
         this.name = name;
         this.argSyntax = argSyntax;
     }

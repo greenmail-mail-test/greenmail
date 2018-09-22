@@ -1,6 +1,7 @@
 package com.icegreen.greenmail.imap.commands;
 
 import com.icegreen.greenmail.imap.*;
+import com.icegreen.greenmail.imap.commands.parsers.SortCommandParser;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.StoredMessage;
@@ -15,14 +16,14 @@ import java.util.*;
  *
  * @author Reda.Housni-Alaoui
  */
-class SortCommand extends SelectedStateCommand implements UidEnabledCommand {
+public class SortCommand extends SelectedStateCommand implements UidEnabledCommand {
 
     public static final String NAME = "SORT";
     public static final String ARGS = "(<sort criteria>) <charset specification> <search term>";
 
     private SortCommandParser sortCommandParser = new SortCommandParser();
 
-    SortCommand() {
+    public SortCommand() {
         super(NAME, ARGS);
     }
 

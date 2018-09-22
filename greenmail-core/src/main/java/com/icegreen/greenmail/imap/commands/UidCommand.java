@@ -18,12 +18,12 @@ import com.icegreen.greenmail.store.FolderException;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-class UidCommand extends SelectedStateCommand {
+public class UidCommand extends SelectedStateCommand {
     public static final String NAME = "UID";
 
     private ImapCommandFactory commandFactory;
 
-    UidCommand() {
+    public UidCommand() {
         super(NAME, "<fetch-command>|<store-command>|<copy-command>|<search-command>|<expunge-command>");
     }
 

@@ -1,4 +1,4 @@
-package com.icegreen.greenmail.imap.commands;
+package com.icegreen.greenmail.imap.commands.parsers.search;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -28,6 +28,8 @@ import javax.mail.search.SearchTerm;
 import javax.mail.search.SentDateTerm;
 import javax.mail.search.SubjectTerm;
 
+import com.icegreen.greenmail.imap.commands.IdRange;
+import com.icegreen.greenmail.imap.commands.SearchKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -206,7 +208,7 @@ public abstract class SearchTermBuilder {
         };
     }
 
-    SearchTermBuilder addParameter(final String pParameter) {
+    public SearchTermBuilder addParameter(final String pParameter) {
         if (Collections.<String>emptyList() == parameters) {
             parameters = new ArrayList<>();
         }
@@ -226,7 +228,7 @@ public abstract class SearchTermBuilder {
         return parameters.size() < key.getNumberOfParameters();
     }
 
-    boolean isCharsetAware() {
+    public boolean isCharsetAware() {
         return key.isCharsetAware();
     }
 

@@ -18,10 +18,10 @@ import com.icegreen.greenmail.store.FolderException;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-class UnsubscribeCommand extends AuthenticatedStateCommand {
+public class UnsubscribeCommand extends AuthenticatedStateCommand {
     public static final String NAME = "UNSUBSCRIBE";
 
-    UnsubscribeCommand() {
+    public UnsubscribeCommand() {
         super(NAME, "<mailbox>");
     }
 

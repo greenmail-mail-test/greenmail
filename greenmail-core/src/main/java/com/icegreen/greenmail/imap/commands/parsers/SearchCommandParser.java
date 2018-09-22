@@ -4,10 +4,12 @@
  * This file has been modified by the copyright holder.
  * Original file can be found at http://james.apache.org
  */
-package com.icegreen.greenmail.imap.commands;
+package com.icegreen.greenmail.imap.commands.parsers;
 
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ProtocolException;
+import com.icegreen.greenmail.imap.commands.SearchKey;
+import com.icegreen.greenmail.imap.commands.parsers.search.SearchTermBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +28,7 @@ import static com.icegreen.greenmail.imap.commands.IdRange.SEQUENCE;
  *
  * @author Darrell DeBoer <darrell@apache.org>
  */
-class SearchCommandParser extends CommandParser {
+public class SearchCommandParser extends CommandParser {
     private final Logger log = LoggerFactory.getLogger(SearchCommandParser.class);
     private static final String CHARSET_TOKEN = "CHARSET";
 
@@ -40,7 +42,7 @@ class SearchCommandParser extends CommandParser {
         SearchTerm resultTerm = null;
         SearchTermBuilder b = null;
         SearchKey key = null;
-	boolean orKey = false;
+        boolean orKey = false;
         boolean negated = false;
         // Dummy implementation
         // Consume to the end of the line.

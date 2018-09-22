@@ -20,7 +20,7 @@ import com.icegreen.greenmail.store.FolderException;
 public class QuotaRootCommand extends QuotaCommand {
     public static final String NAME = "GETQUOTAROOT";
 
-    QuotaRootCommand() {
+    public QuotaRootCommand() {
         super(NAME);
     }
     @Override

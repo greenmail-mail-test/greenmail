@@ -1,7 +1,9 @@
-package com.icegreen.greenmail.imap.commands;
+package com.icegreen.greenmail.imap.commands.parsers;
 
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ProtocolException;
+import com.icegreen.greenmail.imap.commands.SortKey;
+import com.icegreen.greenmail.imap.commands.SortTerm;
 
 import java.nio.charset.CharacterCodingException;
 
@@ -10,7 +12,7 @@ import java.nio.charset.CharacterCodingException;
  *
  * @author Reda.Housni-Alaoui
  */
-class SortCommandParser extends CommandParser {
+public class SortCommandParser extends CommandParser {
 
     private SearchCommandParser searchCommandParser = new SearchCommandParser();
 

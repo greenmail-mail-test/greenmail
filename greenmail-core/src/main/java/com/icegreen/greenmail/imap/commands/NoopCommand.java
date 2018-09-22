@@ -18,10 +18,10 @@ import com.icegreen.greenmail.store.FolderException;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-class NoopCommand extends CommandTemplate {
+public class NoopCommand extends CommandTemplate {
     public static final String NAME = "NOOP";
 
-    NoopCommand() {
+    public NoopCommand() {
         super(NAME, null);
     }
 

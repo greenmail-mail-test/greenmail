@@ -7,6 +7,10 @@
 package com.icegreen.greenmail.imap.commands;
 
 import com.icegreen.greenmail.imap.*;
+import com.icegreen.greenmail.imap.commands.parsers.FetchCommandParser;
+import com.icegreen.greenmail.imap.commands.parsers.fetch.BodyFetchElement;
+import com.icegreen.greenmail.imap.commands.parsers.fetch.FetchRequest;
+import com.icegreen.greenmail.imap.commands.parsers.fetch.Partial;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MessageFlags;
 import com.icegreen.greenmail.store.StoredMessage;
@@ -32,7 +36,7 @@ import java.util.regex.Pattern;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
+public class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
     public static final String NAME = "FETCH";
     public static final String ARGS = "<message-set> <fetch-profile>";
     private static final Flags FLAGS_SEEN = new Flags(Flags.Flag.SEEN);
@@ -40,7 +44,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
     private FetchCommandParser fetchParser = new FetchCommandParser();
 
-    FetchCommand() {
+    public FetchCommand() {
         super(NAME, ARGS);
     }
 
@@ -63,7 +67,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         fetchParser.endLine(request);
 
         if (useUids) {
-            fetch.uid = true;
+            fetch.setUid(true);
         }
 
         ImapSessionFolder mailbox = session.getSelected();
@@ -112,13 +116,13 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         StringBuilder response = new StringBuilder();
 
         // FLAGS response
-        if (fetch.flags || ensureFlagsResponse) {
+        if (fetch.isFlags() || ensureFlagsResponse) {
             response.append(" FLAGS ");
             response.append(MessageFlags.format(message.getFlags()));
         }
 
         // INTERNALDATE response
-        if (fetch.internalDate) {
+        if (fetch.isInternalDate()) {
             response.append(" INTERNALDATE \"");
             // TODO format properly
             response.append(message.getAttributes().getReceivedDateAsString());
@@ -126,31 +130,31 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         }
 
         // RFC822.SIZE response
-        if (fetch.size) {
+        if (fetch.isSize()) {
             response.append(" RFC822.SIZE ");
             response.append(message.getAttributes().getSize());
         }
 
         // ENVELOPE response
-        if (fetch.envelope) {
+        if (fetch.isEnvelope()) {
             response.append(" ENVELOPE ");
             response.append(message.getAttributes().getEnvelope());
         }
 
         // BODY response
-        if (fetch.body) {
+        if (fetch.isBody()) {
             response.append(" BODY ");
             response.append(message.getAttributes().getBodyStructure(false));
         }
 
         // BODYSTRUCTURE response
-        if (fetch.bodyStructure) {
+        if (fetch.isBodyStructure()) {
             response.append(" BODYSTRUCTURE ");
             response.append(message.getAttributes().getBodyStructure(true));
         }
 
         // UID response
-        if (fetch.uid) {
+        if (fetch.isUid()) {
             response.append(" UID ");
             response.append(message.getUid());
         }
@@ -287,7 +291,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             byte[] newBytes = new byte[len];
             System.arraycopy(bytes, start, newBytes, 0, len);
             bytes = newBytes;
-            response.append('<').append(partial.start).append('>');
+            response.append('<').append(partial.getStart()).append('>');
         }
         return bytes;
     }
@@ -340,7 +344,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             int len = partial.computeLength(partialContent.length()); // TODO : Charset?
             int start = partial.computeStart(partialContent.length());
 
-            response.append('<').append(partial.start).append('>');
+            response.append('<').append(partial.getStart()).append('>');
             response.append(" {");
             response.append(len);
             response.append('}');
@@ -356,231 +360,6 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             response.append(buf);
         }
     }
-
-    private static class FetchCommandParser extends CommandParser {
-
-        FetchRequest fetchRequest(ImapRequestLineReader request)
-                throws ProtocolException {
-            FetchRequest fetch = new FetchRequest();
-
-            // Parenthesis optional if single 'atom'
-            char next = nextNonSpaceChar(request);
-            boolean parenthesis = '(' == next;
-            if (parenthesis) {
-                consumeChar(request, '(');
-
-                next = nextNonSpaceChar(request);
-                while (next != ')') {
-                    addNextElement(request, fetch);
-                    next = nextNonSpaceChar(request);
-                }
-
-                consumeChar(request, ')');
-            } else {
-                // Single item
-                addNextElement(request, fetch);
-            }
-
-            return fetch;
-        }
-
-        private void addNextElement(ImapRequestLineReader command, FetchRequest fetch)
-                throws ProtocolException {
-            char next = nextCharInLine(command);
-            StringBuilder element = new StringBuilder();
-            while (next != ' ' && next != '[' && next != ')' && !isCrOrLf(next)) {
-                element.append(next);
-                command.consume();
-                next = command.nextChar();
-            }
-            String name = element.toString();
-            // Simple elements with no '[]' parameters.
-            if (next == ' ' || next == ')' || isCrOrLf(next)) {
-                if ("FAST".equalsIgnoreCase(name)) {
-                    fetch.flags = true;
-                    fetch.internalDate = true;
-                    fetch.size = true;
-                } else if ("FULL".equalsIgnoreCase(name)) {
-                    fetch.flags = true;
-                    fetch.internalDate = true;
-                    fetch.size = true;
-                    fetch.envelope = true;
-                    fetch.body = true;
-                } else if ("ALL".equalsIgnoreCase(name)) {
-                    fetch.flags = true;
-                    fetch.internalDate = true;
-                    fetch.size = true;
-                    fetch.envelope = true;
-                } else if ("FLAGS".equalsIgnoreCase(name)) {
-                    fetch.flags = true;
-                } else if ("RFC822.SIZE".equalsIgnoreCase(name)) {
-                    fetch.size = true;
-                } else if ("ENVELOPE".equalsIgnoreCase(name)) {
-                    fetch.envelope = true;
-                } else if ("INTERNALDATE".equalsIgnoreCase(name)) {
-                    fetch.internalDate = true;
-                } else if ("BODY".equalsIgnoreCase(name)) {
-                    fetch.body = true;
-                } else if ("BODYSTRUCTURE".equalsIgnoreCase(name)) {
-                    fetch.bodyStructure = true;
-                } else if ("UID".equalsIgnoreCase(name)) {
-                    fetch.uid = true;
-                } else if ("RFC822".equalsIgnoreCase(name)) {
-                    fetch.add(new BodyFetchElement("RFC822", ""), false);
-                } else if ("RFC822.HEADER".equalsIgnoreCase(name)) {
-                    fetch.add(new BodyFetchElement("RFC822.HEADER", "HEADER"), true);
-                } else if ("RFC822.TEXT".equalsIgnoreCase(name)) {
-                    fetch.add(new BodyFetchElement("RFC822.TEXT", "TEXT"), false);
-                } else {
-                    throw new ProtocolException("Invalid fetch attribute: " + name);
-                }
-            } else {
-                consumeChar(command, '[');
-
-                StringBuilder sectionIdentifier = new StringBuilder();
-                next = nextCharInLine(command);
-                while (next != ']') {
-                    sectionIdentifier.append(next);
-                    command.consume();
-                    next = nextCharInLine(command);
-                }
-                consumeChar(command, ']');
-
-                String parameter = sectionIdentifier.toString();
-
-                Partial partial = null;
-                next = command.nextChar(); // Can be end of line if single option
-                if ('<' == next) { // Partial eg <2000> or <0.1000>
-                    partial = parsePartial(command);
-                }
-
-                if ("BODY".equalsIgnoreCase(name)) {
-                    fetch.add(new BodyFetchElement("BODY[" + parameter + ']', parameter, partial), false);
-                } else if ("BODY.PEEK".equalsIgnoreCase(name)) {
-                    fetch.add(new BodyFetchElement("BODY[" + parameter + ']', parameter, partial), true);
-                } else {
-                    throw new ProtocolException("Invalid fetch attribute: " + name + "[]");
-                }
-            }
-        }
-
-        private Partial parsePartial(ImapRequestLineReader command) throws ProtocolException {
-            consumeChar(command, '<');
-            int size = (int) consumeLong(command); // Assume <start>
-            int start = 0;
-            if (command.nextChar() == '.') {
-                consumeChar(command, '.');
-                start = size; // Assume <start.size> , so switch fields
-                size = (int) consumeLong(command);
-            }
-            consumeChar(command, '>');
-            return Partial.as(start, size);
-        }
-
-        private char nextCharInLine(ImapRequestLineReader request)
-                throws ProtocolException {
-            char next = request.nextChar();
-            if (isCrOrLf(next)) {
-                request.dumpLine();
-                throw new ProtocolException("Unexpected end of line (CR or LF).");
-            }
-            return next;
-        }
-
-        private char nextNonSpaceChar(ImapRequestLineReader request)
-                throws ProtocolException {
-            char next = request.nextChar();
-            while (next == ' ') {
-                request.consume();
-                next = request.nextChar();
-            }
-            return next;
-        }
-
-    }
-
-    private static class FetchRequest {
-        boolean flags;
-        boolean uid;
-        boolean internalDate;
-        boolean size;
-        boolean envelope;
-        boolean body;
-        boolean bodyStructure;
-
-        private boolean setSeen = false;
-
-        private Set<BodyFetchElement> bodyElements = new HashSet<>();
-
-        public Collection<BodyFetchElement> getBodyElements() {
-            return bodyElements;
-        }
-
-        public boolean isSetSeen() {
-            return setSeen;
-        }
-
-        public void add(BodyFetchElement element, boolean peek) {
-            if (!peek) {
-                setSeen = true;
-            }
-            bodyElements.add(element);
-        }
-    }
-    /** See https://tools.ietf.org/html/rfc3501#page-55 : partial */
-    private static class Partial {
-        int start;
-        int size;
-
-        int computeLength(final int contentSize) {
-            if ( size > 0) {
-                return Math.min(size, contentSize - start); // Only up to max available bytes
-            } else {
-                // First len bytes
-                return contentSize;
-            }
-        }
-
-        int computeStart(final int contentSize) {
-            return Math.min(start, contentSize);
-        }
-
-        public static Partial as(int start, int size) {
-            Partial p = new Partial();
-            p.start = start;
-            p.size = size;
-            return p;
-        }
-    }
-
-    private static class BodyFetchElement {
-        private String name;
-        private String sectionIdentifier;
-        private Partial partial;
-
-        public BodyFetchElement(String name, String sectionIdentifier) {
-            this(name, sectionIdentifier, null);
-        }
-
-        public BodyFetchElement(String name, String sectionIdentifier, Partial partial) {
-            this.name = name;
-            this.sectionIdentifier = sectionIdentifier;
-            this.partial = partial;
-        }
-
-        public String getParameters() {
-            return this.sectionIdentifier;
-        }
-
-        public String getResponseName() {
-            return this.name;
-        }
-
-        public Partial getPartial() {
-            return partial;
-        }
-    }
-
 }
 
 /*
