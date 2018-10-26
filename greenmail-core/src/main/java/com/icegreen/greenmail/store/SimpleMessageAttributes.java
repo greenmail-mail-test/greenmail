@@ -361,7 +361,7 @@ public class SimpleMessageAttributes
     private String parseAddress(String address) {
         try {
             StringBuilder buf = new StringBuilder();
-            InternetAddress[] netAddrs = InternetAddress.parse(address);
+            InternetAddress[] netAddrs = InternetAddress.parseHeader(address, false);
             for (InternetAddress netAddr : netAddrs) {
                 if (buf.length() > 0) {
                     buf.append(SP);
