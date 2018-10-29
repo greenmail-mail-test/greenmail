@@ -32,7 +32,7 @@ public class ImapRequestLineReader {
     private StringBuilder buf = new StringBuilder();
     private static final Pattern CARRIAGE_RETURN = Pattern.compile("\r\n");
 
-    ImapRequestLineReader(InputStream input, OutputStream output) {
+    public ImapRequestLineReader(InputStream input, OutputStream output) {
         this.input = input;
         this.output = output;
     }
