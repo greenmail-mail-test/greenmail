@@ -26,6 +26,7 @@ import javax.mail.search.RecipientStringTerm;
 import javax.mail.search.RecipientTerm;
 import javax.mail.search.SearchTerm;
 import javax.mail.search.SentDateTerm;
+import javax.mail.search.SizeTerm;
 import javax.mail.search.SubjectTerm;
 
 import org.slf4j.Logger;
@@ -148,7 +149,13 @@ public abstract class SearchTermBuilder {
                 break;
             case SENTBEFORE:
                 builder = createSentDateTermBuilder(ComparisonTerm.LT);
-                break;             
+                break;
+            case LARGER:
+                builder = createMessageSizeTermBuilder(ComparisonTerm.GT);
+                break;
+            case SMALLER:
+                builder = createMessageSizeTermBuilder(ComparisonTerm.LT);
+                break;
             default:
                 throw new IllegalStateException("Unsupported search term '" + key + '\'');
         }
@@ -174,6 +181,15 @@ public abstract class SearchTermBuilder {
         };
     }
 
+    private static SearchTermBuilder createMessageSizeTermBuilder(final int searchTerm) {
+        return new SearchTermBuilder() {
+            @Override
+            public SearchTerm build() {
+                return new SizeTerm(searchTerm, SearchTermBuilder.parseInteger(getParameters()));
+            }
+        };
+    }
+
     private static Date parseDate(List<String> parameters) {
         DateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
         String date = parameters.get(0);
@@ -185,6 +201,18 @@ public abstract class SearchTermBuilder {
             throw new IllegalArgumentException("Unable to parse date '" + date+"'",e);
         }
     }
+
+    private static int parseInteger(List<String> parameters) {
+        String integer = parameters.get(0);
+        try {
+            int i = Integer.parseInt(integer);
+            LOGGER.debug("Using date '{}'.", i);
+            return i;
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Unable to parse integer '" + integer + "'",e);
+        }
+    }
+
 	private static SearchTermBuilder createORTermBuilder() {
 			 return new SearchTermBuilder() {
 	            @Override
