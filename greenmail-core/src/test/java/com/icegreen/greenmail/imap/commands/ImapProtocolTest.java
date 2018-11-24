@@ -1,10 +1,15 @@
 package com.icegreen.greenmail.imap.commands;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import javax.mail.*;
+import javax.mail.internet.MimeMessage;
+
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.sun.mail.iap.Argument;
 import com.sun.mail.iap.ByteArray;
@@ -16,12 +21,6 @@ import com.sun.mail.imap.protocol.*;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-
-import javax.mail.*;
-import javax.mail.internet.MimeMessage;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -56,7 +55,7 @@ public class ImapProtocolTest {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
             folder.open(Folder.READ_ONLY);
             assertFalse(folder.getFolder("non existent folder").exists());
-            for(final String cmd : new String[]{
+            for (final String cmd : new String[]{
                     "STATUS \"non existent folder\" (MESSAGES UIDNEXT UIDVALIDITY UNSEEN)",
                     "SELECT \"non existent folder\""
             }) {
@@ -307,7 +306,7 @@ public class ImapProtocolTest {
         try {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
             folder.open(Folder.READ_WRITE);
-            folder.setFlags(new int[]{2,3}, new Flags(Flags.Flag.ANSWERED), true);
+            folder.setFlags(new int[]{2, 3}, new Flags(Flags.Flag.ANSWERED), true);
             Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
                 @Override
                 public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
@@ -456,6 +455,36 @@ public class ImapProtocolTest {
                 String number = response.getRest();
                 assertEquals(charsetAndQuery[2], number);
             }
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
+    public void testUidSearchAll() throws MessagingException, IOException {
+        greenMail.setUser("foo2@localhost", "pwd");
+        store.connect("foo2@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+
+            final MimeMessage email = GreenMailUtil.createTextEmail("foo2@localhost", "foo@localhost",
+                    "some subject", "some content",
+                    greenMail.getSmtp().getServerSetup());
+
+
+            final IMAPFolder.ProtocolCommand uid_search_all = new IMAPFolder.ProtocolCommand() {
+                @Override
+                public Object doCommand(IMAPProtocol protocol) {
+                    return protocol.command("UID SEARCH ALL", null);
+                }
+            };
+
+            // Search empty
+            Response[] ret = (Response[]) folder.doCommand(uid_search_all);
+            IMAPResponse response = (IMAPResponse) ret[0];
+            assertFalse(response.isBAD());
+            assertEquals("* SEARCH", response.toString());
         } finally {
             store.close();
         }
