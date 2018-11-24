@@ -220,7 +220,7 @@ public class ImapResponse implements ImapConstants {
     }
 
     private void message(String message) {
-        if (message != null) {
+        if (message != null && !message.isEmpty()) {
             writer.print(SP);
             writer.print(message);
         }
