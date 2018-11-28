@@ -25,14 +25,14 @@ jobs:
       - restore_cache:
           key: greenmail-{{ checksum "pom.xml" }}
 
-      - run: mvn -V clean package -DskipTests dependency:resolve-plugins dependency:go-offline -pl "!greenmail-junit5"
+      - run: mvn -V clean package -DskipTests dependency:resolve-plugins dependency:go-offline
 
       - save_cache:
           paths:
             - ~/.m2
           key: greenmail-{{ checksum "pom.xml" }}
 
-      - run: mvn -V -pl "!greenmail-junit5" clean install
+      - run: mvn -V clean install
 
       - run:
           name: Save test results
