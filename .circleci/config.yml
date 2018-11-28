@@ -17,7 +17,7 @@ jobs:
       - run: >
           apk add --no-cache curl
           && mkdir -p /usr/share/maven
-          && curl -fsSL -o /tmp/apache-maven.tar.gz http://www-us.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz
+          && curl -fsSL -o /tmp/apache-maven.tar.gz https://www-us.apache.org/dist/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.tar.gz
           && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
           && rm -f /tmp/apache-maven.tar.gz
           && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
@@ -61,7 +61,7 @@ jobs:
       - run: >
           apk add --no-cache curl
           && mkdir -p /usr/share/maven
-          && curl -fsSL -o /tmp/apache-maven.tar.gz http://www-us.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz
+          && curl -fsSL -o /tmp/apache-maven.tar.gz https://www-us.apache.org/dist/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.tar.gz
           && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
           && rm -f /tmp/apache-maven.tar.gz
           && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
@@ -106,7 +106,7 @@ jobs:
       - run: >
           apt-get update && apt-get install -y curl
           && mkdir -p /usr/share/maven
-          && curl -fsSL -o /tmp/apache-maven.tar.gz http://www-us.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz
+          && curl -fsSL -o /tmp/apache-maven.tar.gz https://www-us.apache.org/dist/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.tar.gz
           && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
           && rm -f /tmp/apache-maven.tar.gz
           && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
@@ -151,7 +151,7 @@ jobs:
       - run: >
           apt-get update && apt-get install -y curl
           && mkdir -p /usr/share/maven
-          && curl -fsSL -o /tmp/apache-maven.tar.gz http://www-us.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz
+          && curl -fsSL -o /tmp/apache-maven.tar.gz https://www-us.apache.org/dist/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.tar.gz
           && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
           && rm -f /tmp/apache-maven.tar.gz
           && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
