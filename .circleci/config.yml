@@ -144,7 +144,6 @@ jobs:
 
     environment:
       MAVEN_HOME: /usr/share/maven
-      MAVEN_OPTS: "--add-modules java.xml.bind"
     steps:
       - checkout
 
