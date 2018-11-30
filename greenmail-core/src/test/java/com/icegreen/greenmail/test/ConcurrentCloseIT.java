@@ -1,5 +1,6 @@
 package com.icegreen.greenmail.test;
 
+import java.util.concurrent.TimeUnit;
 import javax.mail.internet.MimeMessage;
 
 import com.icegreen.greenmail.util.GreenMail;
@@ -10,29 +11,22 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class ConcurrentCloseIT {
+
     @Test
     public void concurrentCloseTest() throws Exception {
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 5000; i++) {
             testThis();
+            // Avoid TIME_WAIT issues.
+            TimeUnit.MILLISECONDS.sleep(2);
         }
     }
 
-    private volatile RuntimeException exc;
     private void testThis() throws InterruptedException {
-        exc = null;
         final GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP);
-        greenMail.setUser("test@localhost","test@localhost");
+        greenMail.setUser("test@localhost", "test@localhost");
         greenMail.start();
+        final SenderThread sendThread = new SenderThread();
         try {
-            final Thread sendThread = new Thread() {
-                public void run() {
-                    try {
-                        GreenMailUtil.sendTextEmail("test@localhost", "from@localhost", "abc", "def", ServerSetupTest.SMTP);
-                    } catch (final Throwable e) {
-                        exc = new IllegalStateException(e);
-                    }
-                }
-            };
             sendThread.start();
             greenMail.waitForIncomingEmail(3000, 1);
             final MimeMessage[] emails = greenMail.getReceivedMessages();
@@ -41,8 +35,21 @@ public class ConcurrentCloseIT {
         } finally {
             greenMail.stop();
         }
-        if (exc != null) {
-            throw exc;
+
+        if (sendThread.exc != null) {
+            throw sendThread.exc;
+        }
+    }
+
+    private static class SenderThread extends Thread {
+        RuntimeException exc;
+
+        public void run() {
+            try {
+                GreenMailUtil.sendTextEmail("test@localhost", "from@localhost", "abc", "def", ServerSetupTest.SMTP);
+            } catch (final Throwable e) {
+                exc = new IllegalStateException(e);
+            }
         }
     }
 }
