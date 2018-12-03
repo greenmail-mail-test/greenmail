@@ -299,7 +299,9 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         response.append("\r\n");
 
         for (byte b : bytes) {
-            response.append((char) b);
+            // See https://github.com/greenmail-mail-test/greenmail/issues/257
+            final char c = (char) (b & 0xFF);
+            response.append(c);
         }
     }
 
