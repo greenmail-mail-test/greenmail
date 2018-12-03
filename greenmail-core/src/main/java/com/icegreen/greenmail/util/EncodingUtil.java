@@ -1,6 +1,8 @@
 package com.icegreen.greenmail.util;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
@@ -31,5 +33,19 @@ public class EncodingUtil {
     public static InputStream toStream(String content, Charset charset) {
         byte[] bytes = content.getBytes(charset);
         return new ByteArrayInputStream(bytes);
+    }
+
+    public static String toString(InputStream is, Charset charset) {
+        ByteArrayOutputStream data = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int length;
+        try {
+            while ((length = is.read(buffer)) != -1) {
+                data.write(buffer, 0, length);
+            }
+            return data.toString(charset.name());
+        } catch (IOException e) {
+            throw new IllegalStateException("Can not convert stream to string of charset " + charset, e);
+        }
     }
 }
