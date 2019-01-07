@@ -43,13 +43,4 @@ public class ServerSetupTest {
     public static final ServerSetup[] SMTPS_IMAPS = new ServerSetup[]{SMTPS, IMAPS};
 
     public static final ServerSetup[] ALL = new ServerSetup[]{SMTP, SMTPS, POP3, POP3S, IMAP, IMAPS};
-
-    public static int getPortOffset() {
-        return portOffset;
-    }
-
-    public static void setPortOffset(int portOffset) {
-        ServerSetupTest.portOffset = portOffset;
-    }
-
 }
