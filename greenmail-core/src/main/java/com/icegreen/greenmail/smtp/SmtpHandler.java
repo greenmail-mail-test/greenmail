@@ -18,22 +18,22 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
-class SmtpHandler implements ProtocolHandler {
-    private static final Logger log = LoggerFactory.getLogger(SmtpHandler.class);
+public class SmtpHandler implements ProtocolHandler {
+    protected static final Logger log = LoggerFactory.getLogger(SmtpHandler.class);
 
     // protocol and configuration global stuff
-    SmtpCommandRegistry registry;
-    SmtpManager manager;
-    Workspace workspace;
+    protected SmtpCommandRegistry registry;
+    protected SmtpManager manager;
+    protected Workspace workspace;
 
     // session stuff
-    SmtpConnection conn;
-    SmtpState state;
+    protected SmtpConnection conn;
+    protected SmtpState state;
 
     // command parsing stuff
-    boolean quitting;
-    String currentLine;
-    private Socket socket;
+    protected boolean quitting;
+    protected String currentLine;
+    protected Socket socket;
 
     public SmtpHandler(SmtpCommandRegistry registry,
                        SmtpManager manager, Workspace workspace, Socket socket) {
@@ -106,7 +106,7 @@ class SmtpHandler implements ProtocolHandler {
         command.execute(conn, state, manager, currentLine);
     }
 
-    private boolean commandLegalSize() {
+    protected boolean commandLegalSize() {
         if (currentLine.length() < 4) {
             conn.send("500 Invalid command. Must be 4 characters");
 
