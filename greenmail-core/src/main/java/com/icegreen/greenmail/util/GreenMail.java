@@ -31,10 +31,10 @@ import org.slf4j.LoggerFactory;
  * Utility class that manages a greenmail server with support for multiple protocols
  */
 public class GreenMail extends ConfiguredGreenMail {
-    final Logger log = LoggerFactory.getLogger(GreenMail.class);
-    private Managers managers;
-    private Map<String, AbstractServer> services;
-    private ServerSetup[] config;
+    protected final Logger log = LoggerFactory.getLogger(GreenMail.class);
+    protected Managers managers;
+    protected Map<String, AbstractServer> services;
+    protected ServerSetup[] config;
 
     /**
      * Creates a SMTP, SMTPS, POP3, POP3S, IMAP, and IMAPS server binding onto non-default ports.
@@ -135,7 +135,7 @@ public class GreenMail extends ConfiguredGreenMail {
      * @param config Service configuration
      * @return Services map
      */
-    private static Map<String, AbstractServer> createServices(ServerSetup[] config, Managers mgr) {
+    protected static Map<String, AbstractServer> createServices(ServerSetup[] config, Managers mgr) {
         Map<String, AbstractServer> srvc = new HashMap<>();
         for (ServerSetup setup : config) {
             if (srvc.containsKey(setup.getProtocol())) {
