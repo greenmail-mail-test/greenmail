@@ -135,7 +135,7 @@ public class GreenMail extends ConfiguredGreenMail {
      * @param config Service configuration
      * @return Services map
      */
-    protected static Map<String, AbstractServer> createServices(ServerSetup[] config, Managers mgr) {
+    protected Map<String, AbstractServer> createServices(ServerSetup[] config, Managers mgr) {
         Map<String, AbstractServer> srvc = new HashMap<>();
         for (ServerSetup setup : config) {
             if (srvc.containsKey(setup.getProtocol())) {
