@@ -32,6 +32,7 @@ public class GreenMailUtil {
     private static int generateCount = 0;
     private static final String GENERATE_SET = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPRSTUVWXYZ23456789";
     private static final int GENERATE_SET_SIZE = GENERATE_SET.length();
+    private static final Random RANDOM = new Random();
 
     private static GreenMailUtil instance = new GreenMailUtil();
 
@@ -179,16 +180,14 @@ public class GreenMailUtil {
      * @return the random string.
      */
     public static String random() {
-        Random r = new Random();
-        int nbrOfLetters = r.nextInt(3) + 5;
+        int nbrOfLetters = RANDOM.nextInt(3) + 5;
         return random(nbrOfLetters);
     }
 
     public static String random(int nbrOfLetters) {
-        Random r = new Random();
         StringBuilder ret = new StringBuilder();
         for (/* empty */; nbrOfLetters > 0; nbrOfLetters--) {
-            int pos = (r.nextInt(GENERATE_SET_SIZE) + (++generateCount)) % GENERATE_SET_SIZE;
+            int pos = (RANDOM.nextInt(GENERATE_SET_SIZE) + (++generateCount)) % GENERATE_SET_SIZE;
             ret.append(GENERATE_SET.charAt(pos));
         }
         return ret.toString();
