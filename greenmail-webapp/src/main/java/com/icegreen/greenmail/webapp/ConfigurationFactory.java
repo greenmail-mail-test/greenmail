@@ -58,7 +58,7 @@ public class ConfigurationFactory {
                 if ("host".equals(hostOrPort)) {
                     serviceConf.hostname = pValue;
                 } else if ("port".equals(hostOrPort)) {
-                    serviceConf.port = Integer.valueOf(pValue);
+                    serviceConf.port = Integer.parseInt(pValue);
                 }
             }
         }
