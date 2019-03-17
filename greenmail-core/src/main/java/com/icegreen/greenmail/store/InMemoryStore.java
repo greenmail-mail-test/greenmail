@@ -6,11 +6,11 @@
  */
 package com.icegreen.greenmail.store;
 
-import com.icegreen.greenmail.imap.ImapConstants;
-
+import java.util.*;
 import javax.mail.MessagingException;
 import javax.mail.Quota;
-import java.util.*;
+
+import com.icegreen.greenmail.imap.ImapConstants;
 
 /**
  * A simple in-memory implementation of {@link Store}, used for testing
@@ -22,8 +22,8 @@ import java.util.*;
 public class InMemoryStore
         implements Store, ImapConstants {
     boolean quotaSupported = true;
-    private RootFolder rootMailbox = new RootFolder();
-    private Map<String, Set<Quota>> quotaMap = new HashMap<>();
+    private final RootFolder rootMailbox = new RootFolder();
+    private final Map<String, Set<Quota>> quotaMap = new HashMap<>();
 
     @Override
     public MailFolder getMailbox(String absoluteMailboxName) {
@@ -147,7 +147,8 @@ public class InMemoryStore
         // We only handle wildcard at the end of the search pattern.
         if ((starIndex > -1 && starIndex < searchPattern.length() - 1) ||
                 (percentIndex > -1 && percentIndex < searchPattern.length() - 1)) {
-            throw new FolderException("WIldcard characters are only handled as the last character of a list argument.");
+            throw new FolderException("Wildcard characters <" + searchPattern
+                    + "> are only handled as the last character of a list argument");
         }
 
         List<MailFolder> mailboxes = new ArrayList<>();
