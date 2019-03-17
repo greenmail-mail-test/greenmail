@@ -5,6 +5,7 @@
 package com.icegreen.greenmail.store;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.mail.Flags;
 import javax.mail.Message;
@@ -34,8 +35,8 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
 
     private final StoredMessageCollection mailMessages = new ListBasedStoredMessageCollection();
     private final List<FolderListener> _mailboxListeners = Collections.synchronizedList(new ArrayList<FolderListener>());
-    protected volatile String name;
-    private final Collection<HierarchicalFolder> children = Collections.synchronizedList(new ArrayList<HierarchicalFolder>());
+    protected String name;
+    private final Collection<HierarchicalFolder> children = new CopyOnWriteArrayList<HierarchicalFolder>();
     private HierarchicalFolder parent;
     private boolean isSelectable = false;
     private AtomicLong nextUid = new AtomicLong(1);
@@ -48,8 +49,8 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         // "A good UIDVALIDITY value to use in this case
         //  is a 32-bit representation of the creation date/time of
         //  the mailbox."
-        uidValidity = System.currentTimeMillis()/1000L; // Must fit in unsigned 32bit, which works till > 2100
-        if(uidValidity >= 2L * Integer.MAX_VALUE) { // Enforce max
+        uidValidity = System.currentTimeMillis() / 1000L; // Must fit in unsigned 32bit, which works till > 2100
+        if (uidValidity >= 2L * Integer.MAX_VALUE) { // Enforce max
             throw new IllegalStateException(
                     "UIDVALIDITY value " + uidValidity + " does not fit as unsigned 32 bit int " +
                             2L * Integer.MAX_VALUE);
@@ -62,7 +63,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
      * @return the children.
      */
     public Collection<HierarchicalFolder> getChildren() {
-        return Collections.unmodifiableCollection(children);
+        return children;
     }
 
     public HierarchicalFolder getParent() {
@@ -70,20 +71,16 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     }
 
     void moveToNewParent(HierarchicalFolder newParent) {
-        synchronized (newParent.children) {
-            if (!newParent.children.contains(this)) {
-                parent = newParent;
-                parent.children.add(this);
-            }
+        if (!newParent.children.contains(this)) {
+            parent = newParent;
+            parent.children.add(this);
         }
     }
 
     HierarchicalFolder getChild(String name) {
-        synchronized (children) {
-            for (HierarchicalFolder child : children) {
-                if (child.getName().equalsIgnoreCase(name)) {
-                    return child;
-                }
+        for (HierarchicalFolder child : children) {
+            if (child.getName().equalsIgnoreCase(name)) {
+                return child;
             }
         }
         return null;
@@ -92,22 +89,16 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
 
     HierarchicalFolder createChild(String mailboxName) {
         HierarchicalFolder child = new HierarchicalFolder(this, mailboxName);
-        synchronized (children) {
-            children.add(child);
-        }
+        children.add(child);
         return child;
     }
 
     void removeChild(HierarchicalFolder toDelete) {
-        synchronized (children) {
-            children.remove(toDelete);
-        }
+        children.remove(toDelete);
     }
 
     boolean hasChildren() {
-        synchronized (children) {
-            return !children.isEmpty();
-        }
+        return !children.isEmpty();
     }
 
     @Override
@@ -116,9 +107,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     }
 
     public void setName(String name) {
-        synchronized (children) { // Access to children via name - see getChild(String)
-            this.name = name;
-        }
+        this.name = name;
     }
 
     @Override
