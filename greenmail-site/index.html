@@ -11,15 +11,9 @@
     <title>GreenMail</title>
 
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+          integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu"
           crossorigin="anonymous">
-
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
 
     <!-- Custom styles for this template -->
     <link href="css/docs.min.css" rel="stylesheet"/>
@@ -1615,6 +1609,8 @@ public final GreenMailRule greenMail = new GreenMailRule(ServerSetup.verbose(Ser
                     <li>
                         <a href="#download">Download</a>
                         <ul class="nav">
+                            <li><a href="#download_1_5_9">1.5.9</a></li>
+                            <li><a href="#download_1_5_8">1.5.8</a></li>
                             <li><a href="#download_1_5_7">1.5.7</a></li>
                             <li><a href="#download_1_5_6">1.5.6</a></li>
                             <li><a href="#download_1_5_5">1.5.5</a></li>
@@ -1646,33 +1642,14 @@ public final GreenMailRule greenMail = new GreenMailRule(ServerSetup.verbose(Ser
     <p>&copy; 2006 - 2019, Wael Chatila and GreenMail project contributors</a></p>
 </footer>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"
+        integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+        integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
+        crossorigin="anonymous"></script>
+
 <script src="js/prism.min.js"></script>
-<script>
-    /*!
-     * IE10 viewport hack for Surface/desktop Windows 8 bug
-     * Copyright 2014 Twitter, Inc.
-     * Licensed under the Creative Commons Attribution 3.0 Unported License. For
-     * details, see http://creativecommons.org/licenses/by/3.0/.
-     */
-
-    // See the Getting Started docs for more information:
-    // http://getbootstrap.com/getting-started/#support-ie10-width
-
-    (function () {
-        'use strict';
-        if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
-            var msViewportStyle = document.createElement('style')
-            msViewportStyle.appendChild(
-                    document.createTextNode(
-                            '@-ms-viewport{width:auto!important}'
-                    )
-            )
-            document.querySelector('head').appendChild(msViewportStyle)
-        }
-    })();
-</script>
 <script type="application/javascript">
     $(document).ready(function () {
         var $body = $(document.body);
