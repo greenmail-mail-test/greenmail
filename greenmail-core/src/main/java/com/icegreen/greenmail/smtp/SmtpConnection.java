@@ -9,6 +9,7 @@ package com.icegreen.greenmail.smtp;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 import com.icegreen.greenmail.util.EncodingUtil;
 import com.icegreen.greenmail.util.InternetPrintWriter;
@@ -37,7 +38,7 @@ public class SmtpConnection {
         OutputStream o = sock.getOutputStream();
         InputStream i = sock.getInputStream();
         out = InternetPrintWriter.createForEncoding(o, true, EncodingUtil.CHARSET_EIGHT_BIT_ENCODING);
-        in = new BufferedReader(new InputStreamReader(i));
+        in = new BufferedReader(new InputStreamReader(i, StandardCharsets.US_ASCII));
 
         this.handler = handler;
     }
