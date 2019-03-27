@@ -14,6 +14,7 @@ import java.util.*;
 
 public class UserManager {
     private static final Logger log = LoggerFactory.getLogger(UserManager.class);
+    public static final String PLUS_EXTENSION_REGEX = "\\+.*\\@";
     /**
      * User list by their trimmed, lowercased user names
      */
@@ -35,7 +36,12 @@ public class UserManager {
     }
 
     public GreenMailUser createUser(String email, String login, String password) throws UserException {
-        GreenMailUser user = new UserImpl(email, login, password, imapHostManager);
+        GreenMailUser user = new UserImpl(
+                normalizerEmail(email),
+                normalizerLogin(login),
+                normalizerPassword(password),
+                imapHostManager
+        );
         user.create();
         addUser(user);
         return user;
@@ -98,7 +104,19 @@ public class UserManager {
      * @return Normalized name
      */
     private static String normalizerUserName(String login) {
-        return login.trim().toLowerCase(Locale.ENGLISH);
+        return login != null ? login.trim().replaceFirst(PLUS_EXTENSION_REGEX, "").toLowerCase(Locale.ENGLISH) : null;
+    }
+
+    private static String normalizerEmail(String email) {
+        return email != null ? email.trim().replaceFirst(PLUS_EXTENSION_REGEX, "@").toLowerCase(Locale.ENGLISH) : null;
+    }
+
+    private String normalizerLogin(String login) {
+        return login != null ? login.trim().replaceFirst(PLUS_EXTENSION_REGEX, "@").toLowerCase(Locale.ENGLISH) : null;
+    }
+
+    private String normalizerPassword(String password) {
+        return password != null ? password.replaceFirst(PLUS_EXTENSION_REGEX, password) : null;
     }
 
     /**

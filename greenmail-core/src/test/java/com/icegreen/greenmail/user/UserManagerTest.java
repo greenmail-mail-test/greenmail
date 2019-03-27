@@ -1,15 +1,15 @@
 package com.icegreen.greenmail.user;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.imap.ImapHostManagerImpl;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.InMemoryStore;
 import com.icegreen.greenmail.store.MailFolder;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -46,6 +46,25 @@ public class UserManagerTest {
         assertEquals(u2, userManager.getUserByEmail(u2.getEmail()));
         assertEquals(u1, userManager.getUser(u1.getLogin()));
         assertEquals(u2, userManager.getUser(u2.getLogin()));
+    }
+
+    @Test
+    public void testFindByEmailAndLoginPlusExtension() throws UserException {
+        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
+        UserManager userManager = new UserManager(imapHostManager);
+        GreenMailUser u1 = userManager.createUser("foo+abc@bar.com", "foo", "pwd");
+
+        assertEquals(u1, userManager.getUserByEmail(u1.getEmail()));
+        assertEquals(u1, userManager.getUser(u1.getLogin()));
+
+        GreenMailUser u2 = userManager.createUser("foo2+abc@bar.com", "foo2", "pwd");
+        assertEquals(u1, userManager.getUserByEmail(u1.getEmail()));
+        assertEquals(u2, userManager.getUserByEmail(u2.getEmail()));
+        assertEquals(u1, userManager.getUser(u1.getLogin()));
+        assertEquals(u2, userManager.getUser(u2.getLogin()));
+
+        assertEquals("foo@bar.com", userManager.getUserByEmail(u1.getEmail()).getEmail());
+        assertEquals("foo2@bar.com", userManager.getUserByEmail(u2.getEmail()).getEmail());
     }
 
     @Test
