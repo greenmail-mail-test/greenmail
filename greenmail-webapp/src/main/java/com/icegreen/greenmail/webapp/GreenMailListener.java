@@ -25,6 +25,7 @@ public class GreenMailListener implements ServletContextListener {
     private Managers managers;
     private List<Service> services;
     private Configuration configuration;
+    
 
     @Override
     public void contextInitialized(final ServletContextEvent sce) {
@@ -51,6 +52,9 @@ public class GreenMailListener implements ServletContextListener {
             log.info("Starting GreenMail service: {}", s);
             s.startService();
         }
+        // Initialize context with variables to be retrieved by jsps.
+        sce.getServletContext().setAttribute(Constants.GM_MANAGERS_ATTRIBUTE_NAME, managers );
+        sce.getServletContext().setAttribute(Constants.GM_SERVICES_ATTRIBUTE_NAME, services );
     }
 
     @Override
@@ -60,6 +64,9 @@ public class GreenMailListener implements ServletContextListener {
             log.info("Stopping GreenMail service: {}", s);
             s.stopService();
         }
+        
+        sce.getServletContext().removeAttribute(Constants.GM_MANAGERS_ATTRIBUTE_NAME );
+        sce.getServletContext().removeAttribute(Constants.GM_SERVICES_ATTRIBUTE_NAME);
     }
 
     private Map<String, String> extractParameters(ServletContext pServletContext) {

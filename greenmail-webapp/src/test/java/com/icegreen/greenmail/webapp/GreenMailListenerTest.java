@@ -29,12 +29,16 @@ public class GreenMailListenerTest {
 
         Enumeration<String> params = Collections.enumeration(paramValues.keySet());
         ServletContext servletContext = EasyMock.createMock(ServletContext.class);
+        
         EasyMock.expect(servletContext.getInitParameterNames()).andReturn(params);
         for (Map.Entry<String, String> entry : paramValues.entrySet()) {
             EasyMock.expect(servletContext.getInitParameter(entry.getKey()))
                     .andReturn(entry.getValue());
         }
-
+        servletContext.setAttribute(EasyMock.anyString(), EasyMock.anyObject() );
+        EasyMock.expectLastCall().times(2);
+        servletContext.removeAttribute(EasyMock.anyString() );
+        EasyMock.expectLastCall().times(2);
         EasyMock.replay(servletContext);
 
         GreenMailListener listener = new GreenMailListener();
