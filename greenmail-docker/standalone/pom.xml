@@ -76,7 +76,7 @@
               <name>greenmail/standalone:${project.version}</name>
               <build>
                 <tags>${greenmail.docker.tags}</tags>
-                <dockerFileDir>${basedir}</dockerFileDir>
+                <contextDir>${basedir}</contextDir>
               </build>
               <run>
                 <ports>
@@ -102,6 +102,7 @@
                   </tcp>
                   <time>10000</time>
                 </wait>
+                <containerNamePattern>${project.artifactId}-%i</containerNamePattern>
               </run>
             </image>
           </images>
