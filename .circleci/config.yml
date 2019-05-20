@@ -5,7 +5,7 @@ jobs:
     working_directory: ~/circleci-greenmail
 
     docker:
-        - image: openjdk:7u181-jdk-alpine3.8
+        - image: openjdk:7u211-jdk-alpine3.9
           environment:
             TZ: UTC
 
@@ -17,7 +17,7 @@ jobs:
       - run: >
           apk add --no-cache curl
           && mkdir -p /usr/share/maven
-          && curl -fsSL -o /tmp/apache-maven.tar.gz https://www-us.apache.org/dist/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.tar.gz
+          && curl -fsSL -o /tmp/apache-maven.tar.gz https://www-us.apache.org/dist/maven/maven-3/3.6.1/binaries/apache-maven-3.6.1-bin.tar.gz
           && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
           && rm -f /tmp/apache-maven.tar.gz
           && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
@@ -49,7 +49,7 @@ jobs:
     working_directory: ~/circleci-greenmail
 
     docker:
-        - image: openjdk:8u181-jdk-alpine3.8
+        - image: openjdk:8u212-jdk-alpine3.9
           environment:
             TZ: UTC
 
@@ -61,52 +61,7 @@ jobs:
       - run: >
           apk add --no-cache curl
           && mkdir -p /usr/share/maven
-          && curl -fsSL -o /tmp/apache-maven.tar.gz https://www-us.apache.org/dist/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.tar.gz
-          && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
-          && rm -f /tmp/apache-maven.tar.gz
-          && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
-
-      - restore_cache:
-          key: greenmail-{{ checksum "pom.xml" }}
-
-      - run: mvn -V clean package -DskipTests dependency:resolve-plugins dependency:go-offline
-
-      - save_cache:
-          paths:
-            - ~/.m2
-          key: greenmail-{{ checksum "pom.xml" }}
-
-      - run: mvn -V clean install
-
-      - run:
-          name: Save test results
-          command: |
-            mkdir -p ~/junit/
-            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/junit/ \;
-          when: always
-      - store_test_results:
-          path: ~/junit
-      - store_artifacts:
-          path: ~/junit
-
-  "openjdk-10":
-    working_directory: ~/circleci-greenmail
-
-    docker:
-        - image: openjdk:10.0.2-jdk-slim-sid
-          environment:
-            TZ: UTC
-
-    environment:
-      MAVEN_HOME: /usr/share/maven
-      MAVEN_OPTS: "--add-modules java.xml.bind"
-    steps:
-      - checkout
-
-      - run: >
-          apt-get update && apt-get install -y curl
-          && mkdir -p /usr/share/maven
-          && curl -fsSL -o /tmp/apache-maven.tar.gz https://www-us.apache.org/dist/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.tar.gz
+          && curl -fsSL -o /tmp/apache-maven.tar.gz https://www-us.apache.org/dist/maven/maven-3/3.6.1/binaries/apache-maven-3.6.1-bin.tar.gz
           && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
           && rm -f /tmp/apache-maven.tar.gz
           && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
@@ -138,7 +93,7 @@ jobs:
     working_directory: ~/circleci-greenmail
 
     docker:
-        - image: openjdk:11.0.1-jdk-slim-sid
+        - image: openjdk:11.0.3-jdk-slim-stretch
           environment:
             TZ: UTC
 
@@ -150,7 +105,7 @@ jobs:
       - run: >
           apt-get update && apt-get install -y curl
           && mkdir -p /usr/share/maven
-          && curl -fsSL -o /tmp/apache-maven.tar.gz https://www-us.apache.org/dist/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.tar.gz
+          && curl -fsSL -o /tmp/apache-maven.tar.gz https://www-us.apache.org/dist/maven/maven-3/3.6.1/binaries/apache-maven-3.6.1-bin.tar.gz
           && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
           && rm -f /tmp/apache-maven.tar.gz
           && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
@@ -183,5 +138,4 @@ workflows:
     jobs:
       - "openjdk-7"
       - "openjdk-8"
-      - "openjdk-10"
       - "openjdk-11"
