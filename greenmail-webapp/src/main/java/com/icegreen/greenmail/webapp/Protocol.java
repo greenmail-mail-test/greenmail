@@ -5,7 +5,7 @@ import java.util.Arrays;
 /**
  * Defines the supported mail protocols and default ports.
  */
-enum Protocol {
+public enum Protocol {
     /** SMTP */
     SMTP(25),
     /** Secure SMTP */

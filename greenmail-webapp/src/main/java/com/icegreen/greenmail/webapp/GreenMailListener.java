@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Automatically starts and stops GreenMail server upon deployment/undeployment.
+ * Automatically starts and stops GreenMail server upon deployment/un-deployment.
  *
  * @author mm
  */
@@ -47,10 +47,13 @@ public class GreenMailListener implements ServletContextListener {
                 }
             }
         }
+
         for (Service s : services) {
             log.info("Starting GreenMail service: {}", s);
             s.startService();
         }
+
+        ContextHelper.initAttributes(ctx, managers, configuration);
     }
 
     @Override
