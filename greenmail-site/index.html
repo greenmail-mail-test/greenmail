@@ -699,12 +699,15 @@ docker run -t -i \
 
                 <h3 id="deploy_webapp" class="anchor">Deploy as a webapp (WAR)</h3>
 
-                <p>GreenMail Webapp provides a lightweight Java web application wrapping GreenMail mail server.</p>
+                <p>GreenMail Webapp provides a lightweight Java web application wrapping GreenMail mail server and exposing GreenMail API.</p>
+
+                <img src="images/greenmail_webapp.png" class="img-rounded"
+                     alt="GreenMail webapp showing OpenAPI UI"/>
 
                 <p>Like the <a href="#deploy_jboss_sar">GreenMail JBoss Service</a>, the usage scenario is a development
                    or test environment where a
                    real mail server is too much overhead. The webapp is application server neutral - you should be able
-                   to use it on any JEE application server running und Java 5.</p>
+                   to use it on any Java EE 7 application server (Servlet 3.1) running und Java 7 (or greater).</p>
 
                 <p>With the GreenMail mail service each developer has its own local mail server sandbox - so there's no
                    danger for accidentally leaking test mails into the Internet.</p>

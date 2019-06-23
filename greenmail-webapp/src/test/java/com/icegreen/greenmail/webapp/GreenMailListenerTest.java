@@ -10,6 +10,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.eq;
+
 /**
  * Test for GreenMailListener.
  *
@@ -34,6 +37,8 @@ public class GreenMailListenerTest {
             EasyMock.expect(servletContext.getInitParameter(entry.getKey()))
                     .andReturn(entry.getValue());
         }
+        servletContext.setAttribute(eq(ContextHelper.ATTRIBUTE_NAME_MANAGERS), anyObject());
+        servletContext.setAttribute(eq(ContextHelper.ATTRIBUTE_NAME_CONFIGURATION), anyObject());
 
         EasyMock.replay(servletContext);
 

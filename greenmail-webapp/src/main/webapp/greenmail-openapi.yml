@@ -1,0 +1,88 @@
+---
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: GreenMail OpenAPI
+  description: <p>RESTful API for GreenMail web application</p>
+  license:
+    name: Apache 2.0
+    url: "https://www.apache.org/licenses/LICENSE-2.0.html"
+paths:
+  /api/configuration:
+    get:
+      description: Gets current GreenMail configuration
+      operationId: get_configuration
+      responses:
+        '200':
+          description: Current configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Configuration"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    Configuration:
+      type: object
+      properties:
+        defaultHostname:
+          type: string
+        portOffset:
+          type: integer
+          format: int32
+        users:
+          type: "array"
+          description: Configured users for authentication
+          items:
+            $ref: "#/components/schemas/User"
+        serviceConfigurations:
+          type: array
+          items:
+            $ref: "#/components/schemas/ServiceConfiguration"
+      required:
+        - serviceConfigurations
+    User:
+      type: object
+      required:
+        - login
+        - email
+      properties:
+        login:
+          type: string
+        email:
+          type: string
+    ServiceConfiguration:
+      type: object
+      properties:
+        protocol:
+          description: Service protocol for receiving or sending emails.
+          type: string
+          enum:
+            - pop3
+            - pop3s
+            - imap
+            - imaps
+            - smtp
+            - smtps
+        hostname:
+          description: Service hostname or IP to bind to
+          type: string
+        port:
+          description: Service port
+          type: integer
+          format: int32
+      required:
+        - protocol
+        - hostname
+        - port
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+      required:
+        - message

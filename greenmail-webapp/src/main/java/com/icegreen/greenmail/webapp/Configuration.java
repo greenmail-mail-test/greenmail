@@ -1,39 +1,63 @@
 package com.icegreen.greenmail.webapp;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
- * DESC
+ * GreenMail Web configuration.
  *
  * @author mm
  */
 public class Configuration {
-    /** Default hostname ({@value} */
+    /**
+     * Default hostname ({@value}
+     */
     public static final String DEFAULT_HOSTNAME = "localhost";
     /**
      * Default port offset added to SMTP/IMAP/POP3/... default ports ({@value}).
-     *
+     * <p>
      * Example: A port offset of 10000 results in SMTP port 10025.
      */
     public static final int DEFAULT_PORT_OFFSET = 10000;
 
     /**
      * A mail service configuration entry.
-     *
+     * <p>
      * An entry contains a mandatory protocol and optional hostname and port.
      * If the hostname and port are not configured, GreenMail uses
      * the default hostname and the default protocol port plus the port offset.
      */
-    static class ServiceConfiguration {
+    public static class ServiceConfiguration {
         Protocol protocol;
         String hostname;
         int port;
+
+        public Protocol getProtocol() {
+            return protocol;
+        }
+
+        public String getHostname() {
+            return hostname;
+        }
+
+        public int getPort() {
+            return port;
+        }
     }
-    static class User {
+
+    public static class User {
         String login;
         String password;
+
+        public String getLogin() {
+            return login;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
         String email;
     }
 
@@ -85,8 +109,8 @@ public class Configuration {
     }
 
     public ServiceConfiguration getServiceConfigurationByProtocol(final Protocol pProtocol) {
-        for(ServiceConfiguration c: services) {
-            if(pProtocol.equals(c.protocol)) {
+        for (ServiceConfiguration c : services) {
+            if (pProtocol.equals(c.protocol)) {
                 return c;
             }
         }

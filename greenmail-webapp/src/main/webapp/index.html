@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GreenMail Webapp</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/rapidoc/dist/rapidoc-min.js"></script>
+
+    <style>
+        .btn {
+            width: 90px;
+            height: 32px;
+            font-size: 13px;
+            background-color: #47AFE8;
+            color: #fff;
+            border: none;
+            margin: 0 2px;
+            border-radius: 2px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .txt {
+            width: 100px;
+            height: 30px;
+            font-size: 13px;
+            background-color: transparent;
+            border: 1px solid #47AFE8;
+            color: #fff;
+            padding: 0 8px;
+            margin: 0 2px;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        rapi-doc {
+            width: 100%;
+        }
+        footer {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+<rapi-doc spec-url="greenmail-openapi.yml"
+          allow-spec-url-load="false"
+          allow-spec-file-load="false"
+          header-color="#00695C"
+>
+    <p slot="logo">GreenMail</p>
+    <footer  slot="footer"><p>GreenMail <a href="http://www.icegreen.com/greenmail/">documentation</a> | <a href="https://github.com/greenmail-mail-test/greenmail">Github</a></p></footer>
+</rapi-doc>
+</body>
+</html>
