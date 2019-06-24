@@ -126,8 +126,8 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.8.1</version>
           <configuration>
-            <source>1.7</source>
-            <target>1.7</target>
+            <source>1.8</source>
+            <target>1.8</target>
             <debug>true</debug>
             <compilerArgs>
               <arg>-Xlint</arg>
@@ -250,7 +250,7 @@
             <linkXRef>true</linkXRef>
             <sourceEncoding>utf-8</sourceEncoding>
             <minimumTokens>100</minimumTokens>
-            <targetJdk>1.7</targetJdk>
+            <targetJdk>1.8</targetJdk>
             <analysisCache>true</analysisCache>
           </configuration>
         </plugin>
@@ -268,9 +268,9 @@
           <version>3.1.0</version>
           <configuration>
             <links>
-              <link>http://docs.oracle.com/javase/1.7.0/docs/api/</link>
+              <link>https://docs.oracle.com/javase/8/docs/api/</link>
               <link>https://javamail.java.net/nonav/docs/api/</link>
-              <link>http://junit.org/junit4/javadoc/latest/</link>
+              <link>https://junit.org/junit4/javadoc/latest/</link>
             </links>
             <failOnError>false</failOnError>
           </configuration>
@@ -618,9 +618,9 @@
               <aggregate>true</aggregate>
               <linksource>true</linksource>
               <links>
-                <link>http://docs.oracle.com/javase/1.7.0/docs/api/</link>
+                <link>https://docs.oracle.com/javase/8/docs/api/</link>
                 <link>https://javamail.java.net/nonav/docs/api/</link>
-                <link>http://junit.org/junit4/javadoc/latest/</link>
+                <link>https://junit.org/junit4/javadoc/latest/</link>
               </links>
               <failOnError>false</failOnError>
             </configuration>
@@ -645,7 +645,7 @@
               <linkXRef>true</linkXRef>
               <sourceEncoding>utf-8</sourceEncoding>
               <minimumTokens>100</minimumTokens>
-              <targetJdk>1.7</targetJdk>
+              <targetJdk>1.8</targetJdk>
             </configuration>
           </plugin>
           <plugin>
