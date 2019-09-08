@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.security.KeyStore;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.*;
 
@@ -19,13 +21,16 @@ import javax.net.ssl.*;
  * Contains a preconfigured key store for convenience in testing by avoiding
  * having to manually setup, install, and generate keystore / keys.
  * <p/>
- * By default, the factory loads the resource <code>greenmail.jks</code> from classpath.
- * GreenMail provides the keystore resource. For customization, place your greenmail.jks before greenmail JAR in the classpath.
+ * By default, the factory loads the resource <code>greenmail.p12</code> from classpath.
+ * A fallback to old <code>greenmail.jks</code> exists.
+ *
+ * GreenMail provides the keystore resource. For customization, place your greenmail.p12 before greenmail JAR in the classpath.
  *
  * @author Wael Chatila
  * @since Feb 2006
  */
 public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
+    public static final String GREENMAIL_KESTORE = "greenmail.p12";
     public static final String GREENMAIL_JKS = "greenmail.jks";
     private final SSLServerSocketFactory factory;
     private final KeyStore ks;
@@ -37,12 +42,11 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
             KeyManagerFactory km = KeyManagerFactory.getInstance(defaultAlg);
             ks = KeyStore.getInstance(KeyStore.getDefaultType());
             char[] pass = "changeit".toCharArray();
-            try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(GREENMAIL_JKS)) {
-                ks.load(is, pass);
-            } catch (IOException ex) {
-                // Try hard coded default keystore
-                throw new IllegalStateException("Can not load greenmail keystore from '" + GREENMAIL_JKS +
-                        "' in classpath", ex);
+            try {
+                loadKeystore(pass, GREENMAIL_KESTORE);
+            } catch(IllegalStateException ex) {
+                // Fallback to legacy JKS keystore
+                loadKeystore(pass, GREENMAIL_JKS);
             }
             km.init(ks, pass);
             KeyManager[] kma = km.getKeyManagers();
@@ -52,6 +56,16 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
             factory = sslcontext.getServerSocketFactory();
         } catch (Exception e) {
             throw new IllegalStateException("Can not create and initialize SSL", e);
+        }
+    }
+
+    private void loadKeystore(char[] pass, String kestoreResource) throws NoSuchAlgorithmException, CertificateException {
+        try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(kestoreResource)) {
+            ks.load(is, pass);
+        } catch (IOException ex) {
+            // Try hard coded default keystore
+            throw new IllegalStateException("Can not load greenmail keystore from '" + kestoreResource +
+                    "' in classpath", ex);
         }
     }
 
