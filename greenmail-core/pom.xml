@@ -111,11 +111,12 @@
               <keyalg>RSA</keyalg>
               <keysize>2048</keysize>
               <validity>825</validity>
+              <storetype>pkcs12</storetype>
             </configuration>
           </execution>
         </executions>
         <configuration>
-          <keystore>${project.build.outputDirectory}/greenmail.jks</keystore>
+          <keystore>${project.build.outputDirectory}/greenmail.p12</keystore>
         </configuration> 
       </plugin>
     </plugins>
