@@ -444,20 +444,26 @@ public class ImapProtocolTest {
                 final byte[] searchBytes = search.getBytes(charset);
                 final Argument arg = new Argument();
                 arg.writeBytes(searchBytes);
-                Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-                    @Override
-                    public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
-                        return protocol.command("UID SEARCH CHARSET " + charset + " TEXT", arg);
-                    }
-                });
-                IMAPResponse response = (IMAPResponse) ret[0];
-                assertFalse(response.isBAD());
-                String number = response.getRest();
-                assertEquals(charsetAndQuery[2], number);
+                // Try with and without quotes
+                searchAndValidateWithCharset(folder, charsetAndQuery[2], charset, arg);
+                searchAndValidateWithCharset(folder, charsetAndQuery[2], '"' + charset + '"', arg);
             }
         } finally {
             store.close();
         }
+    }
+
+    private void searchAndValidateWithCharset(IMAPFolder folder, String expected, String charset, Argument arg) throws MessagingException {
+        Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+            @Override
+            public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                return protocol.command("UID SEARCH CHARSET " + charset + " TEXT", arg);
+            }
+        });
+        IMAPResponse response = (IMAPResponse) ret[0];
+        assertFalse(response.isBAD());
+        String number = response.getRest();
+        assertEquals(expected, number);
     }
 
     @Test

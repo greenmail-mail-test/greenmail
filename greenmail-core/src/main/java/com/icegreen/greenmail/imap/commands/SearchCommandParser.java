@@ -92,7 +92,7 @@ class SearchCommandParser extends CommandParser {
                         }
                         else if (CHARSET_TOKEN.equals(keyValue)) { // Charset handling
                             request.nextWordChar(); // Skip spaces
-                            String c = this.atom(request);
+                            String c = this.astring(request);
                             log.debug("Searching with given CHARSET <{}>", c);
                             charset = Charset.forName(c);
                         } else {
