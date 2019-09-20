@@ -270,7 +270,7 @@
           <configuration>
             <links>
               <link>https://docs.oracle.com/javase/8/docs/api/</link>
-              <link>https://javamail.java.net/nonav/docs/api/</link>
+              <link>https://javaee.github.io/javamail/docs/api/</link>
               <link>https://junit.org/junit4/javadoc/latest/</link>
             </links>
             <failOnError>false</failOnError>
