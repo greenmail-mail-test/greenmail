@@ -23,7 +23,7 @@ import javax.net.ssl.*;
  * <p/>
  * By default, the factory loads the resource <code>greenmail.p12</code> from classpath.
  * A fallback to old <code>greenmail.jks</code> exists.
- *
+ * <p>
  * GreenMail provides the keystore resource. For customization, place your greenmail.p12 before greenmail JAR in the classpath.
  *
  * @author Wael Chatila
@@ -35,6 +35,24 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
     private final SSLServerSocketFactory factory;
     private final KeyStore ks;
 
+    // From https://docs.oracle.com/javase/7/docs/technotes/guides/security/SunProviders.html#SupportedCipherSuites
+    static final String[] ANONYMOUS_CIPHERS = {
+            "SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA"
+            , "SSL_DH_anon_EXPORT_WITH_RC4_40_MD5"
+            , "SSL_DH_anon_WITH_3DES_EDE_CBC_SHA"
+            , "SSL_DH_anon_WITH_DES_CBC_SHA"
+            , "SSL_DH_anon_WITH_RC4_128_MD5"
+            , "TLS_DH_anon_WITH_AES_128_CBC_SHA"
+            , "TLS_DH_anon_WITH_AES_128_CBC_SHA256"
+            , "TLS_DH_anon_WITH_AES_256_CBC_SHA"
+            , "TLS_DH_anon_WITH_AES_256_CBC_SHA256"
+            , "TLS_ECDH_anon_WITH_3DES_EDE_CBC_SHA"
+            , "TLS_ECDH_anon_WITH_AES_128_CBC_SHA"
+            , "TLS_ECDH_anon_WITH_AES_256_CBC_SHA"
+            , "TLS_ECDH_anon_WITH_NULL_SHA"
+            , "TLS_ECDH_anon_WITH_RC4_128_SHA"
+    };
+
     public DummySSLServerSocketFactory() {
         try {
             SSLContext sslcontext = SSLContext.getInstance("TLS");
@@ -44,7 +62,7 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
             char[] pass = "changeit".toCharArray();
             try {
                 loadKeystore(pass, GREENMAIL_KESTORE);
-            } catch(IllegalStateException ex) {
+            } catch (IllegalStateException ex) {
                 // Fallback to legacy JKS keystore
                 loadKeystore(pass, GREENMAIL_JKS);
             }
@@ -71,18 +89,15 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
 
     private SSLServerSocket addAnonCipher(ServerSocket socket) {
         SSLServerSocket ssl = (SSLServerSocket) socket;
-        final String[] ciphers = ssl.getEnabledCipherSuites();
-        final String[] anonCiphers = {"SSL_DH_anon_WITH_RC4_128_MD5"
-                , "SSL_DH_anon_WITH_RC4_128_MD5"
-                , "SSL_DH_anon_WITH_3DES_EDE_CBC_SHA"
-                , "SSL_DH_anon_WITH_DES_CBC_SHA"
-                , "SSL_DH_anon_EXPORT_WITH_RC4_40_MD5"
-                , "SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA"};
-        final String[] newCiphers = new String[ciphers.length + anonCiphers.length];
-        System.arraycopy(ciphers, 0, newCiphers, 0, ciphers.length);
-        System.arraycopy(anonCiphers, 0, newCiphers, ciphers.length, anonCiphers.length);
-        ssl.setEnabledCipherSuites(newCiphers);
+        ssl.setEnabledCipherSuites(addAnonCiphers(ssl.getEnabledCipherSuites()));
         return ssl;
+    }
+
+    static String[] addAnonCiphers(String[] ciphers) {
+        final String[] newCiphers = new String[ciphers.length + ANONYMOUS_CIPHERS.length];
+        System.arraycopy(ciphers, 0, newCiphers, 0, ciphers.length);
+        System.arraycopy(ANONYMOUS_CIPHERS, 0, newCiphers, ciphers.length, ANONYMOUS_CIPHERS.length);
+        return newCiphers;
     }
 
     public static ServerSocketFactory getDefault() {
