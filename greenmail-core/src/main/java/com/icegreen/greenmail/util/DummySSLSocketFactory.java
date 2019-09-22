@@ -20,6 +20,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Random;
 
+import static com.icegreen.greenmail.util.DummySSLServerSocketFactory.addAnonCiphers;
+
 /**
  * DummySSLSocketFactory - NOT SECURE
  */
@@ -46,17 +48,7 @@ public class DummySSLSocketFactory extends SSLSocketFactory {
 
     private Socket addAnonCipher(Socket socket) {
         SSLSocket ssl = (SSLSocket) socket;
-        final String[] ciphers = ssl.getEnabledCipherSuites();
-        final String[] anonCiphers = {"SSL_DH_anon_WITH_RC4_128_MD5"
-                , "SSL_DH_anon_WITH_RC4_128_MD5"
-                , "SSL_DH_anon_WITH_3DES_EDE_CBC_SHA"
-                , "SSL_DH_anon_WITH_DES_CBC_SHA"
-                , "SSL_DH_anon_EXPORT_WITH_RC4_40_MD5"
-                , "SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA"};
-        final String[] newCiphers = new String[ciphers.length + anonCiphers.length];
-        System.arraycopy(ciphers, 0, newCiphers, 0, ciphers.length);
-        System.arraycopy(anonCiphers, 0, newCiphers, ciphers.length, anonCiphers.length);
-        ssl.setEnabledCipherSuites(newCiphers);
+        ssl.setEnabledCipherSuites(addAnonCiphers(ssl.getEnabledCipherSuites()));
         return ssl;
     }
 
