@@ -44,7 +44,7 @@ public class EncodingTest {
 
 
         MimeBodyPart textQP = new MimeBodyPart();
-        textQP.setContent("QP Content with umlaut ü", "text/javascript; charset=utf-8");
+        textQP.setContent("QP Content with umlaut \u00FC", "text/javascript; charset=utf-8");
         textQP.setHeader("Content-Transfer-Encoding", "QUOTED-PRINTABLE");
         multipart.addBodyPart(textQP);
 
@@ -53,7 +53,7 @@ public class EncodingTest {
                 "<html lang=en>" +
                 "<head>" +
                 "<meta charset=utf-8>" +
-                "<title>Title with Umlaut ü</title>" +
+                "<title>Title with Umlaut \u00FC</title>" +
                 "</head>" +
                 "<body>" +
                 "<p>8BIT Content with umlaut ü</p>" +
@@ -63,7 +63,7 @@ public class EncodingTest {
         multipart.addBodyPart(html);
 
         MimeBodyPart text = new MimeBodyPart();
-        text.setText("8BIT Content with umlaut ü", "utf-8");
+        text.setText("8BIT Content with umlaut \u00FC", "utf-8");
         text.setHeader("Content-Transfer-Encoding", "8BIT");
         multipart.addBodyPart(text);
 
