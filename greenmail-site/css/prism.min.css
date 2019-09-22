@@ -1,4 +1,4 @@
-/* PrismJS 1.15.0
+/* PrismJS 1.17.1
 https://prismjs.com/download.html?#themes=prism-coy&languages=clike+bash+git+java&plugins=autolinker+file-highlight */
 /**
  * prism.js Coy theme for JavaScript, CoffeeScript, CSS and HTML
@@ -11,6 +11,7 @@ pre[class*="language-"] {
 	color: black;
 	background: none;
 	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
 	text-align: left;
 	white-space: pre;
 	word-spacing: normal;
