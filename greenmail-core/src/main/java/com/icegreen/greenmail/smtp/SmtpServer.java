@@ -7,7 +7,6 @@
 package com.icegreen.greenmail.smtp;
 
 import com.icegreen.greenmail.Managers;
-import com.icegreen.greenmail.foedus.util.InMemoryWorkspace;
 import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.smtp.commands.SmtpCommandRegistry;
@@ -22,7 +21,6 @@ public class SmtpServer extends AbstractServer {
 
     @Override
     protected ProtocolHandler createProtocolHandler(final Socket clientSocket) {
-        return new SmtpHandler(new SmtpCommandRegistry(), managers.getSmtpManager(),
-                new InMemoryWorkspace(), clientSocket);
+        return new SmtpHandler(new SmtpCommandRegistry(), managers.getSmtpManager(), clientSocket);
     }
 }

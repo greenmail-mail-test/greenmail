@@ -6,7 +6,6 @@
  */
 package com.icegreen.greenmail.smtp;
 
-import com.icegreen.greenmail.foedus.util.Workspace;
 import com.icegreen.greenmail.server.BuildInfo;
 import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.smtp.commands.SmtpCommand;
@@ -24,7 +23,6 @@ public class SmtpHandler implements ProtocolHandler {
     // protocol and configuration global stuff
     protected SmtpCommandRegistry registry;
     protected SmtpManager manager;
-    protected Workspace workspace;
 
     // session stuff
     protected SmtpConnection conn;
@@ -36,10 +34,9 @@ public class SmtpHandler implements ProtocolHandler {
     protected Socket socket;
 
     public SmtpHandler(SmtpCommandRegistry registry,
-                       SmtpManager manager, Workspace workspace, Socket socket) {
+                       SmtpManager manager, Socket socket) {
         this.registry = registry;
         this.manager = manager;
-        this.workspace = workspace;
         this.socket = socket;
     }
 
@@ -47,7 +44,7 @@ public class SmtpHandler implements ProtocolHandler {
     public void run() {
         try {
             conn = new SmtpConnection(this, socket);
-            state = new SmtpState(workspace);
+            state = new SmtpState();
             quitting = false;
 
             sendGreetings();
