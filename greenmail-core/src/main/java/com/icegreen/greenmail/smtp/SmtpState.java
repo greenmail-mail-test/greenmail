@@ -6,16 +6,12 @@
  */
 package com.icegreen.greenmail.smtp;
 
-import com.icegreen.greenmail.foedus.util.Workspace;
 import com.icegreen.greenmail.mail.MovingMessage;
-
 
 public class SmtpState {
     MovingMessage currentMessage;
-    Workspace workspace;
 
-    public SmtpState(Workspace workspace) {
-        this.workspace = workspace;
+    public SmtpState() {
         clearMessage();
     }
 
@@ -30,6 +26,6 @@ public class SmtpState {
         if (currentMessage != null) {
             currentMessage.releaseContent();
         }
-        currentMessage = new MovingMessage(workspace);
+        currentMessage = new MovingMessage();
     }
 }
