@@ -32,7 +32,7 @@ public class ImapResponse implements ImapConstants {
 
     /**
      * Writes a standard tagged OK response on completion of a command.
-     * Response is writen as:
+     * Response is written as:
      * <pre>     a01 OK COMMAND_NAME completed.</pre>
      *
      * @param command The ImapCommand which was completed.
@@ -44,7 +44,7 @@ public class ImapResponse implements ImapConstants {
     /**
      * Writes a standard tagged OK response on completion of a command,
      * with a response code (eg READ-WRITE)
-     * Response is writen as:
+     * Response is written as:
      * <pre>     a01 OK [responseCode] COMMAND_NAME completed.</pre>
      *
      * @param command      The ImapCommand which was completed.
@@ -62,7 +62,7 @@ public class ImapResponse implements ImapConstants {
     /**
      * Writes a standard NO response on command failure, together with a
      * descriptive message.
-     * Response is writen as:
+     * Response is written as:
      * <pre>     a01 NO COMMAND_NAME failed. <reason></pre>
      *
      * @param command The ImapCommand which failed.
@@ -75,7 +75,7 @@ public class ImapResponse implements ImapConstants {
     /**
      * Writes a standard NO response on command failure, together with a
      * descriptive message.
-     * Response is writen as:
+     * Response is written as:
      * <pre>     a01 NO [responseCode] COMMAND_NAME failed. <reason></pre>
      *
      * @param command      The ImapCommand which failed.
@@ -97,7 +97,7 @@ public class ImapResponse implements ImapConstants {
     /**
      * Writes a standard BAD response on command error, together with a
      * descriptive message.
-     * Response is writen as:
+     * Response is written as:
      * <pre>     a01 BAD <message></pre>
      *
      * @param message The descriptive error message.
