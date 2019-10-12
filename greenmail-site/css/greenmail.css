@@ -4,14 +4,9 @@
    Previously: 75BD9A (bad contrast)
 -------------------------------------------------- */
 
-/* Header
--------------------------------------------------- */
-body {
-    padding-top: 40px;
-}
-
-header#top {
+header {
     border-bottom: 3px solid #009688;
+    font-weight: bold;
 }
 
 .anchor:before {
@@ -28,10 +23,19 @@ h3.anchor:before, h4.anchor:before {
     margin: -60px 0 0;
 }
 
-.bs-docs-header {
-    padding-top: 30px;
+.bd-toc {
+    position: sticky;
+    top: 4rem;
+    height: calc(100vh - 4rem);
+    overflow-y: auto;
+    padding-top: 1.5rem;
+    order: 2;
+}
+
+#subheader {
+    padding-top: 80px;
     padding-bottom: 30px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .bs-docs-section {
@@ -49,38 +53,27 @@ h3.anchor:before, h4.anchor:before {
     /*background-image: none;*/
 }
 
-.bs-docs-nav .navbar-brand, .bs-docs-nav .navbar-nav > li > a {
-    color: black;
-}
-
 .version {
     margin-top: 10px;
     font-size: 14px;
 }
 
+.nav-link {
+    padding: 0.1rem 0.5rem;
+}
 .bs-docs-sidebar.affix {
     margin-top: 40px;
 }
 
-.bs-docs-sidebar .nav > .active > a, .bs-docs-sidebar .nav > .active:hover > a, .bs-docs-sidebar .nav > .active:focus > a {
-    color: #009688;
-    border-color: #009688;;
-}
-
-.bs-docs-sidebar .nav > li > a:hover, .bs-docs-sidebar .nav > li > a:focus {
-    color: #009688;
-    border-left: 1px solid #009688;
+.nav-pills.nav-link.active, .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    background-color: inherit;
+    font-weight: bold;
+    color: #00796B;
 }
 
 .back-to-top:hover,
 .bs-docs-theme-toggle:hover {
     color: #009688;
-}
-
-.bs-docs-footer {
-    padding-top: 10px;
-    padding-bottom: 10px;
-    margin-top: 20px;
 }
 
 .alert-info {
@@ -101,12 +94,14 @@ a {
 }
 
 .page-header {
-    border-bottom-color: #009688;
+    border-bottom: 1px solid #009688;
 }
 
-pre[class*="language-"] {
-    -webkit-box-shadow: -1px 0px 0px 0px #009688, 0px 0px 0px 1px #dfdfdf;
-    -moz-box-shadow: -1px 0px 0px 0px #009688, 0px 0px 0px 1px #dfdfdf;
+.back-to-top {
+    margin: 0;
+}
+
+pre[class*="language-"] > code {
     box-shadow: -1px 0px 0px 0px #B2DFDB, 0px 0px 0px 1px #dfdfdf;
     border-left: 10px solid #B2DFDB;
 }
