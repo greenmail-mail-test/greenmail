@@ -15,12 +15,11 @@
           crossorigin="anonymous">
 
     <!-- Custom styles for this template -->
-    <link href="css/docs.min.css" rel="stylesheet"/>
     <link href="css/prism.min.css" rel="stylesheet"/>
     <link href="css/greenmail.css" rel="stylesheet"/>
 </head>
 
-<body>
+<body data-spy="scroll" data-offset="240" data-target="#sidebar">
 
 <a href="https://github.com/greenmail-mail-test/greenmail"><img
         style="z-index:9999999;position: fixed; top: 0; right: 0; border: 0;"
@@ -61,20 +60,22 @@
 
 <!-- Main content
 ================================================== -->
-<div class="container">
+<div id="main_container" class="container">
     <div class="row flex-xl-nowrap">
         <!-- Sidebar -->
         <div class="d-none d-lg-block col-lg-3 bd-toc">
             <nav class="nav flex-column" id="sidebar">
                 <a class="nav-item nav-link nav-pills" href="#about" data-toggle="collapse" data-target="#nav_about">About</a>
                 <nav id="nav_about" class="nav nav-pills flex-column collapse" data-parent="#sidebar">
+                    <a class="nav-item nav-link ml-3" href="#intro">Intro</a>
                     <a class="nav-item nav-link ml-3" href="#scenarios">Scenarios</a>
                     <a class="nav-item nav-link ml-3" href="#implementation">Implementation</a>
                     <a class="nav-item nav-link ml-3" href="#sourcecode">Source code</a>
                     <a class="nav-item nav-link ml-3" href="#links">Links and resources</a>
                     <a class="nav-item nav-link ml-3" href="#thanks">Thanks</a>
                 </nav>
-                <a class="nav-item nav-link nav-pills" href="#examples" data-toggle="collapse" data-target="#nav_examples">Examples</a>
+                <a class="nav-item nav-link nav-pills" href="#examples" data-toggle="collapse"
+                   data-target="#nav_examples">Examples</a>
                 <nav id="nav_examples" class="nav nav-pills flex-column collapse" data-parent="#sidebar">
                     <a class="nav-item nav-link ml-3" href="#ex_junit_rule">Using JUnit (rule based setup)</a>
                     <a class="nav-item nav-link ml-3" href="#ex_send_simple">Testing your sending code (simple)</a>
@@ -83,23 +84,30 @@
                     <a class="nav-item nav-link ml-3" href="#ex_javamail_send_retrieve">Testing using plain JavaMail for
                         sending/retrieving code</a>
                 </nav>
-                <a class="nav-item nav-link nav-pills" href="#deployment" data-toggle="collapse" data-target="#nav_deployment">Deployments</a>
+                <a class="nav-item nav-link nav-pills" href="#deployment" data-toggle="collapse"
+                   data-target="#nav_deployment">Deployments</a>
                 <nav id="nav_deployment" class="nav nav-pills flex-column collapse" data-parent="#sidebar">
                     <a class="nav-item nav-link ml-3" href="#deploy_standalone">Run as a standalone Java process</a>
                     <a class="nav-item nav-link ml-3" href="#deploy_docker_standalone">Run as a docker image</a>
                     <a class="nav-item nav-link ml-3" href="#deploy_webapp">Deploy as a webapp (WAR)</a>
-                    <a class="nav-item nav-link ml-3" href="#deploy_jboss_sar" data-toggle="collapse" data-target="#nav_deployment_sar">Deploy as a JBoss Service (SAR)</a>
-                    <nav id="nav_deployment_sar" class="nav nav-pills flex-column collapse" data-parent="#nav_deployment">
+                    <a class="nav-item nav-link ml-3" href="#deploy_jboss_sar" data-toggle="collapse"
+                       data-target="#nav_deployment_sar">Deploy as a JBoss Service (SAR)</a>
+                    <nav id="nav_deployment_sar" class="nav nav-pills flex-column collapse"
+                         data-parent="#nav_deployment">
                         <a class="nav-item nav-link ml-5" href="#deploy_jboss_sar_deploy">Deploying</a>
                         <a class="nav-item nav-link ml-5" href="#deploy_jboss_sar_configure_user">Configure</a>
-                        <a class="nav-item nav-link ml-5" href="#deploy_jboss_sar_send_via_jmx">Send a mail message via JMX</a>
-                        <a class="nav-item nav-link ml-5" href="#deploy_jboss_sar_local_client">Send a mail message using your mail
+                        <a class="nav-item nav-link ml-5" href="#deploy_jboss_sar_send_via_jmx">Send a mail message via
+                            JMX</a>
+                        <a class="nav-item nav-link ml-5" href="#deploy_jboss_sar_local_client">Send a mail message
+                            using your mail
                             client</a>
-                        <a class="nav-item nav-link ml-5" href="#deploy_jboss_sar_list">List mails for a user via JMX</a>
+                        <a class="nav-item nav-link ml-5" href="#deploy_jboss_sar_list">List mails for a user via
+                            JMX</a>
                     </nav>
                 </nav>
                 <a class="nav-item nav-link nav-pills" href="#faq">FAQ</a>
-                <a class="nav-item nav-link nav-pills" href="#download" data-toggle="collapse" data-target="#nav_download">Download</a>
+                <a class="nav-item nav-link nav-pills" href="#download" data-toggle="collapse"
+                   data-target="#nav_download">Download</a>
                 <nav id="nav_download" class="nav nav-pills flex-column collapse" data-parent="#sidebar">
                     <a class="nav-item nav-link ml-3" href="#download_1_5_10">1.5.10</a>
                     <a class="nav-item nav-link ml-3" href="#download_1_5_9">1.5.9</a>
@@ -124,11 +132,11 @@
         </div>
 
         <!-- Main -->
-        <main class="col-lg-9 py-lg-3 bd-content" role="main"
-              data-spy="scroll" data-offset="10" data-target="#sidebar">
+        <main class="col-lg-9 py-lg-3 bd-content" role="main">
 
-            <div id="about" class="bs-docs-section anchor">
+            <section id="about" class="anchor">
                 <h1 class="page-header">About GreenMail</h1>
+                <h3 id="intro" class="anchor">Introduction</h3>
 
                 <p>
                     GreenMail is an open source, intuitive and easy-to-use test suite of email servers for testing
@@ -350,9 +358,9 @@ public void testReceive() throws MessagingException {
                         alt="JProfiler logo"/></a>
                     and <a href="https://www.jetbrains.com/">JetBrains</a> for supporting this project with free OSS
                     licenses!</p>
-            </div>
+            </section>
 
-            <div id="examples" class="bs-docs-section anchor">
+            <section id="examples" class="anchor">
                 <h1 class="page-header">Examples</h1>
                 <div>The source code of the examples can be found in the test package of GreenMail
                     (<a href="https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-core/src/test/java/com/icegreen/greenmail/examples">greenmail-core/src/test/java/com/icegreen/greenmail/examples/</a>).
@@ -485,9 +493,9 @@ public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IM
 }
         </code></pre><!-- @formatter:on -->
 
-            </div>
+            </section>
 
-            <div id="deployment" class="bs-docs-section anchor">
+            <section id="deployment" class="anchor">
                 <h1 class="page-header">Deployment</h1>
 
                 <h3 id="deploy_standalone" class="anchor">Run GreenMail as standalone java application</h3>
@@ -907,7 +915,7 @@ jar xvf /path/to/greenmail-jboss-service-XXX.jar
                     <li>Invoke the sendMail operation:</li>
                 </ol>
                 <img src="images/greenmail_jboss_jmx_send.png" class="img-fluid"
-                     alt="Sending email using GreenMail JMX Bean" />
+                     alt="Sending email using GreenMail JMX Bean"/>
 
                 <p>The mail should now be visible by listing the user mails, if there is no automatic polling of the
                     mail box.</p>
@@ -930,7 +938,7 @@ jar xvf /path/to/greenmail-jboss-service-XXX.jar
                     </li>
                     <li>Enter the user email for the listMailsForUserHTML operation:
                         <img src="images/greenmail_jboss_jmx_list_mail_for_user.png" class="img-fluid"
-                             alt="List mails operation for GreenMail JMX Bean" />
+                             alt="List mails operation for GreenMail JMX Bean"/>
                     </li>
                     <li>Click the invoke button. The browser now shows all emails for the specified user:
                         <img src="images/greenmail_jboss_jmx_list_emails_for_user.png" class="img-fluid"
@@ -940,10 +948,9 @@ jar xvf /path/to/greenmail-jboss-service-XXX.jar
                 <div class="alert alert-info" role="alert">Note that displaying mails does not modify the user mail
                     box.
                 </div>
+            </section>
 
-            </div>
-
-            <div id="faq" class="bs-docs-section anchor">
+            <section id="faq" class="anchor">
                 <h1 class="page-header">FAQ</h1>
                 <h4>How come I don't have to create any accounts to send/retrieve?</h4>
 
@@ -996,9 +1003,9 @@ greenMail.getManagers().getUserManager().deleteUser(user1); // Delete user
 @Rule
 public final GreenMailRule greenMail = new GreenMailRule(ServerSetup.verbose(ServerSetupTest.SMTP_IMAP));
 </code></pre><!-- @formatter:on -->
-            </div>
+            </section>
 
-            <div id="download" class="bs-docs-section anchor">
+            <section id="download" class="anchor">
                 <h1 class="page-header">Download</h1>
 
                 <p>Maven Central contains all <a href="http://repo1.maven.org/maven2/com/icegreen/greenmail/">GreenMail
@@ -1676,10 +1683,9 @@ public final GreenMailRule greenMail = new GreenMailRule(ServerSetup.verbose(Ser
                         href="https://sourceforge.net/projects/greenmail/files/greenmail/">SourceForge
                     download</a>
                     section</p>
-            </div>
+            </section>
 
         </main>
-
 
     </div>
 </div>
@@ -1705,14 +1711,19 @@ public final GreenMailRule greenMail = new GreenMailRule(ServerSetup.verbose(Ser
 <script src="js/prism.min.js"></script>
 <script type="application/javascript">
     $(document).ready(function () {
-        var sidebar = $('#sidebar');
         // Show only current sidebar item as expanded
-        $(window).on('activate.bs.scrollspy', function (e,obj) {
-            sidebar.find('nav').not('.collapse').addClass('collapse')
-            var current = sidebar.find( 'a[href="'+ obj.relatedTarget +'"]');
-            current.parents('nav.collapse').removeClass('collapse')
+        $('#sidebar a.nav-item').on('click', function () {
+            var anchor = $(this).attr('href')
+            window.location = anchor;
         });
-        $('body').scrollspy({target: '#sidebar'});
+        $(window).on('activate.bs.scrollspy', function (e, obj) {
+            var sidebar = $('#sidebar');
+            var current = sidebar.find('a[href="' + obj.relatedTarget + '"]');
+            var currentParents =  current.parents('nav');
+            sidebar.find('nav').not(current).not(currentParents).addClass('collapse').removeClass('show');
+            current.collapse('show');
+            currentParents.removeClass('collapse');
+        });
     });
 </script>
 </body>
