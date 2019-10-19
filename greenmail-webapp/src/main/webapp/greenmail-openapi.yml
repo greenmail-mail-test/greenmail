@@ -1,7 +1,7 @@
 ---
 openapi: "3.0.0"
 info:
-  version: 1.0.0
+  version: "${project.version}"
   title: GreenMail OpenAPI
   description: <p>RESTful API for GreenMail web application</p>
   license:
