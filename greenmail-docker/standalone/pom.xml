@@ -4,7 +4,7 @@
   <description>Docker image running GreenMail Standalone</description>
 
   <artifactId>greenmail-docker-standalone</artifactId>
-  <version>1.5.11</version>
+  <version>1.5.12-SNAPSHOT</version>
   <!-- Does not actually provide a JAR, but requires the JAR Maven lifecycle
        for unit test -->
   <packaging>jar</packaging>
@@ -16,7 +16,7 @@
   <parent>
     <groupId>com.icegreen</groupId>
     <artifactId>greenmail-parent</artifactId>
-    <version>1.5.11</version>
+    <version>1.5.12-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
