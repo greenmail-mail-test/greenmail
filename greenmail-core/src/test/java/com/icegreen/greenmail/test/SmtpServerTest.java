@@ -4,22 +4,32 @@
  */
 package com.icegreen.greenmail.test;
 
+import static com.icegreen.greenmail.util.GreenMailUtil.createTextEmail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
-import javax.mail.*;
+import java.util.Properties;
+
+import javax.mail.AuthenticationFailedException;
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMessage.RecipientType;
 import javax.mail.internet.MimeMultipart;
+
+import org.junit.Rule;
+import org.junit.Test;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.smtp.commands.AuthCommand;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Rule;
-import org.junit.Test;
-
-import static com.icegreen.greenmail.util.GreenMailUtil.createTextEmail;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Wael Chatila
@@ -181,4 +191,32 @@ public class SmtpServerTest {
             assertEquals(body, GreenMailUtil.getBody(receivedMsg).trim());
         }
     }
+
+    @Test
+    public void testSmtpServerReceiveWithAUTHSuffix() throws Throwable {
+        assertEquals(0, greenMail.getReceivedMessages().length);
+
+        String subject = GreenMailUtil.random();
+        String body = GreenMailUtil.random();
+        
+        Properties mailProps = new Properties();
+        mailProps.setProperty("mail.smtp.from", "<test@localhost.com> AUTH <somethingidontknow>");
+        Session session = GreenMailUtil.getSession(ServerSetupTest.SMTP, mailProps);
+
+        MimeMessage message = new MimeMessage(session);
+        message.setContent("body1", "text/plain");
+        message.setFrom("from@localhost");
+        message.setRecipients(RecipientType.TO, InternetAddress.parse("to@localhost"));
+        message.setSubject(subject);
+
+        GreenMailUtil.sendMimeMessage(message);
+        System.setProperty("mail.smtp.from", "<test@localhost.com> AUTH <somethingidontknow>");
+        
+
+        greenMail.waitForIncomingEmail(1500, 1);
+        MimeMessage[] emails = greenMail.getReceivedMessages();
+        assertEquals(1, emails.length);
+        assertEquals(subject, emails[0].getSubject());
+    }
+
 }
