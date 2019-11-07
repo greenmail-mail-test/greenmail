@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  */
 public class MailCommand
         extends SmtpCommand {
-    static final Pattern PARAM = Pattern.compile("MAIL FROM:\\s?<(.*)>",
+    static final Pattern PARAM = Pattern.compile("MAIL FROM:\\s?<([^>]*)>.*",
             Pattern.CASE_INSENSITIVE);
 
     @Override

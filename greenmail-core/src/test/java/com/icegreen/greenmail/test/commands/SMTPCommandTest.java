@@ -92,4 +92,26 @@ public class SMTPCommandTest {
             }
         }
     }
+
+    @Test
+    public void mailSenderAUTHSuffix() throws IOException, MessagingException {
+        Socket smtpSocket;
+        String hostAddress = greenMail.getSmtp().getBindTo();
+        int port = greenMail.getSmtp().getPort();
+
+        Session smtpSession = greenMail.getSmtp().createSession();
+        URLName smtpURL = new URLName(hostAddress);
+        SMTPTransport smtpTransport = new SMTPTransport(smtpSession, smtpURL);
+
+        try {
+            smtpSocket = new Socket(hostAddress, port);
+            smtpTransport.connect(smtpSocket);
+            assertThat(smtpTransport.isConnected(), is(equalTo(true)));
+            smtpTransport.issueCommand("MAIL FROM: <test.test@test.net> AUTH <>", -1);
+            assertThat("250 OK", equalToIgnoringWhiteSpace(smtpTransport.getLastServerResponse()));
+        } finally {
+            smtpTransport.close();
+        }
+    }
+
 }
