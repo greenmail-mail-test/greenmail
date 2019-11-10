@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Helper for handling encodings.
@@ -17,7 +18,7 @@ public class EncodingUtil {
     /**
      * Predefined Charset for 8-Bit encoding.
      */
-    public static final Charset CHARSET_EIGHT_BIT_ENCODING = Charset.forName(EIGHT_BIT_ENCODING);
+    public static final Charset CHARSET_EIGHT_BIT_ENCODING = StandardCharsets.ISO_8859_1;
 
     private EncodingUtil() {
         // No instantiation.

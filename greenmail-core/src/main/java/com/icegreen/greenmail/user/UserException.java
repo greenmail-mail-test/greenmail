@@ -7,6 +7,7 @@
 package com.icegreen.greenmail.user;
 
 public class UserException extends Exception {
+    static final long serialVersionUID = 8789110318922791759L;
 
     public UserException() {
         super();

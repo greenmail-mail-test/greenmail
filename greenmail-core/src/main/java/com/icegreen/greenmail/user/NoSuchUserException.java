@@ -7,6 +7,7 @@
 package com.icegreen.greenmail.user;
 
 public class NoSuchUserException extends UserException {
+    static final long serialVersionUID = 4245125422606632354L;
 
     public NoSuchUserException() {
         super();

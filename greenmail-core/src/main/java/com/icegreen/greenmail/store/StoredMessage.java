@@ -120,7 +120,7 @@ public class StoredMessage {
         return uid;
     }
 
-    public MailMessageAttributes getAttributes() throws FolderException {
+    public MailMessageAttributes getAttributes() {
         return attributes;
     }
 

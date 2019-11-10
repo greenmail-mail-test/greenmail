@@ -13,8 +13,8 @@ package com.icegreen.greenmail.imap;
  * @author <a href="mailto:charles@benett1.demon.co.uk">Charles Benett</a>
  * @version 0.1 on 14 Dec 2000
  */
-public class AuthorizationException
-        extends Exception {
+public class AuthorizationException extends Exception {
+    static final long serialVersionUID = -4448741163197075584L;
 
     /**
      * Construct a new <code>AuthorizationException</code> instance.
