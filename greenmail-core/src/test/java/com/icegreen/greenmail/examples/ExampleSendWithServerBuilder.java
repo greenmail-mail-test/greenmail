@@ -2,6 +2,9 @@ package com.icegreen.greenmail.examples;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.mail.MessagingException;
 
 import org.junit.Test;
@@ -13,6 +16,9 @@ import com.icegreen.greenmail.mail.MailAddress;
 import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpServer;
 import com.icegreen.greenmail.smtp.SmtpState;
+import com.icegreen.greenmail.smtp.commands.NoopCommand;
+import com.icegreen.greenmail.smtp.commands.SmtpCommand;
+import com.icegreen.greenmail.smtp.commands.SmtpCommandRegistry;
 import com.icegreen.greenmail.user.UserManager;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
@@ -46,8 +52,7 @@ public class ExampleSendWithServerBuilder {
         GreenMail greenMail = new GreenMail(setup, new Managers(), new ServerBuilder()); //uses test ports by default
         try {
             greenMail.start();
-            GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "some subject",
-                    "some body"); //replace this with your test message content
+            GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "some subject", "some body");
             assertEquals("some body", GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
         } finally {
             greenMail.stop();
@@ -65,7 +70,7 @@ public class ExampleSendWithServerBuilder {
     	assertEquals(3000+ServerSetup.PORT_SMTP, setup[0].getPort());
     	assertEquals(InvalidBindAddress, setup[1].getBindAddress());
     	
-        GreenMail greenMail = new GreenMail(setup, new Managers(), new ServerBuilder()); //uses test ports by default
+        GreenMail greenMail = new GreenMail(setup, new Managers(), new ServerBuilder());
         try {
             greenMail.start();
         } finally {
@@ -81,8 +86,18 @@ public class ExampleSendWithServerBuilder {
 		GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP, managers, new ServerBuilder()); //uses test ports by default
         try {
             greenMail.start();
-            GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "some subject",
-                    "some body"); //replace this with your test message content
+            GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "some subject","some body");
+        } finally {
+            greenMail.stop();
+        }
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testSendWithSetupBuilderMissingCommand() throws MessagingException {
+        GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP, new Managers(), new MyFailingServerBuilder()); //uses test ports by default
+        try {
+            greenMail.start();
+            GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "some subject", "some body");
         } finally {
             greenMail.stop();
         }
@@ -126,10 +141,13 @@ public class ExampleSendWithServerBuilder {
 		}
     }
     
-    class MyServerBuilder extends ServerBuilder {
+    class MyFailingServerBuilder extends ServerBuilder {
     	@Override
     	public SmtpServer buildSmtpServer(ServerSetup setup, Managers managers) {
-    		return super.buildSmtpServer(setup, managers);
+    		Map<SmtpCommandRegistry.Command, SmtpCommand> map = new HashMap<>();
+    		map.put(SmtpCommandRegistry.Command.NOOP, new NoopCommand());
+    		SmtpCommandRegistry myUnusableRegistry = new SmtpCommandRegistry(map);
+    		return super.buildSmtpServer(setup, managers, myUnusableRegistry);
     	}
     }
 }

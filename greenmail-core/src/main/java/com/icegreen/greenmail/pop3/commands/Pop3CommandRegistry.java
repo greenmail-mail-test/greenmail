@@ -6,27 +6,39 @@
  */
 package com.icegreen.greenmail.pop3.commands;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 
 public class Pop3CommandRegistry {
-    private static final Map<String, Pop3Command> commands = new HashMap<>();
+    public static final Map<String, Pop3Command> DEFAULT_COMMANDS;
+    private final Map<String, Pop3Command> commands;
 
     static {
-        commands.put("QUIT", new QuitCommand());
-        commands.put("STAT", new StatCommand());
-        commands.put("APOP", new ApopCommand());
-        commands.put("USER", new UserCommand());
-        commands.put("PASS", new PassCommand());
-        commands.put("LIST", new ListCommand());
-        commands.put("UIDL", new UidlCommand());
-        commands.put("TOP", new TopCommand());
-        commands.put("RETR", new RetrCommand());
-        commands.put("DELE", new DeleCommand());
-        commands.put("NOOP", new NoopCommand());
-        commands.put("RSET", new RsetCommand());
-        commands.put("CAPA", new CapaCommand());
+    	Map<String, Pop3Command> defaultCommands = new HashMap<>();
+        defaultCommands.put("QUIT", new QuitCommand());
+        defaultCommands.put("STAT", new StatCommand());
+        defaultCommands.put("APOP", new ApopCommand());
+        defaultCommands.put("USER", new UserCommand());
+        defaultCommands.put("PASS", new PassCommand());
+        defaultCommands.put("LIST", new ListCommand());
+        defaultCommands.put("UIDL", new UidlCommand());
+        defaultCommands.put("TOP", new TopCommand());
+        defaultCommands.put("RETR", new RetrCommand());
+        defaultCommands.put("DELE", new DeleCommand());
+        defaultCommands.put("NOOP", new NoopCommand());
+        defaultCommands.put("RSET", new RsetCommand());
+        defaultCommands.put("CAPA", new CapaCommand());
+        DEFAULT_COMMANDS = Collections.unmodifiableMap(new HashMap<>(defaultCommands));
+    }
+    
+    public Pop3CommandRegistry() {
+    	commands = DEFAULT_COMMANDS;
+	}
+    
+    public Pop3CommandRegistry(Map<String, Pop3Command> commands) {
+    	this.commands = commands;
     }
 
     public Pop3Command getCommand(String name) {
