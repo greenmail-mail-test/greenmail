@@ -12,8 +12,9 @@ import java.util.Map;
 
 
 public class SmtpCommandRegistry {
-    public static final Map<Command, SmtpCommand> DEFAULT_COMMANDS;
     public enum Command { AUTH, HELO, EHLO, NOOP, RSET, QUIT, MAIL, RCPT, DATA, VRFY };
+
+    public static final Map<Command, SmtpCommand> DEFAULT_COMMANDS;
 
     static {
     	Map<Command, SmtpCommand> defaultCommands = new HashMap<>();
@@ -37,7 +38,7 @@ public class SmtpCommandRegistry {
 	}
     
     public SmtpCommandRegistry(Map<Command, SmtpCommand> commands) {
-    	this.commands = commands;
+    	this.commands = Collections.unmodifiableMap(commands);
     }
     
     public SmtpCommand getCommand(String name) {

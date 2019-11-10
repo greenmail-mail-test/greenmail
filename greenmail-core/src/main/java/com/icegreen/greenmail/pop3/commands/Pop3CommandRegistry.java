@@ -10,38 +10,46 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class Pop3CommandRegistry {
-    public static final Map<String, Pop3Command> DEFAULT_COMMANDS;
-    private final Map<String, Pop3Command> commands;
-
-    static {
-    	Map<String, Pop3Command> defaultCommands = new HashMap<>();
-        defaultCommands.put("QUIT", new QuitCommand());
-        defaultCommands.put("STAT", new StatCommand());
-        defaultCommands.put("APOP", new ApopCommand());
-        defaultCommands.put("USER", new UserCommand());
-        defaultCommands.put("PASS", new PassCommand());
-        defaultCommands.put("LIST", new ListCommand());
-        defaultCommands.put("UIDL", new UidlCommand());
-        defaultCommands.put("TOP", new TopCommand());
-        defaultCommands.put("RETR", new RetrCommand());
-        defaultCommands.put("DELE", new DeleCommand());
-        defaultCommands.put("NOOP", new NoopCommand());
-        defaultCommands.put("RSET", new RsetCommand());
-        defaultCommands.put("CAPA", new CapaCommand());
-        DEFAULT_COMMANDS = Collections.unmodifiableMap(new HashMap<>(defaultCommands));
-    }
-    
-    public Pop3CommandRegistry() {
-    	commands = DEFAULT_COMMANDS;
+	public enum Command {
+		QUIT, STAT, APOP, USER, PASS, LIST, UIDL, TOP, RETR, DELE, NOOP, RSET, CAPA
 	}
-    
-    public Pop3CommandRegistry(Map<String, Pop3Command> commands) {
-    	this.commands = commands;
-    }
 
-    public Pop3Command getCommand(String name) {
-        return commands.get(name);
-    }
+	public static final Map<Command, Pop3Command> DEFAULT_COMMANDS;
+
+	static {
+		Map<Command, Pop3Command> defaultCommands = new HashMap<>();
+		defaultCommands.put(Command.QUIT, new QuitCommand());
+		defaultCommands.put(Command.STAT, new StatCommand());
+		defaultCommands.put(Command.APOP, new ApopCommand());
+		defaultCommands.put(Command.USER, new UserCommand());
+		defaultCommands.put(Command.PASS, new PassCommand());
+		defaultCommands.put(Command.LIST, new ListCommand());
+		defaultCommands.put(Command.UIDL, new UidlCommand());
+		defaultCommands.put(Command.TOP, new TopCommand());
+		defaultCommands.put(Command.RETR, new RetrCommand());
+		defaultCommands.put(Command.DELE, new DeleCommand());
+		defaultCommands.put(Command.NOOP, new NoopCommand());
+		defaultCommands.put(Command.RSET, new RsetCommand());
+		defaultCommands.put(Command.CAPA, new CapaCommand());
+		DEFAULT_COMMANDS = Collections.unmodifiableMap(new HashMap<>(defaultCommands));
+	}
+
+	private final Map<Command, Pop3Command> commands;
+
+	public Pop3CommandRegistry() {
+		commands = DEFAULT_COMMANDS;
+	}
+
+	public Pop3CommandRegistry(Map<Command, Pop3Command> commands) {
+		this.commands = Collections.unmodifiableMap(commands);
+	}
+
+	public Pop3Command getCommand(String name) {
+		return commands.get(Command.valueOf(name));
+	}
+
+	public Pop3Command getCommand(Command name) {
+		return commands.get(name);
+	}
 }
