@@ -24,16 +24,21 @@ import org.slf4j.LoggerFactory;
 public class SmtpManager {
     protected static final Logger log = LoggerFactory.getLogger(SmtpManager.class);
 
-    Incoming incomingQueue;
-    UserManager userManager;
-    private ImapHostManager imapHostManager;
-    List<CountDownLatch> notifyList;
+    protected Incoming incomingQueue;
+    protected final UserManager userManager;
+    protected final ImapHostManager imapHostManager;
+    private final List<CountDownLatch> notifyList;
 
     public SmtpManager(ImapHostManager imapHostManager, UserManager userManager) {
         this.imapHostManager = imapHostManager;
         this.userManager = userManager;
-        incomingQueue = new Incoming();
+    	this.incomingQueue = new Incoming();
         notifyList = Collections.synchronizedList(new ArrayList<CountDownLatch>());
+    }
+
+    public SmtpManager(ImapHostManager imapHostManager, UserManager userManager, Incoming incoming) {
+    	this(imapHostManager, userManager);
+        this.incomingQueue = incoming;
     }
 
 
@@ -75,15 +80,16 @@ public class SmtpManager {
     //~----------------------------------------------------------------------------------------------------------------
 
 
-    private class Incoming {
-        public void enqueue(MovingMessage msg) {
+    protected class Incoming {
+    	
+		public void enqueue(MovingMessage msg) {
             for (MailAddress address : msg.getToAddresses()) {
                 handle(msg, address);
             }
 
         }
 
-        private void handle(MovingMessage msg, MailAddress mailAddress) {
+        protected void handle(MovingMessage msg, MailAddress mailAddress) {
             try {
                 GreenMailUser user = userManager.getUserByEmail(mailAddress.getEmail());
                 if (null == user) {

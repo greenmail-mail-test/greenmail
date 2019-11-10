@@ -6,10 +6,19 @@
  */
 package com.icegreen.greenmail.imap;
 
-import com.icegreen.greenmail.store.*;
-import com.icegreen.greenmail.user.GreenMailUser;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentHashMap;
 
-import java.util.*;
+import com.icegreen.greenmail.store.FolderException;
+import com.icegreen.greenmail.store.InMemoryStore;
+import com.icegreen.greenmail.store.MailFolder;
+import com.icegreen.greenmail.store.Store;
+import com.icegreen.greenmail.store.StoredMessage;
+import com.icegreen.greenmail.user.GreenMailUser;
 
 /**
  * An initial implementation of an ImapHost. By default, uses,
@@ -19,10 +28,9 @@ import java.util.*;
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $
  */
-public class ImapHostManagerImpl
-        implements ImapHostManager, ImapConstants {
-    private Store store;
-    private MailboxSubscriptions subscriptions;
+public class ImapHostManagerImpl implements ImapHostManager, ImapConstants {
+    protected Store store;
+    protected MailboxSubscriptions subscriptions;
 
     /**
      * Hack constructor which creates an in-memory store, and creates a console logger.
@@ -35,6 +43,11 @@ public class ImapHostManagerImpl
     public ImapHostManagerImpl(Store store) {
         this.store = store;
         subscriptions = new MailboxSubscriptions();
+    }
+
+    public ImapHostManagerImpl(Store store, MailboxSubscriptions subscriptions) {
+        this.store = store;
+        this.subscriptions = subscriptions;
     }
 
     @Override
@@ -76,7 +89,7 @@ public class ImapHostManagerImpl
         return folder;
     }
 
-    private MailFolder checkViewable(MailFolder folder) {
+    protected MailFolder checkViewable(MailFolder folder) {
         // TODO implement this.
         return folder;
     }
@@ -217,7 +230,7 @@ public class ImapHostManagerImpl
      *
      * @see com.icegreen.greenmail.imap.ImapHostManager#listMailboxes
      */
-    private Collection<MailFolder> listMailboxes(GreenMailUser user,
+    protected Collection<MailFolder> listMailboxes(GreenMailUser user,
                                      String mailboxPattern,
                                      boolean subscribedOnly)
             throws FolderException {
@@ -273,7 +286,7 @@ public class ImapHostManagerImpl
      *
      * @return String of absoluteName, null if not valid selection
      */
-    private String getQualifiedMailboxName(GreenMailUser user, String mailboxName) {
+    protected String getQualifiedMailboxName(GreenMailUser user, String mailboxName) {
         String userNamespace = user.getQualifiedMailboxName();
 
         if ("INBOX".equalsIgnoreCase(mailboxName)) {
@@ -298,8 +311,8 @@ public class ImapHostManagerImpl
      * TODO make this a proper class
      * TODO persist
      */
-    private static class MailboxSubscriptions {
-        private Map<String, List<String>> userSubs = new HashMap<>();
+    public static class MailboxSubscriptions {
+        protected Map<String, List<String>> userSubs = new ConcurrentHashMap<>();
 
         /**
          * Subscribes the user to the store.
@@ -309,7 +322,7 @@ public class ImapHostManagerImpl
          * @param folder The store to subscribe
          * @throws FolderException ??? doesn't yet.
          */
-        void subscribe(GreenMailUser user, MailFolder folder)
+        public void subscribe(GreenMailUser user, MailFolder folder)
                 throws FolderException {
             getUserSubs(user).add(folder.getFullName());
         }
@@ -322,7 +335,7 @@ public class ImapHostManagerImpl
          * @param folder The store to unsubscribe
          * @throws FolderException ?? doesn't yet
          */
-        void unsubscribe(GreenMailUser user, MailFolder folder)
+        public void unsubscribe(GreenMailUser user, MailFolder folder)
                 throws FolderException {
             getUserSubs(user).remove(folder.getFullName());
         }
@@ -334,11 +347,11 @@ public class ImapHostManagerImpl
          * @param folder The store to test.
          * @return <code>true</code> if the user is subscribed.
          */
-        boolean isSubscribed(GreenMailUser user, MailFolder folder) {
+        public boolean isSubscribed(GreenMailUser user, MailFolder folder) {
             return getUserSubs(user).contains(folder.getFullName());
         }
 
-        private List<String> getUserSubs(GreenMailUser user) {
+        protected List<String> getUserSubs(GreenMailUser user) {
             List<String> subs = userSubs.get(user.getLogin());
             if (subs == null) {
                 subs = new ArrayList<>();

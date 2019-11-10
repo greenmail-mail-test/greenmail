@@ -35,6 +35,7 @@ public class GreenMail extends ConfiguredGreenMail {
     protected Managers managers;
     protected Map<String, AbstractServer> services;
     protected ServerSetup[] config;
+    protected ServerBuilder serverBuilder;
 
     /**
      * Creates a SMTP, SMTPS, POP3, POP3S, IMAP, and IMAPS server binding onto non-default ports.
@@ -64,14 +65,44 @@ public class GreenMail extends ConfiguredGreenMail {
     }
 
     /**
+     * Call this constructor if you want to run more than one of the email servers
+     *
+     * @param config Server setup to use
+     * @param managers to use
+     */
+    public GreenMail(ServerSetup[] config, Managers managers) {
+        this.config = config;
+        this.managers = managers;
+        init();
+    }
+
+    /**
+     * Call this constructor if you want to run more than one of the email servers
+     *
+     * @param config Server setup to use
+     * @param managers to use
+     * @param server builder to use
+     */
+    public GreenMail(ServerSetup[] config, Managers managers, ServerBuilder serverBuilder) {
+        this.config = config;
+        this.managers = managers;
+        this.serverBuilder = serverBuilder;
+        init();
+    }
+
+    /**
      * Initialize
      */
-    private void init() {
+    protected void init() {
         if (managers == null) {
             managers = new Managers();
         }
         if (services == null) {
-            services = createServices(config, managers);
+        	if (serverBuilder == null) {
+        		services = createServices(config, managers);
+        	} else {
+        		services = createServices(config, managers, serverBuilder);
+        	}
         }
     }
 
@@ -148,6 +179,30 @@ public class GreenMail extends ConfiguredGreenMail {
                 srvc.put(protocol, new Pop3Server(setup, mgr));
             } else if (protocol.startsWith(ServerSetup.PROTOCOL_IMAP)) {
                 srvc.put(protocol, new ImapServer(setup, mgr));
+            }
+        }
+        return srvc;
+    }
+
+    /**
+     * Create the required services according to the server setup
+     *
+     * @param config Service configuration
+     * @return Services map
+     */
+    protected Map<String, AbstractServer> createServices(ServerSetup[] config, Managers mgr, ServerBuilder builder) {
+        Map<String, AbstractServer> srvc = new HashMap<>();
+        for (ServerSetup setup : config) {
+            if (srvc.containsKey(setup.getProtocol())) {
+                throw new IllegalArgumentException("Server '" + setup.getProtocol() + "' was found at least twice in the array");
+            }
+            final String protocol = setup.getProtocol();
+            if (protocol.startsWith(ServerSetup.PROTOCOL_SMTP)) {
+                srvc.put(protocol, builder.buildSmtpServer(setup, mgr));
+            } else if (protocol.startsWith(ServerSetup.PROTOCOL_POP3)) {
+                srvc.put(protocol, builder.buildPop3Server(setup, mgr));
+            } else if (protocol.startsWith(ServerSetup.PROTOCOL_IMAP)) {
+                srvc.put(protocol, builder.buildImapServer(setup, mgr));
             }
         }
         return srvc;

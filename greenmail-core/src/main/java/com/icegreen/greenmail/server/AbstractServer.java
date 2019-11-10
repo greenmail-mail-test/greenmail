@@ -167,7 +167,7 @@ public abstract class AbstractServer extends Thread implements Service {
      *
      * @param handler the handler.
      */
-    private void addHandler(ProtocolHandler handler) {
+    protected void addHandler(ProtocolHandler handler) {
         handlers.add(handler);
     }
 
@@ -176,7 +176,7 @@ public abstract class AbstractServer extends Thread implements Service {
      *
      * @param handler the handler.
      */
-    private void removeHandler(ProtocolHandler handler) {
+    protected void removeHandler(ProtocolHandler handler) {
         handlers.remove(handler);
     }
 

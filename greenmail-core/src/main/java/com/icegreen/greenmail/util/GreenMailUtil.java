@@ -383,6 +383,22 @@ public class GreenMailUtil {
     }
 
     /**
+     * Gets a JavaMail Session for given server type such as IMAP and additional props for JavaMail.
+     *
+     * @param setup     the setup type, such as <code>ServerSetup.IMAP</code>
+     * @param mailProps additional mail properties.
+     * @param debug		set debug
+     * @return the JavaMail session.
+     */
+    public static Session getSession(final ServerSetup setup, Properties mailProps, boolean debug) {
+        Properties props = setup.configureJavaMailSessionProperties(mailProps, debug);
+
+        log.debug("Mail session properties are {}", props);
+
+        return Session.getInstance(props, null);
+    }
+
+    /**
      * Sets a quota for a users.
      *
      * @param user  the user.
