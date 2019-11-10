@@ -79,7 +79,7 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
         return readonly;
     }
 
-    public int[] getExpunged() throws FolderException {
+    public int[] getExpunged() {
         synchronized (expungedMsns) {
             int[] expungedMsns = new int[this.expungedMsns.size()];
             for (int i = 0; i < expungedMsns.length; i++) {

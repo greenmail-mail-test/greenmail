@@ -91,7 +91,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         response.commandComplete(this);
     }
 
-    private String getMessageData(boolean useUids, FetchRequest fetch, ImapSessionFolder mailbox, long uid) throws FolderException, ProtocolException {
+    private String getMessageData(boolean useUids, FetchRequest fetch, ImapSessionFolder mailbox, long uid) throws FolderException {
         StoredMessage storedMessage = mailbox.getMessage(uid);
         return outputMessage(fetch, storedMessage, mailbox, useUids);
     }
@@ -99,7 +99,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
     private String outputMessage(FetchRequest fetch, StoredMessage message,
                                  ImapSessionFolder folder, boolean useUids)
-            throws FolderException, ProtocolException {
+            throws FolderException {
         // Check if this fetch will cause the "SEEN" flag to be set on this message
         // If so, update the flags, and ensure that a flags response is included in the response.
         boolean ensureFlagsResponse = false;

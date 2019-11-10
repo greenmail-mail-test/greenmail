@@ -39,8 +39,7 @@ public class Pop3State {
         return user;
     }
 
-    public void setUser(GreenMailUser user)
-            throws UserException {
+    public void setUser(GreenMailUser user) {
         this.user = user;
     }
 

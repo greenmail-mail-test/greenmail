@@ -17,7 +17,7 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
+import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
 import static org.junit.Assert.assertTrue;
 
 public class SMTPCommandTest {
@@ -40,7 +40,7 @@ public class SMTPCommandTest {
             smtpTransport.connect(smtpSocket);
             assertThat(smtpTransport.isConnected(), is(equalTo(true)));
             smtpTransport.issueCommand("MAIL FROM: <>", -1);
-            assertThat("250 OK", equalToIgnoringWhiteSpace(smtpTransport.getLastServerResponse()));
+            assertThat("250 OK", equalToCompressingWhiteSpace(smtpTransport.getLastServerResponse()));
         } finally {
             smtpTransport.close();
         }
@@ -63,12 +63,12 @@ public class SMTPCommandTest {
 
                 // Should fail, as user does not exist
                 smtpTransport.issueCommand("AUTH PLAIN dGVzdAB0ZXN0AHRlc3RwYXNz" /* test / test / testpass */, -1);
-                assertThat(smtpTransport.getLastServerResponse(), equalToIgnoringWhiteSpace(AuthCommand.AUTH_CREDENTIALS_INVALID));
+                assertThat(smtpTransport.getLastServerResponse(), equalToCompressingWhiteSpace(AuthCommand.AUTH_CREDENTIALS_INVALID));
 
                 // Try again but create user
                 greenMail.getManagers().getUserManager().createUser("test@localhost", "test", "testpass");
                 smtpTransport.issueCommand("AUTH PLAIN dGVzdAB0ZXN0AHRlc3RwYXNz" /* test / test / testpass */, -1);
-                assertThat(smtpTransport.getLastServerResponse(), equalToIgnoringWhiteSpace(AuthCommand.AUTH_SUCCEDED));
+                assertThat(smtpTransport.getLastServerResponse(), equalToCompressingWhiteSpace(AuthCommand.AUTH_SUCCEDED));
             } finally {
                 smtpTransport.close();
             }
@@ -86,7 +86,7 @@ public class SMTPCommandTest {
                 smtpTransport.issueCommand("AUTH PLAIN", -1);
                 assertTrue(smtpTransport.getLastServerResponse().startsWith(AuthCommand.SMTP_SERVER_CONTINUATION));
                 smtpTransport.issueCommand("dGVzdAB0ZXN0AHRlc3RwYXNz" /* test / test / testpass */, -1);
-                assertThat(smtpTransport.getLastServerResponse(), equalToIgnoringWhiteSpace(AuthCommand.AUTH_SUCCEDED));
+                assertThat(smtpTransport.getLastServerResponse(), equalToCompressingWhiteSpace(AuthCommand.AUTH_SUCCEDED));
             } finally {
                 smtpTransport.close();
             }
@@ -108,7 +108,7 @@ public class SMTPCommandTest {
             smtpTransport.connect(smtpSocket);
             assertThat(smtpTransport.isConnected(), is(equalTo(true)));
             smtpTransport.issueCommand("MAIL FROM: <test.test@test.net> AUTH <>", -1);
-            assertThat("250 OK", equalToIgnoringWhiteSpace(smtpTransport.getLastServerResponse()));
+            assertThat("250 OK", equalToCompressingWhiteSpace(smtpTransport.getLastServerResponse()));
         } finally {
             smtpTransport.close();
         }

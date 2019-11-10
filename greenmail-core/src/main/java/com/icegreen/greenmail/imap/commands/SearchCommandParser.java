@@ -50,7 +50,7 @@ class SearchCommandParser extends CommandParser {
         Charset charset = null;
 
         while (next != '\n') {
-            if (next != '\"' && (quoted || (next != '\"' && next != CHR_SPACE && next != CHR_CR))) {
+            if (next != '\"' && (quoted || (next != CHR_SPACE && next != CHR_CR))) {
                 sb.append(next);
             }
             request.consume();
@@ -122,7 +122,7 @@ class SearchCommandParser extends CommandParser {
                     if (b.isCharsetAware() && null != charset) {
                         request.consume(); // \n
                         next = request.nextChar();
-                        final Integer capacity = Integer.valueOf(sb.substring(1, sb.length() - 1));
+                        final int capacity = Integer.parseInt(sb.substring(1, sb.length() - 1));
                         ByteBuffer bb = ByteBuffer.allocate(capacity);
                         while (next != CHR_CR) {
                             request.consume(); // \n
