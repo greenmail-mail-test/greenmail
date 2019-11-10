@@ -6,8 +6,9 @@
  */
 package com.icegreen.greenmail.mail;
 
-public class MalformedAddressException
-        extends Exception {
+public class MalformedAddressException extends Exception {
+    static final long serialVersionUID = 5975918967992752579L;
+
     public MalformedAddressException() {
         super();
     }

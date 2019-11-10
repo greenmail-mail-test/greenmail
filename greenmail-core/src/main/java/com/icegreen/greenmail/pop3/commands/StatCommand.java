@@ -6,7 +6,6 @@
  */
 package com.icegreen.greenmail.pop3.commands;
 
-import com.icegreen.greenmail.mail.MailException;
 import com.icegreen.greenmail.pop3.Pop3Connection;
 import com.icegreen.greenmail.pop3.Pop3State;
 import com.icegreen.greenmail.store.MailFolder;
@@ -36,8 +35,7 @@ public class StatCommand
         }
     }
 
-    long sumMessageSizes(List<StoredMessage> messages)
-            throws MailException {
+    long sumMessageSizes(List<StoredMessage> messages) {
         long total = 0;
 
         for (StoredMessage msg : messages) {

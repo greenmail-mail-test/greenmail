@@ -219,7 +219,6 @@ public class CommandParser {
      * TODO we're being liberal, the spec insists on \r\n for new lines.
      *
      * @param request the imap request
-     * @throws ProtocolException
      */
     private void consumeCRLF(ImapRequestLineReader request)
             throws ProtocolException {
@@ -292,7 +291,7 @@ public class CommandParser {
         return flags;
     }
 
-    public void setFlag(String flagString, Flags flags) throws ProtocolException {
+    public void setFlag(String flagString, Flags flags) {
         if (flagString.equalsIgnoreCase(MessageFlags.ANSWERED)) {
             flags.add(Flags.Flag.ANSWERED);
         } else if (flagString.equalsIgnoreCase(MessageFlags.DELETED)) {

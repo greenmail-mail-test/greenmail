@@ -6,14 +6,13 @@
  */
 package com.icegreen.greenmail.imap.commands;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.regex.Pattern;
 
 /**
  * Represents a range of UID values.
  */
-public class IdRange implements Serializable {
+public class IdRange {
     /** Matches a sequence of a single id or id range */
     public static final Pattern SEQUENCE = Pattern.compile("\\d+|\\d+\\:\\d+");
     private long lowVal;
@@ -92,9 +91,7 @@ public class IdRange implements Serializable {
 
         IdRange currentIdRange = new IdRange(uidsLocal.get(0));
         for (Long uid : uidsLocal) {
-            if (uid == currentIdRange.getHighVal()) {
-                // Ignore
-            } else if (uid > currentIdRange.getHighVal() && (uid == currentIdRange.getHighVal() + 1)) {
+            if (uid > currentIdRange.getHighVal() && (uid == currentIdRange.getHighVal() + 1)) {
                 currentIdRange = new IdRange(currentIdRange.getLowVal(), uid);
             } else {
                 ids.add(currentIdRange);

@@ -34,8 +34,7 @@ class UidCommand extends SelectedStateCommand {
             throws ProtocolException, FolderException {
         String commandName = parser.atom(request);
         ImapCommand command = commandFactory.getCommand(commandName);
-        if (command == null ||
-                !(command instanceof UidEnabledCommand)) {
+        if (!(command instanceof UidEnabledCommand)) {
             throw new ProtocolException("Invalid UID command: '" + commandName + "'");
         }
 

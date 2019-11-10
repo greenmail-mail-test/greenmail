@@ -9,7 +9,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import javax.mail.Address;
 import javax.mail.Flags;
@@ -221,7 +225,11 @@ public class ImapSearchTest {
     }
 
     private Date getSampleDate(int day) {
-        return new Date(110, 1, day);
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd").parse("2010-01-"+day);
+        } catch (ParseException e) {
+            throw new IllegalStateException("Can not parse date", e);
+        }
     }
 
     private Date getSampleDate() {

@@ -19,6 +19,8 @@ import static java.lang.String.format;
  * @author Raimund Klein <raimund.klein@gmx.de>
  */
 public class MaxSizeLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
+    static final long serialVersionUID = 7736880402696612355L;
+
     private final int maxSize;
 
     /**
