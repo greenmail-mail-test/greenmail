@@ -10,6 +10,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.icegreen.greenmail.pop3.commands.Pop3CommandRegistry.Command;
+
 
 public class SmtpCommandRegistry {
     public enum Command { AUTH, HELO, EHLO, NOOP, RSET, QUIT, MAIL, RCPT, DATA, VRFY };
@@ -42,7 +44,13 @@ public class SmtpCommandRegistry {
     }
     
     public SmtpCommand getCommand(String name) {
-        return commands.get(Command.valueOf(name));
+		Command value;
+		try {
+			value = Command.valueOf(name);
+		} catch (IllegalArgumentException iae) {
+			return null;
+		}
+        return commands.get(value);
     }
     
     public SmtpCommand getCommand(Command command) {

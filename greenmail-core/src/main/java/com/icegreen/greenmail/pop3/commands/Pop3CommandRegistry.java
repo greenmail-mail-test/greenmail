@@ -46,7 +46,13 @@ public class Pop3CommandRegistry {
 	}
 
 	public Pop3Command getCommand(String name) {
-		return commands.get(Command.valueOf(name));
+		Command value;
+		try {
+			value = Command.valueOf(name);
+		} catch (IllegalArgumentException iae) {
+			return null;
+		}
+		return commands.get(value);
 	}
 
 	public Pop3Command getCommand(Command name) {
