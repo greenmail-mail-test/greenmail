@@ -6,7 +6,16 @@
  */
 package com.icegreen.greenmail.store;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentHashMap;
+
 import javax.mail.MessagingException;
 import javax.mail.Quota;
 
@@ -21,9 +30,9 @@ import com.icegreen.greenmail.imap.ImapConstants;
  */
 public class InMemoryStore
         implements Store, ImapConstants {
-    boolean quotaSupported = true;
-    private final RootFolder rootMailbox = new RootFolder();
-    private final Map<String, Set<Quota>> quotaMap = new HashMap<>();
+    private boolean quotaSupported = true;
+    protected final RootFolder rootMailbox = new RootFolder();
+    protected final Map<String, Set<Quota>> quotaMap = new ConcurrentHashMap<>();
 
     @Override
     public MailFolder getMailbox(String absoluteMailboxName) {
@@ -111,7 +120,7 @@ public class InMemoryStore
         }
     }
 
-    private HierarchicalFolder getInboxOrUserRootFolder(HierarchicalFolder folder) {
+    protected HierarchicalFolder getInboxOrUserRootFolder(HierarchicalFolder folder) {
         final HierarchicalFolder inboxFolder = findParentByName(folder, ImapConstants.INBOX_NAME);
         if(null==inboxFolder) {
             return folder.getParent();
@@ -119,7 +128,7 @@ public class InMemoryStore
         return inboxFolder.getParent();
     }
 
-    private HierarchicalFolder findParentByName(HierarchicalFolder folder, String name) {
+    protected HierarchicalFolder findParentByName(HierarchicalFolder folder, String name) {
         HierarchicalFolder currentFolder = folder;
         while (null != currentFolder && !name.equals(currentFolder.getName())) {
             currentFolder = currentFolder.getParent();
@@ -211,14 +220,14 @@ public class InMemoryStore
         return collectedQuotas.toArray(new Quota[collectedQuotas.size()]);
     }
 
-    private void updateQuotas(final Set<Quota> quotas,
+    protected void updateQuotas(final Set<Quota> quotas,
                               final String qualifiedRootPrefix) {
         for (Quota q : quotas) {
             updateQuota(q, qualifiedRootPrefix);
         }
     }
 
-    private void updateQuota(final Quota quota, final String pQualifiedRootPrefix) {
+    protected void updateQuota(final Quota quota, final String pQualifiedRootPrefix) {
         MailFolder folder = getMailbox(
                 ImapConstants.USER_NAMESPACE + ImapConstants.HIERARCHY_DELIMITER +
                         pQualifiedRootPrefix + ImapConstants.HIERARCHY_DELIMITER +
@@ -262,7 +271,7 @@ public class InMemoryStore
         quotas.add(quota);
     }
 
-    private void addAllChildren(HierarchicalFolder mailbox, Collection<MailFolder> mailboxes) {
+    protected void addAllChildren(HierarchicalFolder mailbox, Collection<MailFolder> mailboxes) {
         Collection<HierarchicalFolder> children = mailbox.getChildren();
         for (HierarchicalFolder child : children) {
             mailboxes.add(child);

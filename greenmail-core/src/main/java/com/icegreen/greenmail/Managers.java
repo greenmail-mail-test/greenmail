@@ -16,11 +16,44 @@ import com.icegreen.greenmail.user.UserManager;
  * @since Jan 27, 2006
  */
 public class Managers {
-    private ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
-    private UserManager userManager = new UserManager(imapHostManager);
-    private SmtpManager smtpManager = new SmtpManager(imapHostManager, userManager);
+    private final ImapHostManager imapHostManager;
+    private final UserManager userManager;
+    private final SmtpManager smtpManager;
 
-    public SmtpManager getSmtpManager() {
+    public Managers() {
+        imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
+        userManager = new UserManager(imapHostManager);
+        smtpManager = new SmtpManager(imapHostManager, userManager);
+	}
+    
+    public Managers(ImapHostManager imapHostManager) {
+        this.imapHostManager = imapHostManager;
+        userManager = new UserManager(imapHostManager);
+        smtpManager = new SmtpManager(imapHostManager, userManager);
+	}
+    
+    public Managers(ImapHostManager imapHostManager, UserManager userManager) {
+        this.imapHostManager = imapHostManager;
+        this.userManager = userManager;
+        smtpManager = new SmtpManager(imapHostManager, userManager);
+	}
+    
+    public Managers(ImapHostManager imapHostManager, UserManager userManager, SmtpManager smtpManager) {
+		this.imapHostManager = imapHostManager;
+		this.userManager = userManager;
+		this.smtpManager = smtpManager;
+	}
+    
+    public static Managers build(ImapHostManager imapHostManager) {
+    	UserManager userManager = new UserManager(imapHostManager);
+		return new Managers(imapHostManager, userManager, new SmtpManager(imapHostManager, userManager));
+    }
+
+    public static Managers build(ImapHostManager imapHostManager, UserManager userManager) {
+		return new Managers(imapHostManager, userManager, new SmtpManager(imapHostManager, userManager));
+    }
+
+	public SmtpManager getSmtpManager() {
         return smtpManager;
     }
 

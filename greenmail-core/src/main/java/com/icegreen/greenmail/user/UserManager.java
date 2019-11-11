@@ -6,21 +6,26 @@
  */
 package com.icegreen.greenmail.user;
 
-import com.icegreen.greenmail.imap.ImapHostManager;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import com.icegreen.greenmail.imap.ImapHostManager;
 
 public class UserManager {
     private static final Logger log = LoggerFactory.getLogger(UserManager.class);
     /**
      * User list by their trimmed, lowercased user names
      */
-    private Map<String, GreenMailUser> loginToUser = Collections.synchronizedMap(new HashMap<String, GreenMailUser>());
-    private Map<String, GreenMailUser> emailToUser = Collections.synchronizedMap(new HashMap<String, GreenMailUser>());
-    private ImapHostManager imapHostManager;
-    private boolean authRequired = true;
+    protected Map<String, GreenMailUser> loginToUser = new ConcurrentHashMap<String, GreenMailUser>();
+    protected Map<String, GreenMailUser> emailToUser = new ConcurrentHashMap<String, GreenMailUser>();
+    protected ImapHostManager imapHostManager;
+    protected boolean authRequired = true;
 
     public UserManager(ImapHostManager imapHostManager) {
         this.imapHostManager = imapHostManager;
@@ -78,7 +83,7 @@ public class UserManager {
         return null != u && checkPassword(u.getPassword(), password);
     }
 
-    private boolean checkPassword(String expectedPassword, String password) {
+    protected boolean checkPassword(String expectedPassword, String password) {
         return (null != expectedPassword && expectedPassword.equals(password))
                 || (null == password && expectedPassword == null);
     }
@@ -97,7 +102,7 @@ public class UserManager {
      * @param login Login name
      * @return Normalized name
      */
-    private static String normalizerUserName(String login) {
+    protected static String normalizerUserName(String login) {
         return login.trim().toLowerCase(Locale.ENGLISH);
     }
 

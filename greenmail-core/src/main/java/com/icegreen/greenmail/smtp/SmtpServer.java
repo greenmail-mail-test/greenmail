@@ -15,12 +15,21 @@ import com.icegreen.greenmail.util.ServerSetup;
 import java.net.Socket;
 
 public class SmtpServer extends AbstractServer {
+	
+	protected final SmtpCommandRegistry smtpCommandRegistry;
+	
     public SmtpServer(ServerSetup setup, Managers managers) {
         super(setup, managers);
+        smtpCommandRegistry = new SmtpCommandRegistry();
+    }
+
+    public SmtpServer(ServerSetup setup, Managers managers, SmtpCommandRegistry smtpCommandRegistry) {
+        super(setup, managers);
+        this.smtpCommandRegistry = smtpCommandRegistry;
     }
 
     @Override
     protected ProtocolHandler createProtocolHandler(final Socket clientSocket) {
-        return new SmtpHandler(new SmtpCommandRegistry(), managers.getSmtpManager(), clientSocket);
+        return new SmtpHandler(smtpCommandRegistry, managers.getSmtpManager(), clientSocket);
     }
 }

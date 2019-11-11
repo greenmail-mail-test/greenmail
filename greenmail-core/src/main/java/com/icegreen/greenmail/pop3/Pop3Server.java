@@ -18,13 +18,21 @@ import java.net.Socket;
 
 public class Pop3Server extends AbstractServer {
 
+	private final Pop3CommandRegistry pop3CommandRegistry;
+	
     public Pop3Server(ServerSetup setup, Managers managers) {
         super(setup, managers);
+        this.pop3CommandRegistry = new Pop3CommandRegistry();
+    }
+
+    public Pop3Server(ServerSetup setup, Managers managers, Pop3CommandRegistry pop3CommandRegistry) {
+        super(setup, managers);
+        this.pop3CommandRegistry = pop3CommandRegistry;
     }
 
     @Override
     protected ProtocolHandler createProtocolHandler(final Socket clientSocket) {
-        return new Pop3Handler(new Pop3CommandRegistry(), managers.getUserManager(), clientSocket);
+        return new Pop3Handler(pop3CommandRegistry, managers.getUserManager(), clientSocket);
     }
 
     @Override

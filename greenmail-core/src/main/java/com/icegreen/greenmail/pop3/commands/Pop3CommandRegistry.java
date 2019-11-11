@@ -6,30 +6,56 @@
  */
 package com.icegreen.greenmail.pop3.commands;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class Pop3CommandRegistry {
-    private static final Map<String, Pop3Command> commands = new HashMap<>();
+	public enum Command {
+		QUIT, STAT, APOP, USER, PASS, LIST, UIDL, TOP, RETR, DELE, NOOP, RSET, CAPA
+	}
 
-    static {
-        commands.put("QUIT", new QuitCommand());
-        commands.put("STAT", new StatCommand());
-        commands.put("APOP", new ApopCommand());
-        commands.put("USER", new UserCommand());
-        commands.put("PASS", new PassCommand());
-        commands.put("LIST", new ListCommand());
-        commands.put("UIDL", new UidlCommand());
-        commands.put("TOP", new TopCommand());
-        commands.put("RETR", new RetrCommand());
-        commands.put("DELE", new DeleCommand());
-        commands.put("NOOP", new NoopCommand());
-        commands.put("RSET", new RsetCommand());
-        commands.put("CAPA", new CapaCommand());
-    }
+	public static final Map<Command, Pop3Command> DEFAULT_COMMANDS;
 
-    public Pop3Command getCommand(String name) {
-        return commands.get(name);
-    }
+	static {
+		Map<Command, Pop3Command> defaultCommands = new HashMap<>();
+		defaultCommands.put(Command.QUIT, new QuitCommand());
+		defaultCommands.put(Command.STAT, new StatCommand());
+		defaultCommands.put(Command.APOP, new ApopCommand());
+		defaultCommands.put(Command.USER, new UserCommand());
+		defaultCommands.put(Command.PASS, new PassCommand());
+		defaultCommands.put(Command.LIST, new ListCommand());
+		defaultCommands.put(Command.UIDL, new UidlCommand());
+		defaultCommands.put(Command.TOP, new TopCommand());
+		defaultCommands.put(Command.RETR, new RetrCommand());
+		defaultCommands.put(Command.DELE, new DeleCommand());
+		defaultCommands.put(Command.NOOP, new NoopCommand());
+		defaultCommands.put(Command.RSET, new RsetCommand());
+		defaultCommands.put(Command.CAPA, new CapaCommand());
+		DEFAULT_COMMANDS = Collections.unmodifiableMap(new HashMap<>(defaultCommands));
+	}
+
+	private final Map<Command, Pop3Command> commands;
+
+	public Pop3CommandRegistry() {
+		commands = DEFAULT_COMMANDS;
+	}
+
+	public Pop3CommandRegistry(Map<Command, Pop3Command> commands) {
+		this.commands = Collections.unmodifiableMap(commands);
+	}
+
+	public Pop3Command getCommand(String name) {
+		Command value;
+		try {
+			value = Command.valueOf(name);
+		} catch (IllegalArgumentException iae) {
+			return null;
+		}
+		return commands.get(value);
+	}
+
+	public Pop3Command getCommand(Command name) {
+		return commands.get(name);
+	}
 }

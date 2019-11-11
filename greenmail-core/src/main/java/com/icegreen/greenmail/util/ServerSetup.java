@@ -56,6 +56,38 @@ public class ServerSetup {
 
     public static final ServerSetup[] ALL = new ServerSetup[]{SMTP, SMTPS, POP3, POP3S, IMAP, IMAPS};
 
+    public static class Builder {
+    	Integer port;
+    	int portOffset = 0;
+    	String bindAddress;
+    	
+    	public ServerSetup[] build(ServerSetup[] from) {
+    		ServerSetup[] config = new ServerSetup[from.length];
+    		for (int i=0; i<from.length; i++) {
+    			ServerSetup ex = from[i];
+    			config[i] = new ServerSetup(
+    					portOffset + (port != null ? port : ex.getPort()), 
+    					bindAddress != null ? bindAddress : ex.bindAddress, 
+    					ex.getProtocol());
+    		}
+    		return config;
+    	}
+    	
+    	public Builder withPort(int port) {
+    		this.port = port;
+    		return this;
+    	}
+
+    	public Builder withPortOffset(int portOffset) {
+    		this.portOffset = portOffset;
+    		return this;
+    	}
+    	
+    	public Builder withBindAddress(String bindAddress) {
+    		this.bindAddress = bindAddress;
+    		return this;
+    	}
+    }
 
     /**
      * Default socket read timeout. See JavaMail session properties.
@@ -70,11 +102,11 @@ public class ServerSetup {
      */
     public static final long SERVER_STARTUP_TIMEOUT = 1000L;
 
-    private static final String MAIL_DOT = "mail.";
+    public static final String MAIL_DOT = "mail.";
 
-    private final int port;
-    private final String bindAddress;
-    private final String protocol;
+    protected final int port;
+    protected final String bindAddress;
+    protected final String protocol;
     private long readTimeout = -1L;
     private long connectionTimeout = -1L;
     private long writeTimeout = -1L;
