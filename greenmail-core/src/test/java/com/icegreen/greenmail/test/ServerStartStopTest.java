@@ -33,7 +33,7 @@ public class ServerStartStopTest {
     @Test
     public void testServerStartupTimeout() {
         // Create a few setups
-        ServerSetup setups[] = new ServerSetup[ServerSetupTest.ALL.length];
+        ServerSetup[] setups = new ServerSetup[ServerSetupTest.ALL.length];
 
         // Set too low startup timeout
         for(int i=0;i<ServerSetupTest.ALL.length;i++) {

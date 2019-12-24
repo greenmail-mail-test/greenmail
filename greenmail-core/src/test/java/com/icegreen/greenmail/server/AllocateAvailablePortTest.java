@@ -22,13 +22,14 @@ public class AllocateAvailablePortTest {
     public final GreenMailRule greenMail = new GreenMailRule(allocateAnyFreePortForAnSmtpServer);
 
     @Test
-    public void returnTheActuallyAllocatedPort() throws Exception {
+    public void returnTheActuallyAllocatedPort() {
         assertThat(greenMail.getSmtp().getPort(), not(0));
     }
 
     @Test
-    public void ensureThatMailCanActuallyBeSentToTheAllocatedPort() throws Exception {
-        GreenMailUtil.sendTextEmail("to@localhost.com", "from@localhost.com", "subject", "body", smtpServerAtPort(greenMail.getSmtp().getPort()));
+    public void ensureThatMailCanActuallyBeSentToTheAllocatedPort() {
+        GreenMailUtil.sendTextEmail("to@localhost.com", "from@localhost.com", "subject", "body",
+                smtpServerAtPort(greenMail.getSmtp().getPort()));
 
         MimeMessage[] emails = greenMail.getReceivedMessages();
         assertThat(emails.length, is(1));

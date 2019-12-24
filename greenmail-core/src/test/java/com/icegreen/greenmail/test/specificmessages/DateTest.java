@@ -52,7 +52,7 @@ public class DateTest {
      * @param checkReceivedDate True if received date should be checked. POP3 does not provide a received date
      */
     private void retrieveAndCheck(AbstractServer server, String to, Date sentDate, boolean checkReceivedDate)
-            throws MessagingException, IOException {
+            throws MessagingException {
         try (Retriever retriever = new Retriever(server)) {
             Message[] messages = retriever.getMessages(to);
             assertThat(messages.length, is(1));

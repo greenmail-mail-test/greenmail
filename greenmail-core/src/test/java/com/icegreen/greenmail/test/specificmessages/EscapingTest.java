@@ -68,7 +68,7 @@ public class EscapingTest {
      * @param subject Subject of message
      */
     private void retrieveAndCheck(AbstractServer server, String to, String from, String subject)
-            throws MessagingException, IOException {
+            throws MessagingException {
         try (Retriever retriever = new Retriever(server)) {
             Message[] messages = retriever.getMessages(to);
             assertEquals(1, messages.length);

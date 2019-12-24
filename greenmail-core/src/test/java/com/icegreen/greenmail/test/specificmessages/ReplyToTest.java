@@ -134,7 +134,7 @@ public class ReplyToTest
 	 * @param server Server to read from
 	 * @param login  Account to retrieve
 	 */
-	private void retrieveAndCheckReplyTo(AbstractServer server, String login, InternetAddress[] replyToAddrs) throws MessagingException, IOException {
+	private void retrieveAndCheckReplyTo(AbstractServer server, String login, InternetAddress[] replyToAddrs) throws MessagingException {
 		try (Retriever retriever = new Retriever(server)) {
 			Message[] messages = retriever.getMessages(login);
 			assertEquals(1, messages.length);

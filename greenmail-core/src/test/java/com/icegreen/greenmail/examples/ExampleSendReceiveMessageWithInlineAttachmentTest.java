@@ -62,7 +62,7 @@ public class ExampleSendReceiveMessageWithInlineAttachmentTest {
         return folder;
     }
 
-    private Store connectToIMAPServer() throws GeneralSecurityException, MessagingException {
+    private Store connectToIMAPServer() throws MessagingException {
         Store store = greenMail.getImap().createStore();
         store.connect(imapUserName, imapPassword);
 

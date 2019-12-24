@@ -11,11 +11,11 @@ import static org.junit.Assert.assertThat;
 
 public class MaxSizeLinkedHashMapTest {
     private static final int TEST_MAX_SIZE = 8;
-    private MaxSizeLinkedHashMap<Integer, Integer> map = new MaxSizeLinkedHashMap<Integer, Integer>(TEST_MAX_SIZE);
+    private MaxSizeLinkedHashMap<Integer, Integer> map = new MaxSizeLinkedHashMap<>(TEST_MAX_SIZE);
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldRejectNegativeMaxSize() {
-        new MaxSizeLinkedHashMap<Object, Object>(-1 * Math.abs(new Random().nextInt(Integer.MAX_VALUE - 1) + 1));
+        new MaxSizeLinkedHashMap<>(-1 * Math.abs(new Random().nextInt(Integer.MAX_VALUE - 1) + 1));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -26,7 +26,7 @@ public class MaxSizeLinkedHashMapTest {
     @Test
     public void shouldRejectLessThanZeroMaxSize() {
         try {
-            new MaxSizeLinkedHashMap<Object, Object>(-1);
+            new MaxSizeLinkedHashMap<>(-1);
         } catch (IllegalArgumentException ex) {
             assertEquals("The maxSize must be greater than 0: -1", ex.getMessage());
         }

@@ -89,7 +89,7 @@ public class MultiRequestTest {
     //~ END INNER CLASSES -----------------------------------------------
 
     @Test
-    public void test20Senders() throws InterruptedException {
+    public void test20Senders() {
         final int num = 20;
         addUsers(num);
         startSenderThreads(num);
