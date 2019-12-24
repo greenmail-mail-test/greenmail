@@ -28,8 +28,7 @@ public class ImapHostManagerImpl
      * Hack constructor which creates an in-memory store, and creates a console logger.
      */
     public ImapHostManagerImpl() {
-        store = new InMemoryStore();
-        subscriptions = new MailboxSubscriptions();
+        this(new InMemoryStore());
     }
 
     public ImapHostManagerImpl(Store store) {
@@ -85,7 +84,7 @@ public class ImapHostManagerImpl
      * @see ImapHostManager#getInbox
      */
     @Override
-    public MailFolder getInbox(GreenMailUser user) throws FolderException {
+    public MailFolder getInbox(GreenMailUser user) {
         return getFolder(user, INBOX_NAME);
     }
 
@@ -104,7 +103,7 @@ public class ImapHostManagerImpl
      */
     @Override
     public MailFolder createMailbox(GreenMailUser user, String mailboxName)
-            throws AuthorizationException, FolderException {
+            throws FolderException {
         String qualifiedName = getQualifiedMailboxName(user, mailboxName);
         if (store.getMailbox(qualifiedName) != null) {
             throw new FolderException("Mailbox already exists.");
@@ -307,10 +306,8 @@ public class ImapHostManagerImpl
          *
          * @param user   The user making the subscription
          * @param folder The store to subscribe
-         * @throws FolderException ??? doesn't yet.
          */
-        void subscribe(GreenMailUser user, MailFolder folder)
-                throws FolderException {
+        void subscribe(GreenMailUser user, MailFolder folder) {
             getUserSubs(user).add(folder.getFullName());
         }
 
@@ -320,10 +317,8 @@ public class ImapHostManagerImpl
          *
          * @param user   The user making the request.
          * @param folder The store to unsubscribe
-         * @throws FolderException ?? doesn't yet
          */
-        void unsubscribe(GreenMailUser user, MailFolder folder)
-                throws FolderException {
+        void unsubscribe(GreenMailUser user, MailFolder folder) {
             getUserSubs(user).remove(folder.getFullName());
         }
 
