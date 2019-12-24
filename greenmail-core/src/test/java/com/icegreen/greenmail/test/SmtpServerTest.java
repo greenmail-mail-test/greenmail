@@ -50,7 +50,7 @@ public class SmtpServerTest {
     }
 
     @Test
-    public void testSmtpServerTimeout() throws Throwable {
+    public void testSmtpServerTimeout() {
         assertEquals(0, greenMail.getReceivedMessages().length);
         long t0 = System.currentTimeMillis();
         greenMail.waitForIncomingEmail(500, 1);
@@ -197,8 +197,7 @@ public class SmtpServerTest {
         assertEquals(0, greenMail.getReceivedMessages().length);
 
         String subject = GreenMailUtil.random();
-        String body = GreenMailUtil.random();
-        
+
         Properties mailProps = new Properties();
         mailProps.setProperty("mail.smtp.from", "<test@localhost.com> AUTH <somethingidontknow>");
         Session session = GreenMailUtil.getSession(ServerSetupTest.SMTP, mailProps);

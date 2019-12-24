@@ -23,7 +23,6 @@ import javax.mail.internet.MimeMessage;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class ImapSubjectLineTest {
 
@@ -103,7 +102,6 @@ public class ImapSubjectLineTest {
      *
      * @param session Session to set on the messages
      * @param folder Folder to add to
-     * @throws Exception
      */
     private void storeSearchTestMessages(Session session, MailFolder folder, String subject) throws Exception {
         MimeMessage message1 = new MimeMessage(session);

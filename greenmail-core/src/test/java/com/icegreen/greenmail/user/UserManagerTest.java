@@ -116,7 +116,7 @@ public class UserManagerTest {
         concurrencyTest.performTest();
     }
 
-    class ConcurrencyTest {
+    static class ConcurrencyTest {
         private static final int NO_THREADS = 5;
         private static final int NO_ACCOUNTS_PER_THREAD = 20;
 

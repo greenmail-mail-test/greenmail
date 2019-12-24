@@ -36,7 +36,7 @@ public class GreenMailUtilTest {
     }
 
     @Test
-    public void testGetBody() throws MessagingException, IOException {
+    public void testGetBody() throws MessagingException {
         MimeMessage message = GreenMailUtil.newMimeMessage(SAMPLE_EMAIL);
         String body = GreenMailUtil.getBody(message);
         assertEquals("Yo wassup Bertil", body.trim());
@@ -104,7 +104,7 @@ public class GreenMailUtilTest {
                 assertTrue(null != msgs && msgs.length == 1);
                 Message m = msgs[0];
                 assertEquals("Test subject", m.getSubject());
-                Address a[] = m.getRecipients(Message.RecipientType.TO);
+                Address[] a = m.getRecipients(Message.RecipientType.TO);
                 assertTrue(null != a && a.length == 1
                         && a[0].toString().equals("\"Foo, Bar\" <foo@localhost>"));
                 a = m.getFrom();

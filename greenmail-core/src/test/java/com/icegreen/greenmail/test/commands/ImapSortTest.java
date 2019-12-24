@@ -52,17 +52,17 @@ public class ImapSortTest {
 
             imapMessages = imapFolder.getSortedMessages(new SortTerm[]{SortTerm.TO});
             assertEquals(2, imapMessages.length);
-            assertTrue(imapMessages[0] == m0);
-            assertTrue(imapMessages[1] == m1);
+            assertSame(imapMessages[0], m0);
+            assertSame(imapMessages[1], m1);
 
             imapMessages = imapFolder.getSortedMessages(new SortTerm[]{SortTerm.REVERSE, SortTerm.TO});
             assertEquals(2, imapMessages.length);
-            assertTrue(imapMessages[0] == m1);
-            assertTrue(imapMessages[1] == m0);
+            assertSame(imapMessages[0], m1);
+            assertSame(imapMessages[1], m0);
 
             imapMessages = imapFolder.getSortedMessages(new SortTerm[]{SortTerm.TO}, new FlagTerm(new Flags(Flags.Flag.ANSWERED), true));
-            assertTrue(imapMessages.length == 1);
-            assertTrue(imapMessages[0] == m0);
+            assertEquals(1, imapMessages.length);
+            assertSame(imapMessages[0], m0);
 
         } finally {
             store.close();

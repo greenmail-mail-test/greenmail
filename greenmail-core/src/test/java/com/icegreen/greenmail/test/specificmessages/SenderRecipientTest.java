@@ -151,7 +151,7 @@ public class SenderRecipientTest {
      * @param server Server to read from
      * @param login  Account to retrieve
      */
-    private void retrieveAndCheck(AbstractServer server, String login) throws MessagingException, IOException {
+    private void retrieveAndCheck(AbstractServer server, String login) throws MessagingException {
         try (Retriever retriever = new Retriever(server)) {
             Message[] messages = retriever.getMessages(login);
             assertEquals(1, messages.length);

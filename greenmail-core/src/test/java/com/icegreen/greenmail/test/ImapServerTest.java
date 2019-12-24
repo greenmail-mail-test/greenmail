@@ -170,9 +170,9 @@ public class ImapServerTest {
 
             Quota[] quotas = quotaAwareStore.getQuota("INBOX");
             assertNotNull(quotas);
-            assertTrue(quotas.length == 1);
+            assertEquals(1, quotas.length);
             assertNotNull(quotas[0].resources);
-            assertTrue(quotas[0].resources.length == 2);
+            assertEquals(2, quotas[0].resources.length);
             assertEquals(testQuota.quotaRoot, quotas[0].quotaRoot);
             assertEquals(quotas[0].resources[0].limit, testQuota.resources[0].limit);
             assertEquals(quotas[0].resources[1].limit, testQuota.resources[1].limit);
@@ -181,7 +181,7 @@ public class ImapServerTest {
 
             quotas = quotaAwareStore.getQuota("");
             assertNotNull(quotas);
-            assertTrue(quotas.length == 0);
+            assertEquals(0, quotas.length);
             // TODO: Quota on ""
         } finally {
             store.close();
@@ -209,7 +209,7 @@ public class ImapServerTest {
     }
 
     @Test
-    public void testSetGetFlags() throws MessagingException, InterruptedException {
+    public void testSetGetFlags() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject", "Test message", ServerSetupTest.SMTP);
         greenMail.waitForIncomingEmail(1);
@@ -259,7 +259,7 @@ public class ImapServerTest {
     }
 
     @Test
-    public void testNestedFolders() throws MessagingException, InterruptedException {
+    public void testNestedFolders() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
         final IMAPStore store = greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
@@ -268,7 +268,7 @@ public class ImapServerTest {
             // Create some folders
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
             IMAPFolder newFolder = (IMAPFolder) folder.getFolder("foo-folder");
-            assertTrue(!newFolder.exists());
+            assertFalse(newFolder.exists());
 
             assertTrue(newFolder.create(Folder.HOLDS_FOLDERS | Folder.HOLDS_MESSAGES));
 
@@ -293,10 +293,9 @@ public class ImapServerTest {
      *  </q>
      *
      * @throws MessagingException
-     * @throws InterruptedException
      */
     @Test
-    public void testRenameINBOXFolder() throws MessagingException, InterruptedException {
+    public void testRenameINBOXFolder() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject",
                 "Test message", greenMail.getSmtp().getServerSetup());
@@ -330,7 +329,7 @@ public class ImapServerTest {
     }
 
     @Test
-    public void testRenameFolder() throws MessagingException, InterruptedException {
+    public void testRenameFolder() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
 
         final IMAPStore store = greenMail.getImap().createStore();
@@ -344,11 +343,11 @@ public class ImapServerTest {
             assertTrue(newFolder.exists());
 
             Folder renamedFolder = inboxFolder.getFolder("foo-folder-renamed");
-            assertTrue(!renamedFolder.exists());
+            assertFalse(renamedFolder.exists());
 
             // Rename
             assertTrue(newFolder.renameTo(renamedFolder));
-            assertTrue(!newFolder.exists());
+            assertFalse(newFolder.exists());
             assertTrue(renamedFolder.exists());
 
             // Rename with sub folder
@@ -358,7 +357,7 @@ public class ImapServerTest {
 
             Folder renamedFolder2 = inboxFolder.getFolder("foo-folder-renamed-again");
             assertTrue(renamedFolder.renameTo(renamedFolder2));
-            assertTrue(!renamedFolder.exists());
+            assertFalse(renamedFolder.exists());
             assertTrue(renamedFolder2.exists());
             assertTrue(renamedFolder2.getFolder("bar").exists()); // check that sub folder still exists
 
@@ -368,11 +367,11 @@ public class ImapServerTest {
             assertTrue(foo2Folder.create(Folder.HOLDS_FOLDERS | Folder.HOLDS_MESSAGES));
             assertTrue(foo2Folder.exists());
             Folder foo3Folder = foo2Folder.getFolder("foo3");
-            assertTrue(!foo3Folder.exists());
+            assertFalse(foo3Folder.exists());
 
             renamedFolder2.renameTo(foo3Folder);
             assertTrue(inboxFolder.getFolder("foo2.foo3").exists());
-            assertTrue(!inboxFolder.getFolder("foo-folder-renamed-again").exists());
+            assertFalse(inboxFolder.getFolder("foo-folder-renamed-again").exists());
         } finally {
             store.close();
         }
@@ -479,8 +478,8 @@ public class ImapServerTest {
                 if (i % 2 == 0) { // Deleted
                     assertNull(message);
                 } else {
-                    assertTrue("" + i, !message.isExpunged());
-                    assertTrue("" + i, !message.getFlags().contains(Flags.Flag.DELETED));
+                    assertFalse("" + i, message.isExpunged());
+                    assertFalse("" + i, message.getFlags().contains(DELETED));
                 }
             }
         } finally {
@@ -522,7 +521,7 @@ public class ImapServerTest {
             long uid = appendUIDs[0].uid;
             Message newMsg = inboxFolder.getMessageByUID(uid);
             assertEquals(toBeAppended[0].getSubject(), newMsg.getSubject());
-            assertTrue(appendUIDs[0].uidvalidity == inboxFolder.getUIDValidity());
+            assertEquals(appendUIDs[0].uidvalidity, inboxFolder.getUIDValidity());
             messages = inboxFolder.getMessages();
             assertEquals(3, messages.length);
         } finally {
@@ -582,12 +581,12 @@ public class ImapServerTest {
             assertEquals(6, messages.length);
             inboxFolder.setFlags(new int[]{2, 3}, new Flags(DELETED), true); // 1 and 2, offset is not zero-based
 
-            assertEquals(false, inboxFolder.getMessage(1).isSet(DELETED));
-            assertEquals(true, inboxFolder.getMessage(2).isSet(DELETED));
-            assertEquals(true, inboxFolder.getMessage(3).isSet(DELETED));
-            assertEquals(false, inboxFolder.getMessage(4).isSet(DELETED));
-            assertEquals(false, inboxFolder.getMessage(5).isSet(DELETED));
-            assertEquals(false, inboxFolder.getMessage(6).isSet(DELETED));
+            assertFalse(inboxFolder.getMessage(1).isSet(DELETED));
+            assertTrue(inboxFolder.getMessage(2).isSet(DELETED));
+            assertTrue(inboxFolder.getMessage(3).isSet(DELETED));
+            assertFalse(inboxFolder.getMessage(4).isSet(DELETED));
+            assertFalse(inboxFolder.getMessage(5).isSet(DELETED));
+            assertFalse(inboxFolder.getMessage(6).isSet(DELETED));
             assertEquals(2, inboxFolder.getDeletedMessageCount());
             Message[] expunged = inboxFolder.expunge();
             assertEquals(2, expunged.length);

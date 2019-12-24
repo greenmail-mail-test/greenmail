@@ -61,7 +61,7 @@ public class ImapProtocolTest {
             }) {
                 Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
                     @Override
-                    public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                    public Object doCommand(IMAPProtocol protocol) {
                         return protocol.command(cmd, null);
                     }
                 });
@@ -82,7 +82,7 @@ public class ImapProtocolTest {
             folder.open(Folder.READ_ONLY);
             Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
                 @Override
-                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                public Object doCommand(IMAPProtocol protocol) {
                     return protocol.command("UID FETCH 1:* RFC822.SIZE", null);
                 }
             });
@@ -112,7 +112,7 @@ public class ImapProtocolTest {
             // Fetch without partial as reference
             Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
                 @Override
-                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                public Object doCommand(IMAPProtocol protocol) {
                     return protocol.command("UID FETCH 1 (BODY[HEADER])", null);
                 }
             });
@@ -195,7 +195,7 @@ public class ImapProtocolTest {
             folder.open(Folder.READ_ONLY);
             Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
                 @Override
-                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                public Object doCommand(IMAPProtocol protocol) {
                     return protocol.command("SEARCH 1", null);
                 }
             });
@@ -205,7 +205,7 @@ public class ImapProtocolTest {
 
             ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
                 @Override
-                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                public Object doCommand(IMAPProtocol protocol) {
                     return protocol.command("SEARCH 2:2", null);
                 }
             });
@@ -216,7 +216,7 @@ public class ImapProtocolTest {
 
             ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
                 @Override
-                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                public Object doCommand(IMAPProtocol protocol) {
                     return protocol.command("SEARCH 2:4", null);
                 }
             });
@@ -227,7 +227,7 @@ public class ImapProtocolTest {
 
             ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
                 @Override
-                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                public Object doCommand(IMAPProtocol protocol) {
                     return protocol.command("SEARCH 1 2:4 8", null);
                 }
             });
@@ -255,7 +255,7 @@ public class ImapProtocolTest {
 
             Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
                 @Override
-                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                public Object doCommand(IMAPProtocol protocol) {
                     return protocol.command("UID SEARCH 1", null);
                 }
             });
@@ -265,7 +265,7 @@ public class ImapProtocolTest {
 
             ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
                 @Override
-                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                public Object doCommand(IMAPProtocol protocol) {
                     return protocol.command("UID SEARCH 2:2", null);
                 }
             });
@@ -276,7 +276,7 @@ public class ImapProtocolTest {
 
             ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
                 @Override
-                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                public Object doCommand(IMAPProtocol protocol) {
                     return protocol.command("UID SEARCH 2:4", null);
                 }
             });
@@ -287,7 +287,7 @@ public class ImapProtocolTest {
 
             ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
                 @Override
-                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                public Object doCommand(IMAPProtocol protocol) {
                     return protocol.command("UID SEARCH 1 2:4 8", null);
                 }
             });
@@ -309,7 +309,7 @@ public class ImapProtocolTest {
             folder.setFlags(new int[]{2, 3}, new Flags(Flags.Flag.ANSWERED), true);
             Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
                 @Override
-                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                public Object doCommand(IMAPProtocol protocol) {
                     return protocol.command("SEARCH NOT (ANSWERED) NOT (DELETED) NOT (SEEN) NOT (FLAGGED) ALL", null);
                 }
             });
@@ -333,14 +333,14 @@ public class ImapProtocolTest {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
             folder.open(Folder.READ_ONLY);
             Message message = folder.getMessageByUID(666);
-            assertEquals(null, message);
+            assertNull(message);
         } finally {
             store.close();
         }
     }
 
     @Test
-    public void testUidSearchText() throws MessagingException, IOException {
+    public void testUidSearchText() throws MessagingException {
         store.connect("foo@localhost", "pwd");
         try {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
@@ -356,7 +356,7 @@ public class ImapProtocolTest {
             final String searchText1 = "conTEnt2";
             Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
                 @Override
-                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                public Object doCommand(IMAPProtocol protocol) {
                     return protocol.command("UID SEARCH TEXT " + searchText1, null);
                 }
             });
@@ -368,7 +368,7 @@ public class ImapProtocolTest {
             final String searchText2 = "foo@localHOST";
             ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
                 @Override
-                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                public Object doCommand(IMAPProtocol protocol) {
                     return protocol.command("UID SEARCH TEXT " + searchText2, null);
                 }
             });
@@ -389,7 +389,7 @@ public class ImapProtocolTest {
             folder.open(Folder.READ_WRITE);
             Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
                 @Override
-                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                public Object doCommand(IMAPProtocol protocol) {
                     return protocol.command("CREATE foo", null);
                 }
             });
@@ -399,7 +399,7 @@ public class ImapProtocolTest {
 
             ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
                 @Override
-                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+                public Object doCommand(IMAPProtocol protocol) {
                     return protocol.command("RENAME foo bar", null);
                 }
             });
@@ -456,7 +456,7 @@ public class ImapProtocolTest {
     private void searchAndValidateWithCharset(IMAPFolder folder, String expected, String charset, Argument arg) throws MessagingException {
         Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
             @Override
-            public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
+            public Object doCommand(IMAPProtocol protocol) {
                 return protocol.command("UID SEARCH CHARSET " + charset + " TEXT", arg);
             }
         });

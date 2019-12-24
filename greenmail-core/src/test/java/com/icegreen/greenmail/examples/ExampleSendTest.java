@@ -15,7 +15,7 @@ public class ExampleSendTest {
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
 
     @Test
-    public void testSend() throws MessagingException {
+    public void testSend() {
         GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com",
                 "some subject", "some body"); // --- Place your sending code here instead
         assertEquals("some body", GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));

@@ -5,15 +5,11 @@
 package com.icegreen.greenmail.test.commands;
 
 import static junit.framework.TestCase.fail;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import javax.mail.Address;
 import javax.mail.Flags;
@@ -99,9 +95,9 @@ public class ImapSearchTest {
 
             imapMessages = imapFolder.search(new FlagTerm(fooFlags, false));
             assertEquals(5, imapMessages.length);
-            assertTrue(!imapMessages[0].getFlags().contains(fooFlags));
-            assertTrue(!imapMessages[1].getFlags().contains(fooFlags));
-            assertTrue(!imapMessages[2].getFlags().contains(fooFlags));
+            assertFalse(imapMessages[0].getFlags().contains(fooFlags));
+            assertFalse(imapMessages[1].getFlags().contains(fooFlags));
+            assertFalse(imapMessages[2].getFlags().contains(fooFlags));
 
             // Search header ids
             String id = m0.getHeader("Message-ID")[0];
@@ -135,13 +131,13 @@ public class ImapSearchTest {
             // Search Subject
             imapMessages = imapFolder.search(new SubjectTerm("test0Search"));
             assertEquals(2, imapMessages.length);
-            assertTrue(imapMessages[0] == m0);
+            assertSame(imapMessages[0], m0);
             imapMessages = imapFolder.search(new SubjectTerm("TeSt0Search")); // Case insensitive
             assertEquals(2, imapMessages.length);
-            assertTrue(imapMessages[0] == m0);
+            assertSame(imapMessages[0], m0);
             imapMessages = imapFolder.search(new SubjectTerm("0S"));
             assertEquals(2, imapMessages.length);
-            assertTrue(imapMessages[0] == m0);
+            assertSame(imapMessages[0], m0);
             imapMessages = imapFolder.search(new SubjectTerm("not found"));
             assertEquals(0, imapMessages.length);
             imapMessages = imapFolder.search(new SubjectTerm("test"));
@@ -150,13 +146,13 @@ public class ImapSearchTest {
             //Search OrTerm - Search Subject which contains test0Search OR nonexistent
             imapMessages = imapFolder.search(new OrTerm(new SubjectTerm("test0Search"), new SubjectTerm("nonexistent")));
             assertEquals(2, imapMessages.length);
-            assertTrue(imapMessages[0] == m0);
+            assertSame(imapMessages[0], m0);
 
             // OrTerm : two matching sub terms
             imapMessages = imapFolder.search(new OrTerm(new SubjectTerm("foo"), new SubjectTerm("bar")));
             assertEquals(2, imapMessages.length);
-            assertTrue(imapMessages[0] == m2);
-            assertTrue(imapMessages[1] == m3);
+            assertSame(imapMessages[0], m2);
+            assertSame(imapMessages[1], m3);
 
             // OrTerm : no matching
             imapMessages = imapFolder.search(new AndTerm(new SubjectTerm("nothing"), new SubjectTerm("nil")));
@@ -165,7 +161,7 @@ public class ImapSearchTest {
             //Search AndTerm - Search Subject which contains test0Search AND test1Search
             imapMessages = imapFolder.search(new AndTerm(new SubjectTerm("test0Search"), new SubjectTerm("test1Search")));
             assertEquals(1, imapMessages.length);
-            assertTrue(imapMessages[0] == m1);
+            assertSame(imapMessages[0], m1);
 
             testReceivedDateTerms(imapFolder, m0, m1, m2, m3, m4, m5);
 
@@ -215,7 +211,7 @@ public class ImapSearchTest {
 
     // Test an unsupported search term for exception. Should be ignored.
     @Test
-    public void testUnsupportedSearchWarnsButDoesNotThrowException() throws MessagingException {
+    public void testUnsupportedSearchWarnsButDoesNotThrowException() {
         try {
             SearchKey.valueOf("SENTDATE");
             fail("Expected IAE for unimplemented search");
@@ -240,7 +236,7 @@ public class ImapSearchTest {
         Message[] imapMessages = imapFolder.search(term);
         assertEquals(expectedResults.length, imapMessages.length);
         for (int i = 0; i < expectedResults.length; i++) {
-            assertTrue(imapMessages[i] == expectedResults[i]);
+            assertSame(imapMessages[i], expectedResults[i]);
         }
 
     }
@@ -251,7 +247,6 @@ public class ImapSearchTest {
      * @param session Session to set on the messages
      * @param folder  Folder to add to
      * @param flags   Flags to set on both messages
-     * @throws Exception
      */
     private void storeSearchTestMessages(Session session, MailFolder folder, Flags flags) throws Exception {
         MimeMessage message0 = new MimeMessage(session);
