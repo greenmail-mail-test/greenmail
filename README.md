@@ -54,11 +54,11 @@ Development [![Build status](https://circleci.com/gh/greenmail-mail-test/greenma
 
 * Check [Sonar][sonar] report
 
-[greenmail_project_site]: http://greenmail-mail-test.github.io/greenmail/greenmail-site/
-[greenmail_examples]: http://greenmail-mail-test.github.io/greenmail/greenmail-site/#examples
-[greenmail_faq]: http://greenmail-mail-test.github.io/greenmail/greenmail-site/#faq
+[greenmail_project_site]: https://greenmail-mail-test.github.io/greenmail/
+[greenmail_examples]: https://greenmail-mail-test.github.io/greenmail#examples
+[greenmail_faq]: https://greenmail-mail-test.github.io/greenmail#faq
 [greenmail_javadoc]: http://www.icegreen.com/greenmail/javadocs/index.html
-[greenmail_download]: http://greenmail-mail-test.github.io/greenmail/greenmail-site/#download
+[greenmail_download]: https://greenmail-mail-test.github.io/greenmail#download
 [greenmail_sf_site]: https://sourceforge.net/p/greenmail
 [maven_repository_com]: http://mvnrepository.com/artifact/com.icegreen/greenmail
 [maven_download]: http://maven.apache.org
