@@ -5,7 +5,7 @@ jobs:
     working_directory: ~/circleci-greenmail
 
     docker:
-        - image: openjdk:8u212-jdk-alpine3.9
+        - image: openjdk:8u232-jdk-slim-buster
           environment:
             TZ: UTC
 
@@ -15,9 +15,9 @@ jobs:
       - checkout
 
       - run: >
-          apk add --no-cache curl
+          apt-get update && apt-get install -y curl
           && mkdir -p /usr/share/maven
-          && curl -fsSL -o /tmp/apache-maven.tar.gz https://www-us.apache.org/dist/maven/maven-3/3.6.1/binaries/apache-maven-3.6.1-bin.tar.gz
+          && curl -fsSL -o /tmp/apache-maven.tar.gz https://www-us.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
           && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
           && rm -f /tmp/apache-maven.tar.gz
           && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
@@ -49,7 +49,7 @@ jobs:
     working_directory: ~/circleci-greenmail
 
     docker:
-        - image: openjdk:11.0.3-jdk-slim-stretch
+        - image: openjdk:11.0.5-jdk-slim-buster
           environment:
             TZ: UTC
 
@@ -61,7 +61,7 @@ jobs:
       - run: >
           apt-get update && apt-get install -y curl
           && mkdir -p /usr/share/maven
-          && curl -fsSL -o /tmp/apache-maven.tar.gz https://www-us.apache.org/dist/maven/maven-3/3.6.1/binaries/apache-maven-3.6.1-bin.tar.gz
+          && curl -fsSL -o /tmp/apache-maven.tar.gz https://www-us.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
           && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
           && rm -f /tmp/apache-maven.tar.gz
           && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
