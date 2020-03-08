@@ -4,10 +4,12 @@
  */
 package com.icegreen.greenmail.util;
 
-import com.icegreen.greenmail.server.AbstractServer;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.mail.*;
-import java.util.*;
+
+import com.icegreen.greenmail.server.AbstractServer;
 
 /**
  * @author Wael Chatila
@@ -86,11 +88,12 @@ public class Retriever implements AutoCloseable {
      */
     @Override
     public void close() {
-        try {
-            store.close();
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
+        if (null != store)
+            try {
+                store.close();
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }
     }
 
     private List<Message> getMessages(Folder folder) throws MessagingException {
