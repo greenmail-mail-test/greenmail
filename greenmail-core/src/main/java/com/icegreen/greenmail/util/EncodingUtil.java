@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 /**
  * Helper for handling encodings.
@@ -48,5 +49,15 @@ public class EncodingUtil {
         } catch (IOException e) {
             throw new IllegalStateException("Can not convert stream to string of charset " + charset, e);
         }
+    }
+
+    /**
+     * Decodes the base64 encoded string to a string.
+     *
+     * @param encoded the base64 encoded value
+     * @return a string of the decoded value (UTF-8)
+     */
+    public static String decodeBase64(String encoded) {
+        return new String(Base64.getDecoder().decode(encoded), StandardCharsets.UTF_8);
     }
 }
