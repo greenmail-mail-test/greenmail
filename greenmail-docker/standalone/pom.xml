@@ -70,6 +70,7 @@
         <artifactId>docker-maven-plugin</artifactId>
         <configuration>
           <autoPull>true</autoPull>
+          <autoRemove>true</autoRemove>
           <verbose>true</verbose>
           <images>
             <image>
