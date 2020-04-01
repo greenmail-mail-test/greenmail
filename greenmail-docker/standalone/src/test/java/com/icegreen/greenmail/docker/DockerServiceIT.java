@@ -10,6 +10,7 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Store;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 
@@ -18,7 +19,11 @@ public class DockerServiceIT {
     private final String bindAddress = System.getProperty("greenmail.host.address", "127.0.0.1");
 
     @Test
-    public void testAllServices() throws MessagingException {
+    public void testAllServices() throws MessagingException, InterruptedException {
+        // Ugly workaround : GreenMail in docker starts with open TCP connections,
+        //                   but TLS sockets might not be ready yet.
+        TimeUnit.SECONDS.sleep(1);
+
         // Send messages via SMTP and secure SMTPS
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost",
                 "test1", "Test GreenMail Docker service",
