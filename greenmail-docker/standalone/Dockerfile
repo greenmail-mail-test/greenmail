@@ -1,4 +1,4 @@
-FROM openjdk:8u212-jre-alpine3.9
+FROM openjdk:8u242-jre-slim-buster
 MAINTAINER https://github.com/greenmail-mail-test/greenmail (marcel.may.de@gmail.com)
 
 #######################
@@ -22,7 +22,7 @@ ENV GREENMAIL_OPTS -Dgreenmail.setup.test.all \
 
 #######################
 # Run as user greenmail
-RUN addgroup greenmail && adduser -G greenmail -D greenmail
+RUN groupadd -r greenmail && useradd --no-log-init -r -g greenmail greenmail
 # Note: If using Dockerfile without Maven, you must manually copy the JAR
 ADD target/greenmail-standalone.jar /home/greenmail/greenmail-standalone.jar
 ADD run_greenmail.sh /home/greenmail/run_greenmail.sh
