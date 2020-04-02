@@ -666,15 +666,16 @@ public class SimpleMessageAttributes
 
         @Override
         public String toString() {
+            // https://tools.ietf.org/html/rfc3501#section-9 body-fld-dsp
             StringBuilder ret = new StringBuilder();
             if (null == params) {
                 ret.append(Q).append(value).append(Q);
             } else {
+                ret.append(LB);
+                ret.append(Q).append(value).append(Q + SP);
                 if (params.isEmpty()) {
                     ret.append(NIL);
                 } else {
-                    ret.append(LB);
-                    ret.append(Q).append(value).append(Q + SP);
                     ret.append(LB);
                     int i = 0;
                     for (String param : params) {
@@ -684,8 +685,8 @@ public class SimpleMessageAttributes
                         ret.append(param);
                     }
                     ret.append(RB);
-                    ret.append(RB);
                 }
+                ret.append(RB);
             }
             return ret.toString();
         }
