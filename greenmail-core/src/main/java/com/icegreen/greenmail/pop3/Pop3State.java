@@ -34,7 +34,7 @@ public class Pop3State {
     public GreenMailUser getUser(String username) throws UserException {
         GreenMailUser user = manager.getUser(username);
         if (null == user) {
-            throw new NoSuchUserException(username + " doesn't exist");
+            throw new NoSuchUserException("User <" + username + "> doesn't exist");
         }
         return user;
     }
@@ -57,7 +57,6 @@ public class Pop3State {
     }
 
     public MailFolder getFolder() {
-
         return inbox;
     }
 }

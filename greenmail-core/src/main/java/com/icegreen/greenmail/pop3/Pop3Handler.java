@@ -6,20 +6,21 @@
  */
 package com.icegreen.greenmail.pop3;
 
+import java.io.IOException;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.util.StringTokenizer;
 
 import com.icegreen.greenmail.pop3.commands.Pop3Command;
 import com.icegreen.greenmail.pop3.commands.Pop3CommandRegistry;
 import com.icegreen.greenmail.server.BuildInfo;
 import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.user.UserManager;
-
-import java.io.IOException;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
-import java.util.StringTokenizer;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Pop3Handler implements ProtocolHandler {
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     Pop3CommandRegistry registry;
     Pop3Connection conn;
     UserManager manager;
@@ -52,12 +53,16 @@ public class Pop3Handler implements ProtocolHandler {
             conn.close();
         } catch (SocketTimeoutException ste) {
             conn.println("421 Service shutting down and closing transmission channel");
-
         } catch (Exception e) {
+            if (!quitting) {
+                log.error("Can not handle POP3 connection", e);
+                throw new IllegalStateException("Can not handle POP3 connection", e);
+            }
         } finally {
             try {
                 socket.close();
             } catch (IOException ioe) {
+                // Nothing
             }
         }
 
@@ -77,20 +82,17 @@ public class Pop3Handler implements ProtocolHandler {
             return;
         }
 
-        String commandName = new StringTokenizer(currentLine, " ").nextToken()
-                .toUpperCase();
+        String commandName = new StringTokenizer(currentLine, " ").nextToken().toUpperCase();
 
         Pop3Command command = registry.getCommand(commandName);
 
         if (command == null) {
             conn.println("-ERR Command not recognized");
-
             return;
         }
 
         if (!command.isValidForState(state)) {
             conn.println("-ERR Command not valid for this state");
-
             return;
         }
 
@@ -99,12 +101,12 @@ public class Pop3Handler implements ProtocolHandler {
 
     @Override
     public void close() {
-         quitting = true;
+        quitting = true;
         try {
             if (socket != null && !socket.isClosed()) {
                 socket.close();
             }
-        } catch(IOException ignored) {
+        } catch (IOException ignored) {
             //empty
         }
     }

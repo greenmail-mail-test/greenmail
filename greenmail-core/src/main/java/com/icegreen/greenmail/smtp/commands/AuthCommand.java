@@ -75,8 +75,6 @@ public class AuthCommand
     }
 
     private void authPlain(SmtpConnection conn, SmtpManager manager, String[] commandParts) throws IOException {
-        AuthMechanism authMechanism = AuthMechanism.PLAIN;
-
         // Continuation?
         String initialResponse;
         if (commandParts.length == 2) {
@@ -86,7 +84,7 @@ public class AuthCommand
             initialResponse = commandParts[2];
         }
 
-        if (authenticate(manager.getUserManager(), authMechanism, initialResponse)) {
+        if (authenticate(manager.getUserManager(), initialResponse)) {
             conn.setAuthenticated(true);
             conn.send(AUTH_SUCCEDED);
         } else {
@@ -114,27 +112,20 @@ public class AuthCommand
         }
     }
 
-    private boolean authenticate(UserManager userManager, AuthMechanism authMechanism, String value) {
-        if (AuthMechanism.PLAIN == authMechanism) {
-            // authorization-id\0authentication-id\0passwd
-            final BASE64DecoderStream stream = new BASE64DecoderStream(
-                    new ByteArrayInputStream(value.getBytes(StandardCharsets.US_ASCII)));
-            readTillNullChar(stream); // authorizationId Not used
-            String authenticationId = readTillNullChar(stream);
-            String passwd = readTillNullChar(stream);
-            return userManager.test(authenticationId, passwd);
-        }
-        return false;
+    private boolean authenticate(UserManager userManager, String value) {
+        // authorization-id\0authentication-id\0passwd
+        final BASE64DecoderStream stream = new BASE64DecoderStream(
+                new ByteArrayInputStream(value.getBytes(StandardCharsets.UTF_8)));
+        readTillNullChar(stream); // authorizationId Not used
+        String authenticationId = readTillNullChar(stream);
+        String passwd = readTillNullChar(stream);
+        return userManager.test(authenticationId, passwd);
     }
 
     @Deprecated // Remove once JDK baseline is 1.8
     private String readTillNullChar(BASE64DecoderStream stream) {
         try {
-            StringBuilder buf = new StringBuilder();
-            for (int chr = stream.read(); chr != '\0' && chr > 0; chr = stream.read()) {
-                buf.append((char) chr);
-            }
-            return buf.toString();
+            return EncodingUtil.readTillNullChar(stream);
         } catch (IOException e) {
             log.error("Can not decode", e);
             return null;
@@ -144,7 +135,7 @@ public class AuthCommand
     private static String getValuesWsSeparated() {
         StringBuilder buf = new StringBuilder();
         for (AuthMechanism mechanism : AuthMechanism.values()) {
-            if(buf.length()>0) {
+            if (buf.length() > 0) {
                 buf.append(' ');
             }
             buf.append(mechanism);
