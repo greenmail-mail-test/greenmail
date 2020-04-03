@@ -8,6 +8,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+import com.sun.mail.util.BASE64DecoderStream;
+
 /**
  * Helper for handling encodings.
  */
@@ -59,5 +61,14 @@ public class EncodingUtil {
      */
     public static String decodeBase64(String encoded) {
         return new String(Base64.getDecoder().decode(encoded), StandardCharsets.UTF_8);
+    }
+
+    @Deprecated // Remove once JDK baseline is 1.8
+    public static String readTillNullChar(BASE64DecoderStream stream) throws IOException {
+        StringBuilder buf = new StringBuilder();
+        for (int chr = stream.read(); chr != '\u0000' && chr > 0; chr = stream.read()) {
+            buf.append((char) chr);
+        }
+        return buf.toString();
     }
 }

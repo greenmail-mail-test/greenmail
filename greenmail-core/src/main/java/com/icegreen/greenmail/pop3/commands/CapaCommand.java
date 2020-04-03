@@ -37,6 +37,7 @@ public class CapaCommand extends Pop3Command {
         // We don't support any additional capabilities
         conn.println("+OK");
         conn.println("UIDL");
+        conn.println("SASL "+ AuthCommand.Pop3SaslAuthMechanism.list());
         conn.println(".");
     }
 }

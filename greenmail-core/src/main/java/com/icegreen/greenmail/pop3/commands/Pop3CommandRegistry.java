@@ -27,6 +27,7 @@ public class Pop3CommandRegistry {
         commands.put("NOOP", new NoopCommand());
         commands.put("RSET", new RsetCommand());
         commands.put("CAPA", new CapaCommand());
+        commands.put("AUTH", new AuthCommand());
     }
 
     public Pop3Command getCommand(String name) {
