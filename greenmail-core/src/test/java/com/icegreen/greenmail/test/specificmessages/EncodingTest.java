@@ -34,7 +34,6 @@ public class EncodingTest {
      * Message (multipart/alternative)
      * \--> Message (text/plain)
      */
-    @Ignore("https://github.com/greenmail-mail-test/greenmail/issues/257")
     @Test
     public void testTextPlainWithUTF8() throws MessagingException, IOException {
         greenMail.setUser("foo@localhost", "pwd");
@@ -49,7 +48,7 @@ public class EncodingTest {
         multipart.addBodyPart(textQP);
 
         MimeBodyPart html = new MimeBodyPart();
-        html.setContent("<!doctype html>" +
+        html.setContent(MimeUtility.encodeText("<!doctype html>" +
                 "<html lang=en>" +
                 "<head>" +
                 "<meta charset=utf-8>" +
@@ -58,14 +57,19 @@ public class EncodingTest {
                 "<body>" +
                 "<p>8BIT Content with umlaut ü</p>" +
                 "</body>" +
-                "</html>", "text/html; charset=utf-8");
+                "</html>", "UTF-8","B"), "text/html; charset=utf-8");
         html.setHeader("Content-Transfer-Encoding", "8BIT");
         multipart.addBodyPart(html);
 
         MimeBodyPart text = new MimeBodyPart();
-        text.setText("8BIT Content with umlaut \u00FC", "utf-8");
+        text.setText(MimeUtility.encodeText("8BIT Content with umlaut \u00FC","UTF-8","B"), "utf-8");
         text.setHeader("Content-Transfer-Encoding", "8BIT");
         multipart.addBodyPart(text);
+
+        MimeBodyPart text2QP = new MimeBodyPart();
+        text2QP.setText(MimeUtility.encodeText("8BIT Content with umlaut \u00FC","UTF-8","Q"), "utf-8");
+        text2QP.setHeader("Content-Transfer-Encoding", "8BIT");
+        multipart.addBodyPart(text2QP);
 
 
         // New main message, containing body part
@@ -105,6 +109,9 @@ public class EncodingTest {
             assertEquals("TEXT/PLAIN; charset=utf-8", bodyPart2.getContentType());
             assertEquals(text.getContent(), bodyPart2.getContent());
 
+            final BodyPart bodyPart3 = multipartReceived.getBodyPart(3);
+            assertEquals("TEXT/PLAIN; charset=utf-8", bodyPart3.getContentType());
+            assertEquals(text2QP.getContent(), bodyPart3.getContent());
         } finally {
             store.close();
         }
