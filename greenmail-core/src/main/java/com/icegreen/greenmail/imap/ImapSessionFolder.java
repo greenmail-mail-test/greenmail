@@ -81,10 +81,10 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
 
     public int[] getExpunged() {
         synchronized (expungedMsns) {
-            int[] expungedMsns = new int[this.expungedMsns.size()];
-            for (int i = 0; i < expungedMsns.length; i++) {
+            int[] expungedMsnsArray = new int[this.expungedMsns.size()];
+            for (int i = 0; i < expungedMsnsArray.length; i++) {
                 int msn = this.expungedMsns.get(i);
-                expungedMsns[i] = msn;
+                expungedMsnsArray[i] = msn;
             }
             this.expungedMsns.clear();
 
@@ -92,7 +92,7 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
             if (!(modifiedFlags.isEmpty() && !sizeChanged)) {
                 throw new IllegalStateException("Need to do this properly...");
             }
-            return expungedMsns;
+            return expungedMsnsArray;
         }
     }
 
