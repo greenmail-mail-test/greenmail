@@ -51,7 +51,7 @@ public class GreenMailUtil {
     /**
      * Writes the content of an input stream to an output stream
      *
-     * @throws IOException
+     * @throws IOException on io error.
      */
     public static void copyStream(final InputStream src, OutputStream dest) throws IOException {
         byte[] buffer = new byte[1024];
@@ -129,7 +129,7 @@ public class GreenMailUtil {
     public static String getBody(Part msg) {
         String all = getWholeMessage(msg);
         int i = all.indexOf("\r\n\r\n");
-        return i < 0 ? "" /* empty body */ : all.substring(i + 4, all.length());
+        return i < 0 ? "" /* empty body */ : all.substring(i + 4);
     }
 
     /**
@@ -333,7 +333,7 @@ public class GreenMailUtil {
 
             DataSource ds = new DataSource() {
                 @Override
-                public InputStream getInputStream() throws IOException {
+                public InputStream getInputStream() {
                     return new ByteArrayInputStream(attachment);
                 }
 
@@ -363,6 +363,12 @@ public class GreenMailUtil {
         }
     }
 
+    /**
+     * Gets a JavaMail Session for given server type such as IMAP and additional props for JavaMail.
+     *
+     * @param setup     the setup type, such as <code>ServerSetup.IMAP</code>
+     * @return the JavaMail session.
+     */
     public static Session getSession(final ServerSetup setup) {
         return getSession(setup, null);
     }
@@ -375,10 +381,20 @@ public class GreenMailUtil {
      * @return the JavaMail session.
      */
     public static Session getSession(final ServerSetup setup, Properties mailProps) {
-        Properties props = setup.configureJavaMailSessionProperties(mailProps, false);
+        return getSession(setup, mailProps, false);
+    }
 
+    /**
+     * Gets a JavaMail Session for given server type such as IMAP and additional props for JavaMail.
+     *
+     * @param setup     the setup type, such as <code>ServerSetup.IMAP</code>
+     * @param mailProps additional mail properties.
+     * @param debug sets JavaMail debug properties.
+     * @return the JavaMail session.
+     */
+    public static Session getSession(final ServerSetup setup, Properties mailProps, boolean debug) {
+        Properties props = setup.configureJavaMailSessionProperties(mailProps, debug);
         log.debug("Mail session properties are {}", props);
-
         return Session.getInstance(props, null);
     }
 

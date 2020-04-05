@@ -11,14 +11,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class UserManager {
     private static final Logger log = LoggerFactory.getLogger(UserManager.class);
     /**
-     * User list by their trimmed, lowercased user names
+     * User list by their trimmed, lower-cased user names
      */
-    private Map<String, GreenMailUser> loginToUser = Collections.synchronizedMap(new HashMap<String, GreenMailUser>());
-    private Map<String, GreenMailUser> emailToUser = Collections.synchronizedMap(new HashMap<String, GreenMailUser>());
+    private Map<String, GreenMailUser> loginToUser = new ConcurrentHashMap<>();
+    private Map<String, GreenMailUser> emailToUser = new ConcurrentHashMap<>();
     private ImapHostManager imapHostManager;
     private boolean authRequired = true;
 

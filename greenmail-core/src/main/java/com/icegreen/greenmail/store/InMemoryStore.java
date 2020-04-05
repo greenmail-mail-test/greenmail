@@ -79,7 +79,7 @@ public class InMemoryStore
     }
 
     @Override
-    public void renameMailbox(MailFolder existingFolder, String newName) throws FolderException {
+    public void renameMailbox(MailFolder existingFolder, String newName) {
         HierarchicalFolder toRename = (HierarchicalFolder) existingFolder;
         HierarchicalFolder parent = toRename.getParent();
 
@@ -112,16 +112,16 @@ public class InMemoryStore
     }
 
     private HierarchicalFolder getInboxOrUserRootFolder(HierarchicalFolder folder) {
-        final HierarchicalFolder inboxFolder = findParentByName(folder, ImapConstants.INBOX_NAME);
+        final HierarchicalFolder inboxFolder = findParentByName(folder);
         if(null==inboxFolder) {
             return folder.getParent();
         }
         return inboxFolder.getParent();
     }
 
-    private HierarchicalFolder findParentByName(HierarchicalFolder folder, String name) {
+    private HierarchicalFolder findParentByName(HierarchicalFolder folder) {
         HierarchicalFolder currentFolder = folder;
-        while (null != currentFolder && !name.equals(currentFolder.getName())) {
+        while (null != currentFolder && !ImapConstants.INBOX_NAME.equals(currentFolder.getName())) {
             currentFolder = currentFolder.getParent();
         }
         return currentFolder;
