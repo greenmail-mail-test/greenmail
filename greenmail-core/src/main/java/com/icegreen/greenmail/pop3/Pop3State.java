@@ -24,7 +24,6 @@ public class Pop3State {
     public Pop3State(UserManager manager) {
         this.manager = manager;
         this.imapHostManager = manager.getImapHostManager();
-
     }
 
     public GreenMailUser getUser() {
@@ -59,4 +58,15 @@ public class Pop3State {
     public MailFolder getFolder() {
         return inbox;
     }
+
+    public GreenMailUser findOrCreateUser(String username) throws UserException {
+        if (manager.hasUser(username)) {
+            return manager.getUser(username);
+        }
+        if (!manager.isAuthRequired()) {
+            return manager.createUser(username, username, username);
+        }
+        throw new UserException("Unable to find or create user '" + username +"'");
+    }
+
 }

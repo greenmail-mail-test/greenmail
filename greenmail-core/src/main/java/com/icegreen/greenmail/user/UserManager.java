@@ -6,12 +6,16 @@
  */
 package com.icegreen.greenmail.user;
 
-import com.icegreen.greenmail.imap.ImapHostManager;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import com.icegreen.greenmail.imap.ImapHostManager;
 
 public class UserManager {
     private static final Logger log = LoggerFactory.getLogger(UserManager.class);
@@ -65,7 +69,7 @@ public class UserManager {
         GreenMailUser u = getUser(userId);
 
         if (!authRequired) {
-            if(null == u) { // Auto create user
+            if (null == u) { // Auto create user
                 try {
                     createUser(userId, userId, password);
                 } catch (UserException e) {
@@ -86,6 +90,10 @@ public class UserManager {
 
     public void setAuthRequired(boolean auth) {
         authRequired = auth;
+    }
+
+    public boolean isAuthRequired() {
+        return authRequired;
     }
 
     public ImapHostManager getImapHostManager() {
