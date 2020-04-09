@@ -52,7 +52,9 @@ public class Pop3State {
         if (user == null)
             throw new UserException("No user selected");
 
-        user.authenticate(pass);
+        if (manager.isAuthRequired()) {
+            user.authenticate(pass);
+        }
         inbox = imapHostManager.getInbox(user);
     }
 
