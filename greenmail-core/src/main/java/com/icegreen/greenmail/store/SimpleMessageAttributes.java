@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  * <p> Note that the message in a mailbox have the same order using either
  * Message Sequence Numbers or UIDs.
  * <p> reinitialize() must be called on deserialization to reset Logger
- * <p/>
+ *
  * Reference: RFC 2060 - para 2.3 https://www.ietf.org/rfc/rfc2060.txt
  *
  * @author <a href="mailto:sascha@kulawik.de">Sascha Kulawik</a>

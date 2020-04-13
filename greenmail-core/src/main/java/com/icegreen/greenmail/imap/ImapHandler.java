@@ -18,8 +18,8 @@ import java.net.Socket;
 /**
  * The handler class for IMAP connections.
  *
- * @author Federico Barbieri <scoobie@systemy.it>
- * @author Peter M. Goldstein <farsight@alum.mit.edu>
+ * @author Federico Barbieri &lt;scoobie@systemy.it&gt;
+ * @author Peter M. Goldstein &lt;farsight@alum.mit.edu&gt;
  */
 public class ImapHandler implements ImapConstants, ProtocolHandler {
     protected final Logger log = LoggerFactory.getLogger(getClass());

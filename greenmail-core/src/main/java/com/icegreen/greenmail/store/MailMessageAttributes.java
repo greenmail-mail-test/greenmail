@@ -16,7 +16,7 @@ import java.util.Date;
  * very large message without needing to access them directly.
  * <p> Note that the message in a mailbox have the same order using either
  * Message Sequence Numbers or UIDs.
- * <p/>
+ * <p>
  * Reference: RFC 2060 - para 2.3
  *
  * @author <a href="mailto:charles@benett1.demon.co.uk">Charles Benett</a>
@@ -39,6 +39,8 @@ public interface MailMessageAttributes {
 
     /**
      * Returns IMAP formatted String representation of Date
+     *
+     * @return the formatted date
      */
     String getReceivedDateAsString();
 
@@ -60,8 +62,9 @@ public interface MailMessageAttributes {
 
     /**
      * Provides the Body Structure information for this message.
-     * This is a parsed representtion of the MIME structure of the message.
+     * This is a parsed representation of the MIME structure of the message.
      *
+     * @param includeExtensions true if the body structure extensions should be included
      * @return String satisfying body syntax in rfc 2060.
      */
     String getBodyStructure(boolean includeExtensions);

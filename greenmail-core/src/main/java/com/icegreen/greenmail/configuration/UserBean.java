@@ -10,6 +10,10 @@ public class UserBean {
 
     /**
      * Initialize user
+     *
+     * @param email the user email.
+     * @param login the user login.
+     * @param password the user password.
      */
     public UserBean(final String email, final String login, final String password) {
         this.email = email;
