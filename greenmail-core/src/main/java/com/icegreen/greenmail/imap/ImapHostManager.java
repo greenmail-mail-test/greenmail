@@ -24,11 +24,11 @@ import java.util.List;
  * specified user. Examples:
  * '#mail.Inbox' or '#shared.finance.Q2Earnings'.
  * <p>An imap Host must keep track of existing and deleted mailboxes.
- * <p/>
+ * <p>
  * References: rfc 2060, rfc 2193, rfc 2221
  *
  * @author <a href="mailto:charles@benett1.demon.co.uk">Charles Benett</a>
- * @author Darrell DeBoer <darrell@apache.org>
+ * @author Darrell DeBoer &lt;darrell@apache.org&gt;
  * @version $Revision: 109034 $
  */
 public interface ImapHostManager {
@@ -51,7 +51,7 @@ public interface ImapHostManager {
      * Returns a reference to an existing Mailbox. The requested mailbox
      * must already exists on this server and the requesting user must have at
      * least lookup rights.
-     * <p/>
+     * <p>
      * TODO: should default behaviour be to return null?
      *
      * @param user        User making the request.
@@ -257,6 +257,8 @@ public interface ImapHostManager {
      *
      * @param user    String representation of an email address
      * @param mailbox String representation of a mailbox name.
+     * @throws com.icegreen.greenmail.store.FolderException
+     *          if the mailbox does not exist locally (for the user).
      */
     void unsubscribe(GreenMailUser user, String mailbox)
             throws FolderException;

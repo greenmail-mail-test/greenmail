@@ -10,7 +10,7 @@ import org.jboss.system.ServiceMBean;
 public interface GreenMailServiceMBean extends ServiceMBean {
     /**
      * Configures the available user accounts.
-     * <p/>
+     *
      * The user format is 'USER:PWD@DOMAIN'.
      *
      * @param theUsers the theUsers.
@@ -26,7 +26,7 @@ public interface GreenMailServiceMBean extends ServiceMBean {
 
     /**
      * Sets the hostname for the mail server.
-     * <p/>
+     *
      * The default hostname is 'localhost'.
      *
      * @param theHostname the hostname.
@@ -159,18 +159,19 @@ public interface GreenMailServiceMBean extends ServiceMBean {
                   final String theContent);
 
     /**
-     * Lists all mails for the user HTML formated.
+     * Lists all mails for the user HTML formatted.
      *
+     * @param pEmail the email address identifying the user.
      * @return the mails.
      */
     String listMailsForUserHTML(String pEmail);
 
     /**
      * Starts the service.
-     * <p/>
+     *
      * Starting and stopping reconfigures the service.
      *
-     * @throws Exception
+     * @throws Exception on error.
      */
     void startService() throws Exception;
 

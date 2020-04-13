@@ -5,7 +5,7 @@ import java.util.Properties;
 
 /**
  * Creates GreenMailConfiguration from properties.
- * <p/>
+ * <p>
  * Example usage:
  * GreenMailConfiguration config = new PropertyBasedGreenMailConfigurationBuilder().build(System.getProperties());
  * <ul>

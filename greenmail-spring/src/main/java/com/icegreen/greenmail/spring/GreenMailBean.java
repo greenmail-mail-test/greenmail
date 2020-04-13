@@ -15,7 +15,7 @@ import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Spring bean for GreenMail server.
- * <p/>
+ * <p>
  * By default,
  * <ul>
  *  <li>SMTP, POP3 services are activated</li>
@@ -384,7 +384,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
 
     /**
      * Sends a mail message to the GreenMail server.
-     * <p/>
+     * <p>
      * Note: SMTP or SMTPS must be configured.
      *
      * @param theTo      the <em>TO</em> field.
