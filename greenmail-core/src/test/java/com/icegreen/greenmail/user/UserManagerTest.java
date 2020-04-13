@@ -1,12 +1,14 @@
 package com.icegreen.greenmail.user;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.imap.ImapHostManagerImpl;
-import com.icegreen.greenmail.pop3.Pop3Server;
+import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.InMemoryStore;
-import com.icegreen.greenmail.test.Pop3ServerTest;
-import com.sun.mail.pop3.POP3Store;
-
+import com.icegreen.greenmail.store.MailFolder;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
