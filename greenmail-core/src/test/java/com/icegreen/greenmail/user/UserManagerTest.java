@@ -4,11 +4,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.mail.internet.MimeMessage;
+
+import com.icegreen.greenmail.imap.ImapConstants;
 import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.imap.ImapHostManagerImpl;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.InMemoryStore;
 import com.icegreen.greenmail.store.MailFolder;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetup;
+import com.icegreen.greenmail.util.ServerSetupTest;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -61,6 +68,29 @@ public class UserManagerTest {
 
         userManager.deleteUser(user);
         assertTrue(userManager.listUser().isEmpty());
+    }
+
+    @Test
+    public void testDeleteUserShouldDeleteMail() throws Exception {
+        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
+        UserManager userManager = new UserManager(imapHostManager);
+
+        GreenMailUser user = userManager.createUser("foo@bar.com", "foo", "pwd");
+        assertEquals(1, userManager.listUser().size());
+
+        imapHostManager.createPrivateMailAccount(user);
+        MailFolder otherfolder = imapHostManager.createMailbox(user, "otherfolder");
+        MailFolder inbox = imapHostManager.getFolder(user, ImapConstants.INBOX_NAME);
+
+        ServerSetup ss = ServerSetupTest.IMAP;
+        MimeMessage m1 = GreenMailUtil.createTextEmail("there@localhost", "here@localhost", "sub1", "msg1", ss);
+        MimeMessage m2 = GreenMailUtil.createTextEmail("there@localhost", "here@localhost", "sub1", "msg1", ss);
+
+        inbox.store(m1);
+        otherfolder.store(m2);
+ 
+        userManager.deleteUser(user);
+        assertTrue(imapHostManager.getAllMessages().isEmpty());
     }
 
     @Test
