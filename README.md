@@ -8,7 +8,7 @@ GreenMail is the first and only library that offers a test framework for both re
 Go to the [project site][greenmail_project_site] for details:
 
 * [Examples][greenmail_examples]
-* [JavaDoc][greenmail_javadoc]
+* [Javadoc][greenmail_javadoc]
 * [FAQ][greenmail_faq]
 * [Download][greenmail_download]
 * [Maven coordinates][maven_repository_com]: com.icegreen:greenmail:\<[VERSION](https://github.com/greenmail-mail-test/greenmail/releases/)\>
