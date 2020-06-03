@@ -7,13 +7,14 @@
 package com.icegreen.greenmail.imap.commands;
 
 import java.nio.charset.Charset;
+
+import jakarta.mail.Flags;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import javax.mail.Flags;
 
 import com.icegreen.greenmail.imap.ImapConstants;
 import com.icegreen.greenmail.imap.ImapRequestLineReader;

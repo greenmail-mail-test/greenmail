@@ -3,7 +3,7 @@ package com.icegreen.greenmail.configuration;
 import com.icegreen.greenmail.base.GreenMailOperations;
 import com.icegreen.greenmail.util.Retriever;
 
-import javax.mail.Message;
+import jakarta.mail.Message;
 
 import static com.icegreen.greenmail.configuration.GreenMailConfiguration.aConfig;
 import static org.junit.Assert.assertEquals;

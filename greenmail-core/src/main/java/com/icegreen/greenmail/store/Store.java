@@ -6,7 +6,7 @@
  */
 package com.icegreen.greenmail.store;
 
-import javax.mail.Quota;
+import jakarta.mail.Quota;
 import java.util.Collection;
 
 /**
@@ -115,7 +115,7 @@ public interface Store {
      * Sets the quota.
      *
      * @link http://www.ietf.org/rfc/rfc2087.txt
-     * @see com.sun.mail.imap.IMAPStore#setQuota(javax.mail.Quota)
+     * @see com.sun.mail.imap.IMAPStore#setQuota(jakarta.mail.Quota)
      * @param quota the quota.
      * @param qualifiedRootPrefix the user specific prefix
      */

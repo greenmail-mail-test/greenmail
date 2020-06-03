@@ -11,7 +11,7 @@ import com.icegreen.greenmail.smtp.SmtpConnection;
 import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpState;
 
-import javax.mail.internet.AddressException;
+import jakarta.mail.internet.AddressException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

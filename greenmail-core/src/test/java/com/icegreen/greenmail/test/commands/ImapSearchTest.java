@@ -7,10 +7,30 @@ package com.icegreen.greenmail.test.commands;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.mail.search.*;
+
+import jakarta.mail.Address;
+import jakarta.mail.Flags;
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.Store;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.search.AndTerm;
+import jakarta.mail.search.ComparisonTerm;
+import jakarta.mail.search.DateTerm;
+import jakarta.mail.search.FlagTerm;
+import jakarta.mail.search.FromTerm;
+import jakarta.mail.search.HeaderTerm;
+import jakarta.mail.search.OrTerm;
+import jakarta.mail.search.ReceivedDateTerm;
+import jakarta.mail.search.RecipientTerm;
+import jakarta.mail.search.SentDateTerm;
+import jakarta.mail.search.SubjectTerm;
+
+import org.junit.Rule;
+import org.junit.Test;
 
 import com.icegreen.greenmail.imap.commands.SearchKey;
 import com.icegreen.greenmail.junit.GreenMailRule;
@@ -220,9 +240,9 @@ public class ImapSearchTest {
 
     private void testSentDateTerms(Folder imapFolder, Message... m) throws Exception {
         //greater equals, returns all
-        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.GE, getSampleDate()), m[5]);
+        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.GE, getSampleDate()), m[0], m[1], m[2], m[3], m[4] ,m[5]);
         //greater than, does not return sample sent mail
-        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.GT, getSampleDate()));
+        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.GT, getSampleDate()), m[0], m[1], m[2], m[3], m[4]);
         //equals, only returns sample mail
         testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.EQ, getSampleDate()), m[5]);
         //not equals, does not return sample mail, but all other mails
@@ -272,6 +292,7 @@ public class ImapSearchTest {
     }
 
     private void testDateTerm(Folder imapFolder, DateTerm term, Message... expectedResults) throws Exception {
+        System.out.println("Comparison date = " + term.getDate().toString());
         Message[] imapMessages = imapFolder.search(term);
         assertThat(imapMessages.length).isEqualTo(expectedResults.length);
         for (int i = 0; i < expectedResults.length; i++) {

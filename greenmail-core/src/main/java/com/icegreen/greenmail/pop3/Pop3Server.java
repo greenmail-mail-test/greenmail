@@ -13,7 +13,7 @@ import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.sun.mail.pop3.POP3Store; // NOSONAR
 
-import javax.mail.NoSuchProviderException;
+import jakarta.mail.NoSuchProviderException;
 import java.net.Socket;
 
 public class Pop3Server extends AbstractServer {

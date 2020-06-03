@@ -2,17 +2,18 @@ package com.icegreen.greenmail.imap.commands;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.CharacterCodingException;
-import javax.mail.Flags;
-import javax.mail.Message;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.search.*;
 
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ProtocolException;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import jakarta.mail.search.AndTerm;
+import jakarta.mail.search.ComparisonTerm;
+import jakarta.mail.search.SearchTerm;
+import jakarta.mail.search.SizeTerm;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.CharacterCodingException;
 
 public class SearchCommandParserTest {
     @Test
