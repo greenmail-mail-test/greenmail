@@ -6,7 +6,7 @@ package com.icegreen.greenmail.user;
 
 import com.icegreen.greenmail.mail.MovingMessage;
 
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMessage;
 
 
 public interface GreenMailUser {

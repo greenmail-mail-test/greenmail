@@ -1,6 +1,6 @@
 package com.icegreen.greenmail.imap.commands;
 
-import javax.mail.search.SearchTerm;
+import jakarta.mail.search.SearchTerm;
 import java.util.ArrayList;
 import java.util.List;
 

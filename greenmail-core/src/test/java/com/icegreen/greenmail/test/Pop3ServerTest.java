@@ -14,10 +14,10 @@ import com.sun.mail.pop3.POP3Store;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMultipart;
+import jakarta.mail.BodyPart;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 
 import static org.junit.Assert.*;

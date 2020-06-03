@@ -182,7 +182,7 @@ public class ServerSetup {
      * <p/>
      * For details see
      * <ul>
-     * <li>http://docs.oracle.com/javaee/6/api/javax/mail/package-summary.html for some general settings</li>
+     * <li>http://docs.oracle.com/javaee/6/api/jakarta.mail/package-summary.html for some general settings</li>
      * <li>https://javamail.java.net/nonav/docs/api/com/sun/mail/smtp/package-summary.html for valid SMTP properties.</li>
      * <li>https://javamail.java.net/nonav/docs/api/com/sun/mail/imap/package-summary.html for valid IMAP properties</li>
      * <li>https://javamail.java.net/nonav/docs/api/com/sun/mail/pop3/package-summary.html for valid POP3 properties.</li>

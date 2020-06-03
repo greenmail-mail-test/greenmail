@@ -5,10 +5,10 @@ import com.icegreen.greenmail.imap.ProtocolException;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.mail.search.AndTerm;
-import javax.mail.search.ComparisonTerm;
-import javax.mail.search.SearchTerm;
-import javax.mail.search.SizeTerm;
+import jakarta.mail.search.AndTerm;
+import jakarta.mail.search.ComparisonTerm;
+import jakarta.mail.search.SearchTerm;
+import jakarta.mail.search.SizeTerm;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.CharacterCodingException;
 

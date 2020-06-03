@@ -7,7 +7,7 @@
 package com.icegreen.greenmail.user;
 
 import java.util.Collection;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMessage;
 
 import com.icegreen.greenmail.imap.AuthorizationException;
 import com.icegreen.greenmail.imap.ImapHostManager;

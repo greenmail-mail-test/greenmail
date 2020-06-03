@@ -12,7 +12,7 @@ import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.sun.mail.imap.IMAPStore; // NOSONAR
 
-import javax.mail.NoSuchProviderException;
+import jakarta.mail.NoSuchProviderException;
 import java.net.Socket;
 
 public final class ImapServer extends AbstractServer {

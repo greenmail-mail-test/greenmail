@@ -12,7 +12,7 @@ import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.store.MessageFlags;
 import com.sun.mail.imap.protocol.BASE64MailboxDecoder; // NOSONAR
 
-import javax.mail.Flags;
+import jakarta.mail.Flags;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

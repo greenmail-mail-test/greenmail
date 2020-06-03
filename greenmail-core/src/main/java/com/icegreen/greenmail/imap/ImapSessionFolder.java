@@ -7,12 +7,12 @@
 package com.icegreen.greenmail.imap;
 
 import java.util.*;
-import javax.mail.Flags;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.UIDFolder;
-import javax.mail.internet.MimeMessage;
-import javax.mail.search.SearchTerm;
+import jakarta.mail.Flags;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.UIDFolder;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.search.SearchTerm;
 
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import com.icegreen.greenmail.imap.commands.IdRange;
@@ -328,6 +328,10 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
         public Flags getFlags() {
             return flags;
         }
+    }
+    
+    public long getUIDNext() {
+    	return 0l;
     }
 
 }

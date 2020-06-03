@@ -13,7 +13,7 @@ import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
 
-import javax.mail.search.SearchTerm;
+import jakarta.mail.search.SearchTerm;
 import java.nio.charset.CharacterCodingException;
 
 /**

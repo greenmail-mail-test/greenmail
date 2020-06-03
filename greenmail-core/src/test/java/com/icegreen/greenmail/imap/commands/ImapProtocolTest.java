@@ -3,8 +3,8 @@ package com.icegreen.greenmail.imap.commands;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.mail.*;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.*;
+import jakarta.mail.internet.MimeMessage;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.store.FolderException;
