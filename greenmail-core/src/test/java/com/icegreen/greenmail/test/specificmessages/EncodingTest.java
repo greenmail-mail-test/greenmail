@@ -11,10 +11,8 @@ import javax.mail.internet.*;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.EncodingUtil;
 import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.sun.mail.imap.IMAPStore;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -26,7 +24,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class EncodingTest {
     @Rule
-    public GreenMailRule greenMail = new GreenMailRule(ServerSetup.verbose(ServerSetupTest.SMTP_IMAP));
+    public GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
 
     /**
      * Structure of test message and content type:
@@ -40,7 +38,6 @@ public class EncodingTest {
         final Session session = greenMail.getSmtp().createSession();
 
         MimeMultipart multipart = new MimeMultipart("alternative");
-
 
         MimeBodyPart textQP = new MimeBodyPart();
         textQP.setContent("QP Content with umlaut \u00FC", "text/javascript; charset=utf-8");
@@ -57,17 +54,17 @@ public class EncodingTest {
                 "<body>" +
                 "<p>8BIT Content with umlaut ü</p>" +
                 "</body>" +
-                "</html>", "UTF-8","B"), "text/html; charset=utf-8");
+                "</html>", "UTF-8", "B"), "text/html; charset=utf-8");
         html.setHeader("Content-Transfer-Encoding", "8BIT");
         multipart.addBodyPart(html);
 
         MimeBodyPart text = new MimeBodyPart();
-        text.setText(MimeUtility.encodeText("8BIT Content with umlaut \u00FC","UTF-8","B"), "utf-8");
+        text.setText(MimeUtility.encodeText("8BIT Content with umlaut \u00FC", "UTF-8", "B"), "utf-8");
         text.setHeader("Content-Transfer-Encoding", "8BIT");
         multipart.addBodyPart(text);
 
         MimeBodyPart text2QP = new MimeBodyPart();
-        text2QP.setText(MimeUtility.encodeText("8BIT Content with umlaut \u00FC","UTF-8","Q"), "utf-8");
+        text2QP.setText(MimeUtility.encodeText("8BIT Content with umlaut \u00FC", "UTF-8", "Q"), "utf-8");
         text2QP.setHeader("Content-Transfer-Encoding", "8BIT");
         multipart.addBodyPart(text2QP);
 
