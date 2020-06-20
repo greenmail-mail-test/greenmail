@@ -69,7 +69,9 @@ public class GreenMailUtil {
      */
     public static MimeMessage newMimeMessage(InputStream inputStream) {
         try {
-            return new MimeMessage(Session.getDefaultInstance(new Properties()), inputStream);
+            final Properties props = new Properties();
+            props.put("mail.mime.allowutf8", System.getProperty("mail.mime.allowutf8","true"));
+            return new MimeMessage(Session.getDefaultInstance(props), inputStream);
         } catch (MessagingException e) {
             throw new IllegalArgumentException("Can not generate mime message for input stream " + inputStream, e);
         }
