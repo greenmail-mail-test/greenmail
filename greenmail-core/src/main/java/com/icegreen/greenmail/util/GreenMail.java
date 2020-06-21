@@ -241,7 +241,7 @@ public class GreenMail extends ConfiguredGreenMail {
         try {
             for (StoredMessage msg : msgs) {
                 String tos = GreenMailUtil.getAddressList(msg.getMimeMessage().getAllRecipients());
-                if (tos.toLowerCase().contains(domain)) {
+                if (tos.toLowerCase().contains(domain.toLowerCase())) {
                     ret.add(msg.getMimeMessage());
                 }
             }
