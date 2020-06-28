@@ -43,6 +43,7 @@ public abstract class SearchTermBuilder {
     private SearchKey key;
     private List<String> parameters = Collections.<String>emptyList();
     private static final Logger LOGGER = LoggerFactory.getLogger(SearchTermBuilder.class);
+    public static final AllSearchTerm ALL_SEARCH_TERM = new AllSearchTerm();
     
     public static SearchTermBuilder create(final String pTerm) {
         return create(SearchKey.valueOf(pTerm));
@@ -58,7 +59,7 @@ public abstract class SearchTermBuilder {
                 break;
             // Flags
             case ALL:
-                builder = createSearchTermBuilder(new AllSearchTerm());
+                builder = createSearchTermBuilder(ALL_SEARCH_TERM);
                 break;
             case ANSWERED:
                 builder = createFlagSearchTermBuilder("ANSWERED", true);
