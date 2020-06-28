@@ -24,7 +24,6 @@ public class Pop3Connection {
     Pop3Handler handler;
 
     // networking stuff
-    private static final int TIMEOUT_MILLIS = 1000 * 30;
     Socket socket;
     InetAddress clientAddress;
 
@@ -51,7 +50,6 @@ public class Pop3Connection {
     private void configureSocket(Socket socket)
             throws SocketException {
         this.socket = socket;
-        this.socket.setSoTimeout(TIMEOUT_MILLIS);
         clientAddress = this.socket.getInetAddress();
     }
 

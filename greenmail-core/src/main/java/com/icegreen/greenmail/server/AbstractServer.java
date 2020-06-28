@@ -29,6 +29,7 @@ public abstract class AbstractServer extends Thread implements Service {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final InetAddress bindTo;
     protected ServerSocket serverSocket = null;
+    protected final int CLIENT_SOCKET_SO_TIMEOUT = 30 * 1000;
     protected final Managers managers;
     protected final ServerSetup setup;
     private final List<ProtocolHandler> handlers = Collections.synchronizedList(new ArrayList<ProtocolHandler>());
@@ -142,7 +143,8 @@ public abstract class AbstractServer extends Thread implements Service {
         }
     }
 
-    protected void handleClientSocket(Socket clientSocket) {
+    protected void handleClientSocket(Socket clientSocket) throws SocketException {
+        clientSocket.setSoTimeout(CLIENT_SOCKET_SO_TIMEOUT);
         final ProtocolHandler handler = createProtocolHandler(clientSocket);
         addHandler(handler);
         String threadName = getName() + "<-" + clientSocket.getInetAddress() + ":" + clientSocket.getPort();
