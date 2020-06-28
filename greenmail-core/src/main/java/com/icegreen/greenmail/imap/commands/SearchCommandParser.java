@@ -6,162 +6,169 @@
  */
 package com.icegreen.greenmail.imap.commands;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.charset.UnsupportedCharsetException;
+import java.util.*;
+import javax.mail.search.AndTerm;
+import javax.mail.search.NotTerm;
+import javax.mail.search.OrTerm;
+import javax.mail.search.SearchTerm;
+
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ProtocolException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.mail.search.AndTerm;
-import javax.mail.search.NotTerm;
-import javax.mail.search.OrTerm;
-import javax.mail.search.SearchTerm;
-import java.nio.ByteBuffer;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
-
 import static com.icegreen.greenmail.imap.commands.IdRange.SEQUENCE;
 
 /**
  * Handles processing for the SEARCH imap command.
+ * <p>
+ * https://tools.ietf.org/html/rfc3501#section-6.4.4
  *
  * @author Darrell DeBoer <darrell@apache.org>
+ * @author Marcel May
  */
 class SearchCommandParser extends CommandParser {
     private final Logger log = LoggerFactory.getLogger(SearchCommandParser.class);
     private static final String CHARSET_TOKEN = "CHARSET";
 
     /**
+     * Marker for stack when parsing search
+     */
+    protected enum SearchOperator {
+        AND, OR, NOT, GROUP /* Pseudo operator */
+    }
+
+    /**
      * Parses the request argument into a valid search term. Not yet fully implemented - see SearchKey enum.
      * <p>
      * Other searches will return everything for now.
+     *
+     * Throws an UnsupportedCharsetException if provided CHARSET is not supported.
      */
     public SearchTerm searchTerm(ImapRequestLineReader request)
-            throws ProtocolException, CharacterCodingException {
-        SearchTerm resultTerm = null;
-        SearchTermBuilder b = null;
-        SearchKey key = null;
-	boolean orKey = false;
-        boolean negated = false;
-        // Dummy implementation
-        // Consume to the end of the line.
-        char next = request.nextChar();
-        StringBuilder sb = new StringBuilder();
-        boolean quoted = false;
-        Charset charset = null;
+            throws ProtocolException {
+        Charset charset = StandardCharsets.US_ASCII; // Default
+        // Stack contains mix of SearchOperator and SearchTerm instances
+        // and will be processed in two steps
+        Deque<Object> stack = new LinkedList<>();
+        stack.push(SearchOperator.GROUP); // So that the final list of terms will be wrapped in an AndTerm
 
-        while (next != '\n') {
-            if (next != '\"' && (quoted || (next != CHR_SPACE && next != CHR_CR))) {
-                sb.append(next);
-            }
-            request.consume();
-            next = request.nextChar();
-            if (next == '\"') {
-                quoted = !quoted;
-                if (quoted) {
-                    continue;
-                }
-            }
-            if (!quoted && (next == CHR_SPACE || next == '\n') && sb.length() > 0) {
-                log.debug("Search request is '{}'", sb);
-                // Examples:
-                // HEADER Message-ID <747621499.0.1264172476711.JavaMail.tbuchert@dev16.int.consol.de> ALL
-                // FLAG SEEN ALL
-                if (null == b) {
-                    try {
-                        String keyValue = sb.toString();
-                        // Parentheses?
-                        if (keyValue.charAt(0) == '('
-                                && keyValue.charAt(keyValue.length() - 1) == ')') {
-                            keyValue = keyValue.substring(1, keyValue.length() - 1);
-                        }
+        // Phase one : parse search query into SearchOperators/simple search terms and put them on the stack.
+        char next;
+        while ((next = request.nextChar()) != '\n' && next != CHR_CR /* \r */) {
+            next = request.consumeAll(CHR_SPACE);
 
-                        // Message set?
-                        if (SEQUENCE.matcher(keyValue).matches()) {
-                            b = SearchTermBuilder.create(SearchKey.SEQUENCE_SET);
+            if (isAtomSpecial(next)) {
+                // Parentheses?
+                if (next == '(') {
+                    request.consume();
+                    request.consumeAll(CHR_SPACE);
 
-                            // Try to get additional number sequences.
-                            // Sequence can be a whitespace separated list of either a number or number range
-                            // Example: '2 5:9 9'
-                            next = request.nextChar();
-                            while (next == CHR_SPACE || Character.isDigit(next) || next == ':') {
-                                request.consume();
-                                sb.append(next);
-                                next = request.nextChar();
-                            }
-                            b.addParameter(sb.toString());
-                        }
-                        else if (CHARSET_TOKEN.equals(keyValue)) { // Charset handling
-                            request.nextWordChar(); // Skip spaces
-                            String c = this.astring(request);
-                            log.debug("Searching with given CHARSET <{}>", c);
-                            charset = Charset.forName(c);
-                        } else {
-                            // Term?
-                            key = SearchKey.valueOf(keyValue);
-                            if (SearchKey.NOT == key) {
-                                negated = true;
-                            } else {
-                                b = SearchTermBuilder.create(key);
-                            }
+                    stack.push(SearchOperator.GROUP);
+                } else if (next == ')') {
+                    request.consume();
+                    request.consumeAll(CHR_SPACE);
 
-                            if (null!=b && b.expectsParameter() && key.isCharsetAware() && null != charset && next == CHR_SPACE) {
-                                next = request.nextWordChar();
-                                if (next == '{') {
-                                    String textOfCharset = new String(consumeLiteralAsBytes(request), charset);
-                                    b.addParameter(textOfCharset);
-                                    log.debug("Searching for text <{}> of charset {}", textOfCharset, charset);
-                                }
-                            }
-                        }
-                    } catch (IllegalArgumentException ex) {
-                        // Ignore for now instead of breaking. See issue#35 .
-                        log.warn("Ignoring not yet implemented search command '{}'", sb, ex);
-                        negated = false;
+                    List<SearchTerm> groupItems = new ArrayList<>();
+                    Object item;
+                    while ((item = stack.pop()) != SearchOperator.GROUP) {
+                        groupItems.add((SearchTerm) item);
                     }
-                } else if (b.expectsParameter()) {
-                    if (b.isCharsetAware() && null != charset) {
-                        request.consume(); // \n
-                        next = request.nextChar();
-                        final int capacity = Integer.parseInt(sb.substring(1, sb.length() - 1));
-                        ByteBuffer bb = ByteBuffer.allocate(capacity);
-                        while (next != CHR_CR) {
-                            request.consume(); // \n
-                            sb.append(next);
-                            next = request.nextChar();
-                        }
-                        final String decoded = charset.decode(bb).toString();
-                        log.info("Decoded <{}> into <{}>", bb, decoded);
-                        b = b.addParameter(decoded);
+                    if (groupItems.size() == 1) {
+                        stack.push(groupItems.get(0)); // Single item
                     } else {
-                        b = b.addParameter(sb.toString());
+                        stack.push(new AndTerm(groupItems.toArray(new SearchTerm[0])));
                     }
+                } else {
+                    throw new IllegalStateException("Unsupported atom special char <" + next + ">");
                 }
-                if (b != null && !b.expectsParameter()) {
-                    SearchTerm searchTerm = b.build();
-                    if (negated) {
-                        searchTerm = new NotTerm(searchTerm);
-                        negated = false;
+            } else {
+                String token = atomOnly(request);
+                // Sequence-set?
+                if (SEQUENCE.matcher(token).matches()) {
+                    stack.push(SearchTermBuilder.create(SearchKey.SEQUENCE_SET).addParameter(token).build());
+                }
+                // Charset?
+                else if (CHARSET_TOKEN.equals(token)) {
+                    // If the server does not support the specified [CHARSET], it MUST
+                    // return a tagged NO response (not a BAD).  This response SHOULD
+                    // contain the BADCHARSET response code, which MAY list the
+                    // [CHARSET]s supported by the server.
+                    request.consumeAll(CHR_SPACE);
+                    final String charsetName = astring(request);
+                    try {
+                        charset = Charset.forName(charsetName);
+                    } catch (UnsupportedCharsetException ex) {
+                        log.error("Unsupported charset '{}", charsetName);
+                        throw ex;
                     }
-                    b = null;
-					if (SearchKey.OR == key) {
-					resultTerm = resultTerm == null ? searchTerm : new OrTerm(resultTerm, searchTerm);
-					orKey = true;
-					} else {
-						if (orKey) {
-							if (SearchKey.ALL == key) {
-                    resultTerm = resultTerm == null ? searchTerm : new AndTerm(resultTerm, searchTerm);
+                } else {
+                    // Term?
+                    SearchKey key = SearchKey.valueOf(token);
+                    // Operator?
+                    if (key == SearchKey.NOT) {
+                        stack.push(SearchOperator.NOT);
+                    } else if (key == SearchKey.OR) {
+                        stack.push(SearchOperator.OR);
+                    } else {
+                        // No operator
+                        SearchTermBuilder b = SearchTermBuilder.create(key);
+                        if (b.expectsParameter()) {
+                            for (int pi = 0; pi < key.getNumberOfParameters(); pi++) {
+                                request.consumeAll(CHR_SPACE);
+                                String paramValue = string(request, charset);
+                                b.addParameter(paramValue);
+                            }
+                        }
+                        stack.push(b.build());
+                    }
 
-							} else {
-								resultTerm = resultTerm == null ? searchTerm : new OrTerm(resultTerm, searchTerm);
-							}
-						} else {
-							resultTerm = resultTerm == null ? searchTerm : new AndTerm(resultTerm, searchTerm);
-						}
-					}                }
-                sb.setLength(0);
-                next = request.nextChar();
+                }
             }
         }
-        return resultTerm;
+
+        // Phase two : Build search terms by operators
+        return handleOperators(stack);
     }
+
+    private SearchTerm handleOperators(Deque<Object> stack) {
+        LinkedList<SearchTerm> params = new LinkedList<>();
+        while (!stack.isEmpty()) {
+            final Object o = stack.pop();
+            if (SearchOperator.OR == o) {
+                final SearchTerm term1 = params.pop();
+                final SearchTerm term2 = params.pop();
+                params.push(new OrTerm(term1, term2));
+            } else if (SearchOperator.NOT == o) {
+                params.push(new NotTerm(params.pop()));
+            } else if (SearchOperator.AND == o) {
+                final SearchTerm term1 = params.pop();
+                final SearchTerm term2 = params.pop();
+                params.push(new AndTerm(term1, term2));
+            } else if (SearchOperator.GROUP == o) {
+                // Size 0: Empty braces? Do nothing.
+                // Size 1: Do nothing, keep item on params stack, no wrapping needed
+                // Size > 1 : Wrap with AndTerm
+                if (params.size() > 1) {
+//                    Collections.reverse(params);  // Keep order. Easier for testing.
+                    SearchTerm[] items = params.toArray(new SearchTerm[0]);
+                    params.clear();
+                    params.push(new AndTerm(items));
+                }
+            } else if (o instanceof SearchTerm) {
+                params.push((SearchTerm) o);
+            } else {
+                throw new IllegalStateException("Unsupported stack item " + o);
+            }
+        }
+
+        if (params.size() != 1) {
+            throw new IllegalStateException("Expected exactly one root search term but got " + params);
+        }
+        return params.pop();
+    }
+
 }

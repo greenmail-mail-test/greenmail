@@ -29,7 +29,7 @@ public abstract class AbstractServer extends Thread implements Service {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final InetAddress bindTo;
     protected ServerSocket serverSocket = null;
-    protected final int CLIENT_SOCKET_SO_TIMEOUT = 30 * 1000;
+    protected static final int CLIENT_SOCKET_SO_TIMEOUT = 30 * 1000;
     protected final Managers managers;
     protected final ServerSetup setup;
     private final List<ProtocolHandler> handlers = Collections.synchronizedList(new ArrayList<ProtocolHandler>());

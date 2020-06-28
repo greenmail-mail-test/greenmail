@@ -4,6 +4,12 @@
  */
 package com.icegreen.greenmail.test;
 
+import java.io.ByteArrayOutputStream;
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMultipart;
+
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.util.GreenMailUtil;
@@ -13,12 +19,6 @@ import com.sun.mail.pop3.POP3Folder;
 import com.sun.mail.pop3.POP3Store;
 import org.junit.Rule;
 import org.junit.Test;
-
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMultipart;
-import java.io.ByteArrayOutputStream;
 
 import static org.junit.Assert.*;
 

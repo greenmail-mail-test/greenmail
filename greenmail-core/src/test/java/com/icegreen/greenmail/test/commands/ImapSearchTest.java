@@ -4,42 +4,24 @@
  */
 package com.icegreen.greenmail.test.commands;
 
-import static junit.framework.TestCase.fail;
-import static org.junit.Assert.*;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import javax.mail.Address;
-import javax.mail.Flags;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Store;
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.mail.search.AndTerm;
-import javax.mail.search.ComparisonTerm;
-import javax.mail.search.DateTerm;
-import javax.mail.search.FlagTerm;
-import javax.mail.search.FromTerm;
-import javax.mail.search.HeaderTerm;
-import javax.mail.search.OrTerm;
-import javax.mail.search.ReceivedDateTerm;
-import javax.mail.search.RecipientTerm;
-import javax.mail.search.SentDateTerm;
-import javax.mail.search.SubjectTerm;
-
-import org.junit.Rule;
-import org.junit.Test;
+import javax.mail.search.*;
 
 import com.icegreen.greenmail.imap.commands.SearchKey;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import org.junit.Rule;
+import org.junit.Test;
+
+import static junit.framework.TestCase.fail;
+import static org.junit.Assert.*;
 
 /**
  * @author Wael Chatila
@@ -177,6 +159,54 @@ public class ImapSearchTest {
         }
     }
 
+    @Test
+    public void testSearchIssue319() throws Exception {
+        String from = "from@localhost";
+        String to = from;
+        String subject = "Greenmail";
+        String content = "Hello";
+
+        // Setup test emails
+        GreenMailUser user = greenMail.setUser(to, "pwd");
+        Session session = greenMail.getImap().createSession();
+        MailFolder folder = greenMail.getManagers().getImapHostManager().getFolder(user, "INBOX");
+        storeMessage(session, folder, to, from, subject, content); // Match
+        storeMessage(session, folder, to, from, subject, content); // Match
+        storeMessage(session, folder, to, from, "No-match", content); // No match
+        storeMessage(session, folder, "otheraddress@localhost", "otheraddress@localhost", subject, content); // No match
+        assertEquals(4, folder.getMessageCount());
+
+        // Run search test
+        final Store store = greenMail.getImap().createStore();
+        store.connect(to, "pwd");
+        try {
+            Folder inbox = store.getFolder("INBOX");
+            inbox.open(Folder.READ_ONLY);
+
+            SearchTerm fromTerm = new FromStringTerm(from);
+            SearchTerm toTerm = new RecipientStringTerm(Message.RecipientType.TO, from);
+
+            AndTerm and = new AndTerm(new SubjectTerm(subject),
+                    new OrTerm(toTerm, fromTerm));
+
+            Message[] messages = inbox.search(and);
+
+            assertEquals("Failure on AND search", 2, messages.length);
+        } finally {
+            store.close();
+        }
+    }
+
+    private void storeMessage(Session session, MailFolder folder, String to, String from, String subject, String content)
+            throws Exception {
+        MimeMessage message = new MimeMessage(session);
+        message.setSubject(subject);
+        message.setText(content);
+        message.setFrom(new InternetAddress(from));
+        message.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+        folder.store(message);
+    }
+
     private void testSentDateTerms(Folder imapFolder, Message... m) throws Exception {
         //greater equals, returns all
         testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.GE, getSampleDate()), m[5]);
@@ -222,7 +252,7 @@ public class ImapSearchTest {
 
     private Date getSampleDate(int day) {
         try {
-            return new SimpleDateFormat("yyyy-MM-dd").parse("2010-01-"+day);
+            return new SimpleDateFormat("yyyy-MM-dd").parse("2010-01-" + day);
         } catch (ParseException e) {
             throw new IllegalStateException("Can not parse date", e);
         }
@@ -238,7 +268,6 @@ public class ImapSearchTest {
         for (int i = 0; i < expectedResults.length; i++) {
             assertSame(imapMessages[i], expectedResults[i]);
         }
-
     }
 
     /**
@@ -302,7 +331,6 @@ public class ImapSearchTest {
         message5.setText("content sent date");
         message5.setSentDate(getSampleDate());
         folder.store(message5);
-
     }
 
     /**

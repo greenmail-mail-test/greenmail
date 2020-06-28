@@ -6,15 +6,15 @@
  */
 package com.icegreen.greenmail.imap.commands;
 
+import java.nio.charset.UnsupportedCharsetException;
+import javax.mail.search.SearchTerm;
+
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ImapResponse;
 import com.icegreen.greenmail.imap.ImapSession;
 import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
-
-import javax.mail.search.SearchTerm;
-import java.nio.charset.CharacterCodingException;
 
 /**
  * Handles processing for the SEARCH imap command.
@@ -25,7 +25,7 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
     public static final String NAME = "SEARCH";
     public static final String ARGS = "<search term>";
 
-    private SearchCommandParser searchParser = new SearchCommandParser();
+    private final SearchCommandParser searchParser = new SearchCommandParser();
 
     SearchCommand() {
         super(NAME, ARGS);
@@ -49,17 +49,17 @@ class SearchCommand extends SelectedStateCommand implements UidEnabledCommand {
         final SearchTerm searchTerm;
         try {
             searchTerm = searchParser.searchTerm(request);
-        } catch(IllegalArgumentException ex) {
+        } catch (UnsupportedCharsetException e) {
+            // Not support => return "NO"
+            response.commandFailed(this, "Search command does not support charset " + e.getMessage());
+            return;
+        } catch (IllegalArgumentException ex) {
             // Not support => return "BAD"
             response.commandError("Search command not supported");
             return;
-        } catch (CharacterCodingException e) {
-            // Not support => return "BAD"
-            response.commandError("Search command does not support charset "+e.getMessage());
-            return;
         }
 
-        if(null == searchTerm) {
+        if (null == searchTerm) {
             log.warn("Ignoring unsupported search command");
             response.commandComplete(this);
             return;
