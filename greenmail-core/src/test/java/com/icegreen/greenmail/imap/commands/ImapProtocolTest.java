@@ -193,6 +193,7 @@ public class ImapProtocolTest {
         try {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
             folder.open(Folder.READ_ONLY);
+
             Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
                 @Override
                 public Object doCommand(IMAPProtocol protocol) {
@@ -228,12 +229,23 @@ public class ImapProtocolTest {
             ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
                 @Override
                 public Object doCommand(IMAPProtocol protocol) {
-                    return protocol.command("SEARCH 1 2:4 8", null);
+                    return protocol.command("SEARCH 1,2:4,8", null);
                 }
             });
             response = (IMAPResponse) ret[0];
             assertFalse(response.isBAD());
             assertEquals("1 2 3 4 8", response.getRest());
+            assertTrue(ret[1].isOK());
+
+            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
+                @Override
+                public Object doCommand(IMAPProtocol protocol) {
+                    return protocol.command("SEARCH 1,2:4 3,8", null);
+                }
+            });
+            response = (IMAPResponse) ret[0];
+            assertFalse(response.isBAD());
+            assertEquals("3", response.getRest());
             assertTrue(ret[1].isOK());
         } finally {
             store.close();
@@ -288,7 +300,7 @@ public class ImapProtocolTest {
             ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
                 @Override
                 public Object doCommand(IMAPProtocol protocol) {
-                    return protocol.command("UID SEARCH 1 2:4 8", null);
+                    return protocol.command("UID SEARCH 1,2:4,8", null);
                 }
             });
             response = (IMAPResponse) ret[0];
@@ -463,7 +475,7 @@ public class ImapProtocolTest {
         IMAPResponse response = (IMAPResponse) ret[0];
         assertFalse(response.isBAD());
         String number = response.getRest();
-        assertEquals(expected, number);
+        assertEquals("Failed for charset " + charset, expected, number);
     }
 
     @Test
