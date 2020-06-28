@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 public class SmtpConnection {
 
-    private static final int TIMEOUT_MILLIS = 1000 * 30;
+
     private static final Logger log = LoggerFactory.getLogger(SmtpConnection.class);
 
     // networking/io stuff
@@ -33,7 +33,6 @@ public class SmtpConnection {
     public SmtpConnection(SmtpHandler handler, Socket sock)
             throws IOException {
         this.sock = sock;
-        sock.setSoTimeout(TIMEOUT_MILLIS);
         clientAddress = sock.getInetAddress();
         OutputStream o = sock.getOutputStream();
         InputStream i = sock.getInputStream();
