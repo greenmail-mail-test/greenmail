@@ -99,6 +99,9 @@ public abstract class SearchTermBuilder {
             case SUBJECT:
                 builder = createSubjectTermBuilder();
                 break;
+            case BODY:
+                builder = createBodySearchTermBuilder();
+                break;
             case TEXT:
                 builder = createTextSearchTermBuilder();
                 break;
@@ -283,6 +286,15 @@ public abstract class SearchTermBuilder {
         };
     }
 
+    private static SearchTermBuilder createBodySearchTermBuilder() {
+        return new SearchTermBuilder() {
+            @Override
+            public SearchTerm build() {
+                String query = getParameters().get(0);
+                return new BodyTerm(query);
+            }
+        };
+    }
     private static SearchTermBuilder createTextSearchTermBuilder() {
         return new SearchTermBuilder() {
             @Override

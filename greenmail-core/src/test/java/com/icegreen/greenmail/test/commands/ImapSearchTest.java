@@ -50,21 +50,32 @@ public class ImapSearchTest {
             Folder imapFolder = store.getFolder("INBOX");
             imapFolder.open(Folder.READ_WRITE);
 
-            Message[] imapMessages = imapFolder.getMessages();
-            assertEquals(6, imapMessages.length);
-            Message m0 = imapMessages[0];
+            Message[] allImapMessages = imapFolder.getMessages();
+            assertEquals(6, allImapMessages.length);
+            Message m0 = allImapMessages[0];
             assertTrue(m0.getFlags().contains(Flags.Flag.ANSWERED));
             assertTrue(m0.getSubject().startsWith("#0"));
-            Message m1 = imapMessages[1];
+            Message m1 = allImapMessages[1];
             assertTrue(m1.getSubject().startsWith("#1"));
-            Message m2 = imapMessages[2];
+            Message m2 = allImapMessages[2];
             assertTrue(m2.getSubject().startsWith("#2"));
-            Message m3 = imapMessages[3];
+            Message m3 = allImapMessages[3];
             assertTrue(m3.getSubject().startsWith("#3"));
-            Message m4 = imapMessages[4];
+            Message m4 = allImapMessages[4];
             assertTrue(m4.getSubject().startsWith("#4"));
-            Message m5 = imapMessages[5];
+            Message m5 = allImapMessages[5];
             assertTrue(m5.getSubject().startsWith("#5"));
+
+            // Search BODY
+            Message[] imapMessages = imapFolder.search(new BodyTerm("tent"));
+            assertEquals(allImapMessages.length, imapMessages.length);
+
+            imapMessages = imapFolder.search(new BodyTerm("tent#2"));
+            assertEquals(1, imapMessages.length);
+            assertEquals(m2, imapMessages[0]);
+
+            imapMessages = imapFolder.search(new BodyTerm("from"));
+            assertEquals(0, imapMessages.length);
 
             // Search flags
             imapMessages = imapFolder.search(new FlagTerm(new Flags(Flags.Flag.ANSWERED), true));
@@ -280,7 +291,7 @@ public class ImapSearchTest {
     private void storeSearchTestMessages(Session session, MailFolder folder, Flags flags) throws Exception {
         MimeMessage message0 = new MimeMessage(session);
         message0.setSubject("#0 test0Search");
-        message0.setText("content");
+        message0.setText("content#0");
         setRecipients(message0, Message.RecipientType.TO, "to", 1, 2);
         setRecipients(message0, Message.RecipientType.CC, "cc", 1, 2);
         setRecipients(message0, Message.RecipientType.BCC, "bcc", 1, 2);
@@ -291,7 +302,7 @@ public class ImapSearchTest {
 
         MimeMessage message1 = new MimeMessage(session);
         message1.setSubject("#1 test0Search test1Search \u00c4\u00e4\u03A0", "UTF-8");
-        message1.setText("content \u00c4\u00e4\u03A0", "UTF-8");
+        message1.setText("content#1 \u00c4\u00e4\u03A0", "UTF-8");
         setRecipients(message1, Message.RecipientType.TO, "to", 1, 3);
         setRecipients(message1, Message.RecipientType.CC, "cc", 1, 3);
         setRecipients(message1, Message.RecipientType.BCC, "bcc", 1, 3);
@@ -301,7 +312,7 @@ public class ImapSearchTest {
 
         MimeMessage message2 = new MimeMessage(session);
         message2.setSubject("#2 OR search : foo");
-        message2.setText("content foo");
+        message2.setText("content#2 foo");
         setRecipients(message2, Message.RecipientType.TO, "to", 3);
         setRecipients(message2, Message.RecipientType.CC, "cc", 4);
         setRecipients(message2, Message.RecipientType.BCC, "bcc", 5);
@@ -312,7 +323,7 @@ public class ImapSearchTest {
 
         MimeMessage message3 = new MimeMessage(session);
         message3.setSubject("#3 OR search : bar");
-        message3.setText("content bar");
+        message3.setText("content#3 bar");
         setRecipients(message3, Message.RecipientType.TO, "to", 3);
         setRecipients(message3, Message.RecipientType.CC, "cc", 4);
         setRecipients(message3, Message.RecipientType.BCC, "bcc", 5);
@@ -323,12 +334,12 @@ public class ImapSearchTest {
 
         MimeMessage message4 = new MimeMessage(session);
         message4.setSubject("#4 with received date");
-        message4.setText("content received date");
+        message4.setText("content#4 received date");
         folder.appendMessage(message4, new Flags(), getSampleDate());
 
         MimeMessage message5 = new MimeMessage(session);
         message5.setSubject("#5 with sent date");
-        message5.setText("content sent date");
+        message5.setText("content#5 sent date");
         message5.setSentDate(getSampleDate());
         folder.store(message5);
     }
