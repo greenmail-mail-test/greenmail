@@ -229,9 +229,8 @@ public class ImapSearchTest {
         testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.NE, getSampleDate()), m[0], m[1], m[2], m[3], m[4]);
         //less than (sample mail + 1 day), only returns sample mail
         testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.LT, getSampleDate(2)), m[5]);
-        //TODO: less equals: does not work yet, is therefore not included, should only return sample mail
-        //see https://github.com/greenmail-mail-test/greenmail/issues/234
-        //testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.LE, getSampleDate(2)), m[5]);
+        //less equal
+        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.LE, getSampleDate(2)), m[5]);
     }
 
     private void testReceivedDateTerms(Folder imapFolder, Message... m) throws Exception {
@@ -245,9 +244,8 @@ public class ImapSearchTest {
         testDateTerm(imapFolder, new ReceivedDateTerm(ComparisonTerm.NE, getSampleDate()), m[0], m[1], m[2], m[3], m[5]);
         //less than (sample mail + 1 day), only returns sample mail
         testDateTerm(imapFolder, new ReceivedDateTerm(ComparisonTerm.LT, getSampleDate(2)), m[4]);
-        //TODO: less equals: does not work yet, is therefore not included, should only return sample mail
-        //see https://github.com/greenmail-mail-test/greenmail/issues/234
-        //testDateTerm(imapFolder, new ReceivedDateTerm(ComparisonTerm.LE, getSampleDate(2)), m[4]);
+        //less equal
+        testDateTerm(imapFolder, new ReceivedDateTerm(ComparisonTerm.LE, getSampleDate(2)), m[4]);
     }
 
     // Test an unsupported search term for exception. Should be ignored.
