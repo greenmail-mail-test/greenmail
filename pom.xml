@@ -348,7 +348,7 @@
 
   <properties>
     <slf4j.version>1.7.30</slf4j.version>
-    <spring.version>4.2.9.RELEASE</spring.version>
+    <spring.version>4.3.27.RELEASE</spring.version>
     <junit5.version>5.1.0</junit5.version>
     <jersey.version>2.31</jersey.version>
     <jetty.version>9.4.30.v20200611</jetty.version>
