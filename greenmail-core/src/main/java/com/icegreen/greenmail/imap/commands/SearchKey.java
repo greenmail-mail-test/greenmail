@@ -15,7 +15,7 @@ package com.icegreen.greenmail.imap.commands;
  * <li>ANSWERED Messages with the \Answered flag set.</li>
  * <li>BCC Messages that contain the specified string in the envelope structure's BCC field.</li>
  * <li>BEFORE &lt;date&gt;  Messages whose internal date (disregarding time and timezone) is earlier than the specified date.</li>
- * <li>TODO: BODY &lt;string&gt; Messages that contain the specified string in the body of the message.</li>
+ * <li>BODY &lt;string&gt; Messages that contain the specified string in the body of the message.</li>
  * <li>CC &lt;string&gt; Messages that contain the specified string in the envelope structure's CC field.</li>
  * <li>DELETED Messages with the \Deleted flag set.</li>
  * <li>DRAFT Messages with the \Draft flag set.</li>
@@ -69,6 +69,7 @@ public enum SearchKey {
     ALL(),
     ANSWERED(),
     BCC(1, true),
+    BODY(1, true),
     CC(1, true),
     DELETED(),
     DRAFT(),
