@@ -1,4 +1,4 @@
-/* PrismJS 1.17.1
+/* PrismJS 1.20.0
 https://prismjs.com/download.html?#themes=prism-coy&languages=clike+bash+git+java&plugins=autolinker+file-highlight */
 /**
  * prism.js Coy theme for JavaScript, CoffeeScript, CSS and HTML
@@ -47,7 +47,7 @@ pre[class*="language-"]>code {
 	background-attachment: local;
 }
 
-code[class*="language"] {
+code[class*="language-"] {
 	max-height: inherit;
 	height: inherit;
 	padding: 0 1em;
@@ -95,7 +95,6 @@ pre[class*="language-"]:after {
 	transform: rotate(-2deg);
 }
 
-:not(pre) > code[class*="language-"]:after,
 pre[class*="language-"]:after {
 	right: 0.75em;
 	left: auto;
@@ -180,7 +179,7 @@ pre[class*="language-"]:after {
 	cursor: help;
 }
 
-.namespace {
+.token.namespace {
 	opacity: .7;
 }
 
@@ -191,13 +190,6 @@ pre[class*="language-"]:after {
 		box-shadow: none;
 	}
 
-}
-
-/* Plugin styles */
-.token.tab:not(:empty):before,
-.token.cr:before,
-.token.lf:before {
-	color: #e0d7d1;
 }
 
 /* Plugin styles: Line Numbers */
