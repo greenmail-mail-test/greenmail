@@ -72,10 +72,10 @@ class SearchCommandParser extends CommandParser {
                     request.consume();
                     request.consumeAll(CHR_SPACE);
 
-                    List<SearchTerm> groupItems = new ArrayList<>();
+                    LinkedList<SearchTerm> groupItems = new LinkedList<>();
                     Object item;
                     while ((item = stack.pop()) != SearchOperator.GROUP) {
-                        groupItems.add((SearchTerm) item);
+                        groupItems.addFirst((SearchTerm) item);
                     }
                     if (groupItems.size() == 1) {
                         stack.push(groupItems.get(0)); // Single item
@@ -153,7 +153,6 @@ class SearchCommandParser extends CommandParser {
                 // Size 1: Do nothing, keep item on params stack, no wrapping needed
                 // Size > 1 : Wrap with AndTerm
                 if (params.size() > 1) {
-//                    Collections.reverse(params);  // Keep order. Easier for testing.
                     SearchTerm[] items = params.toArray(new SearchTerm[0]);
                     params.clear();
                     params.push(new AndTerm(items));

@@ -2,6 +2,7 @@ package com.icegreen.greenmail.imap.commands;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.CharacterCodingException;
+import javax.mail.Flags;
 import javax.mail.Message;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -15,7 +16,22 @@ import static org.junit.Assert.assertEquals;
 
 public class SearchCommandParserTest {
     @Test
-    public void testSmallerParseCommand() throws CharacterCodingException, ProtocolException {
+    public void testHeader() throws ProtocolException {
+        SearchTerm expectedTerm = new AndTerm(
+                new AndTerm(new SearchTerm[]{
+                        new HeaderTerm("Message-ID", "<1627010197.0.1593681191102@[192.168.242.10]>"),
+                        new FlagTerm(new Flags(Flags.Flag.SEEN), true)
+                }),
+                SearchTermBuilder.create(SearchKey.ALL).build()
+        );
+
+        SearchTerm searchTerm = parse("(HEADER Message-ID <1627010197.0.1593681191102@[192.168.242.10]> SEEN) ALL");
+
+        assertEquals(expectedTerm, searchTerm);
+    }
+
+    @Test
+    public void testSmallerParseCommand() throws ProtocolException {
         SearchTerm expectedTerm = new SizeTerm(ComparisonTerm.LT, 5);
         SearchTerm searchTerm = parse("SMALLER 5");
 
@@ -23,7 +39,7 @@ public class SearchCommandParserTest {
     }
 
     @Test
-    public void testLargerParseCommand() throws CharacterCodingException, ProtocolException {
+    public void testLargerParseCommand() throws ProtocolException {
         SearchTerm expectedTerm = new SizeTerm(ComparisonTerm.GT, 5);
         SearchTerm searchTerm = parse("LARGER 5");
 
@@ -31,7 +47,7 @@ public class SearchCommandParserTest {
     }
 
     @Test
-    public void testSmallerAndLargerParseCommand() throws CharacterCodingException, ProtocolException {
+    public void testSmallerAndLargerParseCommand() throws ProtocolException {
         SearchTerm expectedTerm = new AndTerm(new SizeTerm(ComparisonTerm.LT, 5), new SizeTerm(ComparisonTerm.GT, 3));
         SearchTerm searchTerm = parse("SMALLER 5 LARGER 3");
 
@@ -39,7 +55,7 @@ public class SearchCommandParserTest {
     }
 
     @Test
-    public void testAndSubjectOrToFrom() throws CharacterCodingException, ProtocolException, AddressException {
+    public void testAndSubjectOrToFrom() throws ProtocolException, AddressException {
         SearchTerm expectedTerm = new AndTerm(new SearchTerm[]{
                 new SubjectTerm("Greenmail"),
                 new OrTerm(
@@ -54,7 +70,7 @@ public class SearchCommandParserTest {
         assertEquals(expectedTerm, searchTerm);
     }
 
-    private SearchTerm parse(String line) throws CharacterCodingException, ProtocolException {
+    private SearchTerm parse(String line) throws ProtocolException {
         final byte[] bytes = (line.endsWith("\n") ? line : (line + '\n')).getBytes();
         ByteArrayInputStream ins = new ByteArrayInputStream(bytes);
         return new SearchCommandParser().searchTerm(new ImapRequestLineReader(ins, null));
