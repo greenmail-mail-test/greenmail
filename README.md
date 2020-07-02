@@ -69,6 +69,18 @@ Development [![Build status](https://circleci.com/gh/greenmail-mail-test/greenma
 [github_pull_request]: https://help.github.com/articles/creating-a-pull-request/
 [sonar]: http://nemo.sonarqube.org/dashboard/index?id=com.icegreen%3Agreenmail-parent
 
+Roadmap
+-------
+
+* 1.5.x (current)
+  * Bugfix / maintenance
+* [1.6](https://github.com/greenmail-mail-test/greenmail/issues?q=is%3Aopen+is%3Aissue+milestone%3A1.6)
+  * [JakartaMail 1.6.x](https://github.com/eclipse-ee4j/mail/releases)
+  * Deprecations (JBoss SAR, ...)
+  * Junit 5
+* [2.x](https://github.com/greenmail-mail-test/greenmail/milestone/3)
+  * JakartaMail 2.x
+
 Contribution guidelines
 -----------------------
 
