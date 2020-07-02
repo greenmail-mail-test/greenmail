@@ -6,7 +6,9 @@ import com.icegreen.greenmail.util.GreenMailProxy;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -18,9 +20,10 @@ import org.junit.jupiter.api.extension.RegisterExtension;
  * @see RegisterExtension
  * @see TestInstance
  */
-public class GreenMailExtension extends GreenMailProxy implements BeforeEachCallback, AfterEachCallback {
+public class GreenMailExtension extends GreenMailProxy implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback {
     private final ServerSetup[] serverSetups;
     private GreenMail greenMail;
+    private boolean perMethod = true;
 
     /**
      * Initialize with single server setups.
@@ -49,13 +52,46 @@ public class GreenMailExtension extends GreenMailProxy implements BeforeEachCall
 
     @Override
     public void beforeEach(final ExtensionContext context) {
-        greenMail = new GreenMail(serverSetups);
-        start();
+        if (perMethod) {
+            greenMail = new GreenMail(serverSetups);
+            start();
+        }
     }
 
     @Override
     public void afterEach(final ExtensionContext context) {
-        stop();
+        if (perMethod) {
+            stop();
+        }
+    }
+
+    @Override
+    public void beforeAll(ExtensionContext context) throws Exception {
+        if (!perMethod) {
+            greenMail = new GreenMail(serverSetups);
+            start();
+        }
+    }
+
+    @Override
+    public void afterAll(ExtensionContext context) throws Exception {
+        if (!perMethod) {
+            stop();
+        }
+    }
+
+    /**
+     * Specify whether GreenMail should be set up and torn down before and after
+     * each method or before and after all methods.
+     * 
+     * @param perMethod
+     *            If <code>true</code>, per-method lifecycle is used, per-class
+     *            otherwise.
+     * @return The GreenMail extension for chaining calls.
+     */
+    public GreenMailExtension withPerMethodLifecycle(boolean perMethod) {
+        this.perMethod = perMethod;
+        return this;
     }
 
     @Override
