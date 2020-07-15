@@ -89,20 +89,6 @@
                     <a class="nav-item nav-link ml-3" href="#deploy_standalone">Run as a standalone Java process</a>
                     <a class="nav-item nav-link ml-3" href="#deploy_docker_standalone">Run as a docker image</a>
                     <a class="nav-item nav-link ml-3" href="#deploy_webapp">Deploy as a webapp (WAR)</a>
-                    <a class="nav-item nav-link ml-3" href="#deploy_jboss_sar" data-toggle="collapse"
-                       data-target="#nav_deployment_sar">Deploy as a JBoss Service (SAR)</a>
-                    <nav id="nav_deployment_sar" class="nav nav-pills flex-column collapse"
-                         data-parent="#nav_deployment">
-                        <a class="nav-item nav-link ml-5" href="#deploy_jboss_sar_deploy">Deploying</a>
-                        <a class="nav-item nav-link ml-5" href="#deploy_jboss_sar_configure_user">Configure</a>
-                        <a class="nav-item nav-link ml-5" href="#deploy_jboss_sar_send_via_jmx">Send a mail message via
-                            JMX</a>
-                        <a class="nav-item nav-link ml-5" href="#deploy_jboss_sar_local_client">Send a mail message
-                            using your mail
-                            client</a>
-                        <a class="nav-item nav-link ml-5" href="#deploy_jboss_sar_list">List mails for a user via
-                            JMX</a>
-                    </nav>
                 </nav>
                 <a class="nav-item nav-link nav-pills" href="#faq">FAQ</a>
                 <a class="nav-item nav-link nav-pills" href="#download" data-toggle="collapse"
@@ -172,11 +158,9 @@
                 <ul>
                     <li>Supports SMTP, POP3 and IMAP including SSL</li>
                     <li>Prevents accidental email leaking to real mail servers</li>
-                    <li>Provides different deployment models, such as a simple <a href="#deploy_standalone">standalone
-                        JVM
-                        process</a>,
-                        as a <a href="#deploy_webapp">WAR module</a>, as a
-                        <a href="#deploy_jboss_sar">JBoss GreenMail Service</a> or <a href="#deploy_docker_standalone">docker
+                    <li>Provides different deployment models, such as a simple
+                        <a href="#deploy_standalone">standalone JVM process</a>,
+                        as a <a href="#deploy_webapp">WAR module</a> or as a <a href="#deploy_docker_standalone">docker
                             image</a>
                     </li>
                     <li>Easily embeddable in JUnit tests for integration testing</li>
@@ -268,8 +252,8 @@ public void testReceive() throws MessagingException {
                             href="https://james.apache.org/">Apache James</a>).
                 </p>
 
-                <p>Check out the possible deployments as <a href="#deploy_webapp">webapp</a>, <a
-                        href="#deploy_jboss_sar">JBoss Service</a>, <a href="#deploy_standalone">standalone</a>
+                <p>Check out the possible deployments as <a href="#deploy_webapp">webapp</a>,
+                    <a href="#deploy_standalone">standalone</a>
                     or <a href="#deploy_docker_standalone">standalone docker image</a>.</p>
 
                 <h4 id="implementation" class="anchor">Implementation</h4>
@@ -822,10 +806,9 @@ docker run -t -i \
                 <img src="images/greenmail_webapp.png" class="img-fluid"
                      alt="GreenMail webapp showing OpenAPI UI"/>
 
-                <p>Like the <a href="#deploy_jboss_sar">GreenMail JBoss Service</a>, the usage scenario is a development
-                    or test environment where a
+                <p>The usage scenario is a development or test environment where a
                     real mail server is too much overhead. The webapp is application server neutral - you should be able
-                    to use it on any Java EE 7 application server (Servlet 3.1) running und Java 7 (or greater).</p>
+                    to use it on any Java EE 7 application server (Servlet 3.1) running and Java 8 (or greater).</p>
 
                 <p>With the GreenMail mail service each developer has its own local mail server sandbox - so there's no
                     danger for accidentally leaking test mails into the Internet.</p>
@@ -892,107 +875,6 @@ docker run -t -i \
                 <p>Have a look at the default <a
                         href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-webapp/src/main/webapp/WEB-INF/web.xml">web.xml</a>.
                 </p>
-
-                <h3 id="deploy_jboss_sar" class="anchor">Deploy as a JBoss Service (SAR)</h3>
-
-                <p>GreenMail provides a JBoss Service for easy JBoss integration. The usage scenario is a development or
-                    test environment where a real mail server is too much overhead. With the GreenMail mail service each
-                    developer has its own local mail server sandbox - so there's no danger for accidentally leaking test
-                    mails into the Internet.</p>
-                <div class="alert alert-warning" role="alert">
-                    <p>GreenMail SAR works only up to JBoss AS 6!</p>
-                    <p>
-                        JBoss introduced a not backward compatible change to the SAR MBean deployment in JBoss AS 7+.
-                        As alternative, try out the <a href="#deploy_webapp">GreenMail WAR deployment</a>.
-                    </p>
-                </div>
-
-                <h4 id="deploy_jboss_sar_deploy" class="anchor">Deploy the service</h4>
-                <ol>
-                    <li><a href="#download">Download</a> the current service which we distribute as a JBoss SAR (Service
-                        Archive).
-                    </li>
-                    <li>Unjar the service to your server deploy directory.
-                        <p>This example uses the default server, where the service is deployed in exploded mode for
-                            follow up configuration.</p>
-                        <pre><code class="language-bash"><!-- @formatter:off -->
-cd ${JBOSS_HOME}/server/default/deploy
-mkdir greenmail-jboss-service.sar
-cd greenmail-jboss-service.sar
-jar xvf /path/to/greenmail-jboss-service-XXX.jar
-                        </code></pre><!-- @formatter:on -->
-                    </li>
-                </ol>
-                <p>Starting JBoss will now automatically also start the GreenMail JBoss Service. You can see a startup
-                    message on the console output, including basic configuration data like active protocols and their
-                    ports:
-                </p>
-                <img src="images/greenmail_jboss_sar_console.png" class="img-fluid"
-                     alt="JBoss console output when deploying GreenMail SAR"/>
-
-                <p><!-- space --></p>
-
-                <p>
-                    Opening the JBoss Console, you can see the GreenMail Service JMX Bean:
-                </p>
-                <img src="images/greenmail_jboss_jmx_console.png" class="img-fluid" alt="GreenMail JMX Bean"/>
-
-                <p>
-                    You find two entries, of which the second one holds our interest:
-                </p>
-                <ul>
-                    <li>loader=greenmail-jboss-service : A loader for isolated class loading inside the JBoss service
-                        (as to prevent the greenmail JavaMail to conflict with the application server version).
-                    </li>
-                    <li>name=GreenMail,type=service,version=... : The GreenMail service bean for managing GreenMail</li>
-                </ul>
-
-                <h4 id="deploy_jboss_sar_configure_user" class="anchor">Configurable user accounts</h4>
-
-                <p>The GreenMail service is configured by the file <a
-                        href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-jboss-service/src/main/resources/META-INF/jboss-service.xml">META-INF/jboss-service.xml</a>
-                    in the exploded service directory.</p>
-
-                <h4 id="deploy_jboss_sar_send_via_jmx" class="anchor">Send a mail message via JMX</h4>
-                <ol>
-                    <li>Open the JBoss JMX Console in your browser (see the deployment picture).</li>
-                    <li>Select the JMX bean of name GreenMail and type service</li>
-                    <li>Invoke the sendMail operation:</li>
-                </ol>
-                <img src="images/greenmail_jboss_jmx_send.png" class="img-fluid"
-                     alt="Sending email using GreenMail JMX Bean"/>
-
-                <p>The mail should now be visible by listing the user mails, if there is no automatic polling of the
-                    mail box.</p>
-
-                <h4 id="deploy_jboss_sar_local_client" class="anchor">Send a mail message using your mail client</h4>
-
-                <p>You can use your favorite mail client if you configure it for GreenMail by setting the outgoing mail
-                    to the GreenMail SMTP port. By default this is localhost:3025. Of course you can also read created
-                    mail by configuring your mail client to use GreenMail POP3 (localhost:3110) or IMAP
-                    (localhost:3143).
-                    You will probably have to adjust these settings for your specific configuration.</p>
-
-                <h4 id="deploy_jboss_sar_list" class="anchor">List mails for a user via JMX</h4>
-
-                <p>Instead of using your favourite mail client, you can use the JMX GreenMail service for listing all
-                    current mails in of a user in the GreenMail server sandbox.</p>
-                <ol>
-                    <li>Open your browser with the JMX Console and choose the GreenMail service (see sending mail
-                        paragraph)
-                    </li>
-                    <li>Enter the user email for the listMailsForUserHTML operation:
-                        <img src="images/greenmail_jboss_jmx_list_mail_for_user.png" class="img-fluid"
-                             alt="List mails operation for GreenMail JMX Bean"/>
-                    </li>
-                    <li>Click the invoke button. The browser now shows all emails for the specified user:
-                        <img src="images/greenmail_jboss_jmx_list_emails_for_user.png" class="img-fluid"
-                             alt="Listing mails for a user using GreenMail JMX Bean"/>
-                    </li>
-                </ol>
-                <div class="alert alert-info" role="alert">Note that displaying mails does not modify the user mail
-                    box.
-                </div>
             </section>
 
             <section id="faq" class="anchor">

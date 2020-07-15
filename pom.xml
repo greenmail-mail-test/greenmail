@@ -59,7 +59,6 @@
     <module>greenmail-core</module>
     <module>greenmail-standalone</module>
     <module>greenmail-webapp</module>
-    <module>greenmail-jboss-service</module>
     <module>greenmail-spring</module>
     <module>greenmail-junit5</module>
   </modules>
@@ -209,11 +208,6 @@
             <downloadSources>true</downloadSources>
             <downloadJavadocs>true</downloadJavadocs>
           </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>jboss-packaging-maven-plugin</artifactId>
-          <version>2.2</version>
         </plugin>
         <plugin>
           <artifactId>maven-source-plugin</artifactId>
@@ -383,11 +377,6 @@
       </dependency>
       <dependency>
         <groupId>com.icegreen</groupId>
-        <artifactId>greenmail-jboss-service</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>com.icegreen</groupId>
         <artifactId>greenmail-junit5</artifactId>
         <version>1.6.0-SNAPSHOT</version>
       </dependency>
@@ -419,7 +408,7 @@
         <artifactId>jcl-over-slf4j</artifactId>
         <version>${slf4j.version}</version>
       </dependency>
-      <dependency> <!-- JBoss uses Log4j -->
+      <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-log4j12</artifactId>
         <version>${slf4j.version}</version>
