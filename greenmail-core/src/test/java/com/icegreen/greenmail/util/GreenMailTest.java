@@ -6,9 +6,9 @@ import org.junit.Test;
 
 import javax.mail.internet.MimeMessage;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 
 /**
  * Simple test case to reproduce GreenMail problem.

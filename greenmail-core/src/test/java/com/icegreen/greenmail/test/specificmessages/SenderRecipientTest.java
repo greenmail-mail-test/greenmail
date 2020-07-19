@@ -22,6 +22,7 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 
 /**
@@ -59,7 +60,7 @@ public class SenderRecipientTest {
     }
 
     @Test
-    public void testSendersAndRecipients() throws MessagingException, IOException {
+    public void testSendersAndRecipients() throws MessagingException {
         UserUtil.createUsers(greenMail, TO_ADDRESSES);
         UserUtil.createUsers(greenMail, CC_ADDRESSES);
         UserUtil.createUsers(greenMail, BCC_ADDRESSES);
@@ -139,7 +140,7 @@ public class SenderRecipientTest {
      * @param greenMail Greenmail instance to read from
      * @param addr      Address of account to retrieve
      */
-    private void retrieveAndCheck(GreenMailRule greenMail, InternetAddress addr) throws IOException, MessagingException {
+    private void retrieveAndCheck(GreenMailRule greenMail, InternetAddress addr) throws MessagingException {
         String address = addr.getAddress();
         retrieveAndCheck(greenMail.getPop3(), address);
         retrieveAndCheck(greenMail.getImap(), address);

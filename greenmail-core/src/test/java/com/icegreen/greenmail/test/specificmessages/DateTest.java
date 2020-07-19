@@ -11,13 +11,13 @@ import org.junit.Test;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
-import static org.junit.Assert.assertThat;
 
 /**
  * Tests date handling for received messages
@@ -27,13 +27,13 @@ public class DateTest {
     public GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_POP3_IMAP);
 
     @Test
-    public void testDatesCorrect() throws MessagingException, IOException {
+    public void testDatesCorrect() throws MessagingException {
         String to = "to@localhost";
         greenMail.setUser(to, to);
 
         // Create mail with specific 'sent' date
         final MimeMessage mail = GreenMailUtil.createTextEmail(to, "from@localhost", "Subject", "msg", greenMail.getSmtp().getServerSetup());
-        final Date sentDate = new GregorianCalendar(2000, 1, 1, 0, 0, 0).getTime();
+        final Date sentDate = new GregorianCalendar(2000, Calendar.FEBRUARY, 1, 0, 0, 0).getTime();
         mail.setSentDate(sentDate);
         GreenMailUtil.sendMimeMessage(mail);
 

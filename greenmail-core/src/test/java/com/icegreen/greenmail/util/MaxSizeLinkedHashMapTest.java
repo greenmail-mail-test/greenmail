@@ -4,10 +4,10 @@ import org.junit.Test;
 
 import java.util.Random;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 public class MaxSizeLinkedHashMapTest {
     private static final int TEST_MAX_SIZE = 8;
@@ -20,7 +20,7 @@ public class MaxSizeLinkedHashMapTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldRejectZeroMaxSize() {
-        new MaxSizeLinkedHashMap<Object, Object>(0);
+        new MaxSizeLinkedHashMap<>(0);
     }
 
     @Test

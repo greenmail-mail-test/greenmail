@@ -12,11 +12,10 @@ import org.junit.Test;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
-import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 /**
  * Tests escaping of message parts
@@ -26,7 +25,7 @@ public class EscapingTest {
     public GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_POP3_IMAP);
 
     @Test
-    public void testEscapeSubject() throws MessagingException, IOException {
+    public void testEscapeSubject() throws MessagingException {
         String to = "to@localhost";
         String subject = "Subject?<>/|\\\\.%\\\"*?:{[]}!";
         greenMail.setUser(to, to);
@@ -39,7 +38,7 @@ public class EscapingTest {
     }
 
     @Test
-    public void testEscapeMessageID() throws MessagingException, IOException {
+    public void testEscapeMessageID() throws MessagingException {
         String to = "foo@localhost";
         String from = "bar`bar <bar@localhost>";
         String subject = "Bad IMAP Envelope";
