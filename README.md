@@ -63,7 +63,7 @@ Development [![Build status](https://circleci.com/gh/greenmail-mail-test/greenma
 [maven_repository_com]: http://mvnrepository.com/artifact/com.icegreen/greenmail
 [maven_download]: http://maven.apache.org
 [ossrh_maven]: http://central.sonatype.org/pages/apache-maven.html
-[maven_repository_snapshot]: https://oss.sonatype.org/content/repositories/snapshots/com/icegreen
+[maven_repository_snapshot]: https://oss.sonatype.org/content/repositories/snapshots/com/icegreen/
 [maven_repository_release]: http://central.maven.org/maven2/com/icegreen/
 [github_fork]: https://help.github.com/articles/fork-a-repo/
 [github_pull_request]: https://help.github.com/articles/creating-a-pull-request/
