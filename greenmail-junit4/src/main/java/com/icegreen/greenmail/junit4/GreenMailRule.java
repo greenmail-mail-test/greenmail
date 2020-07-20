@@ -1,4 +1,4 @@
-package com.icegreen.greenmail.junit;
+package com.icegreen.greenmail.junit4;
 
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.util.GreenMail;
@@ -17,10 +17,11 @@ import org.junit.runners.model.Statement;
  * The rule ensures that each test method starts with a clean GreenMail instance without
  * relics from previous tests of current suite.
  * <p>
+ * Note: Contains extracted GreenMail Junit4 rule from previous and deprecated
+ * com.icegreen.greenmail.junit.GreenMailRule of the greenmail-core module.
  *
- * @deprecated Use com.icegreen.greenmail.junit4.GreenMailRule of module greenmail-junit4. Will be removed in GreenMail 2.0 .
+ * @since 1.6
  */
-@Deprecated
 public class GreenMailRule extends GreenMailProxy implements MethodRule, TestRule {
     private GreenMail greenMail;
     private final ServerSetup[] serverSetups;
