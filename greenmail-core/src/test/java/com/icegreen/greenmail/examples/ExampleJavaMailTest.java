@@ -12,7 +12,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Example using plain JavaMail for sending / receiving mails via GreenMail server.
@@ -43,7 +43,7 @@ public class ExampleJavaMailTest {
         Folder inbox = store.getFolder("INBOX");
         inbox.open(Folder.READ_ONLY);
         Message msgReceived = inbox.getMessage(1);
-        assertEquals(msg.getSubject(), msgReceived.getSubject());
+        assertThat(msgReceived.getSubject()).isEqualTo(msg.getSubject());
 
         // Alternative 2: ... let GreenMail create and configure a store:
         IMAPStore imapStore = greenMail.getImap().createStore();
@@ -51,12 +51,12 @@ public class ExampleJavaMailTest {
         inbox = imapStore.getFolder("INBOX");
         inbox.open(Folder.READ_ONLY);
         msgReceived = inbox.getMessage(1);
-        assertEquals(msg.getSubject(), msgReceived.getSubject());
+        assertThat(msgReceived.getSubject()).isEqualTo(msg.getSubject());
 
         // Alternative 3: ... directly fetch sent message using GreenMail API
-        assertEquals(1, greenMail.getReceivedMessagesForDomain("bar@example.com").length);
+        assertThat(1).isEqualTo(greenMail.getReceivedMessagesForDomain("bar@example.com").length);
         msgReceived = greenMail.getReceivedMessagesForDomain("bar@example.com")[0];
-        assertEquals(msg.getSubject(), msgReceived.getSubject());
+        assertThat(msgReceived.getSubject()).isEqualTo(msg.getSubject());
 
         store.close();
         imapStore.close();

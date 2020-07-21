@@ -19,9 +19,7 @@ import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Wael Chatila
@@ -32,14 +30,14 @@ public class GreenMailUtilTest {
     @Test
     public void testMimeMessageLoading() throws MessagingException {
         MimeMessage message = GreenMailUtil.newMimeMessage(SAMPLE_EMAIL);
-        assertEquals("wassup", message.getSubject());
+        assertThat(message.getSubject()).isEqualTo("wassup");
     }
 
     @Test
     public void testGetBody() throws MessagingException {
         MimeMessage message = GreenMailUtil.newMimeMessage(SAMPLE_EMAIL);
         String body = GreenMailUtil.getBody(message);
-        assertEquals("Yo wassup Bertil", body.trim());
+        assertThat(body.trim()).isEqualTo("Yo wassup Bertil");
     }
 
     @Test
@@ -61,24 +59,23 @@ public class GreenMailUtilTest {
                 MimeMultipart mp = (MimeMultipart) retriever.getMessages(to)[0].getContent();
                 BodyPart bp;
                 bp = mp.getBodyPart(0);
-                assertEquals(body, GreenMailUtil.getBody(bp).trim());
-                assertEquals(
+                assertThat(GreenMailUtil.getBody(bp).trim()).isEqualTo(body);
+                assertThat(
                         "Content-Type: text/plain; charset=us-ascii\r\n" +
-                        "Content-Transfer-Encoding: 7bit",
+                        "Content-Transfer-Encoding: 7bit").isEqualTo(
                         GreenMailUtil.getHeaders(bp).trim());
 
                 bp = mp.getBodyPart(1);
-                assertEquals("AAEC", GreenMailUtil.getBody(bp).trim());
-                assertEquals(
+                assertThat(GreenMailUtil.getBody(bp).trim()).isEqualTo("AAEC");
+                assertThat(
                         "Content-Type: image/gif; name=testimage_filename\r\n" +
                         "Content-Transfer-Encoding: base64\r\n" +
                         "Content-Disposition: attachment; filename=testimage_filename\r\n" +
-                        "Content-Description: testimage_description",
-                        GreenMailUtil.getHeaders(bp).trim());
+                        "Content-Description: testimage_description").isEqualTo(GreenMailUtil.getHeaders(bp).trim());
 
                 ByteArrayOutputStream bout = new ByteArrayOutputStream();
                 GreenMailUtil.copyStream(bp.getInputStream(), bout);
-                assertArrayEquals(gifAttachment, bout.toByteArray());
+                assertThat(bout.toByteArray()).isEqualTo(gifAttachment);
             }
         } finally {
             greenMail.stop();
@@ -101,18 +98,17 @@ public class GreenMailUtilTest {
                 Folder folder = store.getFolder("INBOX");
                 folder.open(Folder.READ_ONLY);
                 Message[] msgs = folder.getMessages();
-                assertTrue(null != msgs && msgs.length == 1);
+                assertThat(null != msgs && msgs.length == 1).isTrue();
                 Message m = msgs[0];
-                assertEquals("Test subject", m.getSubject());
+                assertThat(m.getSubject()).isEqualTo("Test subject");
                 Address[] a = m.getRecipients(Message.RecipientType.TO);
-                assertTrue(null != a && a.length == 1
-                        && a[0].toString().equals("\"Foo, Bar\" <foo@localhost>"));
+                assertThat(null != a && a.length == 1
+                        && a[0].toString().equals("\"Foo, Bar\" <foo@localhost>")).isTrue();
                 a = m.getFrom();
-                assertTrue(null != a && a.length == 1
-                        && a[0].toString().equals("\"Bar, Foo\" <bar@localhost>"));
-                assertTrue(m.getContentType().toLowerCase()
-                        .startsWith("text/plain"));
-                assertEquals("Test message", m.getContent());
+                assertThat(null != a && a.length == 1
+                        && a[0].toString().equals("\"Bar, Foo\" <bar@localhost>")).isTrue();
+                assertThat(m.getContentType().toLowerCase().startsWith("text/plain")).isTrue();
+                assertThat(m.getContent()).isEqualTo("Test message");
             } finally {
                 store.close();
             }
@@ -136,12 +132,12 @@ public class GreenMailUtilTest {
             testQuota.setResourceLimit("STORAGE", 1024L * 42L);
             testQuota.setResourceLimit("MESSAGES", 5L);
 
-            assertEquals(0, GreenMailUtil.getQuota(user, testQuota.quotaRoot).length);
+            assertThat(0).isEqualTo(GreenMailUtil.getQuota(user, testQuota.quotaRoot).length);
             GreenMailUtil.setQuota(user, testQuota);
 
             final Quota[] quota = GreenMailUtil.getQuota(user, testQuota.quotaRoot);
-            assertEquals(1, quota.length);
-            assertEquals(2, quota[0].resources.length);
+            assertThat(quota.length).isEqualTo(1);
+            assertThat(quota[0].resources.length).isEqualTo(2);
 
             store.close();
         } finally {

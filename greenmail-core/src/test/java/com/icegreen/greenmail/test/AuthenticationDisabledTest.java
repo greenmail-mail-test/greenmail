@@ -1,6 +1,6 @@
 package com.icegreen.greenmail.test;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 
@@ -36,17 +36,17 @@ public class AuthenticationDisabledTest {
         final String body = "body";
         GreenMailUtil.sendTextEmailTest(to, "from@localhost", subject, body);
         MimeMessage[] emails = greenMail.getReceivedMessages();
-        assertEquals(1, emails.length);
-        assertEquals(subject, emails[0].getSubject());
-        assertEquals(body, GreenMailUtil.getBody(emails[0]));
+        assertThat(emails.length).isEqualTo(1);
+        assertThat(emails[0].getSubject()).isEqualTo(subject);
+        assertThat(GreenMailUtil.getBody(emails[0])).isEqualTo(body);
 
         greenMail.waitForIncomingEmail(5000, 1);
 
         try (Retriever retriever = new Retriever(greenMail.getImap())) {
             Message[] messages = retriever.getMessages(to);
-            assertEquals(1, messages.length);
-            assertEquals(subject, messages[0].getSubject());
-            assertEquals(body, messages[0].getContent());
+            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages[0].getSubject()).isEqualTo(subject);
+            assertThat(messages[0].getContent()).isEqualTo(body);
         }
     }
 
@@ -58,7 +58,7 @@ public class AuthenticationDisabledTest {
 
         try (Retriever retriever = new Retriever(greenMail.getImap())) {
             Message[] messages = retriever.getMessages(to);
-            assertEquals(0, messages.length);
+            assertThat(messages.length).isEqualTo(0);
         }
     }
 
@@ -71,7 +71,7 @@ public class AuthenticationDisabledTest {
 
         try (Retriever retriever = new Retriever(greenMail.getImap())) {
             Message[] messages = retriever.getMessages(to);
-            assertEquals(0, messages.length);
+            assertThat(messages.length).isEqualTo(0);
         }
     }
 

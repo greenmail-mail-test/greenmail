@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests sending and receiving large messages
@@ -59,23 +59,23 @@ public class LargeMessageTest {
     private void retrieveAndCheck(AbstractServer server, String to) throws MessagingException, IOException {
         try (Retriever retriever = new Retriever(server)) {
             Message[] messages = retriever.getMessages(to);
-            assertEquals(1, messages.length);
+            assertThat(messages.length).isEqualTo(1);
             Message message = messages[0];
-            assertTrue(message.getContentType().startsWith("multipart/mixed"));
+            assertThat(message.getContentType().startsWith("multipart/mixed")).isTrue();
             MimeMultipart body = (MimeMultipart) message.getContent();
-            assertTrue(body.getContentType().startsWith("multipart/mixed"));
-            assertEquals(2, body.getCount());
+            assertThat(body.getContentType().startsWith("multipart/mixed")).isTrue();
+            assertThat(body.getCount()).isEqualTo(2);
 
             // Message text
             final BodyPart textPart = body.getBodyPart(0);
             String text = (String) textPart.getContent();
-            assertEquals(createLargeString(), text);
+            assertThat(text).isEqualTo(createLargeString());
 
             final BodyPart attachment = body.getBodyPart(1);
-            assertTrue(attachment.getContentType().equalsIgnoreCase("application/blubb; name=file"));
+            assertThat(attachment.getContentType().equalsIgnoreCase("application/blubb; name=file")).isTrue();
             InputStream attachmentStream = (InputStream) attachment.getContent();
             byte[] bytes = IOUtils.toByteArray(attachmentStream);
-            assertArrayEquals(createLargeByteArray(), bytes);
+            assertThat(bytes).isEqualTo(createLargeByteArray());
         }
     }
 
@@ -88,14 +88,14 @@ public class LargeMessageTest {
     private void retrieveAndCheckBody(AbstractServer server, String to) throws MessagingException, IOException {
         try (Retriever retriever = new Retriever(server)) {
             Message[] messages = retriever.getMessages(to);
-            assertEquals(1, messages.length);
+            assertThat(messages.length).isEqualTo(1);
             Message message = messages[0];
-            assertTrue(message.getContentType().equalsIgnoreCase("application/blubb"));
+            assertThat(message.getContentType().equalsIgnoreCase("application/blubb")).isTrue();
 
             // Check content
             InputStream contentStream = (InputStream) message.getContent();
             byte[] bytes = IOUtils.toByteArray(contentStream);
-            assertArrayEquals(createLargeByteArray(), bytes);
+            assertThat(bytes).isEqualTo(createLargeByteArray());
 
             // Dump complete mail message. This leads to a FETCH command without section or "len" specified.
             message.writeTo(new ByteArrayOutputStream());

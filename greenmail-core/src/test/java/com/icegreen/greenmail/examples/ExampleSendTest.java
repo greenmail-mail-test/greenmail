@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import javax.mail.MessagingException;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ExampleSendTest {
     @Rule
@@ -18,6 +18,6 @@ public class ExampleSendTest {
     public void testSend() {
         GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com",
                 "some subject", "some body"); // --- Place your sending code here instead
-        assertEquals("some body", GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
+        assertThat(GreenMailUtil.getBody(greenMail.getReceivedMessages()[0])).isEqualTo("some body");
     }
 }

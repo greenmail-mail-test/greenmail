@@ -10,7 +10,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ExampleReceiveNoRuleTest {
     @Test
@@ -26,7 +26,7 @@ public class ExampleReceiveNoRuleTest {
             MimeMessage message = createMimeMessage(subject, body, greenMail); // Construct message
             GreenMailUser user = greenMail.setUser("wael@localhost.com", "waelc", "soooosecret");
             user.deliver(message);
-            assertEquals(1, greenMail.getReceivedMessages().length);
+            assertThat(greenMail.getReceivedMessages().length).isEqualTo(1);
 
             // --- Place your retrieve code here
 

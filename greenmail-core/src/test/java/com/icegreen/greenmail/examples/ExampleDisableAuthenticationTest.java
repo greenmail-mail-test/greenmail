@@ -9,9 +9,7 @@ import org.junit.Test;
 
 import javax.mail.Message;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by Youssuf ElKalay.
@@ -26,7 +24,7 @@ public class ExampleDisableAuthenticationTest {
     public void testNoAuthIMAP() {
         try (Retriever retriever = new Retriever(greenMail.getImap())) {
             Message[] messages = retriever.getMessages("foo@localhost");
-            assertEquals(0, messages.length);
+            assertThat(messages.length).isEqualTo(0);
         }
     }
 
@@ -34,8 +32,8 @@ public class ExampleDisableAuthenticationTest {
     public void testExistingUserNotRecreated() {
         try (Retriever retriever = new Retriever(greenMail.getImap())) {
             Message[] messages = retriever.getMessages("foo@localhost");
-            assertEquals(0, messages.length);
-            assertThat(greenMail.getManagers().getUserManager().hasUser("foo@localhost"), equalTo(true));
+            assertThat(messages.length).isEqualTo(0);
+            assertThat(greenMail.getManagers().getUserManager().hasUser("foo@localhost")).isTrue();
         }
     }
 }

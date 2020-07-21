@@ -4,7 +4,7 @@ import com.icegreen.greenmail.junit.GreenMailRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.fail;
 
 public class RetrieverTest {
     @Rule

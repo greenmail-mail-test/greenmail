@@ -9,7 +9,7 @@ import org.junit.Test;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ExampleRuleTest {
     @Rule
@@ -19,9 +19,9 @@ public class ExampleRuleTest {
     public void testSomething() throws MessagingException {
         GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", "body");
         MimeMessage[] emails = greenMail.getReceivedMessages();
-        assertEquals(1, emails.length);
-        assertEquals("subject", emails[0].getSubject());
-        assertEquals("body", GreenMailUtil.getBody(emails[0]));
+        assertThat(emails.length).isEqualTo(1);
+        assertThat(emails[0].getSubject()).isEqualTo("subject");
+        assertThat(GreenMailUtil.getBody(emails[0])).isEqualTo("body");
         // ...
     }
 }

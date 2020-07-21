@@ -20,10 +20,7 @@ import com.sun.mail.imap.IMAPStore;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests if senders and recipients of received messages are set correctly and if messages are received by the correct
@@ -74,8 +71,8 @@ public class SenderRecipientTest {
         msg.setText("text");
 
         GreenMailUtil.sendMimeMessage(msg);
-        assertTrue(greenMail.waitForIncomingEmail(5000,
-                TO_ADDRESSES.length + CC_ADDRESSES.length + BCC_ADDRESSES.length));
+        assertThat(greenMail.waitForIncomingEmail(5000,
+                TO_ADDRESSES.length + CC_ADDRESSES.length + BCC_ADDRESSES.length)).isTrue();
 
         for (InternetAddress address : TO_ADDRESSES) {
             retrieveAndCheck(greenMail, address);
@@ -92,7 +89,7 @@ public class SenderRecipientTest {
     public void testSendWithoutSubject() {
         GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com",
                 null, "some subject less body");
-        assertEquals("some subject less body", GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
+        assertThat(GreenMailUtil.getBody(greenMail.getReceivedMessages()[0])).isEqualTo("some subject less body");
     }
 
     @Test
@@ -113,7 +110,7 @@ public class SenderRecipientTest {
             GreenMailUtil.sendTextEmailTest(to, from,
                     subject, content);
 
-            assertTrue(greenMail.waitForIncomingEmail(5000, 1));
+            assertThat(greenMail.waitForIncomingEmail(5000, 1)).isTrue();
 
             final IMAPStore store = greenMail.getImap().createStore();
             store.connect(to, "pwd");
@@ -121,13 +118,13 @@ public class SenderRecipientTest {
                 IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
                 folder.open(Folder.READ_ONLY);
                 Message[] msgs = folder.getMessages();
-                assertTrue(null != msgs && msgs.length == 1);
+                assertThat(null != msgs && msgs.length == 1).isTrue();
                 final Message msg = msgs[0];
-                assertEquals(to, ((InternetAddress)msg.getRecipients(Message.RecipientType.TO)[0]).getAddress());
-                assertEquals(from, ((InternetAddress)msg.getFrom()[0]).getAddress());
-                assertEquals(subject, msg.getSubject());
-                assertEquals(content, msg.getContent().toString());
-                assertArrayEquals(toAddress, msg.getRecipients(Message.RecipientType.TO));
+                assertThat(((InternetAddress)msg.getRecipients(Message.RecipientType.TO)[0]).getAddress()).isEqualTo(to);
+                assertThat(((InternetAddress)msg.getFrom()[0]).getAddress()).isEqualTo(from);
+                assertThat(msg.getSubject()).isEqualTo(subject);
+                assertThat(msg.getContent().toString()).isEqualTo(content);
+                assertThat(msg.getRecipients(Message.RecipientType.TO)).isEqualTo(toAddress);
             } finally {
                 store.close();
             }
@@ -155,14 +152,14 @@ public class SenderRecipientTest {
     private void retrieveAndCheck(AbstractServer server, String login) throws MessagingException {
         try (Retriever retriever = new Retriever(server)) {
             Message[] messages = retriever.getMessages(login);
-            assertEquals(1, messages.length);
+            assertThat(messages.length).isEqualTo(1);
             Message message = messages[0];
 
-            assertThat(toInetAddr(message.getRecipients(Message.RecipientType.TO)), is(TO_ADDRESSES));
-            assertThat(toInetAddr(message.getRecipients(Message.RecipientType.CC)), is(CC_ADDRESSES));
+            assertThat(toInetAddr(message.getRecipients(Message.RecipientType.TO))).isEqualTo(TO_ADDRESSES);
+            assertThat(toInetAddr(message.getRecipients(Message.RecipientType.CC))).isEqualTo(CC_ADDRESSES);
             // BCC addresses are not contained in the message since other receivers are not allowed to know the list of
             // BCC recipients
-            assertThat(toInetAddr(message.getRecipients(Message.RecipientType.BCC)), nullValue());
+            assertThat(toInetAddr(message.getRecipients(Message.RecipientType.BCC))).isNull();
         }
     }
 

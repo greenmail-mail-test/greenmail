@@ -15,9 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThan;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests date handling for received messages
@@ -55,11 +53,11 @@ public class DateTest {
             throws MessagingException {
         try (Retriever retriever = new Retriever(server)) {
             Message[] messages = retriever.getMessages(to);
-            assertThat(messages.length, is(1));
+            assertThat(messages.length).isEqualTo(1);
             Message message = messages[0];
-            assertThat(milliSecondDateDiff(message.getSentDate(), sentDate), lessThan(3000L));
+            assertThat(milliSecondDateDiff(message.getSentDate(), sentDate)).isLessThan(3000L);
             if (checkReceivedDate) {
-                assertThat(milliSecondDateDiff(message.getReceivedDate(), new Date()), lessThan(3000L));
+                assertThat(milliSecondDateDiff(message.getReceivedDate(), new Date())).isLessThan(3000L);
             }
         }
     }

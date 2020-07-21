@@ -5,7 +5,7 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 public class GreenMailRuleTest {
     @Rule
@@ -18,7 +18,7 @@ public class GreenMailRuleTest {
         // Send email and test in #testGreenMailStartedAgain() for "relicts"
         GreenMailUtil.sendTextEmail("to@localhost", "from@localhost", "subject", "content", greenMail.getSmtp().getServerSetup());
         greenMail.waitForIncomingEmail(1);
-        assertEquals(1, greenMail.getReceivedMessages().length);
+        assertThat(greenMail.getReceivedMessages().length).isEqualTo(1);
     }
 
     @Test
@@ -26,15 +26,15 @@ public class GreenMailRuleTest {
         validateServicesRunning();
 
         // Expect no relict from previous test.
-        assertEquals(0, greenMail.getReceivedMessages().length);
+        assertThat(greenMail.getReceivedMessages().length).isEqualTo(0);
     }
 
     private void validateServicesRunning() {
-        assertTrue(greenMail.getImap().isRunning());
-        assertNull(greenMail.getImaps());
-        assertTrue(greenMail.getSmtp().isRunning());
-        assertNull(greenMail.getSmtps());
-        assertNull(greenMail.getPop3());
-        assertNull(greenMail.getPop3s());
+        assertThat(greenMail.getImap().isRunning()).isTrue();
+        assertThat(greenMail.getImaps()).isNull();
+        assertThat(greenMail.getSmtp().isRunning()).isTrue();
+        assertThat(greenMail.getSmtps()).isNull();
+        assertThat(greenMail.getPop3()).isNull();
+        assertThat(greenMail.getPop3s()).isNull();
     }
 }

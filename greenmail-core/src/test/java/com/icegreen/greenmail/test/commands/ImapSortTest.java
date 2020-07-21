@@ -14,7 +14,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.*;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Created on 10/03/2016.
@@ -29,7 +29,7 @@ public class ImapSortTest {
     @Test
     public void testSort() throws Exception {
         GreenMailUser user = greenMail.setUser("to1@localhost", "pwd");
-        assertNotNull(greenMail.getImap());
+        assertThat(greenMail.getImap()).isNotNull();
 
         MailFolder folder = greenMail.getManagers().getImapHostManager().getFolder(user, "INBOX");
         Flags fooFlags = new Flags();
@@ -45,24 +45,24 @@ public class ImapSortTest {
             imapFolder.open(Folder.READ_WRITE);
 
             Message[] imapMessages = imapFolder.getMessages();
-            assertTrue(null != imapMessages && imapMessages.length == 2);
+            assertThat(null != imapMessages && imapMessages.length == 2).isTrue();
             Message m0 = imapMessages[0];
             Message m1 = imapMessages[1];
-            assertTrue(m0.getFlags().contains(Flags.Flag.ANSWERED));
+            assertThat(m0.getFlags().contains(Flags.Flag.ANSWERED)).isTrue();
 
             imapMessages = imapFolder.getSortedMessages(new SortTerm[]{SortTerm.TO});
-            assertEquals(2, imapMessages.length);
-            assertSame(imapMessages[0], m0);
-            assertSame(imapMessages[1], m1);
+            assertThat(imapMessages.length).isEqualTo(2);
+            assertThat(m0).isSameAs(imapMessages[0]);
+            assertThat(m1).isSameAs(imapMessages[1]);
 
             imapMessages = imapFolder.getSortedMessages(new SortTerm[]{SortTerm.REVERSE, SortTerm.TO});
-            assertEquals(2, imapMessages.length);
-            assertSame(imapMessages[0], m1);
-            assertSame(imapMessages[1], m0);
+            assertThat(imapMessages.length).isEqualTo(2);
+            assertThat(m1).isSameAs(imapMessages[0]);
+            assertThat(m0).isSameAs(imapMessages[1]);
 
             imapMessages = imapFolder.getSortedMessages(new SortTerm[]{SortTerm.TO}, new FlagTerm(new Flags(Flags.Flag.ANSWERED), true));
-            assertEquals(1, imapMessages.length);
-            assertSame(imapMessages[0], m0);
+            assertThat(imapMessages.length).isEqualTo(1);
+            assertThat(m0).isSameAs(imapMessages[0]);
 
         } finally {
             store.close();

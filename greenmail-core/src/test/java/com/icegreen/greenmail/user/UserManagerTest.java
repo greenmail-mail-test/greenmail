@@ -18,7 +18,7 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 
 public class UserManagerTest {
@@ -27,17 +27,17 @@ public class UserManagerTest {
         ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
         UserManager userManager = new UserManager(imapHostManager);
 
-        assertEquals(0, userManager.listUser().size());
+        assertThat(userManager.listUser()).isEmpty();
 
         GreenMailUser u1 = userManager.createUser("foo@bar.com", "foo", "pwd");
 
-        assertEquals(1, userManager.listUser().size());
-        assertTrue(userManager.listUser().contains(u1));
+        assertThat(userManager.listUser()).hasSize(1);
+        assertThat(userManager.listUser().contains(u1)).isTrue();
 
         GreenMailUser u2 = userManager.createUser("foo2@bar.com", "foo2", "pwd");
-        assertEquals(2, userManager.listUser().size());
-        assertTrue(userManager.listUser().contains(u1));
-        assertTrue(userManager.listUser().contains(u2));
+        assertThat(userManager.listUser()).hasSize(2);
+        assertThat(userManager.listUser().contains(u1)).isTrue();
+        assertThat(userManager.listUser().contains(u2)).isTrue();
     }
 
     @Test
@@ -46,14 +46,14 @@ public class UserManagerTest {
         UserManager userManager = new UserManager(imapHostManager);
         GreenMailUser u1 = userManager.createUser("foo@bar.com", "foo", "pwd");
 
-        assertEquals(u1, userManager.getUserByEmail(u1.getEmail()));
-        assertEquals(u1, userManager.getUser(u1.getLogin()));
+        assertThat(userManager.getUserByEmail(u1.getEmail())).isEqualTo(u1);
+        assertThat(userManager.getUser(u1.getLogin())).isEqualTo(u1);
 
         GreenMailUser u2 = userManager.createUser("foo2@bar.com", "foo2", "pwd");
-        assertEquals(u1, userManager.getUserByEmail(u1.getEmail()));
-        assertEquals(u2, userManager.getUserByEmail(u2.getEmail()));
-        assertEquals(u1, userManager.getUser(u1.getLogin()));
-        assertEquals(u2, userManager.getUser(u2.getLogin()));
+        assertThat(userManager.getUserByEmail(u1.getEmail())).isEqualTo(u1);
+        assertThat(userManager.getUserByEmail(u2.getEmail())).isEqualTo(u2);
+        assertThat(userManager.getUser(u1.getLogin())).isEqualTo(u1);
+        assertThat(userManager.getUser(u2.getLogin())).isEqualTo(u2);
     }
 
     @Test
@@ -61,13 +61,13 @@ public class UserManagerTest {
         ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
         UserManager userManager = new UserManager(imapHostManager);
 
-        assertTrue(userManager.listUser().isEmpty());
+        assertThat(userManager.listUser().isEmpty()).isTrue();
 
         GreenMailUser user = userManager.createUser("foo@bar.com", "foo", "pwd");
-        assertEquals(1, userManager.listUser().size());
+        assertThat(userManager.listUser()).hasSize(1);
 
         userManager.deleteUser(user);
-        assertTrue(userManager.listUser().isEmpty());
+        assertThat(userManager.listUser().isEmpty()).isTrue();
     }
 
     @Test
@@ -76,7 +76,7 @@ public class UserManagerTest {
         UserManager userManager = new UserManager(imapHostManager);
 
         GreenMailUser user = userManager.createUser("foo@bar.com", "foo", "pwd");
-        assertEquals(1, userManager.listUser().size());
+        assertThat(userManager.listUser()).hasSize(1);
 
         imapHostManager.createPrivateMailAccount(user);
         MailFolder otherfolder = imapHostManager.createMailbox(user, "otherfolder");
@@ -90,7 +90,7 @@ public class UserManagerTest {
         otherfolder.store(m2);
  
         userManager.deleteUser(user);
-        assertTrue(imapHostManager.getAllMessages().isEmpty());
+        assertThat(imapHostManager.getAllMessages().isEmpty()).isTrue();
     }
 
     @Test
@@ -99,8 +99,8 @@ public class UserManagerTest {
         UserManager userManager = new UserManager(imapHostManager);
         userManager.setAuthRequired(false);
 
-        assertTrue(userManager.test("foo@localhost", null));
-        assertEquals(1, userManager.listUser().size());
+        assertThat(userManager.test("foo@localhost", null)).isTrue();
+        assertThat(userManager.listUser()).hasSize(1);
     }
 
     @Test
@@ -110,8 +110,8 @@ public class UserManagerTest {
         userManager.setAuthRequired(false);
 
         userManager.createUser("foo@example.com", "foo", null);
-        assertFalse(userManager.listUser().isEmpty());
-        assertTrue(userManager.test("foo", null));
+        assertThat(userManager.listUser().isEmpty()).isFalse();
+        assertThat(userManager.test("foo", null)).isTrue();
     }
 
     @Test
@@ -120,8 +120,8 @@ public class UserManagerTest {
         UserManager userManager = new UserManager(imapHostManager);
         userManager.setAuthRequired(true);
 
-        assertFalse(userManager.test("foo@localhost", null));
-        assertTrue(userManager.listUser().isEmpty());
+        assertThat(userManager.test("foo@localhost", null)).isFalse();
+        assertThat(userManager.listUser().isEmpty()).isTrue();
     }
 
     @Test
@@ -131,8 +131,8 @@ public class UserManagerTest {
         userManager.setAuthRequired(true);
         userManager.createUser("foo@example.com", "foo", "bar");
 
-        assertFalse(userManager.listUser().isEmpty());
-        assertTrue(userManager.test("foo", "bar"));
+        assertThat(userManager.listUser().isEmpty()).isFalse();
+        assertThat(userManager.test("foo", "bar")).isTrue();
     }
 
     @Test

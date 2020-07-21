@@ -16,8 +16,7 @@ import com.sun.mail.imap.IMAPStore;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for encoding scenarios.
@@ -87,28 +86,28 @@ public class EncodingTest {
             Message[] messages = inboxFolder.getMessages();
             MimeMessage msg = (MimeMessage) messages[0];
             message.writeTo(new FileOutputStream(new File("t.eml")));
-            assertTrue(msg.getContentType().startsWith("multipart/alternative"));
+            assertThat(msg.getContentType().startsWith("multipart/alternative")).isTrue();
             Multipart multipartReceived = (Multipart) msg.getContent();
 
-            assertTrue(multipartReceived.getContentType().startsWith("multipart/alternative"));
+            assertThat(multipartReceived.getContentType().startsWith("multipart/alternative")).isTrue();
 
             // QP-encoded
             final BodyPart bodyPart0 = multipartReceived.getBodyPart(0);
-            assertEquals("TEXT/JAVASCRIPT; charset=utf-8", bodyPart0.getContentType());
-            assertEquals(textQP.getContent(), EncodingUtil.toString((InputStream) bodyPart0.getContent(), StandardCharsets.UTF_8));
+            assertThat(bodyPart0.getContentType()).isEqualTo("TEXT/JAVASCRIPT; charset=utf-8");
+            assertThat(textQP.getContent()).isEqualTo(EncodingUtil.toString((InputStream) bodyPart0.getContent(), StandardCharsets.UTF_8));
 
             // 8-BIT-encoded
             final BodyPart bodyPart1 = multipartReceived.getBodyPart(1);
-            assertEquals("TEXT/HTML; charset=utf-8", bodyPart1.getContentType());
-            assertEquals(html.getContent(), bodyPart1.getContent()); // Fails
+            assertThat(bodyPart1.getContentType()).isEqualTo("TEXT/HTML; charset=utf-8");
+            assertThat(bodyPart1.getContent()).isEqualTo(html.getContent()); // Fails
 
             final BodyPart bodyPart2 = multipartReceived.getBodyPart(2);
-            assertEquals("TEXT/PLAIN; charset=utf-8", bodyPart2.getContentType());
-            assertEquals(text.getContent(), bodyPart2.getContent());
+            assertThat(bodyPart2.getContentType()).isEqualTo("TEXT/PLAIN; charset=utf-8");
+            assertThat(bodyPart2.getContent()).isEqualTo(text.getContent());
 
             final BodyPart bodyPart3 = multipartReceived.getBodyPart(3);
-            assertEquals("TEXT/PLAIN; charset=utf-8", bodyPart3.getContentType());
-            assertEquals(text2QP.getContent(), bodyPart3.getContent());
+            assertThat(bodyPart3.getContentType()).isEqualTo("TEXT/PLAIN; charset=utf-8");
+            assertThat(bodyPart3.getContent()).isEqualTo(text2QP.getContent());
         } finally {
             store.close();
         }
