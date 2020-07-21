@@ -100,7 +100,7 @@ public class POP3CommandTest {
 
             assertThat(reader.readLine()).startsWith("+OK POP3 GreenMail Server v");
             printStream.print("USER blar@blar.com" + CRLF);
-            assertThat(reader.readLine()).isEqualTo("+OK");
+            assertThat(reader.readLine()).isNotEqualTo("+OK");
         }
     }
 

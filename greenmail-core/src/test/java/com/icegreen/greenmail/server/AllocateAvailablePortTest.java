@@ -8,9 +8,7 @@ import org.junit.Test;
 
 import javax.mail.internet.MimeMessage;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class AllocateAvailablePortTest {
 
@@ -23,7 +21,7 @@ public class AllocateAvailablePortTest {
 
     @Test
     public void returnTheActuallyAllocatedPort() {
-        assertThat(greenMail.getSmtp().getPort(), not(0));
+        assertThat(greenMail.getSmtp().getPort()).isNotEqualTo(0);
     }
 
     @Test
@@ -32,7 +30,7 @@ public class AllocateAvailablePortTest {
                 smtpServerAtPort(greenMail.getSmtp().getPort()));
 
         MimeMessage[] emails = greenMail.getReceivedMessages();
-        assertThat(emails.length, is(1));
+        assertThat(emails.length).isEqualTo(1);
     }
 
     private ServerSetup smtpServerAtPort(int port) {

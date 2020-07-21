@@ -59,14 +59,14 @@ public class GreenMailUtilTest {
                 MimeMultipart mp = (MimeMultipart) retriever.getMessages(to)[0].getContent();
                 BodyPart bp;
                 bp = mp.getBodyPart(0);
-                assertThat(GreenMailUtil.getBody(bp).trim()).isEqualTo(body);
+                assertThat(body).isEqualTo(GreenMailUtil.getBody(bp).trim());
                 assertThat(
                         "Content-Type: text/plain; charset=us-ascii\r\n" +
                         "Content-Transfer-Encoding: 7bit").isEqualTo(
                         GreenMailUtil.getHeaders(bp).trim());
 
                 bp = mp.getBodyPart(1);
-                assertThat(GreenMailUtil.getBody(bp).trim()).isEqualTo("AAEC");
+                assertThat("AAEC").isEqualTo(GreenMailUtil.getBody(bp).trim());
                 assertThat(
                         "Content-Type: image/gif; name=testimage_filename\r\n" +
                         "Content-Transfer-Encoding: base64\r\n" +
