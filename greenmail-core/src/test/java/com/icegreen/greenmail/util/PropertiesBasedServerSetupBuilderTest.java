@@ -4,9 +4,8 @@ import org.junit.Test;
 
 import java.util.Properties;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 public class PropertiesBasedServerSetupBuilderTest {
     @Test
@@ -17,25 +16,25 @@ public class PropertiesBasedServerSetupBuilderTest {
         final PropertiesBasedServerSetupBuilder setupBuilder = new PropertiesBasedServerSetupBuilder();
         ServerSetup[] setups = setupBuilder.build(properties);
         assert setups != null;
-        assertArrayEquals(setups, ServerSetup.ALL);
+        assertThat(ServerSetup.ALL).isEqualTo(setups);
 
         properties.clear();
         properties.setProperty("greenmail.setup.imap", "");
         setups = setupBuilder.build(properties);
         assert setups != null;
-        assertArrayEquals(setups, new ServerSetup[]{ServerSetup.IMAP});
+        assertThat(new ServerSetup[]{ServerSetup.IMAP}).isEqualTo(setups);
 
         properties.clear();
         properties.setProperty("greenmail.setup.test.all", "");
         setups = setupBuilder.build(properties);
         assert setups != null;
-        assertArrayEquals(setups, ServerSetupTest.ALL);
+        assertThat(ServerSetupTest.ALL).isEqualTo(setups);
 
         properties.clear();
         properties.setProperty("greenmail.setup.test.smtp", "");
         setups = setupBuilder.build(properties);
         assert setups != null;
-        assertArrayEquals(setups, new ServerSetup[]{ServerSetupTest.SMTP});
+        assertThat(new ServerSetup[]{ServerSetupTest.SMTP}).isEqualTo(setups);
 
         // With debug
         properties.clear();
@@ -43,8 +42,8 @@ public class PropertiesBasedServerSetupBuilderTest {
         properties.setProperty(PropertiesBasedServerSetupBuilder.GREENMAIL_VERBOSE, "");
         setups = setupBuilder.build(properties);
         assert setups != null;
-        assertArrayEquals(setups, new ServerSetup[]{ServerSetupTest.SMTP});
-        assertTrue(setups[0].isVerbose());
+        assertThat(new ServerSetup[]{ServerSetupTest.SMTP}).isEqualTo(setups);
+        assertThat(setups[0].isVerbose()).isTrue();
 
         // With hostname
         properties.clear();
@@ -52,8 +51,8 @@ public class PropertiesBasedServerSetupBuilderTest {
         properties.setProperty("greenmail.hostname", "0.0.0.0");
         setups = setupBuilder.build(properties);
         assert setups != null;
-        assertArrayEquals(setups, new ServerSetup[]{ServerSetupTest.SMTP.createCopy("0.0.0.0")});
-        assertFalse(setups[0].isVerbose());
+        assertThat(setups).isEqualTo(new ServerSetup[]{ServerSetupTest.SMTP.createCopy("0.0.0.0")});
+        assertThat(setups[0].isVerbose()).isFalse();
 
 
         // Default test setups
@@ -63,7 +62,7 @@ public class PropertiesBasedServerSetupBuilderTest {
             properties.setProperty("greenmail."+setup.getProtocol()+".port", Integer.toString(setup.getPort()));
             setups = setupBuilder.build(properties);
             assert setups != null;
-            assertArrayEquals(setups, new ServerSetup[]{setup});
+            assertThat(new ServerSetup[]{setup}).isEqualTo(setups);
         }
 
         // Specific setup
@@ -74,7 +73,7 @@ public class PropertiesBasedServerSetupBuilderTest {
         properties.setProperty("greenmail.imap.port", "3143");
         setups = setupBuilder.build(properties);
         assert setups != null;
-        assertArrayEquals(setups, ServerSetupTest.SMTP_IMAP);
+        assertThat(ServerSetupTest.SMTP_IMAP).isEqualTo(setups);
 
     }
 }

@@ -1,10 +1,6 @@
 package com.icegreen.greenmail.test.commands;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,70 +37,70 @@ public class POP3CommandTest {
     @Test
     public void authPlain() throws IOException, MessagingException, UserException {
         try (Socket socket = new Socket(hostAddress, port)) {
-            assertThat(socket.isConnected(), is(equalTo(true)));
+            assertThat(socket.isConnected()).isTrue();
             PrintStream printStream = new PrintStream(socket.getOutputStream());
             final BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             // No such user
-            assertThat(reader.readLine(), is(startsWith("+OK POP3 GreenMail Server v")));
+            assertThat(reader.readLine()).startsWith("+OK POP3 GreenMail Server v");
             printStream.print("AUTH PLAIN dGVzdAB0ZXN0AHRlc3RwYXNz" + CRLF /* test / test / testpass */);
-            assertThat(reader.readLine(), is(equalTo("-ERR Authentication failed: User <test> doesn't exist")));
+            assertThat(reader.readLine()).isEqualTo("-ERR Authentication failed: User <test> doesn't exist");
 
             greenMail.getManagers().getUserManager().createUser("test@localhost", "test", "testpass");
 
             // Invalid pwd
             printStream.print("AUTH PLAIN dGVzdAB0ZXN0AHRlc3RwY" + CRLF /* test / test / <invalid> */);
-            assertThat(reader.readLine(), is(equalTo("-ERR Authentication failed: Invalid password")));
+            assertThat(reader.readLine()).isEqualTo("-ERR Authentication failed: Invalid password");
 
             // Successful auth
             printStream.print("AUTH PLAIN dGVzdAB0ZXN0AHRlc3RwYXNz" + CRLF /* test / test / <invalid> */);
-            assertThat(reader.readLine(), is(equalTo("+OK")));
+            assertThat(reader.readLine()).isEqualTo("+OK");
         }
     }
 
     @Test
     public void authPlainWithContinuation() throws IOException, UserException {
         try (Socket socket = new Socket(hostAddress, port)) {
-            assertThat(socket.isConnected(), is(equalTo(true)));
+            assertThat(socket.isConnected()).isTrue();
             PrintStream printStream = new PrintStream(socket.getOutputStream());
             final BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             greenMail.getManagers().getUserManager().createUser("test@localhost", "test", "testpass");
 
-            assertThat(reader.readLine(), is(startsWith("+OK POP3 GreenMail Server v")));
+            assertThat(reader.readLine()).startsWith("+OK POP3 GreenMail Server v");
             printStream.print("AUTH PLAIN" + CRLF /* test / test / testpass */);
-            assertThat(reader.readLine(), is(equalTo(AuthCommand.CONTINUATION)));
+            assertThat(reader.readLine()).isEqualTo(AuthCommand.CONTINUATION);
             printStream.print("dGVzdAB0ZXN0AHRlc3RwYXNz" + CRLF /* test / test / <invalid> */);
-            assertThat(reader.readLine(), is(equalTo("+OK")));
+            assertThat(reader.readLine()).isEqualTo("+OK");
         }
     }
 
     @Test
     public void authDisabled() throws IOException, UserException {
         try (Socket socket = new Socket(hostAddress, port)) {
-            assertThat(socket.isConnected(), is(equalTo(true)));
+            assertThat(socket.isConnected()).isTrue();
             PrintStream printStream = new PrintStream(socket.getOutputStream());
             final BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             greenMail.getManagers().getUserManager().setAuthRequired(false);
 
-            assertThat(reader.readLine(), is(startsWith("+OK POP3 GreenMail Server v")));
+            assertThat(reader.readLine()).startsWith("+OK POP3 GreenMail Server v");
             printStream.print("USER blar@blar.com" + CRLF);
-            assertThat(reader.readLine(), is(equalTo("+OK")));
+            assertThat(reader.readLine()).isEqualTo("+OK");
         }
     }
 
     @Test
     public void authEnabled() throws IOException, UserException {
         try (Socket socket = new Socket(hostAddress, port)) {
-            assertThat(socket.isConnected(), is(equalTo(true)));
+            assertThat(socket.isConnected()).isTrue();
             PrintStream printStream = new PrintStream(socket.getOutputStream());
             final BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             greenMail.getManagers().getUserManager().setAuthRequired(true);
 
-            assertThat(reader.readLine(), is(startsWith("+OK POP3 GreenMail Server v")));
+            assertThat(reader.readLine()).startsWith("+OK POP3 GreenMail Server v");
             printStream.print("USER blar@blar.com" + CRLF);
-            assertThat(reader.readLine(), is(not(equalTo("+OK"))));
+            assertThat(reader.readLine()).isEqualTo("+OK");
         }
     }
 

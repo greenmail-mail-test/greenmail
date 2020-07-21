@@ -16,9 +16,7 @@ import com.icegreen.greenmail.util.UserUtil;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests if ReplyTo addresses of received messages are set correctly.
@@ -137,10 +135,10 @@ public class ReplyToTest {
             throws MessagingException {
         try (Retriever retriever = new Retriever(server)) {
             Message[] messages = retriever.getMessages(login);
-            assertEquals(1, messages.length);
+            assertThat(messages.length).isEqualTo(1);
             Message message = messages[0];
 
-            assertThat(toInetAddr(message.getReplyTo()), is(replyToAddrs));
+            assertThat(toInetAddr(message.getReplyTo())).isEqualTo(replyToAddrs);
         }
     }
 

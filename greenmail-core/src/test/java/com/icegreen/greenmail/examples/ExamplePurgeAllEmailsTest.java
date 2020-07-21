@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import javax.mail.Message;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -29,10 +29,10 @@ public class ExamplePurgeAllEmailsTest {
             greenMailRule.setUser("foo@localhost", "pwd");
             GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost",
                     "Test subject", "Test message", ServerSetupTest.SMTP);
-            assertTrue(greenMailRule.waitForIncomingEmail(1));
+            assertThat(greenMailRule.waitForIncomingEmail(1)).isTrue();
             greenMailRule.purgeEmailFromAllMailboxes();
             Message[] messages = retriever.getMessages("foo@localhost", "pwd");
-            assertEquals(0, messages.length);
+            assertThat(messages.length).isEqualTo(0);
         }
 
     }

@@ -10,7 +10,7 @@ import org.junit.Test;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ExampleReceiveTest {
     @Rule
@@ -23,7 +23,7 @@ public class ExampleReceiveTest {
         GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com",
                 "subject", "body"); // ...or use the default messages
 
-        assertEquals(2, greenMail.getReceivedMessages().length); // // --- Place your POP3 or IMAP retrieve code here
+        assertThat(greenMail.getReceivedMessages().length).isEqualTo(2); // // --- Place your POP3 or IMAP retrieve code here
     }
 
     private MimeMessage createMimeMessage() {

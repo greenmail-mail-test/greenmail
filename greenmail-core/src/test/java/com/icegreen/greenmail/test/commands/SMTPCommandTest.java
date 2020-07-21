@@ -17,11 +17,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 public class SMTPCommandTest {
 
@@ -47,9 +44,9 @@ public class SMTPCommandTest {
         try {
             Socket smtpSocket = new Socket(hostAddress, port); // Closed by transport
             smtpTransport.connect(smtpSocket);
-            assertThat(smtpTransport.isConnected(), is(equalTo(true)));
+            assertThat(smtpTransport.isConnected()).isTrue();
             smtpTransport.issueCommand("MAIL FROM: <>", -1);
-            assertThat("250 OK", equalToCompressingWhiteSpace(smtpTransport.getLastServerResponse()));
+            assertThat("250 OK").isEqualToNormalizingWhitespace(smtpTransport.getLastServerResponse());
         } finally {
             smtpTransport.close();
         }
@@ -63,16 +60,16 @@ public class SMTPCommandTest {
             try {
                 Socket smtpSocket = new Socket(hostAddress, port); // Closed by transport
                 smtpTransport.connect(smtpSocket);
-                assertThat(smtpTransport.isConnected(), is(equalTo(true)));
+                assertThat(smtpTransport.isConnected()).isTrue();
 
                 // Should fail, as user does not exist
                 smtpTransport.issueCommand("AUTH PLAIN dGVzdAB0ZXN0AHRlc3RwYXNz" /* test / test / testpass */, -1);
-                assertThat(smtpTransport.getLastServerResponse(), equalToCompressingWhiteSpace(AuthCommand.AUTH_CREDENTIALS_INVALID));
+                assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace(AuthCommand.AUTH_CREDENTIALS_INVALID);
 
                 // Try again but create user
                 greenMail.getManagers().getUserManager().createUser("test@localhost", "test", "testpass");
                 smtpTransport.issueCommand("AUTH PLAIN dGVzdAB0ZXN0AHRlc3RwYXNz" /* test / test / testpass */, -1);
-                assertThat(smtpTransport.getLastServerResponse(), equalToCompressingWhiteSpace(AuthCommand.AUTH_SUCCEDED));
+                assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace(AuthCommand.AUTH_SUCCEDED);
             } finally {
                 smtpTransport.close();
             }
@@ -85,12 +82,12 @@ public class SMTPCommandTest {
             try {
                 Socket smtpSocket = new Socket(hostAddress, port); // Closed by transport
                 smtpTransport.connect(smtpSocket);
-                assertThat(smtpTransport.isConnected(), is(equalTo(true)));
+                assertThat(smtpTransport.isConnected()).isTrue();
 
                 smtpTransport.issueCommand("AUTH PLAIN", -1);
-                assertTrue(smtpTransport.getLastServerResponse().startsWith(AuthCommand.SMTP_SERVER_CONTINUATION));
+                assertThat(smtpTransport.getLastServerResponse().startsWith(AuthCommand.SMTP_SERVER_CONTINUATION)).isTrue();
                 smtpTransport.issueCommand("dGVzdAB0ZXN0AHRlc3RwYXNz" /* test / test / testpass */, -1);
-                assertThat(smtpTransport.getLastServerResponse(), equalToCompressingWhiteSpace(AuthCommand.AUTH_SUCCEDED));
+                assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace(AuthCommand.AUTH_SUCCEDED);
             } finally {
                 smtpTransport.close();
             }
@@ -104,24 +101,24 @@ public class SMTPCommandTest {
         try {
             Socket smtpSocket = new Socket(hostAddress, port); // Closed by transport
             smtpTransport.connect(smtpSocket);
-            assertThat(smtpTransport.isConnected(), is(equalTo(true)));
+            assertThat(smtpTransport.isConnected()).isTrue();;
 
             // Should fail, as user does not exist
             smtpTransport.issueCommand("AUTH LOGIN ", 334);
-            assertThat(smtpTransport.getLastServerResponse(), equalToCompressingWhiteSpace("334 VXNlciBOYW1lAA==" /* Username */));
+            assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace("334 VXNlciBOYW1lAA==" /* Username */);
             smtpTransport.issueCommand(Base64.getEncoder().encodeToString("test".getBytes(StandardCharsets.US_ASCII)), -1);
-            assertThat(smtpTransport.getLastServerResponse(), equalToCompressingWhiteSpace("334 UGFzc3dvcmQA" /* Password */));
+            assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace("334 UGFzc3dvcmQA" /* Password */);
             smtpTransport.issueCommand(Base64.getEncoder().encodeToString("testpass".getBytes(StandardCharsets.US_ASCII)), -1);
-            assertThat(smtpTransport.getLastServerResponse(), equalToCompressingWhiteSpace(AuthCommand.AUTH_CREDENTIALS_INVALID));
+            assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace(AuthCommand.AUTH_CREDENTIALS_INVALID);
 
             // Try again but create user
             greenMail.getManagers().getUserManager().createUser("test@localhost", "test", "testpass");
             smtpTransport.issueCommand("AUTH LOGIN ", 334);
-            assertThat(smtpTransport.getLastServerResponse(), equalToCompressingWhiteSpace("334 VXNlciBOYW1lAA==" /* Username */));
+            assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace("334 VXNlciBOYW1lAA==" /* Username */);
             smtpTransport.issueCommand(Base64.getEncoder().encodeToString("test".getBytes(StandardCharsets.US_ASCII)), -1);
-            assertThat(smtpTransport.getLastServerResponse(), equalToCompressingWhiteSpace("334 UGFzc3dvcmQA" /* Password */));
+            assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace("334 UGFzc3dvcmQA" /* Password */);
             smtpTransport.issueCommand(Base64.getEncoder().encodeToString("testpass".getBytes(StandardCharsets.US_ASCII)), -1);
-            assertThat(smtpTransport.getLastServerResponse(), equalToCompressingWhiteSpace(AuthCommand.AUTH_SUCCEDED));
+            assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace(AuthCommand.AUTH_SUCCEDED);
         } finally {
             smtpTransport.close();
         }
@@ -135,9 +132,9 @@ public class SMTPCommandTest {
         try {
             Socket smtpSocket = new Socket(hostAddress, port); // Closed by transport
             smtpTransport.connect(smtpSocket);
-            assertThat(smtpTransport.isConnected(), is(equalTo(true)));
+            assertThat(smtpTransport.isConnected()).isTrue();
             smtpTransport.issueCommand("MAIL FROM: <test.test@test.net> AUTH <>", -1);
-            assertThat("250 OK", equalToCompressingWhiteSpace(smtpTransport.getLastServerResponse()));
+            assertThat("250 OK").isEqualToNormalizingWhitespace(smtpTransport.getLastServerResponse());
         } finally {
             smtpTransport.close();
         }

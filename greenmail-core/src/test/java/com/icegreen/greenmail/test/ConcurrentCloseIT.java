@@ -8,7 +8,7 @@ import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ConcurrentCloseIT {
 
@@ -30,7 +30,7 @@ public class ConcurrentCloseIT {
             sendThread.start();
             greenMail.waitForIncomingEmail(3000, 1);
             final MimeMessage[] emails = greenMail.getReceivedMessages();
-            assertEquals(1, emails.length);
+            assertThat(1).isEqualTo(emails.length);
             sendThread.join(10000);
         } finally {
             greenMail.stop();

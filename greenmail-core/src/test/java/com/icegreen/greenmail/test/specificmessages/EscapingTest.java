@@ -13,9 +13,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests escaping of message parts
@@ -70,13 +68,13 @@ public class EscapingTest {
             throws MessagingException {
         try (Retriever retriever = new Retriever(server)) {
             Message[] messages = retriever.getMessages(to);
-            assertEquals(1, messages.length);
+            assertThat(messages.length).isEqualTo(1);
             Message message = messages[0];
 
             // Message subject
-            assertThat(message.getSubject(), is(subject));
-            assertThat(message.getAllRecipients()[0].toString(), is(to));
-            assertThat(message.getFrom()[0].toString(), is(from));
+            assertThat(message.getSubject()).isEqualTo(subject);
+            assertThat(message.getAllRecipients()[0].toString()).isEqualTo(to);
+            assertThat(message.getFrom()[0].toString()).isEqualTo(from);
         }
     }
 }

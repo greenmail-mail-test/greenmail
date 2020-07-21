@@ -20,9 +20,7 @@ import javax.mail.Store;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ImapSubjectLineTest {
 
@@ -75,7 +73,7 @@ public class ImapSubjectLineTest {
 
     private void testSubject(String subject) throws Exception {
         GreenMailUser user = greenMail.setUser("to1@localhost", "pwd");
-        assertNotNull(greenMail.getImap());
+        assertThat(greenMail.getImap()).isNotNull();
 
         MailFolder folder = greenMail.getManagers().getImapHostManager().getFolder(user, "INBOX");
         storeSearchTestMessages(greenMail.getImap().createSession(), folder, subject);
@@ -89,9 +87,9 @@ public class ImapSubjectLineTest {
             imapFolder.open(Folder.READ_ONLY);
 
             Message[] imapMessages = imapFolder.getMessages();
-            assertTrue(null != imapMessages && imapMessages.length == 1);
+            assertThat(null != imapMessages && imapMessages.length == 1).isTrue();
             Message imapMessage = imapMessages[0];
-            assertEquals(subject.replaceAll("\\s+",""), imapMessage.getSubject().replaceAll("\\s+",""));
+            assertThat(imapMessage.getSubject().replaceAll("\\s+","")).isEqualTo(subject.replaceAll("\\s+",""));
         } finally {
             store.close();
         }

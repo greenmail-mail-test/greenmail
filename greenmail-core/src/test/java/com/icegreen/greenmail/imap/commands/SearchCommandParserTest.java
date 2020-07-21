@@ -12,7 +12,7 @@ import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ProtocolException;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SearchCommandParserTest {
     @Test
@@ -27,7 +27,7 @@ public class SearchCommandParserTest {
 
         SearchTerm searchTerm = parse("(HEADER Message-ID <1627010197.0.1593681191102@[192.168.242.10]> SEEN) ALL");
 
-        assertEquals(expectedTerm, searchTerm);
+        assertThat(searchTerm).isEqualTo(expectedTerm);
     }
 
     @Test
@@ -35,7 +35,7 @@ public class SearchCommandParserTest {
         SearchTerm expectedTerm = new SizeTerm(ComparisonTerm.LT, 5);
         SearchTerm searchTerm = parse("SMALLER 5");
 
-        assertEquals(expectedTerm, searchTerm);
+        assertThat(searchTerm).isEqualTo(expectedTerm);
     }
 
     @Test
@@ -43,7 +43,7 @@ public class SearchCommandParserTest {
         SearchTerm expectedTerm = new SizeTerm(ComparisonTerm.GT, 5);
         SearchTerm searchTerm = parse("LARGER 5");
 
-        assertEquals(expectedTerm, searchTerm);
+        assertThat(searchTerm).isEqualTo(expectedTerm);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class SearchCommandParserTest {
         SearchTerm expectedTerm = new AndTerm(new SizeTerm(ComparisonTerm.LT, 5), new SizeTerm(ComparisonTerm.GT, 3));
         SearchTerm searchTerm = parse("SMALLER 5 LARGER 3");
 
-        assertEquals(expectedTerm, searchTerm);
+        assertThat(searchTerm).isEqualTo(expectedTerm);
     }
 
     @Test
@@ -67,7 +67,7 @@ public class SearchCommandParserTest {
         // SUBJECT Greenmail (OR TO from@localhost FROM from@localhost) ALL
         SearchTerm searchTerm = parse("SUBJECT Greenmail OR TO to@localhost FROM from@localhost ALL");
 
-        assertEquals(expectedTerm, searchTerm);
+        assertThat(searchTerm).isEqualTo(expectedTerm);
     }
 
     private SearchTerm parse(String line) throws ProtocolException {

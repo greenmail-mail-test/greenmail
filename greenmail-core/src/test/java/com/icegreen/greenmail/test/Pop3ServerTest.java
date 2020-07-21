@@ -20,7 +20,7 @@ import com.sun.mail.pop3.POP3Store;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author Wael Chatila
@@ -38,7 +38,7 @@ public class Pop3ServerTest {
                 "testPop3Capabillities@localhost.com", "pwd");
         store.connect("testPop3Capabillities@localhost.com", "pwd");
         try {
-            assertTrue(store.capabilities().containsKey("UIDL"));
+            assertThat(store.capabilities().containsKey("UIDL")).isTrue();
         } finally {
             store.close();
         }
@@ -46,7 +46,7 @@ public class Pop3ServerTest {
 
     @Test
     public void testRetrieve() throws Exception {
-        assertNotNull(greenMail.getPop3());
+        assertThat(greenMail.getPop3()).isNotNull();
         final String subject = GreenMailUtil.random();
         final String body = GreenMailUtil.random() + "\r\n" + GreenMailUtil.random() + "\r\n" + GreenMailUtil.random();
         String to = "test@localhost.com";
@@ -55,19 +55,19 @@ public class Pop3ServerTest {
 
         try (Retriever retriever = new Retriever(greenMail.getPop3())) {
             Message[] messages = retriever.getMessages(to);
-            assertEquals(1, messages.length);
-            assertEquals(subject, messages[0].getSubject());
-            assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
+            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages[0].getSubject()).isEqualTo(subject);
+            assertThat(GreenMailUtil.getBody(messages[0]).trim()).isEqualTo(body);
 
             // UID
             POP3Folder f = (POP3Folder) messages[0].getFolder();
-            assertNotEquals("UNKNOWN", f.getUID(messages[0]));
+            assertThat(f.getUID(messages[0])).isNotEqualTo("UNKNOWN");
         }
     }
 
     @Test
     public void testPop3sReceive() throws Throwable {
-        assertNotNull(greenMail.getPop3s());
+        assertThat(greenMail.getPop3s()).isNotNull();
         final String subject = GreenMailUtil.random();
         final String body = GreenMailUtil.random();
         String to = "test@localhost.com";
@@ -76,15 +76,15 @@ public class Pop3ServerTest {
 
         try (Retriever retriever = new Retriever(greenMail.getPop3s())) {
             Message[] messages = retriever.getMessages(to);
-            assertEquals(1, messages.length);
-            assertEquals(subject, messages[0].getSubject());
-            assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
+            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages[0].getSubject()).isEqualTo(subject);
+            assertThat(GreenMailUtil.getBody(messages[0]).trim()).isEqualTo(body);
         }
     }
 
     @Test
     public void testRetrieveWithNonDefaultPassword() throws Exception {
-        assertNotNull(greenMail.getPop3());
+        assertThat(greenMail.getPop3()).isNotNull();
         final String to = "test@localhost.com";
         final String password = "donotharmanddontrecipricateharm";
         greenMail.setUser(to, password);
@@ -102,15 +102,15 @@ public class Pop3ServerTest {
             }
 
             Message[] messages = retriever.getMessages(to, password);
-            assertEquals(1, messages.length);
-            assertEquals(subject, messages[0].getSubject());
-            assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
+            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages[0].getSubject()).isEqualTo(subject);
+            assertThat(GreenMailUtil.getBody(messages[0]).trim()).isEqualTo(body);
         }
     }
 
     @Test
     public void testRetrieveMultipart() throws Exception {
-        assertNotNull(greenMail.getPop3());
+        assertThat(greenMail.getPop3()).isNotNull();
 
         String subject = GreenMailUtil.random();
         String body = GreenMailUtil.random();
@@ -122,21 +122,21 @@ public class Pop3ServerTest {
             Message[] messages = retriever.getMessages(to);
 
             Object o = messages[0].getContent();
-            assertTrue(o instanceof MimeMultipart);
+            assertThat(o instanceof MimeMultipart).isTrue();
             MimeMultipart mp = (MimeMultipart) o;
-            assertEquals(2, mp.getCount());
+            assertThat(mp.getCount()).isEqualTo(2);
             BodyPart bp;
             bp = mp.getBodyPart(0);
-            assertEquals(body, GreenMailUtil.getBody(bp).trim());
+            assertThat(GreenMailUtil.getBody(bp).trim()).isEqualTo(body);
 
             bp = mp.getBodyPart(1);
-            assertEquals("AAEC", GreenMailUtil.getBody(bp).trim());
+            assertThat(GreenMailUtil.getBody(bp).trim()).isEqualTo("AAEC");
 
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             GreenMailUtil.copyStream(bp.getInputStream(), bout);
             byte[] gif = bout.toByteArray();
             for (int i = 0; i < gif.length; i++) {
-                assertEquals(i, gif[i]);
+                assertThat((long)gif[i]).isEqualTo((long)i);
             }
         }
     }

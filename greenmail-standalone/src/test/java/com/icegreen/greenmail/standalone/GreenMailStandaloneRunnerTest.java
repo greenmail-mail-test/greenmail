@@ -9,8 +9,7 @@ import org.junit.Test;
 import javax.mail.*;
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class GreenMailStandaloneRunnerTest {
 
@@ -29,7 +28,7 @@ public class GreenMailStandaloneRunnerTest {
                 ServerSetupTest.SMTP);
 
         final Session session = runner.getGreenMail().getImap().createSession();
-        assertTrue(session.getDebug());
+        assertThat(session.getDebug()).isTrue();
         Store store = session.getStore("imap");
         try {
             store.connect("test2", "pwd2");
@@ -37,8 +36,8 @@ public class GreenMailStandaloneRunnerTest {
             try {
                 folder.open(Folder.READ_ONLY);
                 Message msg = folder.getMessages()[0];
-                assertEquals("test1@localhost", msg.getFrom()[0].toString());
-                assertEquals("Standalone test", msg.getSubject());
+                assertThat(msg.getFrom()[0].toString()).isEqualTo("test1@localhost");
+                assertThat(msg.getSubject()).isEqualTo("Standalone test");
             } finally {
                 folder.close(true);
             }

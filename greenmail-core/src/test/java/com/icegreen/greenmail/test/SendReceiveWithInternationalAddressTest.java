@@ -17,7 +17,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SendReceiveWithInternationalAddressTest {
 
@@ -51,7 +51,7 @@ public class SendReceiveWithInternationalAddressTest {
 
         // Decoding the body text to verify equality
         String decodedText = MimeUtility.decodeText(GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
-        assertEquals("用户@例子", decodedText);
+        assertThat(decodedText).isEqualTo("用户@例子");
     }
 
     // This is a mock message that doesn't implement the full functionality from MimeMessage.

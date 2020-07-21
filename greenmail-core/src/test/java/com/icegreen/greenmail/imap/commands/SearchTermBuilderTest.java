@@ -4,8 +4,8 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 public class SearchTermBuilderTest {
     static class Data {
@@ -31,10 +31,10 @@ public class SearchTermBuilderTest {
             List<IdRange> uidSet = IdRange.parseRangeSequence(d.uidSeq);
             SearchTermBuilder.UidSearchTerm term = new SearchTermBuilder.UidSearchTerm(uidSet);
             for (long uidMatch : d.uidMatching) {
-                assertTrue("Expected match for uidseq=" + d.uidSeq + " and uid=" + uidMatch, term.match(uidMatch));
+                assertThat(term.match(uidMatch)).as("Expected match for uidseq=" + d.uidSeq + " and uid=" + uidMatch).isTrue();
             }
             for (long uidNoMatch : d.uidNotMatching) {
-                assertFalse("Expected no match for uidseq=" + d.uidSeq + " and uid=" + uidNoMatch, term.match(uidNoMatch));
+                assertThat(term.match(uidNoMatch)).as("Expected no match for uidseq=" + d.uidSeq + " and uid=" + uidNoMatch).isFalse();
             }
         }
     }

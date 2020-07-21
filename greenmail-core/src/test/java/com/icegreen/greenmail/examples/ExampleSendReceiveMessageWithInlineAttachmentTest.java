@@ -14,8 +14,8 @@ import javax.mail.internet.MimeMultipart;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.*;
+
 
 /**
  * See https://github.com/greenmail-mail-test/greenmail/issues/113
@@ -44,16 +44,16 @@ public class ExampleSendReceiveMessageWithInlineAttachmentTest {
         Folder folder = openFolder(store, "INBOX");
 
         Message[] messages = folder.getMessages();
-        assertEquals(1, messages.length);
-        assertTrue(messages[0].getContentType().startsWith("multipart/mixed;"));
+        assertThat(messages.length).isEqualTo(1);
+        assertThat(messages[0].getContentType().startsWith("multipart/mixed;")).isTrue();
 
         final Multipart part = (Multipart) messages[0].getContent();
-        assertEquals(1, part.getCount());
+        assertThat(part.getCount()).isEqualTo(1);
 
         final BodyPart bodyPart = part.getBodyPart(0);
-        assertEquals("TEXT/PLAIN; charset=us-ascii", bodyPart.getContentType());
-        assertEquals("inline", bodyPart.getDisposition());
-        Assert.assertEquals("This is some text to be displayed inline", bodyPart.getContent());
+        assertThat(bodyPart.getContentType()).isEqualTo("TEXT/PLAIN; charset=us-ascii");
+        assertThat(bodyPart.getDisposition()).isEqualTo("inline");
+        assertThat(bodyPart.getContent()).isEqualTo("This is some text to be displayed inline");
     }
 
     private Folder openFolder(Store store, String folderName) throws MessagingException {

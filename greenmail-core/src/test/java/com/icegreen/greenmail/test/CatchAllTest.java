@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import javax.mail.MessagingException;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Wael Chatila
@@ -27,9 +27,9 @@ public class CatchAllTest {
         GreenMailUtil.sendTextEmailTest("to31@domain3.com", "from@localhost.com", "subject", "body");
         GreenMailUtil.sendTextEmailTest("to32@domain3.com", "from@localhost.com", "subject", "body");
         GreenMailUtil.sendTextEmailTest("to33@domain3.com", "from@localhost.com", "subject", "body");
-        assertEquals(6, greenMail.getReceivedMessages().length);
-        assertEquals(2, greenMail.getReceivedMessagesForDomain("domain1.com").length);
-        assertEquals(1, greenMail.getReceivedMessagesForDomain("domain2.com").length);
-        assertEquals(3, greenMail.getReceivedMessagesForDomain("domain3.com").length);
+        assertThat(greenMail.getReceivedMessages().length).isEqualTo(6);
+        assertThat(2).isEqualTo(greenMail.getReceivedMessagesForDomain("domain1.com").length);
+        assertThat(1).isEqualTo(greenMail.getReceivedMessagesForDomain("domain2.com").length);
+        assertThat(3).isEqualTo(greenMail.getReceivedMessagesForDomain("domain3.com").length);
     }
 }
