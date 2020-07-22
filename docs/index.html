@@ -76,12 +76,14 @@
                 <a class="nav-item nav-link nav-pills" href="#examples" data-toggle="collapse"
                    data-target="#nav_examples">Examples</a>
                 <nav id="nav_examples" class="nav nav-pills flex-column collapse" data-parent="#sidebar">
-                    <a class="nav-item nav-link ml-3" href="#ex_junit_rule">Using JUnit (rule based setup)</a>
+                    <a class="nav-item nav-link ml-3" href="#ex_junit_rule">Using JUnit4 rule based setup</a>
+                    <a class="nav-item nav-link ml-3" href="#ex_junit_extension">Using JUnit5 extension</a>
                     <a class="nav-item nav-link ml-3" href="#ex_send_simple">Testing your sending code (simple)</a>
                     <a class="nav-item nav-link ml-3" href="#ex_send_adv">Testing your sending code (advanced)</a>
                     <a class="nav-item nav-link ml-3" href="#ex_retrieve">Testing your retrieving code</a>
                     <a class="nav-item nav-link ml-3" href="#ex_javamail_send_retrieve">Testing using plain JavaMail for
                         sending/retrieving code</a>
+                    <a class="nav-item nav-link ml-3" href="#ex_spring">Testing using Spring framework</a>
                 </nav>
                 <a class="nav-item nav-link nav-pills" href="#deployment" data-toggle="collapse"
                    data-target="#nav_deployment">Deployments</a>
@@ -200,7 +202,7 @@ public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
 
 @Test
 public void testSend() throws MessagingException {
-    GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com",
+    GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost",
         "some subject", "some body"); // --- Place your sending code here instead
     assertEquals("some body", GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
 }
@@ -225,9 +227,9 @@ public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IM
 
 @Test
 public void testReceive() throws MessagingException {
-    GreenMailUser user = greenMail.setUser("to@localhost.com", "login-id", "password");
+    GreenMailUser user = greenMail.setUser("to@localhost", "login-id", "password");
     user.deliver(createMimeMessage()); // You can either create a more complex message...
-    GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com",
+    GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost",
         "subject", "body"); // ...or use the default messages
 
     assertEquals(2, greenMail.getReceivedMessages().length); // // --- Place your POP3 or IMAP retrieve code here
@@ -258,20 +260,26 @@ public void testReceive() throws MessagingException {
 
                 <h4 id="implementation" class="anchor">Implementation</h4>
 
-                <p>The implementation is in 100% Java with only a few library dependencies:
+                <p>The implementation is in 100% Java with only a few library dependencies for GreenMail Core:
                 </p>
                 <ul>
                     <li>javamail.jar - <a href="https://java.net/projects/javamail/">JavaMail API</a></li>
-                    <li>activation.jar - <a href="https://eclipse-ee4j.github.io/jaf/">Java
-                        Activation
-                        Framework</a>,
+                    <li>activation.jar - <a href="https://eclipse-ee4j.github.io/jaf/">Java Activation Framework</a>,
                         required by JavaMail (provided by JDK since 1.6+)
                     </li>
-                    <li>slf4j-api.jar - required for logging via <a href="http://www.slf4j.org/">Simple Logging
-                        Facade
-                        for
-                        Java</a></li>
+                    <li>slf4j-api.jar - required for logging via <a href="http://www.slf4j.org/">Simple Logging Facade
+                        for Java</a></li>
                     <li>junit.jar - required for easy test setup using Rules</li>
+                </ul>
+                <p>GreenMail contains several modules:</p>
+                <ul>
+                    <li><a href="#examples">com.icegreen:greenmail-core</a> - Core library for unit tests</li>
+                    <li><a href="#deploy_standalone">com.icegreen:greenmail-standalone</a> - Standalone runner (eg when not using GreenMail embedded into unit test)</li>
+                    <li><a href="#deploy_docker_standalone">com.icegreen:greenmail-docker-standalone</a> - Dockerized standalone runner</li>
+                    <li><a href="#ex_junit_rule">com.icegreen:greenmail-junit4</a> - JUnit4 support via GreenMailRule</li>
+                    <li><a href="#ex_junit_extension">com.icegreen:greenmail-junit5</a> - JUnit5 support via GreenMailExtension</li>
+                    <li><a href="#deploy_webapp">com.icegreen:greenmail-webapp</a></li>
+                    <li><a href="#ex_spring">com.icegreen:greenmail-spring</a> - Spring framework support via GreenMailBean</li>
                 </ul>
 
                 <h4 id="sourcecode" class="anchor">Source Code</h4>
@@ -394,15 +402,21 @@ public void testReceive() throws MessagingException {
                 <div>The source code of the examples can be found in the test package of GreenMail
                     (<a href="https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-core/src/test/java/com/icegreen/greenmail/examples">greenmail-core/src/test/java/com/icegreen/greenmail/examples/</a>).
                 </div>
-                <h3 id="ex_junit_rule" class="anchor">Using JUnit (Rule based setup)</h3>
+                <h3 id="ex_junit_rule" class="anchor">Using JUnit4 rule based setup</h3>
+                The rule GreenMailRule provided by <a href="#download">com.icegreen:greenmail-junit4</a> will take care of starting and stopping GreenMail for each test,
+                providing a clean environment.
+                <div class="alert alert-warning" role="alert">
+                  Starting with GreenMail version 1.6.x , GreenMailRule was deprecated in the Core package.
+                  Please include GreenMailRule from the module <a href="#download">com.icegreen:greenmail-junit4</a> (newly introduced in version 1.6).
+                </div>
                 <pre><code class="language-java"><!-- @formatter:off -->
 /** [See code on GitHub](https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-core/src/test/java/com/icegreen/greenmail/examples/ExampleRuleTest.java) */
 @Rule
 public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
 
 @Test
-            public void testSomething() {
-    GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", "body");
+public void testSomething() {
+    GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "subject", "body");
     MimeMessage[] emails = greenMail.getReceivedMessages();
     assertEquals(1, emails.length);
     assertEquals("subject", emails[0].getSubject());
@@ -411,12 +425,31 @@ public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
 }
         </code></pre><!-- @formatter:on -->
 
+                <h3 id="ex_junit_extension" class="anchor">Using JUnit5 extension</h3>
+                The JUnit5 GreenMailExtension included in <a href="#download">com.icegreen:greenmail-junit5</a>
+                replaces JUnit 4 rule GreenMailRule and also take care of starting and stopping GreenMail
+                as part of the test lifecycle.
+                <pre><code class="language-java"><!-- @formatter:off -->
+/** [See code on GitHub](https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-junit5/src/test/java/com/icegreen/greenmail/junit5/CustomSetupTests.java) */
+@RegisterExtension
+static GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP);
+
+@Test
+@DisplayName("Send test")
+void testSend() {
+    GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "some subject", "some body");
+    final MimeMessage[] receivedMessages = greenMail.getReceivedMessages();
+    final MimeMessage receivedMessage = receivedMessages[0];
+    assertEquals("some body", GreenMailUtil.getBody(receivedMessage));
+}
+        </code></pre><!-- @formatter:on -->
+
                 <h3 id="ex_send_simple" class="anchor">Testing your sending code (simple)</h3>
                 <pre><code class="language-java"><!-- @formatter:off -->
 /** [See code on GitHub](https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-core/src/test/java/com/icegreen/greenmail/examples/ExampleSendTest.java) */
 GreenMail greenMail = new GreenMail(); //uses test ports by default
 greenMail.start();
-GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "some subject",
+GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "some subject",
                                 "some body"); // --- Place your sending code here
 assertEquals("some body", GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
 greenMail.stop();
@@ -467,7 +500,7 @@ greenMail.start();
 final String subject = GreenMailUtil.random();
 final String body = GreenMailUtil.random();
 MimeMessage message = createMimeMessage(subject, body, greenMail); // Construct message
-GreenMailUser user = greenMail.setUser("wael@localhost.com", "waelc", "soooosecret");
+GreenMailUser user = greenMail.setUser("wael@localhost", "waelc", "soooosecret");
 user.deliver(message);
 assertEquals(1, greenMail.getReceivedMessages().length);
 
@@ -483,7 +516,7 @@ greenMail.stop();
 public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
 
 @Test
-            public void testSendAndReceive() throws MessagingException, ... {
+public void testSendAndReceive() throws MessagingException, ... {
     Session smtpSession = greenMail.getSmtp().createSession();
 
     Message msg = new MimeMessage(smtpSession);
@@ -518,6 +551,22 @@ public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IM
     // Alternative 3: ... directly fetch sent message using GreenMail API
     assertEquals(1, greenMail.getReceivedMessagesForDomain("bar@example.com").length);
     msgReceived = greenMail.getReceivedMessagesForDomain("bar@example.com")[0];
+    ...
+}
+        </code></pre><!-- @formatter:on -->
+
+                <h3 id="ex_spring" class="anchor">Testing using Spring framework</h3>
+                The <a href="#download">com.icegreen:greenmail-spring</a> module provides basic support for Spring configuration via GreenMailBean:
+                <pre><code class="language-java"><!-- @formatter:off -->
+/** See [GreenMailBeanTest.java](https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-spring/src/test/java/com/icegreen/greenmail/spring/GreenMailBeanTest.java)
+ * and [GreenMailBeanTest-context.xml](greenmail-spring/src/test/resources/com/icegreen/greenmail/spring/GreenMailBeanTest-context.xml)
+*/
+@Autowired
+private GreenMailBean greenMailBean;
+
+@Test
+public void testCreate() {
+    GreenMail greenMail = greenMailBean.getGreenMail();
     ...
 }
         </code></pre><!-- @formatter:on -->

@@ -18,7 +18,7 @@ class CustomSetupTests {
     @Test
     @DisplayName("Send test")
     void testSend() {
-        GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "some subject", "some body");
+        GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "some subject", "some body");
         final MimeMessage[] receivedMessages = greenMail.getReceivedMessages();
         final MimeMessage receivedMessage = receivedMessages[0];
         assertEquals("some body", GreenMailUtil.getBody(receivedMessage));
