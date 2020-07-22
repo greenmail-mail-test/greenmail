@@ -489,9 +489,16 @@
         <artifactId>easymock</artifactId>
         <version>4.2</version>
       </dependency>
+      <!-- Transitively by junit:junit -->
       <dependency>
         <groupId>org.hamcrest</groupId>
-        <artifactId>hamcrest</artifactId>
+        <artifactId>hamcrest-core</artifactId>
+        <version>2.2</version>
+      </dependency>
+      <!-- Transitively by junit:junit -->
+      <dependency>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>hamcrest-library</artifactId>
         <version>2.2</version>
       </dependency>
       <dependency>
