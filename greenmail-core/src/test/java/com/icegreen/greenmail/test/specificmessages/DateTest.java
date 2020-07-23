@@ -14,6 +14,7 @@ import jakarta.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Calendar;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -8,10 +8,8 @@ import com.icegreen.greenmail.imap.ProtocolException;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import jakarta.mail.search.AndTerm;
-import jakarta.mail.search.ComparisonTerm;
-import jakarta.mail.search.SearchTerm;
-import jakarta.mail.search.SizeTerm;
+import jakarta.mail.search.*;
+import jakarta.mail.internet.*;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.CharacterCodingException;
 
