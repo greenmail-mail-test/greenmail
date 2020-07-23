@@ -11,6 +11,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import jakarta.mail.search.*;
 import jakarta.mail.internet.*;
 import java.io.ByteArrayInputStream;
+import jakarta.mail.Flags;
+import jakarta.mail.Message;
 import java.nio.charset.CharacterCodingException;
 
 public class SearchCommandParserTest {
