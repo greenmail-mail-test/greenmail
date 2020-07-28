@@ -1,11 +1,11 @@
 package com.icegreen.greenmail.imap.commands;
 
 import java.io.ByteArrayInputStream;
-import javax.mail.Flags;
-import javax.mail.Message;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.search.*;
+import jakarta.mail.Flags;
+import jakarta.mail.Message;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.search.*;
 
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ProtocolException;

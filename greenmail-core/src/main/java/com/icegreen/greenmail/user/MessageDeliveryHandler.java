@@ -3,7 +3,7 @@ package com.icegreen.greenmail.user;
 import com.icegreen.greenmail.mail.MailAddress;
 import com.icegreen.greenmail.mail.MovingMessage;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 
 /**
  * Handles delivery when receiving messages.

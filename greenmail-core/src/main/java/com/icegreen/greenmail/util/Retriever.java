@@ -7,7 +7,7 @@ package com.icegreen.greenmail.util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.mail.*;
+import jakarta.mail.*;
 
 import com.icegreen.greenmail.server.AbstractServer;
 

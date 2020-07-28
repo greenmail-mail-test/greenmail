@@ -2,7 +2,7 @@ package com.icegreen.greenmail.spring;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMessage;
 
 import com.icegreen.greenmail.user.UserManager;
 import com.icegreen.greenmail.util.GreenMail;

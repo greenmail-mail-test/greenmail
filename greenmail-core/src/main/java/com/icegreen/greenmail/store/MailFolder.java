@@ -10,9 +10,9 @@ import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import com.icegreen.greenmail.imap.commands.IdRange;
 import com.icegreen.greenmail.mail.MovingMessage;
 
-import javax.mail.Flags;
-import javax.mail.internet.MimeMessage;
-import javax.mail.search.SearchTerm;
+import jakarta.mail.Flags;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.search.SearchTerm;
 import java.util.Date;
 import java.util.List;
 

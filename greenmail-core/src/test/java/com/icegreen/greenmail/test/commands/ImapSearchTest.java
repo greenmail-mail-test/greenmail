@@ -7,10 +7,10 @@ package com.icegreen.greenmail.test.commands;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.mail.search.*;
+import jakarta.mail.*;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.search.*;
 
 import com.icegreen.greenmail.imap.commands.SearchKey;
 import com.icegreen.greenmail.junit.GreenMailRule;

@@ -15,22 +15,17 @@ import com.sun.mail.imap.IMAPStore;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.mail.*;
-import javax.mail.event.MessageCountEvent;
-import javax.mail.event.MessageCountListener;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+import jakarta.mail.*;
+import jakarta.mail.event.MessageCountEvent;
+import jakarta.mail.event.MessageCountListener;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
 
-import static javax.mail.Flags.Flag.DELETED;
+import static jakarta.mail.Flags.Flag.DELETED;
 import static org.assertj.core.api.Assertions.*;
 
-/**a
- * @author Wael Chatila
- * @version $Id: $
- * @since Jan 28, 2006
- */
 public class ImapServerTest {
     private static final String UMLAUTS = "öäü \u00c4 \u00e4";
     @Rule

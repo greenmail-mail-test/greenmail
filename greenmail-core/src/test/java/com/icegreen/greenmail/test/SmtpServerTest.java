@@ -11,16 +11,16 @@ import java.io.ByteArrayOutputStream;
 import java.net.SocketException;
 import java.util.Properties;
 
-import javax.mail.AuthenticationFailedException;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMessage.RecipientType;
-import javax.mail.internet.MimeMultipart;
+import jakarta.mail.AuthenticationFailedException;
+import jakarta.mail.BodyPart;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMessage.RecipientType;
+import jakarta.mail.internet.MimeMultipart;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Rule;
@@ -161,7 +161,7 @@ public class SmtpServerTest {
         final MimeMessage message = createTextEmail("test@localhost", "from@localhost", subject, body,
                 greenMail.getSmtp().getServerSetup());
 
-        assertThat(greenMail.getReceivedMessages().length).isEqualTo(0);
+        assertThat(greenMail.getReceivedMessages().length).isZero();
 
         greenMail.getSmtp().setClientSocketTimeout(2000);
         Transport transport = message.getSession().getTransport();
@@ -172,7 +172,6 @@ public class SmtpServerTest {
             transport.sendMessage(message, message.getAllRecipients());
             Assertions.fail("should have thrown");
         } catch (MessagingException e) {
-            e.printStackTrace();
             assertThat(e).hasCauseExactlyInstanceOf(SocketException.class);
             transport.connect();
             transport.sendMessage(message, message.getAllRecipients());
@@ -182,7 +181,7 @@ public class SmtpServerTest {
         assertThat(greenMail.waitForIncomingEmail(1000, 2)).isTrue();
 
         MimeMessage[] emails = greenMail.getReceivedMessages();
-        assertThat(emails.length).isEqualTo(2);
+        assertThat(emails).hasSize(2);
     }
 
     @Test

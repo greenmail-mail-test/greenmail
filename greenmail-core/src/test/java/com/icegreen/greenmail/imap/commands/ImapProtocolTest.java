@@ -15,8 +15,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.mail.*;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.*;
+import jakarta.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;

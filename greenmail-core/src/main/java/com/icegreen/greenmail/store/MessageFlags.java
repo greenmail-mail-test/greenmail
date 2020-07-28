@@ -6,12 +6,12 @@
  */
 package com.icegreen.greenmail.store;
 
-import javax.mail.Flags;
+import jakarta.mail.Flags;
 
 
 /**
  * The set of flags associated with a message.
- * TODO - why not use javax.mail.Flags instead of having our own.
+ * TODO - why not use jakarta.mail.Flags instead of having our own.
  * <p>Reference: RFC 2060 - para 2.3
  *
  * @author <a href="mailto:charles@benett1.demon.co.uk">Charles Benett</a>

@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.URLName;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.URLName;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.smtp.commands.AuthCommand;

@@ -9,9 +9,9 @@ import java.net.*;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import javax.mail.NoSuchProviderException;
-import javax.mail.Session;
-import javax.mail.Store;
+import jakarta.mail.NoSuchProviderException;
+import jakarta.mail.Session;
+import jakarta.mail.Store;
 
 import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.util.DummySSLServerSocketFactory;

@@ -2,7 +2,7 @@ package com.icegreen.greenmail.imap.commands;
 
 import java.net.SocketTimeoutException;
 
-import javax.mail.Flags;
+import jakarta.mail.Flags;
 
 import com.icegreen.greenmail.imap.AuthorizationException;
 import com.icegreen.greenmail.imap.ImapRequestLineReader;

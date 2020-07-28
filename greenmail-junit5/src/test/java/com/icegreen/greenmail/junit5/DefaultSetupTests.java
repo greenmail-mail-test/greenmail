@@ -1,7 +1,7 @@
 package com.icegreen.greenmail.junit5;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 
 import com.icegreen.greenmail.util.GreenMailUtil;
 import org.junit.jupiter.api.DisplayName;

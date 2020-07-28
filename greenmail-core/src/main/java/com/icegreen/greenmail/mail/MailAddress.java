@@ -7,8 +7,8 @@
 package com.icegreen.greenmail.mail;
 
 import java.io.UnsupportedEncodingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeUtility;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeUtility;
 
 public class MailAddress {
     String host;
