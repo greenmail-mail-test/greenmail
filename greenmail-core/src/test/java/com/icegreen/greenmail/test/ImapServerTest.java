@@ -15,13 +15,13 @@ import com.sun.mail.imap.IMAPStore;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.mail.*;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+import jakarta.mail.*;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
 
-import static javax.mail.Flags.Flag.DELETED;
+import static jakarta.mail.Flags.Flag.DELETED;
 import static org.assertj.core.api.Assertions.*;
 
 /**a

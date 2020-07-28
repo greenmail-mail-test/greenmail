@@ -8,7 +8,7 @@ import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import com.icegreen.greenmail.imap.commands.IdRange;
 import com.icegreen.greenmail.util.MaxSizeLinkedHashMap;
 
-import javax.mail.Flags;
+import jakarta.mail.Flags;
 import java.util.*;
 
 import static java.lang.String.format;

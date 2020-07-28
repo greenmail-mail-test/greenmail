@@ -7,8 +7,8 @@
 package com.icegreen.greenmail.store;
 
 import java.util.*;
-import javax.mail.MessagingException;
-import javax.mail.Quota;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Quota;
 
 import com.icegreen.greenmail.imap.ImapConstants;
 

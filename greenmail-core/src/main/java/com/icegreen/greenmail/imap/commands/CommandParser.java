@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import javax.mail.Flags;
+import jakarta.mail.Flags;
 
 import com.icegreen.greenmail.imap.ImapConstants;
 import com.icegreen.greenmail.imap.ImapRequestLineReader;

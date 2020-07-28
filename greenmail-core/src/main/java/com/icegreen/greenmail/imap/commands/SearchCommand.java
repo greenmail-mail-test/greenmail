@@ -7,7 +7,7 @@
 package com.icegreen.greenmail.imap.commands;
 
 import java.nio.charset.UnsupportedCharsetException;
-import javax.mail.search.SearchTerm;
+import jakarta.mail.search.SearchTerm;
 
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ImapResponse;

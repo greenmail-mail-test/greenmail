@@ -13,7 +13,7 @@ import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.util.GreenMailUtil;
 
-import javax.mail.Flags;
+import jakarta.mail.Flags;
 import java.io.StringReader;
 import java.util.List;
 

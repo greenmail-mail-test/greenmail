@@ -6,7 +6,7 @@ import com.icegreen.greenmail.util.PropertiesBasedServerSetupBuilder;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Test;
 
-import javax.mail.*;
+import jakarta.mail.*;
 import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;

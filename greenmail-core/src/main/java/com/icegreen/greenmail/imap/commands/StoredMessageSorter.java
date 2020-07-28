@@ -2,9 +2,9 @@ package com.icegreen.greenmail.imap.commands;
 
 import com.icegreen.greenmail.store.StoredMessage;
 
-import javax.mail.Address;
-import javax.mail.Message;
-import javax.mail.MessagingException;
+import jakarta.mail.Address;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicBoolean;
 
