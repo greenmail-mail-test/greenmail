@@ -11,7 +11,7 @@ import com.icegreen.greenmail.store.MessageFlags;
 import com.icegreen.greenmail.util.EncodingUtil;
 import com.icegreen.greenmail.util.InternetPrintWriter;
 
-import javax.mail.Flags;
+import jakarta.mail.Flags;
 import java.io.OutputStream;
 
 /**

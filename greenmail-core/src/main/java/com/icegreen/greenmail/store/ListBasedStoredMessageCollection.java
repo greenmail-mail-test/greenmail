@@ -7,7 +7,7 @@ package com.icegreen.greenmail.store;
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import com.icegreen.greenmail.imap.commands.IdRange;
 
-import javax.mail.Flags;
+import jakarta.mail.Flags;
 import java.util.*;
 
 /**

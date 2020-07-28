@@ -10,7 +10,7 @@ import com.icegreen.greenmail.imap.*;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.FolderListener;
 
-import javax.mail.Flags;
+import jakarta.mail.Flags;
 
 
 /**

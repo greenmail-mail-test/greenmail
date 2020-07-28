@@ -10,16 +10,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.ByteArrayOutputStream;
 import java.util.Properties;
 
-import javax.mail.AuthenticationFailedException;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMessage.RecipientType;
-import javax.mail.internet.MimeMultipart;
+import jakarta.mail.AuthenticationFailedException;
+import jakarta.mail.BodyPart;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMessage.RecipientType;
+import jakarta.mail.internet.MimeMultipart;
 
 import org.junit.Rule;
 import org.junit.Test;

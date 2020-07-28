@@ -6,7 +6,7 @@
  */
 package com.icegreen.greenmail.store;
 
-import javax.mail.Flags;
+import jakarta.mail.Flags;
 
 
 public interface FolderListener {

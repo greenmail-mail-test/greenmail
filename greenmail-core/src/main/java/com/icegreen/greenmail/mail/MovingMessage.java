@@ -6,7 +6,7 @@
  */
 package com.icegreen.greenmail.mail;
 
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMessage;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.LinkedList;

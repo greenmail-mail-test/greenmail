@@ -7,14 +7,13 @@
 package com.icegreen.greenmail.user;
 
 import java.util.Collection;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMessage;
 
 import com.icegreen.greenmail.imap.AuthorizationException;
 import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.mail.MovingMessage;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
-
 
 
 public class UserImpl implements GreenMailUser {

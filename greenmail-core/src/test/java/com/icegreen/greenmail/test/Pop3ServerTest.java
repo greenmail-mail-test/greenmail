@@ -5,11 +5,11 @@
 package com.icegreen.greenmail.test;
 
 import java.io.ByteArrayOutputStream;
-import javax.mail.AuthenticationFailedException;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMultipart;
+import jakarta.mail.AuthenticationFailedException;
+import jakarta.mail.BodyPart;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMultipart;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.user.UserException;

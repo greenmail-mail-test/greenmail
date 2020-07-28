@@ -8,9 +8,9 @@ package com.icegreen.greenmail.store;
 
 
 import java.util.*;
-import javax.mail.BodyPart;
-import javax.mail.MessagingException;
-import javax.mail.internet.*;
+import jakarta.mail.BodyPart;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.*;
 
 import com.icegreen.greenmail.mail.MailAddress;
 import com.icegreen.greenmail.util.GreenMailUtil;

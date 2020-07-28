@@ -9,25 +9,25 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import javax.mail.Flags;
-import javax.mail.Message;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.search.AndTerm;
-import javax.mail.search.BodyTerm;
-import javax.mail.search.ComparisonTerm;
-import javax.mail.search.FlagTerm;
-import javax.mail.search.FromStringTerm;
-import javax.mail.search.FromTerm;
-import javax.mail.search.HeaderTerm;
-import javax.mail.search.OrTerm;
-import javax.mail.search.ReceivedDateTerm;
-import javax.mail.search.RecipientStringTerm;
-import javax.mail.search.RecipientTerm;
-import javax.mail.search.SearchTerm;
-import javax.mail.search.SentDateTerm;
-import javax.mail.search.SizeTerm;
-import javax.mail.search.SubjectTerm;
+import jakarta.mail.Flags;
+import jakarta.mail.Message;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.search.AndTerm;
+import jakarta.mail.search.BodyTerm;
+import jakarta.mail.search.ComparisonTerm;
+import jakarta.mail.search.FlagTerm;
+import jakarta.mail.search.FromStringTerm;
+import jakarta.mail.search.FromTerm;
+import jakarta.mail.search.HeaderTerm;
+import jakarta.mail.search.OrTerm;
+import jakarta.mail.search.ReceivedDateTerm;
+import jakarta.mail.search.RecipientStringTerm;
+import jakarta.mail.search.RecipientTerm;
+import jakarta.mail.search.SearchTerm;
+import jakarta.mail.search.SentDateTerm;
+import jakarta.mail.search.SizeTerm;
+import jakarta.mail.search.SubjectTerm;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -355,7 +355,7 @@ public abstract class SearchTermBuilder {
 
     private static SearchTerm createFlagSearchTerm(String flagName, boolean value) {
         Flags.Flag flag = toFlag(flagName);
-        Flags flags = new javax.mail.Flags();
+        Flags flags = new jakarta.mail.Flags();
         if (null == flag) { // user flags
             flags.add(flagName);
         } else {
@@ -384,28 +384,28 @@ public abstract class SearchTermBuilder {
         };
     }
 
-    private static javax.mail.Flags.Flag toFlag(String flagValue) {
+    private static jakarta.mail.Flags.Flag toFlag(String flagValue) {
         if (flagValue == null || flagValue.trim().length() < 1) {
             throw new IllegalArgumentException("Can not convert empty string to mail flag");
         }
         String flag = flagValue.trim().toUpperCase();
         if ("ANSWERED".equals(flag)) {
-            return javax.mail.Flags.Flag.ANSWERED;
+            return jakarta.mail.Flags.Flag.ANSWERED;
         }
         if ("DELETED".equals(flag)) {
-            return javax.mail.Flags.Flag.DELETED;
+            return jakarta.mail.Flags.Flag.DELETED;
         }
         if ("DRAFT".equals(flag)) {
-            return javax.mail.Flags.Flag.DRAFT;
+            return jakarta.mail.Flags.Flag.DRAFT;
         }
         if ("FLAGGED".equals(flag)) {
-            return javax.mail.Flags.Flag.FLAGGED;
+            return jakarta.mail.Flags.Flag.FLAGGED;
         }
         if ("RECENT".equals(flag)) {
-            return javax.mail.Flags.Flag.RECENT;
+            return jakarta.mail.Flags.Flag.RECENT;
         }
         if ("SEEN".equals(flag)) {
-            return javax.mail.Flags.Flag.SEEN;
+            return jakarta.mail.Flags.Flag.SEEN;
         }
         return null;
     }

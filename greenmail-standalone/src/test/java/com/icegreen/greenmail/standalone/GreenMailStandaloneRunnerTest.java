@@ -7,7 +7,7 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.After;
 import org.junit.Test;
 
-import javax.mail.*;
+import jakarta.mail.*;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.*;
 import javax.ws.rs.core.MediaType;

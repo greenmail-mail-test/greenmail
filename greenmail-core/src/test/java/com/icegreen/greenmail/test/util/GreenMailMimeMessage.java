@@ -1,8 +1,8 @@
 package com.icegreen.greenmail.test.util;
 
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.internet.MimeMessage;
 
 /* Utility class that extends MimeMessage forcing every message-id to contain characters that need to be properly escaped
  * Javamail by default will set the message-id when the MimeMessage is being processed.

@@ -8,9 +8,9 @@ package com.icegreen.greenmail.store;
 
 import java.util.Date;
 
-import javax.mail.Flags;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.Flags;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 
 /**
  * A mail message with all of the extra stuff that IMAP requires.
