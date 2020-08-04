@@ -6,7 +6,7 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

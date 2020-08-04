@@ -7,12 +7,12 @@ package com.icegreen.greenmail.store;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.mail.Flags;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.UIDFolder;
-import javax.mail.internet.MimeMessage;
-import javax.mail.search.SearchTerm;
+import jakarta.mail.Flags;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.UIDFolder;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.search.SearchTerm;
 
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import com.icegreen.greenmail.imap.ImapConstants;
@@ -135,6 +135,11 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     @Override
     public long getUidNext() {
         return nextUid.get();
+    }
+
+    @Override
+    public long getUIDNext() {
+        return -1;
     }
 
     @Override
@@ -447,6 +452,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
             return messages.toArray(new Message[messages.size()]);
         }
     }
+
 
     @Override
     public long getUID(Message message) {

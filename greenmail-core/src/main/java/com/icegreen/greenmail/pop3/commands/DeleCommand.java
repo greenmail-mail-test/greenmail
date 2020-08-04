@@ -12,7 +12,7 @@ import com.icegreen.greenmail.pop3.Pop3State;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.StoredMessage;
 
-import javax.mail.Flags;
+import jakarta.mail.Flags;
 import java.util.List;
 
 

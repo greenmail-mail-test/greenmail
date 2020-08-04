@@ -1,6 +1,6 @@
 package com.icegreen.greenmail.imap.commands;
 
-import javax.mail.Quota;
+import jakarta.mail.Quota;
 
 import com.icegreen.greenmail.imap.AuthorizationException;
 import com.icegreen.greenmail.imap.ImapRequestLineReader;

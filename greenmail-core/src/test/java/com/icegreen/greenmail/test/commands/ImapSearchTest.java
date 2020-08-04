@@ -7,10 +7,10 @@ package com.icegreen.greenmail.test.commands;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.mail.search.*;
+import jakarta.mail.*;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.search.*;
 
 import com.icegreen.greenmail.imap.commands.SearchKey;
 import com.icegreen.greenmail.junit.GreenMailRule;
@@ -220,9 +220,9 @@ public class ImapSearchTest {
 
     private void testSentDateTerms(Folder imapFolder, Message... m) throws Exception {
         //greater equals, returns all
-        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.GE, getSampleDate()), m[5]);
+        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.GE, getSampleDate()), m[0], m[1], m[2], m[3], m[4] ,m[5]);
         //greater than, does not return sample sent mail
-        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.GT, getSampleDate()));
+        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.GT, getSampleDate()), m[0], m[1], m[2], m[3], m[4]);
         //equals, only returns sample mail
         testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.EQ, getSampleDate()), m[5]);
         //not equals, does not return sample mail, but all other mails

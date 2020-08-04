@@ -12,7 +12,7 @@ import com.icegreen.greenmail.store.MessageFlags;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserManager;
 
-import javax.mail.Flags;
+import jakarta.mail.Flags;
 import java.util.List;
 
 /**

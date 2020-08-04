@@ -4,7 +4,7 @@ import com.icegreen.greenmail.junit.GreenMailRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMessage;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

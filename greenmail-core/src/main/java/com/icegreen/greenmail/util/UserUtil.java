@@ -2,7 +2,7 @@ package com.icegreen.greenmail.util;
 
 import com.icegreen.greenmail.base.GreenMailOperations;
 
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.InternetAddress;
 
 /**
  * Utility for managing users

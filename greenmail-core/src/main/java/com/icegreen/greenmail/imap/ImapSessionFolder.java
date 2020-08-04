@@ -7,12 +7,12 @@
 package com.icegreen.greenmail.imap;
 
 import java.util.*;
-import javax.mail.Flags;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.UIDFolder;
-import javax.mail.internet.MimeMessage;
-import javax.mail.search.SearchTerm;
+import jakarta.mail.Flags;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.UIDFolder;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.search.SearchTerm;
 
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import com.icegreen.greenmail.imap.commands.IdRange;
@@ -191,6 +191,11 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
         return folder.getUidNext();
     }
 
+    public long getUIDNext() {
+        return -1;
+    }
+
+
     @Override
     public int getUnseenCount() {
         return folder.getUnseenCount();
@@ -305,6 +310,7 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
     public long getUID(Message message) throws MessagingException {
         return unwrapUIDFolder().getUID(message);
     }
+
 
     static final class FlagUpdate {
         private int msn;
