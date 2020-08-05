@@ -187,8 +187,8 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
     }
 
     @Override
-    public long getUidNext() {
-        return folder.getUidNext();
+    public long getUidNext() { // TODO: Remove in 1.7
+        return getUIDNext();
     }
 
     @Override
@@ -304,6 +304,11 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
     @Override
     public long getUID(Message message) throws MessagingException {
         return unwrapUIDFolder().getUID(message);
+    }
+
+    @Override
+    public long getUIDNext() {
+        return folder.getUIDNext();
     }
 
     static final class FlagUpdate {

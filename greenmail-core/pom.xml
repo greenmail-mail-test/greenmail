@@ -21,7 +21,7 @@
     <!-- Compile scope (=default) -->
     <dependency>
       <groupId>com.sun.mail</groupId>
-      <artifactId>javax.mail</artifactId>
+      <artifactId>jakarta.mail</artifactId>
     </dependency>
     <dependency> <!-- SLF4J Core -->
       <groupId>org.slf4j</groupId>

@@ -133,8 +133,8 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     }
 
     @Override
-    public long getUidNext() {
-        return nextUid.get();
+    public long getUidNext() { // TODO: Remove in 1.7
+        return getUIDNext();
     }
 
     @Override
@@ -459,6 +459,11 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
             }
         }
         throw new IllegalStateException("No match found for " + message);
+    }
+
+    @Override
+    public long getUIDNext() {
+        return nextUid.get();
     }
 
 }

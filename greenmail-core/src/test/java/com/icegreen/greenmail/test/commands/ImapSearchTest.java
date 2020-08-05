@@ -219,14 +219,23 @@ public class ImapSearchTest {
     }
 
     private void testSentDateTerms(Folder imapFolder, Message... m) throws Exception {
+        // m0.sentDate : now()
+        // m1.sentDate : now()
+        // m2.sentDate : now()
+        // m3.sentDate : now()
+        // m4.sentDate : now()
+        // m5.sentDate : Fri Jan 01 00:00:00 CET 2010
+
+        final Date sampleDate = getSampleDate(); // Fri Jan 01 00:00:00 CET 2010
+
         //greater equals, returns all
-        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.GE, getSampleDate()), m[5]);
-        //greater than, does not return sample sent mail
-        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.GT, getSampleDate()));
+        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.GE, sampleDate), m);
+        //greater than, does not return sample sent mail m5
+        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.GT, sampleDate), m[0], m[1],m[2],m[3],m[4]);
         //equals, only returns sample mail
-        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.EQ, getSampleDate()), m[5]);
+        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.EQ, sampleDate), m[5]);
         //not equals, does not return sample mail, but all other mails
-        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.NE, getSampleDate()), m[0], m[1], m[2], m[3], m[4]);
+        testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.NE, sampleDate), m[0], m[1], m[2], m[3], m[4]);
         //less than (sample mail + 1 day), only returns sample mail
         testDateTerm(imapFolder, new SentDateTerm(ComparisonTerm.LT, getSampleDate(2)), m[5]);
         //less equal
@@ -280,7 +289,7 @@ public class ImapSearchTest {
     }
 
     /**
-     * Create the two messages with different recipients, etc. for testing and add them to the folder.
+     * Create messages in folder
      *
      * @param session Session to set on the messages
      * @param folder  Folder to add to
