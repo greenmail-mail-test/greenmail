@@ -79,10 +79,8 @@ public class GreenMailUtil {
 
     /**
      * Convenience method which creates a new {@link MimeMessage} from a string
-     *
-     * @throws MessagingException
      */
-    public static MimeMessage newMimeMessage(String mailString) throws MessagingException {
+    public static MimeMessage newMimeMessage(String mailString) {
         return newMimeMessage(EncodingUtil.toStream(mailString, EncodingUtil.CHARSET_EIGHT_BIT_ENCODING));
     }
 
