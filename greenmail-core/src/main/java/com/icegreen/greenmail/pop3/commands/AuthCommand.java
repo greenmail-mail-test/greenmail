@@ -6,9 +6,7 @@
  */
 package com.icegreen.greenmail.pop3.commands;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import com.icegreen.greenmail.pop3.Pop3Connection;
@@ -17,7 +15,7 @@ import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.util.EncodingUtil;
-import com.sun.mail.util.BASE64DecoderStream;
+import com.icegreen.greenmail.util.SaslMessage;
 
 /**
  * SASL : PLAIN
@@ -99,23 +97,27 @@ public class AuthCommand
         }
 
         // authorization-id\0authentication-id\0passwd
-        final BASE64DecoderStream stream = new BASE64DecoderStream(
-                new ByteArrayInputStream(initialResponse.getBytes(StandardCharsets.UTF_8)));
-        readTillNullChar(stream); // authorizationId Not used
-        String authenticationId = readTillNullChar(stream);
+        final SaslMessage saslMessage;
+        try {
+            saslMessage = SaslMessage.parse(EncodingUtil.decodeBase64(initialResponse));
+        } catch(IllegalArgumentException ex) { // Invalid Base64
+            log.error("Expected base64 encoding but got <"+initialResponse+">", ex); /* GreenMail is just a test server */
+            conn.println("-ERR Authentication failed, expected base64 encoding : " + ex.getMessage() );
+            return;
+        }
 
         GreenMailUser user;
         try {
-            user = state.getUser(authenticationId);
+            user = state.getUser(saslMessage.getAuthcid());
             state.setUser(user);
         } catch (UserException e) {
-            log.error("Can not get user <" + authenticationId + ">", e);
+            log.error("Can not get user <" + saslMessage.getAuthcid() + ">", e);
             conn.println("-ERR Authentication failed: " + e.getMessage() /* GreenMail is just a test server */);
             return;
         }
 
         try {
-            state.authenticate(readTillNullChar(stream));
+            state.authenticate(saslMessage.getPasswd());
             conn.println("+OK");
         } catch (UserException e) {
             log.error("Can not authenticate using user <" + user.getLogin() + ">", e);
@@ -123,17 +125,6 @@ public class AuthCommand
         } catch (FolderException e) {
             log.error("Can not authenticate using user " + user + ", internal error", e);
             conn.println("-ERR Authentication failed, internal error: " + e.getMessage());
-        }
-    }
-
-
-    @Deprecated // Remove once JDK baseline is 1.8
-    private String readTillNullChar(BASE64DecoderStream stream) {
-        try {
-            return EncodingUtil.readTillNullChar(stream);
-        } catch (IOException e) {
-            log.error("Can not decode", e);
-            return null;
         }
     }
 }

@@ -50,7 +50,8 @@ public class POP3CommandTest {
 
             // Invalid pwd
             printStream.print("AUTH PLAIN dGVzdAB0ZXN0AHRlc3RwY" + CRLF /* test / test / <invalid> */);
-            assertThat(reader.readLine()).isEqualTo("-ERR Authentication failed: Invalid password");
+            assertThat(reader.readLine()).isEqualTo(
+                    "-ERR Authentication failed, expected base64 encoding : Last unit does not have enough valid bits");
 
             // Successful auth
             printStream.print("AUTH PLAIN dGVzdAB0ZXN0AHRlc3RwYXNz" + CRLF /* test / test / <invalid> */);

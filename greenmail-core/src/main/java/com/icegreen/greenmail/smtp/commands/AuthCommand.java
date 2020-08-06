@@ -6,9 +6,7 @@
  */
 package com.icegreen.greenmail.smtp.commands;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import com.icegreen.greenmail.smtp.SmtpConnection;
@@ -16,7 +14,7 @@ import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpState;
 import com.icegreen.greenmail.user.UserManager;
 import com.icegreen.greenmail.util.EncodingUtil;
-import com.sun.mail.util.BASE64DecoderStream;
+import com.icegreen.greenmail.util.SaslMessage;
 
 
 /**
@@ -84,7 +82,7 @@ public class AuthCommand
             initialResponse = commandParts[2];
         }
 
-        if (authenticate(manager.getUserManager(), initialResponse)) {
+        if (authenticate(manager.getUserManager(), EncodingUtil.decodeBase64(initialResponse))) {
             conn.setAuthenticated(true);
             conn.send(AUTH_SUCCEDED);
         } else {
@@ -114,22 +112,8 @@ public class AuthCommand
 
     private boolean authenticate(UserManager userManager, String value) {
         // authorization-id\0authentication-id\0passwd
-        final BASE64DecoderStream stream = new BASE64DecoderStream(
-                new ByteArrayInputStream(value.getBytes(StandardCharsets.UTF_8)));
-        readTillNullChar(stream); // authorizationId Not used
-        String authenticationId = readTillNullChar(stream);
-        String passwd = readTillNullChar(stream);
-        return userManager.test(authenticationId, passwd);
-    }
-
-    @Deprecated // Remove once JDK baseline is 1.8
-    private String readTillNullChar(BASE64DecoderStream stream) {
-        try {
-            return EncodingUtil.readTillNullChar(stream);
-        } catch (IOException e) {
-            log.error("Can not decode", e);
-            return null;
-        }
+        final SaslMessage saslMessage = SaslMessage.parse(value);
+        return userManager.test(saslMessage.getAuthcid(), saslMessage.getPasswd());
     }
 
     private static String getValuesWsSeparated() {
