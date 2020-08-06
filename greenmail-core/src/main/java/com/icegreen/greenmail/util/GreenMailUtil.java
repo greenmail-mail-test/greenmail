@@ -34,18 +34,8 @@ public class GreenMailUtil {
     private static final int GENERATE_SET_SIZE = GENERATE_SET.length();
     private static final Random RANDOM = new Random();
 
-    private static GreenMailUtil instance = new GreenMailUtil();
-
     private GreenMailUtil() {
         //empty
-    }
-
-    /**
-     * @deprecated As of 1.5 and to be removed in 1.6. No need to instantiate static helper class
-     */
-    @Deprecated
-    public static GreenMailUtil instance() {
-        return instance;
     }
 
     /**

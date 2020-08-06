@@ -17,7 +17,7 @@ import com.icegreen.greenmail.server.AbstractServer;
  * @since Apr 16, 2005
  */
 public class Retriever implements AutoCloseable {
-    private AbstractServer server;
+    private final AbstractServer server;
     private Store store;
 
     /**
@@ -62,22 +62,10 @@ public class Retriever implements AutoCloseable {
             fp.add(UIDFolder.FetchProfileItem.UID);
             rootFolder.fetch(rootFolder.getMessages(), fp);
 
-            return messages.toArray(new Message[messages.size()]);
+            return messages.toArray(new Message[0]);
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * Closes the underlying store.
-     * Make sure you finished processing any fetched messages before closing!
-     *
-     * @since 1.5
-     * @deprecated use {@link #close()} instead.
-     */
-    @Deprecated
-    public void logout() {
-        close();
     }
 
     /**
