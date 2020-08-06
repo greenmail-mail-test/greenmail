@@ -76,15 +76,6 @@ public interface GreenMailOperations {
     MimeMessage[] getReceivedMessages();
 
     /**
-     * @deprecated As of 1.5 and to be removed in 1.6. Use {@link #getReceivedMessagesForDomain(String domain)} instead.
-     *
-     * @param domain the domain
-     * @return Returns all received messages for given domain.
-     */
-    @Deprecated
-    MimeMessage[] getReceviedMessagesForDomain(String domain);
-
-    /**
      * Gets all messages containing given domain.
      *
      * @param domain the domain, such as 'icegreen.com' or 'some.example.com'

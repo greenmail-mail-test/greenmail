@@ -225,15 +225,6 @@ public class GreenMail extends ConfiguredGreenMail {
         return ret;
     }
 
-    /**
-     * @deprecated As of 1.5 and to be removed in 1.6. Use {@link #getReceivedMessagesForDomain(String domain)} instead.
-     */
-    @Deprecated
-    @Override
-    public MimeMessage[] getReceviedMessagesForDomain(String domain) {
-        return getReceivedMessagesForDomain(domain);
-    }
-
     @Override
     public MimeMessage[] getReceivedMessagesForDomain(String domain) {
         List<StoredMessage> msgs = managers.getImapHostManager().getAllMessages();
@@ -301,13 +292,4 @@ public class GreenMail extends ConfiguredGreenMail {
             folder.deleteAllMessages();
         }
     }
-
-    /**
-     * @deprecated As of 1.5 and to be removed in 1.6. No need to instantiate static helper class
-     */
-    @Deprecated
-    public GreenMailUtil util() {
-        return GreenMailUtil.instance();
-    }
-
 }
