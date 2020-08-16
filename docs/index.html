@@ -53,7 +53,7 @@
         <p class="lead">Open Source suite of lightweight and sand boxed email servers supporting SMTP, POP3 and
             IMAP.</p>
 
-        <p class="version">Currently <a href="https://github.com/greenmail-mail-test/greenmail/releases">v1.5.14</a></p>
+        <p class="version">Currently <a href="https://github.com/greenmail-mail-test/greenmail/releases">v1.6.0</a></p>
     </div>
 </div>
 
@@ -96,6 +96,7 @@
                 <a class="nav-item nav-link nav-pills" href="#download" data-toggle="collapse"
                    data-target="#nav_download">Download</a>
                 <nav id="nav_download" class="nav nav-pills flex-column collapse" data-parent="#sidebar">
+                    <a class="nav-item nav-link ml-3" href="#download_1_6_0">1.6.0</a>
                     <a class="nav-item nav-link ml-3" href="#download_1_5_14">1.5.14</a>
                     <a class="nav-item nav-link ml-3" href="#download_1_5_13">1.5.13</a>
                     <a class="nav-item nav-link ml-3" href="#download_1_5_12">1.5.12</a>
@@ -818,10 +819,10 @@ java -Dgreenmail.smtp.hostname=127.0.0.1 -Dgreenmail.smtp.port=4025 \
 
                 <h4>Using docker to run the image</h4>
                 <pre><code class="language-bash"><!-- @formatter:off -->
-docker pull greenmail/standalone:1.5.14
+docker pull greenmail/standalone:1.6.0
 docker run -t -i -p 3025:3025 -p 3110:3110 -p 3143:3143 \
                  -p 3465:3465 -p 3993:3993 -p 3995:3995 \
-                 greenmail/standalone:1.5.14
+                 greenmail/standalone:1.6.0
                 </code></pre><!-- @formatter:on -->
                 <div class="alert alert-info" role="alert">
                     You might want to modify your mapped ports
@@ -989,6 +990,50 @@ public final GreenMailRule greenMail = new GreenMailRule(ServerSetup.verbose(Ser
                 <p>Docker images are availalbe on <a href="https://hub.docker.com/u/greenmail/">Docker Hub GreenMail
                     Repository</a>,
                     such as for the GreenMail standalone runner.</p>
+                <h4 id="download_1_6_0" class="anchor"><a
+                        href="https://github.com/greenmail-mail-test/greenmail/releases" title="1.6.0 Release Notes">1.6.0</a>
+                    - August 16th, 2020</h4>
+
+                <div class="alert alert-info" role="alert">
+                    <p>This version requires JDK 1.8+ and Jakarta Mail 1.6+ .</p>
+                </div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>GAV</td>
+                    </tr>
+                    </thead>
+                    <tr>
+                        <td>GreenMail Core</td>
+                        <td>
+                            <a href="https://repo1.maven.org/maven2/com/icegreen/greenmail/1.6.0/greenmail-1.6.0.jar">com.icegreen:greenmail:1.6.0</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>GreenMail Standalone</td>
+                        <td>
+                            <a href="https://repo1.maven.org/maven2/com/icegreen/greenmail-standalone/1.6.0/greenmail-standalone-1.6.0.jar">com.icegreen:greenmail-standalone:1.6.0</a>
+                            (<a href="https://hub.docker.com/r/greenmail/standalone/">Docker Hub</a>)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>GreenMail Webapp</td>
+                        <td>
+                            <a href="https://repo1.maven.org/maven2/com/icegreen/greenmail-webapp/1.6.0/greenmail-webapp-1.6.0.war">com.icegreen:greenmail-webapp:1.6.0:war</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>GreenMail Spring</td>
+                        <td>
+                            <a href="https://repo1.maven.org/maven2/com/icegreen/greenmail-spring/1.6.0/greenmail-spring-1.6.0.jar">com.icegreen:greenmail-spring:1.6.0</a>
+                        </td>
+                    </tr>
+                </table>
+                <p>Available via Maven repository or as a <a
+                        href="https://github.com/greenmail-mail-test/greenmail/archive/release-1.6.0.zip">ZIP from
+                    GitHub</a>.
+
                 <h4 id="download_1_5_14" class="anchor"><a
                         href="https://github.com/greenmail-mail-test/greenmail/releases" title="1.5.14 Release Notes">1.5.14</a>
                     - July 4th, 2020</h4>
