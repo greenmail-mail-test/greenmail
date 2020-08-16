@@ -73,14 +73,10 @@ Development [![Build status](https://circleci.com/gh/greenmail-mail-test/greenma
 Roadmap
 -------
 
-* 1.5.x (current)
+* [1.6](https://github.com/greenmail-mail-test/greenmail/issues?q=is%3Aopen+is%3Aissue+milestone%3A1.6) (current)
   * Bugfix / maintenance
-* [1.6](https://github.com/greenmail-mail-test/greenmail/issues?q=is%3Aopen+is%3Aissue+milestone%3A1.6)
-  * [JakartaMail 1.6.x](https://github.com/eclipse-ee4j/mail/releases)
-  * Deprecations
-    * Removed JBoss SAR
-    * Deprecated/extracted GreenMailRule to new submodule greenmail-junit4
-  * Junit 5 (greenmail-junit5)
+* [1.7](https://github.com/greenmail-mail-test/greenmail/milestone/6)  
+  * Deprecations (no GreenMailRule in greenmail-core, ...)
 * [2.x](https://github.com/greenmail-mail-test/greenmail/milestone/3)
   * JakartaMail 2.x
 
