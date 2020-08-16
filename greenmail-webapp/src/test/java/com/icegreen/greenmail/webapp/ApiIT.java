@@ -1,7 +1,6 @@
 package com.icegreen.greenmail.webapp;
 
 import java.io.File;
-import java.util.regex.Pattern;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
