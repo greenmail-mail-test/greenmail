@@ -107,8 +107,7 @@ class ListCommand extends AuthenticatedStateCommand {
                 session.getUser().getQualifiedMailboxName();
         int prefixLength = personalNamespace.length();
 
-        for (final Object mailboxe : mailboxes) {
-            MailFolder folder = (MailFolder) mailboxe;
+        for (final MailFolder folder : mailboxes) {
             StringBuilder message = new StringBuilder("(");
             if (!folder.isSelectable()) {
                 message.append("\\Noselect");

@@ -6,14 +6,13 @@
  */
 package com.icegreen.greenmail.smtp.commands;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.icegreen.greenmail.mail.MailAddress;
 import com.icegreen.greenmail.smtp.SmtpConnection;
 import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpState;
-
-import javax.mail.internet.AddressException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -21,8 +20,12 @@ import java.util.regex.Pattern;
  * <p/>
  * <p/>
  * The spec is at <a
- * href="http://asg.web.cmu.edu/rfc/rfc2821.html#sec-4.1.1.3">
- * http://asg.web.cmu.edu/rfc/rfc2821.html#sec-4.1.1.3</a>.
+ * href="https://tools.ietf.org/html/rfc2821.html#section-4.1.1.3">
+ * https://tools.ietf.org/html/rfc2821.html#section-4.1.1.3</a>.
+ * </p>
+ * <p>
+ * "RCPT TO:" ("<Postmaster@" domain ">" / "<Postmaster>" / Forward-Path)
+ *            [SP Rcpt-parameters] CRLF
  * </p>
  */
 public class RcptCommand
@@ -35,30 +38,26 @@ public class RcptCommand
                         SmtpManager manager, String commandLine) {
         Matcher m = param.matcher(commandLine);
 
-        try {
-            if (m.matches()) {
-                if (state.getMessage().getReturnPath() != null) {
-                    String to = m.group(1);
+        if (m.matches()) {
+            if (state.getMessage().getReturnPath() != null) {
+                String to = m.group(1);
 
-                    MailAddress toAddr = new MailAddress(to);
+                MailAddress toAddr = new MailAddress(to);
 
-                    String err = manager.checkRecipient(state, toAddr);
-                    if (err != null) {
-                        conn.send(err);
+                String err = manager.checkRecipient(state, toAddr);
+                if (err != null) {
+                    conn.send(err);
 
-                        return;
-                    }
-
-                    state.getMessage().addRecipient(toAddr);
-                    conn.send("250 OK");
-                } else {
-                    conn.send("503 MAIL must come before RCPT");
+                    return;
                 }
+
+                state.getMessage().addRecipient(toAddr);
+                conn.send("250 OK");
             } else {
-                conn.send("501 Required syntax: 'RCPT TO:<email@host>'");
+                conn.send("503 MAIL must come before RCPT");
             }
-        } catch (AddressException e) {
-            conn.send("501 Malformed email address. Use form email@host");
+        } else {
+            conn.send("501 Required syntax: 'RCPT TO:<email@host>'");
         }
     }
 }

@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 class StoredMessageSorter implements Comparator<StoredMessage> {
 
-    private SortTerm sortTerm;
+    private final SortTerm sortTerm;
 
     private final AtomicBoolean reverse = new AtomicBoolean();
 

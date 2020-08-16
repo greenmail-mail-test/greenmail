@@ -129,7 +129,7 @@ public class InMemoryStore
 
     @Override
     public Collection<MailFolder> getChildren(MailFolder parent) {
-        return Collections.<MailFolder>unmodifiableCollection(((HierarchicalFolder) parent).getChildren());
+        return Collections.unmodifiableCollection(((HierarchicalFolder) parent).getChildren());
     }
 
     @Override
@@ -166,8 +166,7 @@ public class InMemoryStore
             // If the parent from the search pattern doesn't exist,
             // return empty.
             if (parent != null) {
-                for (final Object o : parent.getChildren()) {
-                    HierarchicalFolder child = (HierarchicalFolder) o;
+                for (final HierarchicalFolder child : parent.getChildren()) {
                     if (child.getName().startsWith(matchPattern)) {
                         mailboxes.add(child);
 
@@ -208,7 +207,7 @@ public class InMemoryStore
             }
         }
         updateQuotas(collectedQuotas, qualifiedRootPrefix);
-        return collectedQuotas.toArray(new Quota[collectedQuotas.size()]);
+        return collectedQuotas.toArray(new Quota[0]);
     }
 
     private void updateQuotas(final Set<Quota> quotas,

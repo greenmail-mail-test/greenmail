@@ -6,14 +6,13 @@
  */
 package com.icegreen.greenmail.smtp.commands;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.icegreen.greenmail.mail.MailAddress;
 import com.icegreen.greenmail.smtp.SmtpConnection;
 import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpState;
-
-import javax.mail.internet.AddressException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -21,12 +20,14 @@ import java.util.regex.Pattern;
  * <p/>
  * <p/>
  * The spec is at <a
- * href="http://asg.web.cmu.edu/rfc/rfc2821.html#sec-4.1.1.2">
- * http://asg.web.cmu.edu/rfc/rfc2821.html#sec-4.1.1.2</a>.
+ * href="https://tools.ietf.org/html/rfc2821.html#section-4.1.1.2">
+ * https://tools.ietf.org/html/rfc2821.html#section-4.1.1.2</a>
  * </p>
  */
 public class MailCommand
         extends SmtpCommand {
+    // "MAIL FROM:" ("<>" / Reverse-Path)
+    //                      [SP Mail-parameters] CRLF
     static final Pattern PARAM = Pattern.compile("MAIL FROM:\\s?<([^>]*)>.*",
             Pattern.CASE_INSENSITIVE);
 
@@ -34,31 +35,27 @@ public class MailCommand
     public void execute(SmtpConnection conn, SmtpState state,
                         SmtpManager manager, String commandLine) {
         Matcher m = PARAM.matcher(commandLine);
-        try {
-            if (m.matches()) {
-                String from = m.group(1);
+        if (m.matches()) {
+            String from = m.group(1);
 
-                if (!from.isEmpty()) {
-                    MailAddress fromAddr = new MailAddress(from);
-                    String err = manager.checkSender(state, fromAddr);
-                    if (err != null) {
-                        conn.send(err);
-                        return;
-                    }
-                    state.clearMessage();
-                    state.getMessage().setReturnPath(fromAddr);
-                    conn.send("250 OK");
-                } else {
-                    state.clearMessage();
-                    state.getMessage();
-                    conn.send("250 OK");
+            if (!from.isEmpty()) {
+                MailAddress fromAddr = new MailAddress(from);
+                String err = manager.checkSender(state, fromAddr);
+                if (err != null) {
+                    conn.send(err);
+                    return;
                 }
-
+                state.clearMessage();
+                state.getMessage().setReturnPath(fromAddr);
+                conn.send("250 OK");
             } else {
-                conn.send("501 Required syntax: 'MAIL FROM:<email@host>'");
+                state.clearMessage();
+                state.getMessage();
+                conn.send("250 OK");
             }
-        } catch (AddressException e) {
-            conn.send("501 Malformed email address. Use form email@host");
+
+        } else {
+            conn.send("501 Required syntax: 'MAIL FROM:<email@host>'");
         }
     }
 }

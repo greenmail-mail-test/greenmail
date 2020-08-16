@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.SocketException;
 
 
 public class Pop3Connection {
@@ -47,8 +46,7 @@ public class Pop3Connection {
         in = new BufferedReader(new InputStreamReader(i));
     }
 
-    private void configureSocket(Socket socket)
-            throws SocketException {
+    private void configureSocket(Socket socket) {
         this.socket = socket;
         clientAddress = this.socket.getInetAddress();
     }

@@ -5,7 +5,6 @@ import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.StoredMessage;
 
-import java.nio.charset.CharacterCodingException;
 import java.util.*;
 
 /**
@@ -20,7 +19,7 @@ class SortCommand extends SelectedStateCommand implements UidEnabledCommand {
     public static final String NAME = "SORT";
     public static final String ARGS = "(<sort criteria>) <charset specification> <search term>";
 
-    private SortCommandParser sortCommandParser = new SortCommandParser();
+    private final SortCommandParser sortCommandParser = new SortCommandParser();
 
     SortCommand() {
         super(NAME, ARGS);
@@ -42,9 +41,9 @@ class SortCommand extends SelectedStateCommand implements UidEnabledCommand {
         final SortTerm sortTerm;
         try {
             sortTerm = sortCommandParser.sortTerm(request);
-        } catch (CharacterCodingException e) {
+        } catch (ProtocolException e) {
             // Not support => return "BAD"
-            response.commandError("Sort/search command does not support charset "+e.getMessage());
+            response.commandError("Sort/search command failed to parse: "+e.getMessage());
             return;
         }
 
@@ -56,7 +55,7 @@ class SortCommand extends SelectedStateCommand implements UidEnabledCommand {
             messages.add(folder.getMessage(uid));
         }
 
-        Collections.sort(messages, new StoredMessageSorter(sortTerm));
+        messages.sort(new StoredMessageSorter(sortTerm));
 
         StringBuilder idList = new StringBuilder();
         for (int i = 0; i < messages.size(); i++) {

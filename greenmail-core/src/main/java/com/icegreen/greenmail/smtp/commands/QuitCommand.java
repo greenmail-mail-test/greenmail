@@ -16,9 +16,10 @@ import com.icegreen.greenmail.smtp.SmtpState;
  * <p/>
  * <p/>
  * The spec is at <a
- * href="http://asg.web.cmu.edu/rfc/rfc2821.html#sec-4.1.1.10">
- * http://asg.web.cmu.edu/rfc/rfc2821.html#sec-4.1.1.10</a>.
+ * https://tools.ietf.org/html/rfc2821.html#section-4.1.1.10">
+ * https://tools.ietf.org/html/rfc2821.html#section-4.1.1.10</a>.
  * </p>
+ * <p>"QUIT" CRLF</p>
  */
 public class QuitCommand
         extends SmtpCommand {

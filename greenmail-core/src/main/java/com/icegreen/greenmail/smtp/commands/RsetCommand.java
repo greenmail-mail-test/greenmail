@@ -16,8 +16,8 @@ import com.icegreen.greenmail.smtp.SmtpState;
  * <p/>
  * <p/>
  * The spec is at <a
- * href="http://asg.web.cmu.edu/rfc/rfc2821.html#sec-4.1.1.5">
- * http://asg.web.cmu.edu/rfc/rfc2821.html#sec-4.1.1.5</a>.
+ * href="https://tools.ietf.org/html/rfc2821.html#section-4.1.1.5">
+ * https://tools.ietf.org/html/rfc2821.html#section-4.1.1.5</a>.
  * </p>
  */
 public class RsetCommand

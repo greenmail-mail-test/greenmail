@@ -23,9 +23,9 @@ import java.net.Socket;
  */
 public class ImapHandler implements ImapConstants, ProtocolHandler {
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    private ImapRequestHandler requestHandler = new ImapRequestHandler();
-    private ImapSession session;
+    private final ImapRequestHandler requestHandler = new ImapRequestHandler();
     private final Object closeMonitor = new Object();
+    private ImapSession session;
 
     /**
      * The TCP/IP socket over which the IMAP interaction
@@ -36,7 +36,7 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
     private ImapResponse response;
 
     UserManager userManager;
-    private ImapHostManager imapHost;
+    private final ImapHostManager imapHost;
 
     public ImapHandler(UserManager userManager, ImapHostManager imapHost, Socket socket) {
         this.userManager = userManager;
@@ -72,7 +72,6 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
                 // Loop ...
             }
         } catch (Exception e) {
-            log.error("Can not handle IMAP connection", e);
             throw new IllegalStateException("Can not handle IMAP connection", e);
         } finally {
             close();

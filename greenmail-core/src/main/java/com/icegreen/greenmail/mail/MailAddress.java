@@ -7,7 +7,6 @@
 package com.icegreen.greenmail.mail;
 
 import java.io.UnsupportedEncodingException;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeUtility;
 
@@ -17,9 +16,7 @@ public class MailAddress {
     String email;
     String name;
 
-    public MailAddress(String str)
-            throws AddressException {
-
+    public MailAddress(String str) {
         // Decoding the mail address in
         // case it contains non us-ascii characters
         String decoded = decodeStr(str);
