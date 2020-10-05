@@ -99,8 +99,8 @@ workflows:
   build:
     jobs:
       - "openjdk-8"
-        context:
-          - docker
+          context:
+            - docker
       - "openjdk-11"
-        context:
-          - docker
+          context:
+            - docker
