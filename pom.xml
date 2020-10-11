@@ -1,6 +1,7 @@
 <?xml version='1.0'?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <name>== GreenMail ==</name>
   <description>GreenMail - Email Test Servers</description>
@@ -345,7 +346,6 @@
     <slf4j.version>1.7.30</slf4j.version>
     <spring.version>4.3.27.RELEASE</spring.version>
     <junit5.version>5.6.2</junit5.version>
-    <jersey.version>2.31</jersey.version>
     <jetty.version>9.4.32.v20200930</jetty.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -395,7 +395,7 @@
       </dependency>
       <dependency>
         <groupId>com.sun.activation</groupId>
-		<artifactId>jakarta.activation</artifactId>
+        <artifactId>jakarta.activation</artifactId>
         <version>1.2.1</version>
       </dependency>
       <dependency>
@@ -430,29 +430,11 @@
         <version>3.1.0</version>
       </dependency>
       <dependency>
-        <groupId>org.glassfish.jersey.core</groupId>
-        <artifactId>jersey-server</artifactId>
-        <version>${jersey.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.glassfish.jersey.containers</groupId>
-        <artifactId>jersey-container-servlet-core</artifactId>
-        <version>${jersey.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.glassfish.jersey.containers</groupId>
-        <artifactId>jersey-container-jetty-http</artifactId>
-        <version>${jersey.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.glassfish.jersey.media</groupId>
-        <artifactId>jersey-media-json-jackson</artifactId>
-        <version>${jersey.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.glassfish.jersey.inject</groupId>
-        <artifactId>jersey-hk2</artifactId>
-        <version>${jersey.version}</version>
+        <groupId>org.glassfish.jersey</groupId>
+        <artifactId>jersey-bom</artifactId>
+        <version>2.32</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
 
       <!-- Spring -->
@@ -506,9 +488,9 @@
         <version>2.2</version>
       </dependency>
       <dependency>
-         <groupId>org.assertj</groupId>
-         <artifactId>assertj-core</artifactId>
-         <version>3.16.1</version>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>3.16.1</version>
       </dependency>
       <!-- GreenMail Webapp test scoped-->
       <dependency>
