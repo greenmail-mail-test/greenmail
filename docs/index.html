@@ -675,13 +675,24 @@ java [OPTIONS] -jar greenmail-standalone.jar
                         <td class="text-nowrap">-Dgreenmail.users=user1[, ..., userN]</td>
                         <td>Configures the user mail boxes including password.
                             <p>The list of users is comma separated.</p>
-                            <p>A single user is of format <i>logon</i>:<i>password</i>[@<i>domain</i>] , where the <i>domain</i>
+                            <p>A single user is of format <i>local-part</i>:<i>password</i>[@<i>domain</i>] , where the <i>domain</i>
                                 part is optional.</p>
                             <div class="alert alert-warning" role="alert">
                                 Note: Domain must be DNS resolvable!
                             </div>
                             <div class="bs-example">
                                 <code>-Dgreenmail.users=foo:pwd@bar.com,jabber:wocky@monster.local,foo1:bar</code>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-nowrap">-Dgreenmail.users.login=(local_part|email)<br><mark><b>Requires 1.6.1</b></mark></td>
+                        <td>Configures if local_part (default) or full email should be used for login when configuring users via <i>-Dgreenmail.users=foo@bar.com,...</i>.
+                            <div class="alert alert-warning" role="alert">
+                                Note: Only has effect if configured user is of type email (i.e. contains '@')
+                            </div>
+                            <div class="bs-example">
+                                <code>-Dgreenmail.users.login=email</code>
                             </div>
                         </td>
                     </tr>
