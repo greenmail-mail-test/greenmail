@@ -2,7 +2,7 @@ package com.icegreen.greenmail.configuration;
 
 import java.util.Arrays;
 import java.util.Properties;
-import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 
 /**
  * Creates GreenMailConfiguration from properties.
@@ -42,9 +42,13 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
      * Configures how user login should be extracted from user of pattern local-part:password@domain .
      */
     private enum UsersLoginConfigurationType {
-        /** Use local part of email (default) */
+        /**
+         * Use local part of email (default)
+         */
         LOCAL_PART,
-        /** Use email for login */
+        /**
+         * Use email for login
+         */
         EMAIL
     }
 
@@ -57,7 +61,7 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
     public GreenMailConfiguration build(Properties properties) {
         GreenMailConfiguration configuration = new GreenMailConfiguration();
         String usersParam = properties.getProperty(GREENMAIL_USERS);
-        BiFunction<String, String, String> loginBuilder = configureLoginBuilder(properties);
+        BinaryOperator<String> loginBuilder = configureLoginBuilder(properties);
         if (null != usersParam) {
             String[] usersArray = usersParam.split(",");
             for (String user : usersArray) {
@@ -71,7 +75,7 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
         return configuration;
     }
 
-    private BiFunction<String, String, String> configureLoginBuilder(Properties properties) {
+    private BinaryOperator<String> configureLoginBuilder(Properties properties) {
         String loginType = properties.getProperty(GREENMAIL_USERS_LOGIN);
         if (UsersLoginConfigurationType.EMAIL.name().equalsIgnoreCase(loginType)) {
             return this::buildEmailLogin;
@@ -89,7 +93,7 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
         return localPart;
     }
 
-    protected void extractAndAddUser(GreenMailConfiguration configuration, BiFunction<String, String, String> buildLogin, String user) {
+    protected void extractAndAddUser(GreenMailConfiguration configuration, BinaryOperator<String> buildLogin, String user) {
         // login:pwd@domain
         String[] userParts = user.split(":|@");
         switch (userParts.length) {

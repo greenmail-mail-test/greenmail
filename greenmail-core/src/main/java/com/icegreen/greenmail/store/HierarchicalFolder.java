@@ -34,13 +34,13 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     }
 
     private final StoredMessageCollection mailMessages = new ListBasedStoredMessageCollection();
-    private final List<FolderListener> _mailboxListeners = Collections.synchronizedList(new ArrayList<FolderListener>());
+    private final List<FolderListener> _mailboxListeners = Collections.synchronizedList(new ArrayList<>());
     protected String name;
-    private final Collection<HierarchicalFolder> children = new CopyOnWriteArrayList<HierarchicalFolder>();
+    private final Collection<HierarchicalFolder> children = new CopyOnWriteArrayList<>();
     private HierarchicalFolder parent;
     private boolean isSelectable = false;
-    private AtomicLong nextUid = new AtomicLong(1);
-    private long uidValidity;
+    private final AtomicLong nextUid = new AtomicLong(1);
+    private final long uidValidity;
 
     protected HierarchicalFolder(HierarchicalFolder parent, String name) {
         this.name = name;
