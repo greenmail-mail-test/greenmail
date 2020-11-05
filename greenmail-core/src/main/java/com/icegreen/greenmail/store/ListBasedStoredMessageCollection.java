@@ -1,7 +1,7 @@
 /* -------------------------------------------------------------------
-* This software is released under the Apache license 2.0
-* -------------------------------------------------------------------
-*/
+ * This software is released under the Apache license 2.0
+ * -------------------------------------------------------------------
+ */
 package com.icegreen.greenmail.store;
 
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
@@ -14,7 +14,7 @@ import java.util.*;
  * @author Raimund Klein <raimund.klein@gmx.de>
  */
 public class ListBasedStoredMessageCollection implements StoredMessageCollection {
-    private final List<StoredMessage> mailMessages = Collections.synchronizedList(new ArrayList<StoredMessage>());
+    private final List<StoredMessage> mailMessages = Collections.synchronizedList(new ArrayList<>());
 
     @Override
     public int size() {
@@ -42,9 +42,7 @@ public class ListBasedStoredMessageCollection implements StoredMessageCollection
     }
 
     private void deleteMessage(int msn) {
-        synchronized (mailMessages) {
-            mailMessages.remove(msn - 1); // input is 1 based index
-        }
+        mailMessages.remove(msn - 1); // input is 1 based index
     }
 
     @Override
@@ -90,10 +88,7 @@ public class ListBasedStoredMessageCollection implements StoredMessageCollection
 
     @Override
     public List<StoredMessage> getMessages() {
-        synchronized (mailMessages) {
-            // Return new list since we don't want to give the caller access to the internal list
-            return new ArrayList<>(mailMessages);
-        }
+        return Collections.unmodifiableList(mailMessages);
     }
 
     @Override
@@ -119,7 +114,7 @@ public class ListBasedStoredMessageCollection implements StoredMessageCollection
             for (int i = mailMessages.size() - 1; i >= 0; i--) {
                 StoredMessage message = mailMessages.get(i);
                 if (message.isSet(Flags.Flag.DELETED) &&
-                        (idRanges == null || IdRange.containsUid(idRanges, message.getUid()))) {
+                    (idRanges == null || IdRange.containsUid(idRanges, message.getUid()))) {
                     expungeMessage(i + 1, folderListeners); // MSNs start counting at 1
                 }
             }

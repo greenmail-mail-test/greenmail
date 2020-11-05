@@ -10,6 +10,7 @@ import com.icegreen.greenmail.store.*;
 import com.icegreen.greenmail.user.GreenMailUser;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * An initial implementation of an ImapHost. By default, uses,
@@ -21,8 +22,8 @@ import java.util.*;
  */
 public class ImapHostManagerImpl
         implements ImapHostManager, ImapConstants {
-    private Store store;
-    private MailboxSubscriptions subscriptions;
+    private final Store store;
+    private final MailboxSubscriptions subscriptions;
 
     /**
      * Hack constructor which creates an in-memory store, and creates a console logger.
@@ -61,8 +62,7 @@ public class ImapHostManagerImpl
     @Override
     public MailFolder getFolder(GreenMailUser user, String mailboxName) {
         String name = getQualifiedMailboxName(user, mailboxName);
-        MailFolder folder = store.getMailbox(name);
-        return checkViewable(folder);
+        return store.getMailbox(name);
     }
 
     @Override
@@ -72,11 +72,6 @@ public class ImapHostManagerImpl
         if (mustExist && (folder == null)) {
             throw new FolderException("No such folder : "+mailboxName);
         }
-        return folder;
-    }
-
-    private MailFolder checkViewable(MailFolder folder) {
-        // TODO implement this.
         return folder;
     }
 
@@ -143,7 +138,7 @@ public class ImapHostManagerImpl
      */
     @Override
     public void deleteMailbox(GreenMailUser user, String mailboxName)
-            throws FolderException, AuthorizationException {
+            throws FolderException {
         MailFolder toDelete = getFolder(user, mailboxName, true);
         if (store.getChildren(toDelete).isEmpty()) {
             toDelete.deleteAllMessages();
@@ -166,7 +161,7 @@ public class ImapHostManagerImpl
     public void renameMailbox(GreenMailUser user,
                               String oldMailboxName,
                               String newMailboxName)
-            throws FolderException, AuthorizationException {
+            throws FolderException {
 
         MailFolder existingFolder = getFolder(user, oldMailboxName, true);
 
@@ -224,14 +219,10 @@ public class ImapHostManagerImpl
         String qualifiedPattern = getQualifiedMailboxName(user, mailboxPattern);
 
         for (MailFolder folder : store.listMailboxes(qualifiedPattern)) {
-            // TODO check subscriptions.
             if (subscribedOnly && !subscriptions.isSubscribed(user, folder)) {
                 // if not subscribed
                 folder = null;
             }
-
-            // Sets the store to null if it's not viewable.
-            folder = checkViewable(folder);
 
             if (folder != null) {
                 mailboxes.add(folder);
@@ -298,7 +289,7 @@ public class ImapHostManagerImpl
      * TODO persist
      */
     private static class MailboxSubscriptions {
-        private Map<String, List<String>> userSubs = new HashMap<>();
+        private final Map<String, List<String>> userSubs = new ConcurrentHashMap<>();
 
         /**
          * Subscribes the user to the store.
@@ -334,12 +325,7 @@ public class ImapHostManagerImpl
         }
 
         private List<String> getUserSubs(GreenMailUser user) {
-            List<String> subs = userSubs.get(user.getLogin());
-            if (subs == null) {
-                subs = new ArrayList<>();
-                userSubs.put(user.getLogin(), subs);
-            }
-            return subs;
+            return userSubs.computeIfAbsent(user.getLogin(), k -> new ArrayList<>());
         }
     }
 

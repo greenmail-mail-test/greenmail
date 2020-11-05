@@ -25,7 +25,7 @@ package com.icegreen.greenmail.util;
  * {@link ServerSetup}
  */
 public class ServerSetupTest {
-    public static int portOffset = 3000;
+    public static final int portOffset = 3000;
 
     public static final ServerSetup SMTP = new ServerSetup(25+portOffset, null, ServerSetup.PROTOCOL_SMTP);
     public static final ServerSetup SMTPS = new ServerSetup(465+portOffset, null, ServerSetup.PROTOCOL_SMTPS);
