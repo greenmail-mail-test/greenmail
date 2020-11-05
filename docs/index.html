@@ -640,7 +640,9 @@ java [OPTIONS] -jar greenmail-standalone.jar
                     </tr>
                     <tr>
                         <td class="text-nowrap">-Dgreenmail.PROTOCOL.port</td>
-                        <td>Configures the port for given protocol. Protocol can be one of
+                        <td>Configures the port for given protocol.
+                            <p>Use 0 for dynamically finding an available port.</p>
+                            Protocol can be one of
                             <ul>
                                 <li>smtp</li>
                                 <li>smtps</li>
@@ -975,6 +977,16 @@ greenMail.getManagers().getUserManager().deleteUser(user1); // Delete user
                 <pre><code class="language-java"><!-- @formatter:off -->
 @Rule
 public final GreenMailRule greenMail = new GreenMailRule(ServerSetup.verbose(ServerSetupTest.SMTP_IMAP));
+</code></pre><!-- @formatter:on -->
+
+                <h4>How can I let GreenMail dynamically choose available port?</h4>
+                <p>Set the port to 0 or use <code>ServerSetup.SMTP.dynamicPort()</code>, and GreenMail will try to find an available port.</p>
+                <pre><code class="language-java"><!-- @formatter:off -->
+@Rule
+public final GreenMailRule greenMail = new GreenMailRule(ServerSetup.SMTP.dynamicPort());
+
+GreenMailUtil.sendTextEmail("to@localhost", "from@localhost", "subject", "body",
+    greenMail.getSmtp().getServerSetup());
 </code></pre><!-- @formatter:on -->
             </section>
 

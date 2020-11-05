@@ -85,6 +85,13 @@ public class ServerSetup {
      */
     private long serverStartupTimeout = SERVER_STARTUP_TIMEOUT;
 
+    /**
+     * Creates a configuration.
+     *
+     * @param port        the port for this service. Set to 0 if an available port should be autodetected.
+     * @param bindAddress the bind address, eg 'localhost'
+     * @param protocol    the protocol, see {@link ServerSetup#PROTOCOLS}
+     */
     public ServerSetup(int port, String bindAddress, String protocol) {
         this.port = port;
         if (null == bindAddress || bindAddress.length() == 0) {
@@ -155,6 +162,34 @@ public class ServerSetup {
         return serverStartupTimeout;
     }
 
+    /**
+     * Creates a deep copy and updates port.
+     *
+     * @param port the port (0 for dynamic port allocation).
+     * @return a modified copy.
+     */
+    public ServerSetup withPort(int port) {
+        return createCopy(port, getBindAddress(), getProtocol());
+    }
+
+    /**
+     * True if available port gets dynamically allocated.
+     *
+     * @return true if enabled.
+     */
+    public boolean isDynamicPort() {
+        return getPort() == 0;
+    }
+
+    /**
+     * Enable dynamic port allocation.
+     *
+     * @return a modified copy with dynamic port allocation enabled.
+     */
+    public ServerSetup dynamicPort() {
+        return createCopy(0, getBindAddress(), getProtocol());
+    }
+
     public boolean isVerbose() {
         return verbose;
     }
@@ -201,7 +236,7 @@ public class ServerSetup {
         }
 
         // Set local host address (makes tests much faster. If this is not set java mail always looks for the address)
-        props.setProperty(MAIL_DOT + getProtocol() + ".localaddress", String.valueOf(ServerSetup.getLocalHostAddress()));
+        props.setProperty(MAIL_DOT + getProtocol() + ".localaddress", ServerSetup.getLocalHostAddress());
         props.setProperty(MAIL_DOT + getProtocol() + ".port", String.valueOf(getPort()));
         props.setProperty(MAIL_DOT + getProtocol() + ".host", String.valueOf(getBindAddress()));
 
@@ -213,9 +248,9 @@ public class ServerSetup {
 
         // Timeouts
         props.setProperty(MAIL_DOT + getProtocol() + ".connectiontimeout",
-                Long.toString(getConnectionTimeout() < 0L ? ServerSetup.CONNECTION_TIMEOUT : getConnectionTimeout()));
+            Long.toString(getConnectionTimeout() < 0L ? ServerSetup.CONNECTION_TIMEOUT : getConnectionTimeout()));
         props.setProperty(MAIL_DOT + getProtocol() + ".timeout",
-                Long.toString(getReadTimeout() < 0L ? ServerSetup.READ_TIMEOUT : getReadTimeout()));
+            Long.toString(getReadTimeout() < 0L ? ServerSetup.READ_TIMEOUT : getReadTimeout()));
         // Note: "mail." + setup.getProtocol() + ".writetimeout" breaks TLS/SSL Dummy Socket and makes tests run 6x slower!!!
         //       Therefore we do not by default configure writetimeout.
         if (getWriteTimeout() >= 0L) {
@@ -271,15 +306,15 @@ public class ServerSetup {
     @Override
     public String toString() {
         return "ServerSetup{" +
-                "port=" + port +
-                ", bindAddress='" + bindAddress + '\'' +
-                ", protocol='" + protocol + '\'' +
-                ", readTimeout=" + readTimeout +
-                ", connectionTimeout=" + connectionTimeout +
-                ", writeTimeout=" + writeTimeout +
-                ", serverStartupTimeout=" + serverStartupTimeout +
-                ", verbose=" + isVerbose() +
-                '}';
+            "port=" + port +
+            ", bindAddress='" + bindAddress + '\'' +
+            ", protocol='" + protocol + '\'' +
+            ", readTimeout=" + readTimeout +
+            ", connectionTimeout=" + connectionTimeout +
+            ", writeTimeout=" + writeTimeout +
+            ", serverStartupTimeout=" + serverStartupTimeout +
+            ", verbose=" + isVerbose() +
+            '}';
     }
 
     /**
@@ -298,7 +333,20 @@ public class ServerSetup {
      * @return a copy of the server setup configuration.
      */
     public ServerSetup createCopy(String bindAddress) {
-        ServerSetup setup = new ServerSetup(getPort(), bindAddress, getProtocol());
+        return createCopy(getPort(), bindAddress, getProtocol());
+    }
+
+    /**
+     * Create a deep copy.
+     *
+     * @param  port overwrites the port.
+     * @param bindAddress overwrites bind address.
+     * @param protocol overwrites the protocol.
+     *
+     * @return a copy of the server setup configuration.
+     */
+    public ServerSetup createCopy(int port, String bindAddress, String protocol) {
+        ServerSetup setup = new ServerSetup(port, bindAddress, protocol);
         setup.setServerStartupTimeout(getServerStartupTimeout());
         setup.setConnectionTimeout(getConnectionTimeout());
         setup.setReadTimeout(getReadTimeout());
@@ -318,6 +366,20 @@ public class ServerSetup {
         ServerSetup[] copies = new ServerSetup[serverSetups.length];
         for (int i = 0; i < serverSetups.length; i++) {
             copies[i] = serverSetups[i].createCopy().setVerbose(true);
+        }
+        return copies;
+    }
+
+    /**
+     * Creates a copy with dynamic ports (auto detecting available ports) enabled.
+     *
+     * @param serverSetups the server setups.
+     * @return copies of server setups with verbose mode enabled.
+     */
+    public static ServerSetup[] dynamicPort(ServerSetup[] serverSetups) {
+        ServerSetup[] copies = new ServerSetup[serverSetups.length];
+        for (int i = 0; i < serverSetups.length; i++) {
+            copies[i] = serverSetups[i].createCopy().dynamicPort();
         }
         return copies;
     }

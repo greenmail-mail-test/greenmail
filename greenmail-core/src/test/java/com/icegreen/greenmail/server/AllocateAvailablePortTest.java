@@ -12,12 +12,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class AllocateAvailablePortTest {
 
-    private static final int AnyFreePort = 0;
-
-    private final ServerSetup allocateAnyFreePortForAnSmtpServer = smtpServerAtPort(AnyFreePort);
-
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(allocateAnyFreePortForAnSmtpServer);
+    public final GreenMailRule greenMail = new GreenMailRule(ServerSetup.SMTP.dynamicPort());
 
     @Test
     public void returnTheActuallyAllocatedPort() {
@@ -26,14 +22,10 @@ public class AllocateAvailablePortTest {
 
     @Test
     public void ensureThatMailCanActuallyBeSentToTheAllocatedPort() {
-        GreenMailUtil.sendTextEmail("to@localhost.com", "from@localhost.com", "subject", "body",
-                smtpServerAtPort(greenMail.getSmtp().getPort()));
+        GreenMailUtil.sendTextEmail("to@localhost", "from@localhost", "subject", "body",
+                greenMail.getSmtp().getServerSetup());
 
         MimeMessage[] emails = greenMail.getReceivedMessages();
         assertThat(emails.length).isEqualTo(1);
-    }
-
-    private ServerSetup smtpServerAtPort(int port) {
-        return new ServerSetup(port, null, ServerSetup.PROTOCOL_SMTP);
     }
 }
