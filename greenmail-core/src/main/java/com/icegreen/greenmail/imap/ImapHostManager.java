@@ -41,6 +41,13 @@ public interface ImapHostManager {
     List<StoredMessage> getAllMessages();
 
     /**
+     * Returns all messages.
+     *
+     * @return a list of messages.
+     */
+    List<StoredMessage> getAllMessages(GreenMailUser user);
+
+    /**
      * Returns the hierarchy delimiter for mailboxes on this host.
      *
      * @return The hierarchy delimiter character.
@@ -58,7 +65,7 @@ public interface ImapHostManager {
      * @param mailboxName String name of the target.
      * @return an Mailbox reference.
      */
-    MailFolder getFolder(GreenMailUser user, String mailboxName);
+    MailFolder getFolder(GreenMailUser user, String mailboxName) throws FolderException;
 
     /**
      * Returns a reference to an existing Mailbox.

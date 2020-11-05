@@ -106,6 +106,28 @@ public interface GreenMailOperations {
     GreenMailUser setUser(String email, String login, String password);
 
     /**
+     * Sets the password for the account linked to email. If no account exits, one is automatically created when an email is received
+     * The automatically created account has the account login and password equal to the email address.
+     *
+     * @param login    Login for which the password should be set. This is assumed to be the same as the email address.
+     * @param password New password
+     * @return the admin user created
+     */
+    GreenMailUser setAdmin(String login, String password);
+
+    /**
+     * Sets the password for the account linked to email. If no account exits, one is automatically created when an email is received
+     * The automatically created account has the account login and password equal to the email address.
+     *
+     * @param email    Email address for which the password should be set
+     * @param login    Login name for login. This may be different to the email address. E.g. the email address could be
+     *                 "info@localhost", the login could be "info".
+     * @param password New password
+     * @return the admin user created
+     */
+    GreenMailUser setAdmin(String email, String login, String password);
+
+    /**
      * Sets up accounts with password based on a properties map where the key is the email/login and the value the password
      *
      * @param users User/password map
