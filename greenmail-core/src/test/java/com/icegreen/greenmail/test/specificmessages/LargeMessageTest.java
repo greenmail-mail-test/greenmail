@@ -5,7 +5,6 @@ import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.apache.commons.io.IOUtils;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -18,7 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests sending and receiving large messages
@@ -31,8 +30,8 @@ public class LargeMessageTest {
     public void testLargeMessageTextAndAttachment() throws MessagingException, IOException {
         String to = "to@localhost";
         GreenMailUtil.sendAttachmentEmail(to, "from@localhost", "Subject", createLargeString(),
-                createLargeByteArray(), "application/blubb", "file", "descr",
-                greenMail.getSmtp().getServerSetup());
+            createLargeByteArray(), "application/blubb", "file", "descr",
+            greenMail.getSmtp().getServerSetup());
         greenMail.waitForIncomingEmail(5000, 1);
 
         retrieveAndCheck(greenMail.getPop3(), to);
@@ -43,7 +42,7 @@ public class LargeMessageTest {
     public void testLargeMessageBody() throws MessagingException, IOException {
         String to = "to@localhost";
         GreenMailUtil.sendMessageBody(to, "from@localhost", "Subject", createLargeByteArray(), "application/blubb",
-                greenMail.getSmtp().getServerSetup());
+            greenMail.getSmtp().getServerSetup());
         greenMail.waitForIncomingEmail(5000, 1);
 
         retrieveAndCheckBody(greenMail.getPop3(), to);
@@ -74,7 +73,7 @@ public class LargeMessageTest {
             final BodyPart attachment = body.getBodyPart(1);
             assertThat(attachment.getContentType().equalsIgnoreCase("application/blubb; name=file")).isTrue();
             InputStream attachmentStream = (InputStream) attachment.getContent();
-            byte[] bytes = IOUtils.toByteArray(attachmentStream);
+            byte[] bytes = toByteArray(attachmentStream);
             assertThat(bytes).isEqualTo(createLargeByteArray());
         }
     }
@@ -94,12 +93,26 @@ public class LargeMessageTest {
 
             // Check content
             InputStream contentStream = (InputStream) message.getContent();
-            byte[] bytes = IOUtils.toByteArray(contentStream);
+            byte[] bytes = toByteArray(contentStream);
             assertThat(bytes).isEqualTo(createLargeByteArray());
 
             // Dump complete mail message. This leads to a FETCH command without section or "len" specified.
             message.writeTo(new ByteArrayOutputStream());
         }
+    }
+
+    private byte[] toByteArray(InputStream contentStream) {
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        final byte[] buf = new byte[1024];
+        int bytesRead;
+        try {
+            while (((bytesRead = contentStream.read(buf)) > 0)) {
+                byteArrayOutputStream.write(buf, 0, bytesRead);
+            }
+        } catch (IOException ex) {
+            throw new IllegalStateException(ex);
+        }
+        return byteArrayOutputStream.toByteArray();
     }
 
     /**
