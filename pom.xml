@@ -14,10 +14,6 @@
   <!-- This version should get inherited to all subprojects. -->
   <version>1.6.1-SNAPSHOT</version>
 
-  <prerequisites>
-    <maven>3.6</maven>
-  </prerequisites>
-
   <licenses>
     <license>
       <name>Apache 2.0</name>
@@ -298,9 +294,12 @@
           <version>3.2.0</version>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
           <version>3.2.4</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>3.0.0-M3</version>
         </plugin>
         <!-- Inject POM version and scm version -->
         <plugin>
@@ -337,6 +336,24 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <executions>
+              <execution>
+                  <id>enforce-maven</id>
+                  <goals>
+                      <goal>enforce</goal>
+                  </goals>
+                  <configuration>
+                      <rules>
+                          <requireMavenVersion>
+                              <version>3.6</version>
+                          </requireMavenVersion>
+                      </rules>
+                  </configuration>
+              </execution>
+          </executions>
       </plugin>
     </plugins>
 
