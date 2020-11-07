@@ -522,7 +522,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
   <profiles>
     <profile>
       <!--
@@ -596,95 +595,6 @@
         </plugins>
       </build>
     </profile>
-    <profile>
-      <id>site</id>
-      <reporting>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-site-plugin</artifactId>
-            <configuration>
-              <skin>
-                <groupId>org.apache.maven.skins</groupId>
-                <artifactId>maven-stylus-skin</artifactId>
-                <version>1.1</version>
-              </skin>
-            </configuration>
-          </plugin>
-          <plugin>
-            <!-- javadoc report -->
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <configuration>
-              <quiet />
-              <aggregate>true</aggregate>
-              <linksource>true</linksource>
-              <links>
-                <link>https://docs.oracle.com/javase/8/docs/api/</link>
-                <link>https://javamail.java.net/nonav/docs/api/</link>
-                <link>https://junit.org/junit4/javadoc/latest/</link>
-              </links>
-              <failOnError>false</failOnError>
-            </configuration>
-          </plugin>
-
-          <plugin>
-            <artifactId>maven-jxr-plugin</artifactId>
-            <configuration>
-              <linkJavadoc>true</linkJavadoc>
-              <aggregate>true</aggregate>
-            </configuration>
-          </plugin>
-
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>jdepend-maven-plugin</artifactId>
-          </plugin>
-          <plugin>
-            <artifactId>maven-pmd-plugin</artifactId>
-            <configuration>
-              <format>html</format>
-              <linkXRef>true</linkXRef>
-              <sourceEncoding>utf-8</sourceEncoding>
-              <minimumTokens>100</minimumTokens>
-              <targetJdk>1.8</targetJdk>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>findbugs-maven-plugin</artifactId>
-            <configuration>
-              <threshold>Normal</threshold>
-            </configuration>
-          </plugin>
-
-          <plugin>
-            <artifactId>maven-project-info-reports-plugin</artifactId>
-            <reportSets>
-              <reportSet>
-                <reports>
-                  <report>index</report>
-                  <report>summary</report>
-                  <report>dependencies</report>
-                  <report>dependency-convergence</report>
-                  <report>dependency-management</report>
-                  <report>scm</report>
-                  <report>mailing-list</report>
-                  <report>cim</report>
-                  <report>issue-tracking</report>
-                  <report>license</report>
-                  <report>project-team</report>
-                  <report>plugin-management</report>
-                  <report>plugins</report>
-                </reports>
-              </reportSet>
-            </reportSets>
-          </plugin>
-        </plugins>
-
-      </reporting>
-
-    </profile>
-
     <profile>
       <id>docker</id>
       <modules>
