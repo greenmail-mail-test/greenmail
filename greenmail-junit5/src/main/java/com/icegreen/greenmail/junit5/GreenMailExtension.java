@@ -5,6 +5,8 @@ import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailProxy;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -16,6 +18,19 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 /**
  * To use this extension you need to use {@code @RegisterExtension} Junit5 mechanism and made variable {@code static}.<br>
  * But if you want to remove {@code static} keyword annotate test class with {@code @TestInstance(TestInstance.Lifecycle.PER_CLASS)}.
+ * <p>
+ * By default you get a new GreenMail instance per method which works with {@link BeforeEach}.
+ * You can use {@link GreenMailExtension#withPerMethodLifecycle(boolean)} to control this behavior - eg to speed
+ * up at the cost of isolation using only {@link BeforeAll}
+ * </p>
+ * <pre>
+ *    {@literal @}RegisterExtension
+ *    GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP)
+ *             .withPerMethodLifecycle(false);
+ *
+ *    {@literal @}BeforeAll
+ *    public void setup() { ... }
+ * </pre>
  *
  * @see RegisterExtension
  * @see TestInstance
@@ -66,7 +81,7 @@ public class GreenMailExtension extends GreenMailProxy implements BeforeAllCallb
     }
 
     @Override
-    public void beforeAll(ExtensionContext context) throws Exception {
+    public void beforeAll(ExtensionContext context) {
         if (!perMethod) {
             greenMail = new GreenMail(serverSetups);
             start();
@@ -74,7 +89,7 @@ public class GreenMailExtension extends GreenMailProxy implements BeforeAllCallb
     }
 
     @Override
-    public void afterAll(ExtensionContext context) throws Exception {
+    public void afterAll(ExtensionContext context) {
         if (!perMethod) {
             stop();
         }
@@ -83,7 +98,7 @@ public class GreenMailExtension extends GreenMailProxy implements BeforeAllCallb
     /**
      * Specify whether GreenMail should be set up and torn down before and after
      * each method or before and after all methods.
-     * 
+     *
      * @param perMethod
      *            If <code>true</code>, per-method lifecycle is used, per-class
      *            otherwise.
