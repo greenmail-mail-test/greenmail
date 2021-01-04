@@ -147,7 +147,7 @@
             <!-- cli -->
             <workingDirectory>target</workingDirectory>
             <!-- Fix https://talk.openmrs.org/t/error-could-not-find-or-load-main-class-org-apache-maven-surefire-booter-forkedbooter/20509 -->
-            <argLine>@{argLine} -Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+            <argLine>@{argLine} -Djdk.net.URLClassPath.disableClassPathURLCheck=true -Djava.net.preferIPv4Stack=true</argLine>
           </configuration>
         </plugin>
         <plugin>
@@ -159,7 +159,7 @@
             <!-- cli -->
             <workingDirectory>target</workingDirectory>
             <!-- Fix https://talk.openmrs.org/t/error-could-not-find-or-load-main-class-org-apache-maven-surefire-booter-forkedbooter/20509 -->
-            <argLine>@{argLine} -Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+            <argLine>@{argLine} -Djdk.net.URLClassPath.disableClassPathURLCheck=true -Djava.net.preferIPv4Stack=true</argLine>
           </configuration>
           <executions>
             <execution>
