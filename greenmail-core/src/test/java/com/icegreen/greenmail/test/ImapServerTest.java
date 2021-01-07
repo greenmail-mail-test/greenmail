@@ -189,11 +189,10 @@ public class ImapServerTest {
     }
 
     @Test
-    public void testQuotaCapability() throws MessagingException {
+    public void testQuotaCapability() {
         greenMail.setUser("foo@localhost", "pwd");
         greenMail.setQuotaSupported(false);
-        final IMAPStore store = greenMail.getImap().createStore();
-        try {
+        try (IMAPStore store = greenMail.getImap().createStore()) {
             store.connect("foo@localhost", "pwd");
 
             Quota testQuota = new Quota("INBOX");
@@ -203,8 +202,6 @@ public class ImapServerTest {
             fail("Excepted MessageException since quota capability is turned off");
         } catch (MessagingException ex) {
             assertThat("QUOTA not supported").isEqualTo(ex.getMessage());
-        } finally {
-            store.close();
         }
     }
 
@@ -264,13 +261,13 @@ public class ImapServerTest {
         final IMAPStore store = greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
         try {
-
             // Create some folders
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
             IMAPFolder newFolder = (IMAPFolder) folder.getFolder("foo-folder");
             assertThat(newFolder.exists()).isFalse();
 
             assertThat(newFolder.create(Folder.HOLDS_FOLDERS | Folder.HOLDS_MESSAGES)).isTrue();
+            assertThat(newFolder.create(Folder.HOLDS_FOLDERS | Folder.HOLDS_MESSAGES)).isFalse();
 
             // Re-read and validate
             folder = (IMAPFolder) store.getFolder("INBOX");
@@ -282,7 +279,7 @@ public class ImapServerTest {
     }
 
     /**
-     * 
+     *
      * https://tools.ietf.org/html/rfc3501#page-37 :
      * <q>
      *     Renaming INBOX is permitted, and has special behavior.  It moves
@@ -291,8 +288,6 @@ public class ImapServerTest {
      *     inferior hierarchical names of INBOX, these are unaffected by a
      *     rename of INBOX.
      *  </q>
-     *
-     * @throws MessagingException
      */
     @Test
     public void testRenameINBOXFolder() throws MessagingException {

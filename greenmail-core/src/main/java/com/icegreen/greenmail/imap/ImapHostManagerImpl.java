@@ -101,7 +101,7 @@ public class ImapHostManagerImpl
             throws FolderException {
         String qualifiedName = getQualifiedMailboxName(user, mailboxName);
         if (store.getMailbox(qualifiedName) != null) {
-            throw new FolderException("Mailbox already exists.");
+            throw new FolderException("Mailbox " + mailboxName + " already exists.");
         }
 
         StringTokenizer tokens = new StringTokenizer(qualifiedName,
