@@ -51,7 +51,7 @@ public class GreenMailStandaloneRunner {
             GreenMailApiServerBuilder apiBuilder = new GreenMailApiServerBuilder().configure(properties);
             if (apiBuilder.isEnabled()) {
                 apiServer = apiBuilder.withGreenMail(greenMail, serverSetups, configuration).build();
-                log.info("Starting GreenMail API server at " + apiServer.getUri());
+                log.info("Starting GreenMail API server at {}", apiServer.getUri());
                 apiServer.start();
             }
         }

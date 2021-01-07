@@ -32,6 +32,7 @@ public class JacksonObjectMapperProvider implements ContextResolver<ObjectMapper
 
 
     static class GreenMailUserSerializer extends StdSerializer<GreenMailUser> {
+        private static final long serialVersionUID = 1L;
 
         public GreenMailUserSerializer() {
             super(GreenMailUser.class);
@@ -47,6 +48,7 @@ public class JacksonObjectMapperProvider implements ContextResolver<ObjectMapper
     }
 
     static class GreenMailServerSetupSerializer extends StdSerializer<ServerSetup> {
+        private static final long serialVersionUID = 1L;
 
         public GreenMailServerSetupSerializer() {
             super(ServerSetup.class);

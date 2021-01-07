@@ -17,7 +17,6 @@ import java.io.OutputStream;
 
 /**
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 public final class ImapRequestHandler {
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -26,13 +25,16 @@ public final class ImapRequestHandler {
     private static final String REQUEST_SYNTAX = "Protocol Error: Was expecting <tag SPACE command [arguments]>";
 
     /**
-     * This method parses POP3 commands read off the wire in handleConnection.
+     * This method parses commands read off the wire in handleConnection.
      * Actual processing of the command (possibly including additional back and
      * forth communication with the client) is delegated to one of a number of
      * command specific handler methods.  The primary purpose of this method is
      * to parse the raw command string to determine exactly which handler should
      * be called.  It returns true if expecting additional commands, false otherwise.
      *
+     * @param input stream containing commands
+     * @param output stream for response
+     * @param session current IMAP session (state)
      * @return whether additional commands are expected.
      */
     public boolean handleRequest(InputStream input,
