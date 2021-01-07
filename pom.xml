@@ -236,7 +236,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-pmd-plugin</artifactId>
-          <version>3.13.0</version>
+          <version>3.14.0</version>
           <configuration>
             <format>html</format>
             <linkXRef>true</linkXRef>
