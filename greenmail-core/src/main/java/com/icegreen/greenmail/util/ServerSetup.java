@@ -238,11 +238,11 @@ public class ServerSetup {
         // Set local host address (makes tests much faster. If this is not set java mail always looks for the address)
         props.setProperty(MAIL_DOT + getProtocol() + ".localaddress", ServerSetup.getLocalHostAddress());
         props.setProperty(MAIL_DOT + getProtocol() + ".port", String.valueOf(getPort()));
-        final String bindAddress = getBindAddress();
-        props.setProperty(MAIL_DOT + getProtocol() + ".host", String.valueOf(bindAddress));
+        final String address = getBindAddress();
+        props.setProperty(MAIL_DOT + getProtocol() + ".host", String.valueOf(address));
         // Fixes slow Transport.send->UniqueValue.getUniqueMessageIDValue->javax.mail.internet.InternetAddress.getLocalAddress
-        if(!props.containsKey("mail.host")&&null!=bindAddress) {
-            props.setProperty("mail.host", bindAddress);
+        if (!props.containsKey("mail.host") && null != address) {
+            props.setProperty("mail.host", address);
         }
 
         if (isSecure()) {

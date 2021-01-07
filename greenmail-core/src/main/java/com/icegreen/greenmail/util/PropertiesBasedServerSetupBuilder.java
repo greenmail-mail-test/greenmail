@@ -48,6 +48,9 @@ public class PropertiesBasedServerSetupBuilder {
      * Enables verbose JavaMail debug output by setting JavaMail 'mail.debug' property.
      */
     public static final String GREENMAIL_VERBOSE = "greenmail.verbose";
+    public static final String GREENMAIL_SETUP_ALL = "greenmail.setup.all";
+    public static final String GREENMAIL_SETUP_TEST_ALL = "greenmail.setup.test.all";
+    public static final String GREENMAIL_HOSTNAME = "greenmail.hostname";
 
     /**
      * Creates a server setup based on provided properties.
@@ -58,7 +61,7 @@ public class PropertiesBasedServerSetupBuilder {
     public ServerSetup[] build(Properties properties) {
         List<ServerSetup> serverSetups = new ArrayList<>();
 
-        String hostname = properties.getProperty("greenmail.hostname", ServerSetup.getLocalHostAddress());
+        String hostname = properties.getProperty(GREENMAIL_HOSTNAME, ServerSetup.getLocalHostAddress());
         long serverStartupTimeout =
                 Long.parseLong(properties.getProperty("greenmail.startup.timeout", "-1"));
 
@@ -96,7 +99,7 @@ public class PropertiesBasedServerSetupBuilder {
 
 
     protected void addTestSetups(String hostname, Properties properties, List<ServerSetup> serverSetups) {
-        if (properties.containsKey("greenmail.setup.test.all")) {
+        if (properties.containsKey(GREENMAIL_SETUP_TEST_ALL)) {
             for (ServerSetup setup : ServerSetupTest.ALL) {
                 serverSetups.add(setup.createCopy(hostname));
             }
@@ -122,7 +125,7 @@ public class PropertiesBasedServerSetupBuilder {
     }
 
     protected void addDefaultSetups(String hostname, Properties properties, List<ServerSetup> serverSetups) {
-        if (properties.containsKey("greenmail.setup.all")) {
+        if (properties.containsKey(GREENMAIL_SETUP_ALL)) {
             for (ServerSetup setup : ServerSetup.ALL) {
                 serverSetups.add(setup.createCopy(hostname));
             }

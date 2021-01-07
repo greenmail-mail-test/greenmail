@@ -292,4 +292,15 @@ public class GreenMail extends ConfiguredGreenMail {
             folder.deleteAllMessages();
         }
     }
+
+    @Override
+    public boolean isRunning() {
+        for (AbstractServer service : services.values()) {
+            if (!service.isRunning()) {
+                log.debug("Service {} is not running", service);
+                return false;
+            }
+        }
+        return true;
+    }
 }

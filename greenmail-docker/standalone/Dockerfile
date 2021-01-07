@@ -9,8 +9,9 @@ MAINTAINER https://github.com/greenmail-mail-test/greenmail (marcel.may.de@gmail
 # - pop3s : 3995
 # - imap  : 3143
 # - imaps : 3993
+# - api   : 8080
 #######################
-EXPOSE 3025 3465 3110 3995 3143 3993
+EXPOSE 3025 3465 3110 3995 3143 3993 8080
 
 #######################
 # Configuration options

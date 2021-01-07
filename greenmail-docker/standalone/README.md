@@ -13,7 +13,7 @@ How to build via docker CLI
    `docker build -t greenmail/standalone .`
 
 2. Test  
-   `docker run -t -i -p 3025:3025 -p 3110:3110 -p 3143:3143 -p 3465:3465 -p 3993:3993 -p 3995:3995  greenmail/standalone:<VERSION>`
+   `docker run -t -i -p 3025:3025 -p 3110:3110 -p 3143:3143 -p 3465:3465 -p 3993:3993 -p 3995:3995 -p 8080:8080  greenmail/standalone:<VERSION>`
    `telnet ``docker-machine ip`` 3025`  
    The telnet command should produce a GreenMail ready output,
    similiar to this: `220 /172.17.0.2 GreenMail SMTP Service ready`
@@ -53,5 +53,5 @@ Example running GreenMail in verbose mode by setting GREENMAIL\_OPTS:
 ```
 docker run -t -i \
            -e GREENMAIL_OPTS='-Dgreenmail.setup.test.all -Dgreenmail.hostname=0.0.0.0 -Dgreenmail.auth.disabled -Dgreenmail.verbose' \
-           -p 3025:3025 -p 3110:3110 -p 3143:3143 -p 3465:3465 -p 3993:3993 -p 3995:3995  greenmail/standalone:<VERSION>
+           -p 3025:3025 -p 3110:3110 -p 3143:3143 -p 3465:3465 -p 3993:3993 -p 3995:3995 -p 8080:8080 greenmail/standalone:<VERSION>
 ```

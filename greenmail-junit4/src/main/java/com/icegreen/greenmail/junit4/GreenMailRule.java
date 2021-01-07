@@ -78,6 +78,11 @@ public class GreenMailRule extends GreenMailProxy implements MethodRule, TestRul
     }
 
     @Override
+    public boolean isRunning() {
+        return greenMail.isRunning();
+    }
+
+    @Override
     protected GreenMail getGreenMail() {
         return greenMail;
     }

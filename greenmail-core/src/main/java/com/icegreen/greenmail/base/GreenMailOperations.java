@@ -143,9 +143,16 @@ public interface GreenMailOperations {
     void reset();
 
     /**
+     * Checks if GreenMail is up and running.
+     *
+     * @return true if ready to serve.
+     */
+    boolean isRunning();
+
+    /**
      * Remove/purge all data from all mail stores (POP3/IMAP)
      *
      * @throws FolderException on error
-    */
+     */
     void purgeEmailFromAllMailboxes() throws FolderException;
 }

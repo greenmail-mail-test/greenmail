@@ -18,9 +18,12 @@
     </layout>
   </appender>
 
+  <logger name="org.glassfish.jersey">
+    <level value="ERROR"/>
+  </logger>
+
   <root>
     <level value="INFO" />
     <appender-ref ref="CONSOLE"/>
   </root>
-
 </log4j:configuration>
