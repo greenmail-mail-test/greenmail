@@ -6,8 +6,6 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.mail.MessagingException;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ExampleSendTest {
@@ -16,7 +14,7 @@ public class ExampleSendTest {
 
     @Test
     public void testSend() {
-        GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com",
+        GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost",
                 "some subject", "some body"); // --- Place your sending code here instead
         assertThat(GreenMailUtil.getBody(greenMail.getReceivedMessages()[0])).isEqualTo("some body");
     }

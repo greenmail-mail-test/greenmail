@@ -91,7 +91,7 @@ public class ImapServerTest {
     @Test
     public void testRetreiveSimpleWithNonDefaultPassword() throws Exception {
         assertThat(greenMail.getImap()).isNotNull();
-        final String to = "test@localhost.com";
+        final String to = "test@localhost";
         final String password = "donotharmanddontrecipricateharm";
         greenMail.setUser(to, password);
         final String subject = GreenMailUtil.random();

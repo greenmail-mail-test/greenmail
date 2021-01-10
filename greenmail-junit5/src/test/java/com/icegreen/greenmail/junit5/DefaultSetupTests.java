@@ -20,7 +20,7 @@ class DefaultSetupTests {
     @Test
     @DisplayName("Send test")
     void testSend() throws MessagingException {
-        GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", "body");
+        GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "subject", "body");
         final MimeMessage[] emails = greenMail.getReceivedMessages();
         assertEquals(1, emails.length);
         final MimeMessage email = emails[0];

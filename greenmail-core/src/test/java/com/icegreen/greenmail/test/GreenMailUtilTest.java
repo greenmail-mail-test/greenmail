@@ -17,7 +17,6 @@ import javax.mail.*;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,7 +33,7 @@ public class GreenMailUtilTest {
     }
 
     @Test
-    public void testGetBody() throws MessagingException {
+    public void testGetBody() {
         MimeMessage message = GreenMailUtil.newMimeMessage(SAMPLE_EMAIL);
         String body = GreenMailUtil.getBody(message);
         assertThat(body.trim()).isEqualTo("Yo wassup Bertil");
@@ -157,10 +156,10 @@ public class GreenMailUtilTest {
             + "\tby mail5.hotmail.com with (RC4-MD5 encrypted) SMTP; Wed, 18 Jan 2006 18:01:05 -0800\r\n"
             + "Message-ID: <43CEF322.7080702@hotmail.com>\r\n"
             + "Date: Wed, 18 Jan 2006 18:02:10 -0800\r\n"
-            + "From: Wael Chatila <wael@localhost.com>\r\n"
+            + "From: Wael Chatila <wael@localhost>\r\n"
             + "User-Agent: Mozilla Thunderbird 1.0.7 (Windows/20050923)\r\n"
             + "X-Accept-Language: en-us, en\r\n" + "MIME-Version: 1.0\r\n"
-            + "To: Bertil <bertil@localhost.com>\r\n" + "Subject: wassup\r\n"
+            + "To: Bertil <bertil@localhost>\r\n" + "Subject: wassup\r\n"
             + "Content-Type: text/plain; charset=ISO-8859-1; format=flowed\r\n"
             + "Content-Transfer-Encoding: 7bit\r\n" + "\r\n"
             + "Yo wassup Bertil\r\n";

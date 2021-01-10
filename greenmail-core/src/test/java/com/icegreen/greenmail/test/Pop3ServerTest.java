@@ -34,9 +34,9 @@ public class Pop3ServerTest {
     @Test
     public void testPop3Capabillities() throws MessagingException, UserException {
         final POP3Store store = greenMail.getPop3().createStore();
-        greenMail.getManagers().getUserManager().createUser("testPop3Capabillities@localhost.com",
-                "testPop3Capabillities@localhost.com", "pwd");
-        store.connect("testPop3Capabillities@localhost.com", "pwd");
+        greenMail.getManagers().getUserManager().createUser("testPop3Capabillities@localhost",
+                "testPop3Capabillities@localhost", "pwd");
+        store.connect("testPop3Capabillities@localhost", "pwd");
         try {
             assertThat(store.capabilities().containsKey("UIDL")).isTrue();
         } finally {
@@ -49,8 +49,8 @@ public class Pop3ServerTest {
         assertThat(greenMail.getPop3()).isNotNull();
         final String subject = GreenMailUtil.random();
         final String body = GreenMailUtil.random() + "\r\n" + GreenMailUtil.random() + "\r\n" + GreenMailUtil.random();
-        String to = "test@localhost.com";
-        GreenMailUtil.sendTextEmailTest(to, "from@localhost.com", subject, body);
+        String to = "test@localhost";
+        GreenMailUtil.sendTextEmailTest(to, "from@localhost", subject, body);
         greenMail.waitForIncomingEmail(5000, 1);
 
         try (Retriever retriever = new Retriever(greenMail.getPop3())) {
@@ -70,8 +70,8 @@ public class Pop3ServerTest {
         assertThat(greenMail.getPop3s()).isNotNull();
         final String subject = GreenMailUtil.random();
         final String body = GreenMailUtil.random();
-        String to = "test@localhost.com";
-        GreenMailUtil.sendTextEmailSecureTest(to, "from@localhost.com", subject, body);
+        String to = "test@localhost";
+        GreenMailUtil.sendTextEmailSecureTest(to, "from@localhost", subject, body);
         greenMail.waitForIncomingEmail(5000, 1);
 
         try (Retriever retriever = new Retriever(greenMail.getPop3s())) {
@@ -85,12 +85,12 @@ public class Pop3ServerTest {
     @Test
     public void testRetrieveWithNonDefaultPassword() throws Exception {
         assertThat(greenMail.getPop3()).isNotNull();
-        final String to = "test@localhost.com";
+        final String to = "test@localhost";
         final String password = "donotharmanddontrecipricateharm";
         greenMail.setUser(to, password);
         final String subject = GreenMailUtil.random();
         final String body = GreenMailUtil.random();
-        GreenMailUtil.sendTextEmailTest(to, "from@localhost.com", subject, body);
+        GreenMailUtil.sendTextEmailTest(to, "from@localhost", subject, body);
         greenMail.waitForIncomingEmail(5000, 1);
 
         try (Retriever retriever = new Retriever(greenMail.getPop3())) {
@@ -114,8 +114,10 @@ public class Pop3ServerTest {
 
         String subject = GreenMailUtil.random();
         String body = GreenMailUtil.random();
-        String to = "test@localhost.com";
-        GreenMailUtil.sendAttachmentEmail(to, "from@localhost.com", subject, body, new byte[]{0, 1, 2}, "image/gif", "testimage_filename", "testimage_description", ServerSetupTest.SMTP);
+        String to = "test@localhost";
+        GreenMailUtil.sendAttachmentEmail(to, "from@localhost", subject, body, new byte[]{0, 1, 2},
+            "image/gif", "testimage_filename", "testimage_description",
+            ServerSetupTest.SMTP);
         greenMail.waitForIncomingEmail(5000, 1);
 
         try (Retriever retriever = new Retriever(greenMail.getPop3())) {
@@ -136,7 +138,7 @@ public class Pop3ServerTest {
             GreenMailUtil.copyStream(bp.getInputStream(), bout);
             byte[] gif = bout.toByteArray();
             for (int i = 0; i < gif.length; i++) {
-                assertThat((long)gif[i]).isEqualTo((long)i);
+                assertThat((int)gif[i]).isEqualTo(i);
             }
         }
     }

@@ -17,7 +17,7 @@ public class ExampleRuleTest {
 
     @Test
     public void testSomething() throws MessagingException {
-        GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", "body");
+        GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "subject", "body");
         MimeMessage[] emails = greenMail.getReceivedMessages();
         assertThat(emails.length).isEqualTo(1);
         assertThat(emails[0].getSubject()).isEqualTo("subject");

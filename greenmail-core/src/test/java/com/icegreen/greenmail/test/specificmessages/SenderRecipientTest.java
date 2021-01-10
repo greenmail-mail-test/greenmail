@@ -87,7 +87,7 @@ public class SenderRecipientTest {
 
     @Test
     public void testSendWithoutSubject() {
-        GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com",
+        GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost",
                 null, "some subject less body");
         assertThat(GreenMailUtil.getBody(greenMail.getReceivedMessages()[0])).isEqualTo("some subject less body");
     }

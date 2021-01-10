@@ -6,7 +6,6 @@ package com.icegreen.greenmail.test;
 
 import static com.icegreen.greenmail.util.GreenMailUtil.createTextEmail;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Properties;
@@ -42,7 +41,7 @@ public class SmtpServerTest {
 
     @Test
     public void testSmtpServerBasic() throws MessagingException {
-        GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", "body");
+        GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "subject", "body");
         MimeMessage[] emails = greenMail.getReceivedMessages();
         assertThat(emails.length).isEqualTo(1);
         assertThat(emails[0].getSubject()).isEqualTo("subject");
@@ -65,7 +64,7 @@ public class SmtpServerTest {
 
         String subject = GreenMailUtil.random();
         String body = GreenMailUtil.random();
-        GreenMailUtil.sendTextEmailTest("test@localhost.com", "from@localhost.com", subject, body);
+        GreenMailUtil.sendTextEmailTest("test@localhost", "from@localhost", subject, body);
         greenMail.waitForIncomingEmail(1500, 1);
         MimeMessage[] emails = greenMail.getReceivedMessages();
         assertThat(emails.length).isEqualTo(1);
@@ -79,7 +78,7 @@ public class SmtpServerTest {
 
         String subject = GreenMailUtil.random();
         String body = GreenMailUtil.random();
-        GreenMailUtil.sendTextEmailSecureTest("test@localhost.com", "from@localhost", subject, body);
+        GreenMailUtil.sendTextEmailSecureTest("test@localhost", "from@localhost", subject, body);
         greenMail.waitForIncomingEmail(1500, 1);
         MimeMessage[] emails = greenMail.getReceivedMessages();
         assertThat(emails.length).isEqualTo(1);
@@ -91,16 +90,14 @@ public class SmtpServerTest {
     public void testSmtpServerReceiveInThread() throws Throwable {
         assertThat(greenMail.getReceivedMessages().length).isEqualTo(0);
 
-        Thread sendThread = new Thread() {
-            public void run() {
-                try {
-                    Thread.sleep(700);
-                    GreenMailUtil.sendTextEmailTest("test@localhost.com", "from@localhost", "abc", "def");
-                } catch (Throwable e) {
-                    throw new RuntimeException(e);
-                }
+        Thread sendThread = new Thread(() -> {
+            try {
+                Thread.sleep(700);
+                GreenMailUtil.sendTextEmailTest("test@localhost", "from@localhost", "abc", "def");
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
             }
-        };
+        });
         sendThread.start();
         greenMail.waitForIncomingEmail(3000, 1);
         MimeMessage[] emails = greenMail.getReceivedMessages();
@@ -114,7 +111,7 @@ public class SmtpServerTest {
 
         String subject = GreenMailUtil.random();
         String body = GreenMailUtil.random();
-        GreenMailUtil.sendAttachmentEmail("test@localhost.com", "from@localhost.com", subject, body, new byte[]{0, 1, 2}, "image/gif", "testimage_filename", "testimage_description", ServerSetupTest.SMTP);
+        GreenMailUtil.sendAttachmentEmail("test@localhost", "from@localhost", subject, body, new byte[]{0, 1, 2}, "image/gif", "testimage_filename", "testimage_description", ServerSetupTest.SMTP);
         greenMail.waitForIncomingEmail(1500, 1);
         Message[] emails = greenMail.getReceivedMessages();
         assertThat(emails.length).isEqualTo(1);
@@ -135,14 +132,14 @@ public class SmtpServerTest {
         GreenMailUtil.copyStream(bp.getInputStream(), bout);
         byte[] gif = bout.toByteArray();
         for (int i = 0; i < gif.length; i++) {
-            assertThat((long)gif[i]).isEqualTo((long)i); // AssertEquals used to convert both the arguments to Long /
+            assertThat((int)gif[i]).isEqualTo(i); // AssertEquals used to convert both the arguments to Long /
         }
     }
 
     @Test
     public void testSmtpServerLeadingPeriods() throws MessagingException {
         String body = ". body with leading period";
-        GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "subject", body);
+        GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "subject", body);
         MimeMessage[] emails = greenMail.getReceivedMessages();
         assertThat(emails.length).isEqualTo(1);
         assertThat(emails[0].getSubject()).isEqualTo("subject");
@@ -153,7 +150,8 @@ public class SmtpServerTest {
     public void testSendAndWaitForIncomingMailsInBcc() throws Throwable {
         String subject = GreenMailUtil.random();
         String body = GreenMailUtil.random();
-        final MimeMessage message = createTextEmail("test@localhost", "from@localhost", subject, body, greenMail.getSmtp().getServerSetup());
+        final MimeMessage message = createTextEmail("test@localhost", "from@localhost", subject, body,
+            greenMail.getSmtp().getServerSetup());
         message.addRecipients(Message.RecipientType.BCC, "bcc1@localhost,bcc2@localhost");
 
         assertThat(greenMail.getReceivedMessages().length).isEqualTo(0);
@@ -199,7 +197,7 @@ public class SmtpServerTest {
         String subject = GreenMailUtil.random();
 
         Properties mailProps = new Properties();
-        mailProps.setProperty("mail.smtp.from", "<test@localhost.com> AUTH <somethingidontknow>");
+        mailProps.setProperty("mail.smtp.from", "<test@localhost> AUTH <somethingidontknow>");
         Session session = GreenMailUtil.getSession(ServerSetupTest.SMTP, mailProps);
 
         MimeMessage message = new MimeMessage(session);
@@ -209,8 +207,8 @@ public class SmtpServerTest {
         message.setSubject(subject);
 
         GreenMailUtil.sendMimeMessage(message);
-        System.setProperty("mail.smtp.from", "<test@localhost.com> AUTH <somethingidontknow>");
-        
+        System.setProperty("mail.smtp.from", "<test@localhost> AUTH <somethingidontknow>");
+
 
         greenMail.waitForIncomingEmail(1500, 1);
         MimeMessage[] emails = greenMail.getReceivedMessages();

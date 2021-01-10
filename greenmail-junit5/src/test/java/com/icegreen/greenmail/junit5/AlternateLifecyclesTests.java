@@ -1,8 +1,5 @@
 package com.icegreen.greenmail.junit5;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import org.junit.jupiter.api.AfterAll;
@@ -25,19 +22,19 @@ class AlternateLifecyclesTests {
         @RegisterExtension
         GreenMailExtension greenMail = new GreenMailExtension()
             .withConfiguration(GreenMailConfiguration.aConfig()
-                .withUser("to@localhost.com", "login-id", "password"));
+                .withUser("to@localhost", "login-id", "password"));
 
         @Test
         @DisplayName("Send test 1")
         void testSend1() {
-            GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "some subject", "some body");
+            GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "some subject", "some body");
             assertEquals(1, greenMail.getReceivedMessages().length);
         }
 
         @Test
         @DisplayName("Send test 2")
         void testSend2() {
-            GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "some subject", "some body");
+            GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "some subject", "some body");
             assertEquals(1, greenMail.getReceivedMessages().length);
         }
 
@@ -55,18 +52,18 @@ class AlternateLifecyclesTests {
         GreenMailExtension greenMail = new GreenMailExtension()
             .withPerMethodLifecycle(false)
             .withConfiguration(GreenMailConfiguration.aConfig()
-                .withUser("to@localhost.com", "login-id", "password"));
+                .withUser("to@localhost", "login-id", "password"));
 
         @Test
         @DisplayName("Send test 1")
         void testSend1() {
-            GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "some subject", "some body");
+            GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "some subject", "some body");
         }
 
         @Test
         @DisplayName("Send test 2")
         void testSend2() {
-            GreenMailUtil.sendTextEmailTest("to@localhost.com", "from@localhost.com", "some subject", "some body");
+            GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "some subject", "some body");
         }
 
         @AfterAll
