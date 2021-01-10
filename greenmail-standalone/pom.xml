@@ -98,7 +98,6 @@
                   <artifact>*:*</artifact>
                   <excludes>
                     <exclude>META-INF/MANIFEST.MF</exclude>
-                    <exclude>META-INF/services/*</exclude>
                   </excludes>
                 </filter>
               </filters>

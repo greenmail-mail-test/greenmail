@@ -28,7 +28,7 @@ paths:
     /api/user:
         get:
             description: Gets current GreenMail users
-            operationId: get_user
+            operationId: get_all_user
             responses:
                 '200':
                     description: List of users
@@ -71,6 +71,30 @@ paths:
                                 $ref: "#/components/schemas/User"
                 default:
                     description: Unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+    /api/user/{id}:
+        parameters:
+            -   in: path
+                name: id
+                description: Either user login or user email as identifier
+                required: true
+                schema:
+                    type: string
+        delete:
+            description: Deletes given GreenMail user
+            operationId: delete_user
+            responses:
+                '200':
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/SuccessResponse"
+                '400':
+                    description: User not found
                     content:
                         application/json:
                             schema:

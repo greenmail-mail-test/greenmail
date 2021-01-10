@@ -4,8 +4,11 @@ import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
+import com.icegreen.greenmail.user.UserManager;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -21,6 +24,7 @@ import java.util.Scanner;
  */
 @Path("/")
 public class GreenMailApiResource {
+    private static final Logger LOG = LoggerFactory.getLogger(GreenMailApiResource.class);
     private final GreenMail greenMail;
     private final ServerSetup[] serverSetups;
     private final GreenMailConfiguration configuration;
@@ -123,6 +127,7 @@ public class GreenMailApiResource {
     public Response createUsers(User newUser) {
         try {
             final GreenMailUser user = greenMail.getManagers().getUserManager().createUser(newUser.email, newUser.login, newUser.password);
+            LOG.debug("Created user {}", user);
             return Response.status(Response.Status.OK)
                 .entity(user)
                 .build();
@@ -131,6 +136,27 @@ public class GreenMailApiResource {
                 .entity(new ErrorMessage("Can not create user : " + e.getMessage()))
                 .build();
         }
+    }
+
+    @DELETE
+    @Path("/api/user/{emailOrLogin}")
+    @Produces("application/json")
+    public Response deleteUserById(@PathParam("emailOrLogin") String id) {
+        final UserManager userManager = greenMail.getManagers().getUserManager();
+        LOG.debug("Searching user using '{}'", id);
+        GreenMailUser user = userManager.getUser(id);
+        if (null == user) {
+            user = userManager.getUserByEmail(id);
+        }
+        if (null == user) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                .entity(new ErrorMessage("User '" + id + "' not found")).build();
+        }
+        LOG.debug("Deleting user {}", user);
+        userManager.deleteUser(user);
+        return Response.status(Response.Status.OK)
+            .entity(new SuccessMessage("User '" + id + "' deleted")).build();
+
     }
 
     // Operations

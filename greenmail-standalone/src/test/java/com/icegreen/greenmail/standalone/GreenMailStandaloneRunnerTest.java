@@ -9,10 +9,7 @@ import org.junit.Test;
 
 import javax.mail.*;
 import javax.ws.rs.ProcessingException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.client.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Properties;
@@ -90,12 +87,18 @@ public class GreenMailStandaloneRunnerTest {
             "{\"login\":\"test1\",\"email\":\"test1\"}" +
             "]");
 
+        String userId = "foo.bar";
         final Response userCreateResponse = api.path("/api/user")
             .request(MediaType.APPLICATION_JSON)
-            .post(Entity.entity("{\"email\":\"foo.bar@localhost\", \"login\":\"foo.bar\", \"password\":\"xxx\"}",
+            .post(Entity.entity("{\"email\":\"foo.bar@localhost\", \"login\":\""+userId+"\", \"password\":\"xxx\"}",
                 MediaType.APPLICATION_JSON));
         assertThat(userCreateResponse.getStatus()).isEqualTo(200);
-        assertThat(userCreateResponse.readEntity(String.class)).isEqualTo("{\"login\":\"foo.bar\",\"email\":\"foo.bar@localhost\"}");
+        assertThat(userCreateResponse.readEntity(String.class)).isEqualTo("{\"login\":\""+userId+"\",\"email\":\"foo.bar@localhost\"}");
+
+        final Invocation.Builder deleteRequest = api.path("/api/user/" + userId).request();
+        final Response userDeleteResponse = deleteRequest.delete();
+        assertThat(userDeleteResponse.getStatus()).isEqualTo(200);
+        assertThat(deleteRequest.delete().getStatus()).isEqualTo(400);
 
         final Response readinessResponse = api.path("/api/service/readiness")
             .request(MediaType.APPLICATION_JSON).get(Response.class);
