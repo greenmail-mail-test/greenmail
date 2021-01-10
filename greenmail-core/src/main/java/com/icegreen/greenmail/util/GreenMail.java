@@ -4,12 +4,6 @@
  */
 package com.icegreen.greenmail.util;
 
-import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-
 import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.configuration.ConfiguredGreenMail;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
@@ -24,8 +18,15 @@ import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
+import com.icegreen.greenmail.user.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Utility class that manages a greenmail server with support for multiple protocols
@@ -186,14 +187,14 @@ public class GreenMail extends ConfiguredGreenMail {
     }
 
     @Override
-    public Managers getManagers() {
+    public synchronized Managers getManagers() {
         return managers;
     }
 
     //~ Convenience Methods, often needed while testing ---------------------------------------------------------------
     @Override
     public boolean waitForIncomingEmail(long timeout, int emailCount) {
-        final CountDownLatch waitObject = managers.getSmtpManager().createAndAddNewWaitObject(emailCount);
+        final CountDownLatch waitObject = getManagers().getSmtpManager().createAndAddNewWaitObject(emailCount);
         final long endTime = System.currentTimeMillis() + timeout;
             while (waitObject.getCount() > 0) {
                 final long waitTime = endTime - System.currentTimeMillis();
@@ -216,7 +217,7 @@ public class GreenMail extends ConfiguredGreenMail {
 
     @Override
     public MimeMessage[] getReceivedMessages() {
-        List<StoredMessage> msgs = managers.getImapHostManager().getAllMessages();
+        List<StoredMessage> msgs = getManagers().getImapHostManager().getAllMessages();
         MimeMessage[] ret = new MimeMessage[msgs.size()];
         for (int i = 0; i < msgs.size(); i++) {
             StoredMessage storedMessage = msgs.get(i);
@@ -227,19 +228,19 @@ public class GreenMail extends ConfiguredGreenMail {
 
     @Override
     public MimeMessage[] getReceivedMessagesForDomain(String domain) {
-        List<StoredMessage> msgs = managers.getImapHostManager().getAllMessages();
+        List<StoredMessage> msgs = getManagers().getImapHostManager().getAllMessages();
         List<MimeMessage> ret = new ArrayList<>();
         try {
             for (StoredMessage msg : msgs) {
                 String tos = GreenMailUtil.getAddressList(msg.getMimeMessage().getAllRecipients());
-                if (tos.toLowerCase().contains(domain.toLowerCase())) {
+                if (null != tos && tos.toLowerCase().contains(domain.toLowerCase())) {
                     ret.add(msg.getMimeMessage());
                 }
             }
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
-        return ret.toArray(new MimeMessage[ret.size()]);
+        return ret.toArray(new MimeMessage[0]);
     }
 
     @Override
@@ -249,10 +250,11 @@ public class GreenMail extends ConfiguredGreenMail {
 
     @Override
     public GreenMailUser setUser(String email, String login, String password) {
-        GreenMailUser user = managers.getUserManager().getUser(login);
+        final UserManager userManager = getManagers().getUserManager();
+        GreenMailUser user = userManager.getUser(login);
         if (null == user) {
             try {
-                user = managers.getUserManager().createUser(email, login, password);
+                user = userManager.createUser(email, login, password);
             } catch (UserException e) {
                 throw new RuntimeException(e);
             }
@@ -264,7 +266,7 @@ public class GreenMail extends ConfiguredGreenMail {
 
     @Override
     public void setQuotaSupported(boolean isEnabled) {
-        managers.getImapHostManager().getStore().setQuotaSupported(isEnabled);
+        getManagers().getImapHostManager().getStore().setQuotaSupported(isEnabled);
     }
 
     @Override
