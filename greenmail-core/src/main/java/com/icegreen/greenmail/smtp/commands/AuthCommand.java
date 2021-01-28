@@ -96,9 +96,9 @@ public class AuthCommand
             conn.send(SMTP_SYNTAX_ERROR + " : Unsupported auth mechanism " + authMechanismValue +
                     " with unexpected values. Line is: <" + commandLine + ">");
         } else {
-            conn.send(SMTP_SERVER_CONTINUATION + " VXNlciBOYW1lAA=="); // "User Name"
+            conn.send(SMTP_SERVER_CONTINUATION + "VXNlciBOYW1lAA=="); // "User Name"
             String username = conn.receiveLine();
-            conn.send(SMTP_SERVER_CONTINUATION + " UGFzc3dvcmQA"); // Password
+            conn.send(SMTP_SERVER_CONTINUATION + "UGFzc3dvcmQA"); // Password
             String pwd = conn.receiveLine();
 
             if (manager.getUserManager().test(EncodingUtil.decodeBase64(username), EncodingUtil.decodeBase64(pwd))) {
