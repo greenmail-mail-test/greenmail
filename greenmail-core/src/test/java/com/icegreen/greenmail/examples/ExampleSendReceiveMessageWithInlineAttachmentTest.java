@@ -2,7 +2,6 @@ package com.icegreen.greenmail.examples;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -39,7 +38,7 @@ public class ExampleSendReceiveMessageWithInlineAttachmentTest {
         fetchEmailWithInlineAttachment();
     }
 
-    private void fetchEmailWithInlineAttachment() throws MessagingException, GeneralSecurityException, IOException {
+    private void fetchEmailWithInlineAttachment() throws MessagingException, IOException {
         Store store = connectToIMAPServer();
         Folder folder = openFolder(store, "INBOX");
 

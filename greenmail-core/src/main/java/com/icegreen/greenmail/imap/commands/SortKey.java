@@ -13,5 +13,5 @@ public enum SortKey {
     REVERSE,
     SIZE,
     SUBJECT,
-    TO;
+    TO
 }

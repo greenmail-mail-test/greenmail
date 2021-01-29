@@ -64,8 +64,8 @@ public class IdRange {
      */
     public static final Pattern SEQUENCE = Pattern.compile(PATTERN_SEQ_SET);
     public static final long VALUE_WILDCARD = Long.MAX_VALUE;
-    private long lowVal;
-    private long highVal;
+    private final long lowVal;
+    private final long highVal;
 
     public IdRange(long singleVal) {
         lowVal = singleVal;
@@ -159,7 +159,7 @@ public class IdRange {
             ids.add(currentIdRange);
         }
 
-        return ids.toArray(new IdRange[ids.size()]);
+        return ids.toArray(new IdRange[0]);
     }
 
     public static String uidsToRangeString(List<Long> uids) {
@@ -169,7 +169,7 @@ public class IdRange {
     public static String idRangeToString(IdRange idRange) {
         return idRange.getHighVal() == idRange.getLowVal()
                 ? Long.toString(idRange.getLowVal())
-                : Long.toString(idRange.getLowVal()) + ":" + Long.toString(idRange.getHighVal());
+                : idRange.getLowVal() + ":" + idRange.getHighVal();
     }
 
     public static String idRangesToString(IdRange[] idRanges) {

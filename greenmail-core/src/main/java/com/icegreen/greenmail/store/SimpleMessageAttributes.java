@@ -123,7 +123,7 @@ public class SimpleMessageAttributes
      * Parses key data items from a MimeMessage for seperate storage.
      * TODO this is a mess, and should be completely revamped.
      */
-    void parseMimePart(MimePart part) throws MessagingException {
+    void parseMimePart(MimePart part) {
         final String body = GreenMailUtil.getBody(part);
         size = body.length();
 

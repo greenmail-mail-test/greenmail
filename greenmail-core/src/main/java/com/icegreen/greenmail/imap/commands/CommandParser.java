@@ -437,7 +437,7 @@ public class CommandParser {
         }
         String range = nextWord.substring(pos);
         rangeList.add(IdRange.parseRange(range));
-        return rangeList.toArray(new IdRange[rangeList.size()]);
+        return rangeList.toArray(new IdRange[0]);
     }
 
     /**
@@ -490,7 +490,7 @@ public class CommandParser {
         return next == '(' || next == ')' || next == '{'
                 || next == ' ' // SP
                 || next == '%' || next == '*' // list-wildcards
-                || (next >= 0 && next <= 1F) || next == 7F // CTL
+                || next <= 1F || next == 7F // CTL
                 || next == '"' // quoted-specials = DQUOTE / "\"
                 || next == ']'  // resp-specials
                 ;

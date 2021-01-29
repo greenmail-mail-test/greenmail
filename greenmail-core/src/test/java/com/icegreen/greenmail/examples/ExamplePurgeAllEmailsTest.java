@@ -11,7 +11,6 @@ import org.junit.Test;
 import javax.mail.Message;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Youssuf ElKalay.

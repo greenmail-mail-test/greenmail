@@ -426,7 +426,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
                     messages.add(mailMessage.getMimeMessage());
                 }
             }
-            return messages.toArray(new Message[messages.size()]);
+            return messages.toArray(new Message[0]);
         }
     }
 
@@ -444,7 +444,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
                     messages.add(storedMessage.getMimeMessage());
                 }
             }
-            return messages.toArray(new Message[messages.size()]);
+            return messages.toArray(new Message[0]);
         }
     }
 

@@ -100,12 +100,9 @@ public class ImapServerTest {
         greenMail.waitForIncomingEmail(5000, 1);
 
         try (Retriever retriever = new Retriever(greenMail.getImap())) {
-            try {
-                retriever.getMessages(to, "wrongpassword");
-                fail("Expected failed login");
-            } catch (Throwable e) {
-                // ok
-            }
+            assertThatThrownBy(() -> retriever.getMessages(to, "wrongpassword"))
+                .isInstanceOf(RuntimeException.class)
+                .hasCauseInstanceOf(AuthenticationFailedException.class);
 
             Message[] messages = retriever.getMessages(to, password);
             assertThat(messages.length).isEqualTo(1);

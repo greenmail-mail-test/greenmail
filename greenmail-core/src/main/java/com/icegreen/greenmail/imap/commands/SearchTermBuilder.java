@@ -41,10 +41,10 @@ import com.icegreen.greenmail.store.StoredMessage;
  */
 public abstract class SearchTermBuilder {
     private SearchKey key;
-    private List<String> parameters = Collections.<String>emptyList();
+    private List<String> parameters = Collections.emptyList();
     private static final Logger LOGGER = LoggerFactory.getLogger(SearchTermBuilder.class);
     public static final AllSearchTerm ALL_SEARCH_TERM = new AllSearchTerm();
-    
+
     public static SearchTermBuilder create(final String pTerm) {
         return create(SearchKey.valueOf(pTerm));
     }
@@ -224,7 +224,7 @@ public abstract class SearchTermBuilder {
                 return new OrTerm(new SubjectTerm(getParameters().get(0)),new SubjectTerm(getParameters().get(1)));
 	            }
 	        };	}
-    
+
     private void setSearchKey(final SearchKey pKey) {
         key = pKey;
     }
@@ -335,33 +335,33 @@ public abstract class SearchTermBuilder {
         };
     }
 
-    private static SearchTermBuilder createFlagSearchTermBuilder(final String pFlagName, final boolean pValue) {
+    private static SearchTermBuilder createFlagSearchTermBuilder(final String pFlagName, final boolean value) {
         return new SearchTermBuilder() {
             @Override
             public SearchTerm build() {
-                return createFlagSearchTerm(pFlagName, pValue);
+                return createFlagSearchTerm(pFlagName, value);
             }
         };
     }
 
-    private static SearchTermBuilder createKeywordSearchTermBuilder(final SearchKey pKey) {
+    private static SearchTermBuilder createKeywordSearchTermBuilder(final SearchKey key) {
         return new SearchTermBuilder() {
             @Override
             public SearchTerm build() {
-                return createFlagSearchTerm(getParameter(0), pKey == SearchKey.KEYWORD);
+                return createFlagSearchTerm(getParameter(0), key == SearchKey.KEYWORD);
             }
         };
     }
 
-    private static SearchTerm createFlagSearchTerm(String pFlagName, boolean pValue) {
-        Flags.Flag flag = toFlag(pFlagName);
+    private static SearchTerm createFlagSearchTerm(String flagName, boolean value) {
+        Flags.Flag flag = toFlag(flagName);
         Flags flags = new javax.mail.Flags();
         if (null == flag) { // user flags
-            flags.add(pFlagName);
+            flags.add(flagName);
         } else {
             flags.add(flag);
         }
-        return new FlagTerm(flags, pValue);
+        return new FlagTerm(flags, value);
     }
 
     private static SearchTermBuilder createUidTermBuilder() {
@@ -384,11 +384,11 @@ public abstract class SearchTermBuilder {
         };
     }
 
-    private static javax.mail.Flags.Flag toFlag(String pFlag) {
-        if (pFlag == null || pFlag.trim().length() < 1) {
+    private static javax.mail.Flags.Flag toFlag(String flagValue) {
+        if (flagValue == null || flagValue.trim().length() < 1) {
             throw new IllegalArgumentException("Can not convert empty string to mail flag");
         }
-        String flag = pFlag.trim().toUpperCase();
+        String flag = flagValue.trim().toUpperCase();
         if ("ANSWERED".equals(flag)) {
             return javax.mail.Flags.Flag.ANSWERED;
         }

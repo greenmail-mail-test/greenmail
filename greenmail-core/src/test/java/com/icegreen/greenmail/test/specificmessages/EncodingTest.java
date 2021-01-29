@@ -1,6 +1,5 @@
 package com.icegreen.greenmail.test.specificmessages;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -85,7 +84,7 @@ public class EncodingTest {
             inboxFolder.open(Folder.READ_WRITE);
             Message[] messages = inboxFolder.getMessages();
             MimeMessage msg = (MimeMessage) messages[0];
-            message.writeTo(new FileOutputStream(new File("t.eml")));
+            message.writeTo(new FileOutputStream("t.eml"));
             assertThat(msg.getContentType().startsWith("multipart/alternative")).isTrue();
             Multipart multipartReceived = (Multipart) msg.getContent();
 

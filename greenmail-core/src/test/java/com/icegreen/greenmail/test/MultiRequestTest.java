@@ -52,8 +52,8 @@ public class MultiRequestTest {
     private static class RetrieverThread extends Thread {
         String to;
         volatile int count;
-        private int expectedCount;
-        private AbstractServer server;
+        private final int expectedCount;
+        private final AbstractServer server;
 
         RetrieverThread(String to, AbstractServer server, ThreadGroup group, int expectedCount) {
             super(group, RetrieverThread.class.getName());

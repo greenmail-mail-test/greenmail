@@ -20,13 +20,7 @@ public class POP3CommandTest {
     private static final String CRLF = "\r\n";
 
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.POP3){
-        @Override
-        public void start() {
-            super.start();
-            System.out.println("Started");
-        }
-    };
+    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.POP3);
 
     private int port;
     private String hostAddress;

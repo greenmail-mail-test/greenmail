@@ -88,7 +88,7 @@ public class UserManagerTest {
 
         inbox.store(m1);
         otherfolder.store(m2);
- 
+
         userManager.deleteUser(user);
         assertThat(imapHostManager.getAllMessages().isEmpty()).isTrue();
     }
@@ -173,24 +173,21 @@ public class UserManagerTest {
         }
 
         public void performTest() {
-            final List<Exception> exceptions = Collections.synchronizedList(new ArrayList<Exception>());
-            Runnable task = new Runnable() {
-                @Override
-                public void run() {
-                    for (int counter = 0; counter < NO_ACCOUNTS_PER_THREAD; counter++) {
-                        String email = "email_" + Thread.currentThread().getName() + "_" + counter;
-                        try {
-                            if (creationSynchronized) {
-                                synchronized (ConcurrencyTest.class) {
-                                    createMailbox(email);
-                                }
-                            } else {
+            final List<Exception> exceptions = Collections.synchronizedList(new ArrayList<>());
+            Runnable task = () -> {
+                for (int counter = 0; counter < NO_ACCOUNTS_PER_THREAD; counter++) {
+                    String email = "email_" + Thread.currentThread().getName() + "_" + counter;
+                    try {
+                        if (creationSynchronized) {
+                            synchronized (ConcurrencyTest.class) {
                                 createMailbox(email);
                             }
-                            deleteMailbox(email);
-                        } catch (Exception e) {
-                            exceptions.add(e);
+                        } else {
+                            createMailbox(email);
                         }
+                        deleteMailbox(email);
+                    } catch (Exception e) {
+                        exceptions.add(e);
                     }
                 }
             };
@@ -201,9 +198,9 @@ public class UserManagerTest {
                 threads[i].start();
             }
 
-            for (int i = 0; i < threads.length; i++) {
+            for (Thread thread : threads) {
                 try {
-                    threads[i].join();
+                    thread.join();
                 } catch (InterruptedException e) {
                     throw new IllegalStateException(e);
                 }

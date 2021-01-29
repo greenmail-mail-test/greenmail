@@ -324,7 +324,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         String sub = value.substring(startPos);
         strings.add(sub);
 
-        return strings.toArray(new String[strings.size()]);
+        return strings.toArray(new String[0]);
     }
 
     private void addHeaders(Enumeration<?> inum, StringBuilder response, Partial partial) {
@@ -348,7 +348,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             response.append('}');
             response.append("\r\n");
 
-            response.append(partialContent.substring(start,start + len));
+            response.append(partialContent, start, start + len);
         } else {
             response.append("{");
             response.append(count);

@@ -95,7 +95,7 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
 
     protected void extractAndAddUser(GreenMailConfiguration configuration, BinaryOperator<String> buildLogin, String user) {
         // login:pwd@domain
-        String[] userParts = user.split(":|@");
+        String[] userParts = user.split("[:@]");
         switch (userParts.length) {
             case 2:
                 configuration.withUser(userParts[0], userParts[1]);

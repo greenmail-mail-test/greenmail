@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class MovingMessage {
     private MailAddress returnPath;
-    private List<MailAddress> toAddresses = new LinkedList<>();
+    private final List<MailAddress> toAddresses = new LinkedList<>();
     private MimeMessage message;
     private String content;
 

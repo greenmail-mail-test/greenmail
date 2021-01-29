@@ -5,6 +5,7 @@
 package com.icegreen.greenmail.test;
 
 import java.io.ByteArrayOutputStream;
+import javax.mail.AuthenticationFailedException;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -94,12 +95,9 @@ public class Pop3ServerTest {
         greenMail.waitForIncomingEmail(5000, 1);
 
         try (Retriever retriever = new Retriever(greenMail.getPop3())) {
-            try {
-                retriever.getMessages(to, "wrongpassword");
-                fail("Expected authentication failure");
-            } catch (Throwable e) {
-                // ok
-            }
+            assertThatThrownBy(() -> retriever.getMessages(to, "wrongpassword"))
+                .isInstanceOf(RuntimeException.class)
+                .hasCauseInstanceOf(AuthenticationFailedException.class);
 
             Message[] messages = retriever.getMessages(to, password);
             assertThat(messages.length).isEqualTo(1);

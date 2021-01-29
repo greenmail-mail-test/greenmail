@@ -115,7 +115,7 @@ public class UserImpl implements GreenMailUser {
 
     @Override
     public boolean equals(Object o) {
-        if ((null == o) || !(o instanceof UserImpl)) {
+        if (!(o instanceof UserImpl)) {
             return false;
         }
         UserImpl that = (UserImpl) o;

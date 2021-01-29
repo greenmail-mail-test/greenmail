@@ -11,8 +11,8 @@ package com.icegreen.greenmail.imap.commands;
  */
 public class MsnRange {
 
-    private int lowVal;
-    private int highVal;
+    private final int lowVal;
+    private final int highVal;
 
     public MsnRange(int singleVal) {
         lowVal = singleVal;

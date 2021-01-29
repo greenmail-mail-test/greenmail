@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class MaxSizeLinkedHashMapTest {
     private static final int TEST_MAX_SIZE = 8;
-    private MaxSizeLinkedHashMap<Integer, Integer> map = new MaxSizeLinkedHashMap<>(TEST_MAX_SIZE);
+    private final MaxSizeLinkedHashMap<Integer, Integer> map = new MaxSizeLinkedHashMap<>(TEST_MAX_SIZE);
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldRejectNegativeMaxSize() {

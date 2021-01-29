@@ -27,8 +27,8 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
     private ImapSession session;
     private boolean readonly;
     private volatile boolean sizeChanged;
-    private final List<Integer> expungedMsns = Collections.synchronizedList(new LinkedList<Integer>());
-    private final Map<Integer, FlagUpdate> modifiedFlags = Collections.synchronizedMap(new TreeMap<Integer, FlagUpdate>());
+    private final List<Integer> expungedMsns = Collections.synchronizedList(new LinkedList<>());
+    private final Map<Integer, FlagUpdate> modifiedFlags = Collections.synchronizedMap(new TreeMap<>());
 
     public ImapSessionFolder(MailFolder folder, ImapSession session, boolean readonly) {
         this.folder = folder;

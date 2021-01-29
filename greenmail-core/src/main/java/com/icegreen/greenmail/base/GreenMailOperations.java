@@ -70,7 +70,7 @@ public interface GreenMailOperations {
     boolean waitForIncomingEmail(int emailCount);
 
     /**
-     * @return Returns all messags in all folders for all users
+     * @return Returns all messages in all folders for all users
      * {@link com.icegreen.greenmail.util.GreenMailUtil} has a bunch of static helper methods to extract body text etc.
      */
     MimeMessage[] getReceivedMessages();

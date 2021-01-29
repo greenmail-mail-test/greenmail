@@ -95,11 +95,9 @@ class CopyCommand extends SelectedStateCommand implements UidEnabledCommand {
      */
     private String generateCopyUidResponseCode(ImapSessionFolder currentMailbox,
                                                List<Long> copiedUidsFrom, List<Long> copiedUidsTo) {
-        StringBuilder copyuidResponseCode = new StringBuilder("COPYUID").append(SP).
-                append(currentMailbox.getUidValidity()).append(SP).
-                append(IdRange.uidsToRangeString(copiedUidsFrom)).append(SP).
-                append(IdRange.uidsToRangeString(copiedUidsTo));
-
-        return copyuidResponseCode.toString();
+        return "COPYUID" + SP +
+            currentMailbox.getUidValidity() + SP +
+            IdRange.uidsToRangeString(copiedUidsFrom) + SP +
+            IdRange.uidsToRangeString(copiedUidsTo);
     }
 }

@@ -20,7 +20,7 @@ public class MapBasedStoredMessageCollection implements StoredMessageCollection 
     private final Map<Long, StoredMessage> mailMessages;
 
     public MapBasedStoredMessageCollection(final int maximumMapSize) {
-        mailMessages = Collections.synchronizedMap(new MaxSizeLinkedHashMap<Long, StoredMessage>(maximumMapSize));
+        mailMessages = Collections.synchronizedMap(new MaxSizeLinkedHashMap<>(maximumMapSize));
     }
 
     @Override

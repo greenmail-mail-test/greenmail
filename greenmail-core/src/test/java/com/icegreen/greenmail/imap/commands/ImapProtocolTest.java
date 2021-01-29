@@ -13,7 +13,6 @@ import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.sun.mail.iap.Argument;
 import com.sun.mail.iap.ByteArray;
-import com.sun.mail.iap.ProtocolException;
 import com.sun.mail.iap.Response;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.imap.IMAPStore;
@@ -59,12 +58,7 @@ public class ImapProtocolTest {
                     "STATUS \"non existent folder\" (MESSAGES UIDNEXT UIDVALIDITY UNSEEN)",
                     "SELECT \"non existent folder\""
             }) {
-                Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-                    @Override
-                    public Object doCommand(IMAPProtocol protocol) {
-                        return protocol.command(cmd, null);
-                    }
-                });
+                Response[] ret = (Response[]) folder.doCommand(protocol -> protocol.command(cmd, null));
 
                 IMAPResponse response = (IMAPResponse) ret[0];
                 assertThat(response.isNO()).isTrue();
@@ -80,12 +74,7 @@ public class ImapProtocolTest {
         try {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
             folder.open(Folder.READ_ONLY);
-            Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-                @Override
-                public Object doCommand(IMAPProtocol protocol) {
-                    return protocol.command("UID FETCH 1:* RFC822.SIZE", null);
-                }
-            });
+            Response[] ret = (Response[]) folder.doCommand(protocol -> protocol.command("UID FETCH 1:* RFC822.SIZE", null));
 
             FetchResponse fetchResponse = (FetchResponse) ret[0];
             assertThat(fetchResponse.isBAD()).isFalse();
@@ -110,12 +99,7 @@ public class ImapProtocolTest {
             folder.open(Folder.READ_ONLY);
 
             // Fetch without partial as reference
-            Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-                @Override
-                public Object doCommand(IMAPProtocol protocol) {
-                    return protocol.command("UID FETCH 1 (BODY[HEADER])", null);
-                }
-            });
+            Response[] ret = (Response[]) folder.doCommand(protocol -> protocol.command("UID FETCH 1 (BODY[HEADER])", null));
             FetchResponse fetchResponse = (FetchResponse) ret[0];
             assertThat(fetchResponse.isBAD()).isFalse();
             assertThat(fetchResponse.getItemCount()).isEqualTo(3); // UID, BODY, FLAGS
@@ -128,12 +112,7 @@ public class ImapProtocolTest {
             assertThat(uid.uid).isEqualTo(folder.getUID(folder.getMessage(1)));
 
             // partial size only
-            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-                @Override
-                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
-                    return protocol.command("UID FETCH 1 (BODY[HEADER]<50>)", null);
-                }
-            });
+            ret = (Response[]) folder.doCommand(protocol -> protocol.command("UID FETCH 1 (BODY[HEADER]<50>)", null));
             fetchResponse = (FetchResponse) ret[0];
             assertThat(fetchResponse.isBAD()).isFalse();
             assertThat(fetchResponse.getItemCount()).isEqualTo(2); // UID, BODY
@@ -146,12 +125,7 @@ public class ImapProtocolTest {
             assertThat(uid.uid).isEqualTo(folder.getUID(folder.getMessage(1)));
 
             // partial size and zero offset
-            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-                @Override
-                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
-                    return protocol.command("UID FETCH 1 (BODY[HEADER]<0.30>)", null);
-                }
-            });
+            ret = (Response[]) folder.doCommand(protocol -> protocol.command("UID FETCH 1 (BODY[HEADER]<0.30>)", null));
             fetchResponse = (FetchResponse) ret[0];
             assertThat(fetchResponse.isBAD()).isFalse();
             assertThat(fetchResponse.getItemCount()).isEqualTo(2); // UID , BODY
@@ -164,12 +138,8 @@ public class ImapProtocolTest {
             assertThat(uid.uid).isEqualTo(folder.getUID(folder.getMessage(1)));
 
             // partial size and non zero offset
-            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-                @Override
-                public Object doCommand(IMAPProtocol protocol) throws ProtocolException {
-                    return protocol.command("UID FETCH 1 (BODY[HEADER]<10.30>)", null);
-                }
-            });
+            ret = (Response[]) folder.doCommand(
+                protocol -> protocol.command("UID FETCH 1 (BODY[HEADER]<10.30>)", null));
             fetchResponse = (FetchResponse) ret[0];
             assertThat(fetchResponse.isBAD()).isFalse();
             assertThat(fetchResponse.getItemCount()).isEqualTo(2); // UID and SIZE
@@ -194,55 +164,30 @@ public class ImapProtocolTest {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
             folder.open(Folder.READ_ONLY);
 
-            Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-                @Override
-                public Object doCommand(IMAPProtocol protocol) {
-                    return protocol.command("SEARCH 1", null);
-                }
-            });
+            Response[] ret = (Response[]) folder.doCommand(protocol -> protocol.command("SEARCH 1", null));
             IMAPResponse response = (IMAPResponse) ret[0];
             assertThat(response.isBAD()).isFalse();
             assertThat(response.getRest()).isEqualTo("1");
 
-            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-                @Override
-                public Object doCommand(IMAPProtocol protocol) {
-                    return protocol.command("SEARCH 2:2", null);
-                }
-            });
+            ret = (Response[]) folder.doCommand(protocol -> protocol.command("SEARCH 2:2", null));
             response = (IMAPResponse) ret[0];
             assertThat(response.isBAD()).isFalse();
             assertThat(ret[1].isOK()).isTrue();
             assertThat(response.getRest()).isEqualTo("2");
 
-            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-                @Override
-                public Object doCommand(IMAPProtocol protocol) {
-                    return protocol.command("SEARCH 2:4", null);
-                }
-            });
+            ret = (Response[]) folder.doCommand(protocol -> protocol.command("SEARCH 2:4", null));
             response = (IMAPResponse) ret[0];
             assertThat(response.isBAD()).isFalse();
             assertThat(response.getRest()).isEqualTo("2 3 4");
             assertThat(ret[1].isOK()).isTrue();
 
-            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-                @Override
-                public Object doCommand(IMAPProtocol protocol) {
-                    return protocol.command("SEARCH 1,2:4,8", null);
-                }
-            });
+            ret = (Response[]) folder.doCommand(protocol -> protocol.command("SEARCH 1,2:4,8", null));
             response = (IMAPResponse) ret[0];
             assertThat(response.isBAD()).isFalse();
             assertThat(response.getRest()).isEqualTo("1 2 3 4 8");
             assertThat(ret[1].isOK()).isTrue();
 
-            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-                @Override
-                public Object doCommand(IMAPProtocol protocol) {
-                    return protocol.command("SEARCH 1,2:4 3,8", null);
-                }
-            });
+            ret = (Response[]) folder.doCommand(protocol -> protocol.command("SEARCH 1,2:4 3,8", null));
             response = (IMAPResponse) ret[0];
             assertThat(response.isBAD()).isFalse();
             assertThat(response.getRest()).isEqualTo("3");
@@ -265,44 +210,24 @@ public class ImapProtocolTest {
                 uids.put(msg.getMessageNumber(), folder.getUID(msg));
             }
 
-            Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-                @Override
-                public Object doCommand(IMAPProtocol protocol) {
-                    return protocol.command("UID SEARCH 1", null);
-                }
-            });
+            Response[] ret = (Response[]) folder.doCommand(protocol -> protocol.command("UID SEARCH 1", null));
             IMAPResponse response = (IMAPResponse) ret[0];
             assertThat(response.isBAD()).isFalse();
             assertThat(response.getRest()).isEqualTo(uids.get(1).toString());
 
-            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-                @Override
-                public Object doCommand(IMAPProtocol protocol) {
-                    return protocol.command("UID SEARCH 2:2", null);
-                }
-            });
+            ret = (Response[]) folder.doCommand(protocol -> protocol.command("UID SEARCH 2:2", null));
             response = (IMAPResponse) ret[0];
             assertThat(response.isBAD()).isFalse();
             assertThat(ret[1].isOK()).isTrue();
             assertThat(response.getRest()).isEqualTo(uids.get(2).toString());
 
-            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-                @Override
-                public Object doCommand(IMAPProtocol protocol) {
-                    return protocol.command("UID SEARCH 2:4", null);
-                }
-            });
+            ret = (Response[]) folder.doCommand(protocol -> protocol.command("UID SEARCH 2:4", null));
             response = (IMAPResponse) ret[0];
             assertThat(response.isBAD()).isFalse();
             assertThat(msnListToUidString(uids, 2, 3, 4)).isEqualTo(response.getRest());
             assertThat(ret[1].isOK()).isTrue();
 
-            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-                @Override
-                public Object doCommand(IMAPProtocol protocol) {
-                    return protocol.command("UID SEARCH 1,2:4,8", null);
-                }
-            });
+            ret = (Response[]) folder.doCommand(protocol -> protocol.command("UID SEARCH 1,2:4,8", null));
             response = (IMAPResponse) ret[0];
             assertThat(response.isBAD()).isFalse();
             assertThat(msnListToUidString(uids, 1, 2, 3, 4, 8)).isEqualTo(response.getRest());
@@ -319,12 +244,8 @@ public class ImapProtocolTest {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
             folder.open(Folder.READ_WRITE);
             folder.setFlags(new int[]{2, 3}, new Flags(Flags.Flag.ANSWERED), true);
-            Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-                @Override
-                public Object doCommand(IMAPProtocol protocol) {
-                    return protocol.command("SEARCH NOT (ANSWERED) NOT (DELETED) NOT (SEEN) NOT (FLAGGED) ALL", null);
-                }
-            });
+            Response[] ret = (Response[]) folder.doCommand(protocol -> protocol.command(
+                "SEARCH NOT (ANSWERED) NOT (DELETED) NOT (SEEN) NOT (FLAGGED) ALL", null));
             IMAPResponse response = (IMAPResponse) ret[0];
             assertThat(response.isBAD()).isFalse();
             assertThat("1 4 5 6 7 8 9 10" /* 2 and 3 set to answered */).isEqualTo(response.getRest());
@@ -366,24 +287,16 @@ public class ImapProtocolTest {
 
             // messages[2] contains content with search text, match must be case insensitive
             final String searchText1 = "conTEnt2";
-            Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-                @Override
-                public Object doCommand(IMAPProtocol protocol) {
-                    return protocol.command("UID SEARCH TEXT " + searchText1, null);
-                }
-            });
+            Response[] ret = (Response[]) folder.doCommand(
+                protocol -> protocol.command("UID SEARCH TEXT " + searchText1, null));
             IMAPResponse response = (IMAPResponse) ret[0];
             assertThat(response.isBAD()).isFalse();
             assertThat(response.getRest()).isEqualTo(uids.get(messages[2].getMessageNumber()));
 
             // messages[2] contains search text in CC, with different upper case
             final String searchText2 = "foo@localHOST";
-            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-                @Override
-                public Object doCommand(IMAPProtocol protocol) {
-                    return protocol.command("UID SEARCH TEXT " + searchText2, null);
-                }
-            });
+            ret = (Response[]) folder.doCommand(
+                protocol -> protocol.command("UID SEARCH TEXT " + searchText2, null));
             response = (IMAPResponse) ret[0];
             assertThat(response.isBAD()).isFalse();
             // Match all
@@ -399,22 +312,12 @@ public class ImapProtocolTest {
         try {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
             folder.open(Folder.READ_WRITE);
-            Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-                @Override
-                public Object doCommand(IMAPProtocol protocol) {
-                    return protocol.command("CREATE foo", null);
-                }
-            });
+            Response[] ret = (Response[]) folder.doCommand(protocol -> protocol.command("CREATE foo", null));
 
             IMAPResponse response = (IMAPResponse) ret[0];
             assertThat(response.isBAD()).isFalse();
 
-            ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-                @Override
-                public Object doCommand(IMAPProtocol protocol) {
-                    return protocol.command("RENAME foo bar", null);
-                }
-            });
+            ret = (Response[]) folder.doCommand(protocol -> protocol.command("RENAME foo bar", null));
 
             Response response2 = ret[0];
             assertThat(response2.isOK()).isTrue();
@@ -465,13 +368,10 @@ public class ImapProtocolTest {
         }
     }
 
-    private void searchAndValidateWithCharset(IMAPFolder folder, String expected, String charset, Argument arg) throws MessagingException {
-        Response[] ret = (Response[]) folder.doCommand(new IMAPFolder.ProtocolCommand() {
-            @Override
-            public Object doCommand(IMAPProtocol protocol) {
-                return protocol.command("UID SEARCH CHARSET " + charset + " TEXT", arg);
-            }
-        });
+    private void searchAndValidateWithCharset(IMAPFolder folder, String expected, String charset,
+                                              Argument arg) throws MessagingException {
+        Response[] ret = (Response[]) folder.doCommand
+            (protocol -> protocol.command("UID SEARCH CHARSET " + charset + " TEXT", arg));
         IMAPResponse response = (IMAPResponse) ret[0];
         assertThat(response.isBAD()).isFalse();
         String number = response.getRest();
@@ -479,24 +379,18 @@ public class ImapProtocolTest {
     }
 
     @Test
-    public void testUidSearchAll() throws MessagingException, IOException {
+    public void testUidSearchAll() throws MessagingException {
         greenMail.setUser("foo2@localhost", "pwd");
         store.connect("foo2@localhost", "pwd");
         try {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
             folder.open(Folder.READ_ONLY);
 
-            final MimeMessage email = GreenMailUtil.createTextEmail("foo2@localhost", "foo@localhost",
+            GreenMailUtil.createTextEmail("foo2@localhost", "foo@localhost",
                     "some subject", "some content",
                     greenMail.getSmtp().getServerSetup());
 
-
-            final IMAPFolder.ProtocolCommand uid_search_all = new IMAPFolder.ProtocolCommand() {
-                @Override
-                public Object doCommand(IMAPProtocol protocol) {
-                    return protocol.command("UID SEARCH ALL", null);
-                }
-            };
+            final IMAPFolder.ProtocolCommand uid_search_all = protocol -> protocol.command("UID SEARCH ALL", null);
 
             // Search empty
             Response[] ret = (Response[]) folder.doCommand(uid_search_all);

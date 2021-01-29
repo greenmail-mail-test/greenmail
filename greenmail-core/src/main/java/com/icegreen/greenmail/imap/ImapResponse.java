@@ -19,7 +19,7 @@ import java.io.OutputStream;
  * to the client.
  */
 public class ImapResponse implements ImapConstants {
-    private InternetPrintWriter writer;
+    private final InternetPrintWriter writer;
     private String tag = UNTAGGED;
 
     public ImapResponse(OutputStream output) {

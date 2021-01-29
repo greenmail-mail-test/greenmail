@@ -29,7 +29,7 @@ class AppendCommand extends AuthenticatedStateCommand {
     public static final String NAME = "APPEND";
     public static final String ARGS = "<mailbox> [<flag_list>] [<date_time>] literal";
 
-    private AppendCommandParser appendCommandParser = new AppendCommandParser();
+    private final AppendCommandParser appendCommandParser = new AppendCommandParser();
 
     AppendCommand() {
         super(NAME, ARGS);

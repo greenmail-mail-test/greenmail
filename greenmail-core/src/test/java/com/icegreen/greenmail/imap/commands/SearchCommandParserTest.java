@@ -1,7 +1,6 @@
 package com.icegreen.greenmail.imap.commands;
 
 import java.io.ByteArrayInputStream;
-import java.nio.charset.CharacterCodingException;
 import javax.mail.Flags;
 import javax.mail.Message;
 import javax.mail.internet.AddressException;
