@@ -74,9 +74,9 @@ public class GreenMailStandaloneRunnerTest {
         assertThat(configResponse.getStatus()).isEqualTo(200);
         assertThat(configResponse.readEntity(String.class)).isEqualTo("{\"serverSetups\":[" +
             "{\"port\":3025,\"address\":\"127.0.0.1\",\"protocol\":\"smtp\",\"isSecure\":false,\"readTimeout\":-1," +
-            "\"writeTimeout\":-1,\"connectionTimeout\":-1,\"serverStartupTimeout\":1000,\"isDynamicPort\":false}," +
+            "\"writeTimeout\":-1,\"connectionTimeout\":-1,\"serverStartupTimeout\":2000,\"isDynamicPort\":false}," +
             "{\"port\":3143,\"address\":\"127.0.0.1\",\"protocol\":\"imap\",\"isSecure\":false,\"readTimeout\":-1," +
-            "\"writeTimeout\":-1,\"connectionTimeout\":-1,\"serverStartupTimeout\":1000,\"isDynamicPort\":false}],\"authenticationDisabled\":false" +
+            "\"writeTimeout\":-1,\"connectionTimeout\":-1,\"serverStartupTimeout\":2000,\"isDynamicPort\":false}],\"authenticationDisabled\":false" +
             "}");
 
         final Response userListResponse = api.path("/api/user")

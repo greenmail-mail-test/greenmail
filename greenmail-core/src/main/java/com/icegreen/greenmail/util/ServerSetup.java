@@ -68,7 +68,7 @@ public class ServerSetup {
     /**
      * Default server startup timeout in milliseconds.
      */
-    public static final long SERVER_STARTUP_TIMEOUT = 1000L;
+    public static final long SERVER_STARTUP_TIMEOUT = 2000L;
 
     private static final String MAIL_DOT = "mail.";
 
