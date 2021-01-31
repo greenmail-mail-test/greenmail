@@ -37,7 +37,7 @@ import com.icegreen.greenmail.util.ServerSetupTest;
  */
 public class SmtpServerTest {
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(new ServerSetup[]{ServerSetupTest.SMTP, ServerSetupTest.SMTPS});
+    public final GreenMailRule greenMail = new GreenMailRule(new ServerSetup[]{ServerSetupTest.SMTP});
 
     @Test
     public void testSmtpServerBasic() throws MessagingException {
@@ -72,19 +72,6 @@ public class SmtpServerTest {
         assertThat(GreenMailUtil.getBody(emails[0]).trim()).isEqualTo(body);
     }
 
-    @Test
-    public void testSmtpsServerReceive() throws Throwable {
-        assertThat(greenMail.getReceivedMessages().length).isEqualTo(0);
-
-        String subject = GreenMailUtil.random();
-        String body = GreenMailUtil.random();
-        GreenMailUtil.sendTextEmailSecureTest("test@localhost", "from@localhost", subject, body);
-        greenMail.waitForIncomingEmail(1500, 1);
-        MimeMessage[] emails = greenMail.getReceivedMessages();
-        assertThat(emails.length).isEqualTo(1);
-        assertThat(emails[0].getSubject()).isEqualTo(subject);
-        assertThat(GreenMailUtil.getBody(emails[0]).trim()).isEqualTo(body);
-    }
 
     @Test
     public void testSmtpServerReceiveInThread() throws Throwable {
@@ -111,7 +98,8 @@ public class SmtpServerTest {
 
         String subject = GreenMailUtil.random();
         String body = GreenMailUtil.random();
-        GreenMailUtil.sendAttachmentEmail("test@localhost", "from@localhost", subject, body, new byte[]{0, 1, 2}, "image/gif", "testimage_filename", "testimage_description", ServerSetupTest.SMTP);
+        GreenMailUtil.sendAttachmentEmail("test@localhost", "from@localhost", subject, body,
+            new byte[]{0, 1, 2}, "image/gif", "testimage_filename", "testimage_description", ServerSetupTest.SMTP);
         greenMail.waitForIncomingEmail(1500, 1);
         Message[] emails = greenMail.getReceivedMessages();
         assertThat(emails.length).isEqualTo(1);
