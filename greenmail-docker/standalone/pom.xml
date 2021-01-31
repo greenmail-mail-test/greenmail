@@ -87,6 +87,7 @@
                   <port>3465:3465</port>
                   <port>3993:3993</port>
                   <port>3995:3995</port>
+                  <port>8080:8080</port>
                 </ports>
                 <wait>
                   <tcp>
@@ -99,6 +100,7 @@
                       <port>3465</port>
                       <port>3993</port>
                       <port>3995</port>
+                      <port>8080</port>
                     </ports>
                   </tcp>
                   <time>10000</time>
