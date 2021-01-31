@@ -77,6 +77,7 @@ Roadmap
   * Bugfix / maintenance
 * [1.7](https://github.com/greenmail-mail-test/greenmail/milestone/6)  
   * Deprecations (no GreenMailRule in greenmail-core, ...)
+  * Jersey 3.x (jakarta)
 * [2.x](https://github.com/greenmail-mail-test/greenmail/milestone/3)
   * JakartaMail 2.x
 
