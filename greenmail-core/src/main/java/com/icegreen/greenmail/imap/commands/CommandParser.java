@@ -85,12 +85,16 @@ public class CommandParser {
             case '{':
                 return new String(consumeLiteralAsBytes(request), charset);
             default:
-                return atom(request);
+                return consumeWord(request);
         }
     }
 
     /**
      * Reads an argument of type "nstring" from the request.
+     *
+     * https://tools.ietf.org/html/rfc3501#page-88 :
+     * nstring         = string / nil
+     * nil             = "NIL"
      */
     public String nstring(ImapRequestLineReader request) throws ProtocolException {
         char next = request.nextWordChar();
@@ -100,7 +104,7 @@ public class CommandParser {
             case '{':
                 return consumeLiteral(request);
             default:
-                String value = atom(request);
+                String value = consumeWord(request);
                 if ("NIL".equals(value)) {
                     return null;
                 } else {
@@ -150,6 +154,13 @@ public class CommandParser {
         } catch (ParseException e) {
             throw new ProtocolException("Invalid date format <" + dateString + ">, should comply to dd-MMM-yyyy hh:mm:ss Z");
         }
+    }
+
+    /**
+     * Reads the next "word from the request, comprising all characters up to the next SPACE.
+     */
+    protected String consumeWord(ImapRequestLineReader request) throws ProtocolException {
+        return consumeWord(request, new NoopCharValidator());
     }
 
     /**

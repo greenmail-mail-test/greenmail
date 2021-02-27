@@ -1,11 +1,5 @@
 package com.icegreen.greenmail.imap.commands;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import javax.mail.*;
-import javax.mail.internet.MimeMessage;
-
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.user.GreenMailUser;
@@ -21,7 +15,13 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import javax.mail.*;
+import javax.mail.internet.MimeMessage;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Low level IMAP protocol test cases.
@@ -39,8 +39,8 @@ public class ImapProtocolTest {
         int numberOfMails = 10;
         for (int i = 0; i < numberOfMails; i++) {
             GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test search " + i,
-                    "Test message content" + i,
-                    greenMail.getSmtp().getServerSetup());
+                "Test message content" + i,
+                greenMail.getSmtp().getServerSetup());
         }
         greenMail.waitForIncomingEmail(numberOfMails);
 
@@ -55,8 +55,8 @@ public class ImapProtocolTest {
             folder.open(Folder.READ_ONLY);
             assertThat(folder.getFolder("non existent folder").exists()).isFalse();
             for (final String cmd : new String[]{
-                    "STATUS \"non existent folder\" (MESSAGES UIDNEXT UIDVALIDITY UNSEEN)",
-                    "SELECT \"non existent folder\""
+                "STATUS \"non existent folder\" (MESSAGES UIDNEXT UIDVALIDITY UNSEEN)",
+                "SELECT \"non existent folder\""
             }) {
                 Response[] ret = (Response[]) folder.doCommand(protocol -> protocol.command(cmd, null));
 
@@ -210,8 +210,13 @@ public class ImapProtocolTest {
                 uids.put(msg.getMessageNumber(), folder.getUID(msg));
             }
 
-            Response[] ret = (Response[]) folder.doCommand(protocol -> protocol.command("UID SEARCH 1", null));
+            Response[] ret = (Response[]) folder.doCommand(protocol -> protocol.command("UID SEARCH UID 3:*", null));
             IMAPResponse response = (IMAPResponse) ret[0];
+            assertThat(response.isBAD()).isFalse();
+            assertThat(msnListToUidString(uids, 3, 4, 5, 6, 7, 8, 9, 10)).isEqualTo(response.getRest());
+
+            ret = (Response[]) folder.doCommand(protocol -> protocol.command("UID SEARCH 1", null));
+            response = (IMAPResponse) ret[0];
             assertThat(response.isBAD()).isFalse();
             assertThat(response.getRest()).isEqualTo(uids.get(1).toString());
 
@@ -258,9 +263,9 @@ public class ImapProtocolTest {
     @Test
     public void testGetMessageByUnknownUidInEmptyINBOX() throws MessagingException, FolderException {
         greenMail.getManagers()
-                .getImapHostManager()
-                .getInbox(user)
-                .deleteAllMessages();
+            .getImapHostManager()
+            .getInbox(user)
+            .deleteAllMessages();
         store.connect("foo@localhost", "pwd");
         try {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
@@ -339,13 +344,13 @@ public class ImapProtocolTest {
             folder.open(Folder.READ_ONLY);
 
             final MimeMessage email = GreenMailUtil.createTextEmail("foo2@localhost", "foo@localhost",
-                    "some subject", "some content",
-                    greenMail.getSmtp().getServerSetup());
+                "some subject", "some content",
+                greenMail.getSmtp().getServerSetup());
 
             String[][] s = {
-                    {"US-ASCII", "ABC", "1"},
-                    {"ISO-8859-15", "\u00c4\u00e4\u20AC", "2"},
-                    {"UTF-8", "\u00c4\u00e4\u03A0", "3"}
+                {"US-ASCII", "ABC", "1"},
+                {"ISO-8859-15", "\u00c4\u00e4\u20AC", "2"},
+                {"UTF-8", "\u00c4\u00e4\u03A0", "3"}
             };
 
             for (String[] charsetAndQuery : s) {
@@ -387,8 +392,8 @@ public class ImapProtocolTest {
             folder.open(Folder.READ_ONLY);
 
             GreenMailUtil.createTextEmail("foo2@localhost", "foo@localhost",
-                    "some subject", "some content",
-                    greenMail.getSmtp().getServerSetup());
+                "some subject", "some content",
+                greenMail.getSmtp().getServerSetup());
 
             final IMAPFolder.ProtocolCommand uid_search_all = protocol -> protocol.command("UID SEARCH ALL", null);
 
