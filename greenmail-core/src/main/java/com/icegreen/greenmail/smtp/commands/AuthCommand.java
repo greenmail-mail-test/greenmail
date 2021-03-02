@@ -91,14 +91,14 @@ public class AuthCommand
     }
 
     private void authLogin(SmtpConnection conn, SmtpManager manager, String commandLine, String[] commandParts, String authMechanismValue) throws IOException {
-        // https://www.ietf.org/archive/id/draft-murchison-sasl-login-00.txt
+        // https://www.samlogic.net/articles/smtp-commands-reference-auth.htm
         if (commandParts.length != 2) {
             conn.send(SMTP_SYNTAX_ERROR + " : Unsupported auth mechanism " + authMechanismValue +
                     " with unexpected values. Line is: <" + commandLine + ">");
         } else {
-            conn.send(SMTP_SERVER_CONTINUATION + "VXNlciBOYW1lAA=="); // "User Name"
+            conn.send(SMTP_SERVER_CONTINUATION + "VXNlcm5hbWU6"); // "Username:"
             String username = conn.receiveLine();
-            conn.send(SMTP_SERVER_CONTINUATION + "UGFzc3dvcmQA"); // Password
+            conn.send(SMTP_SERVER_CONTINUATION + "UGFzc3dvcmQ6"); // "Password:"
             String pwd = conn.receiveLine();
 
             if (manager.getUserManager().test(EncodingUtil.decodeBase64(username), EncodingUtil.decodeBase64(pwd))) {
