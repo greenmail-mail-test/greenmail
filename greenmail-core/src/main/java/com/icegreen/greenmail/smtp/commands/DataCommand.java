@@ -6,16 +6,15 @@
  */
 package com.icegreen.greenmail.smtp.commands;
 
-import com.icegreen.greenmail.foedus.util.StreamUtils;
 import com.icegreen.greenmail.mail.MovingMessage;
 import com.icegreen.greenmail.smtp.SmtpConnection;
 import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpState;
+import com.icegreen.greenmail.util.GreenMailUtil;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.StringReader;
-
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * DATA command.
@@ -30,7 +29,7 @@ public class DataCommand extends SmtpCommand {
     @Override
     public void execute(SmtpConnection conn, SmtpState state,
                         SmtpManager manager, String commandLine)
-            throws IOException {
+        throws IOException {
         MovingMessage msg = state.getMessage();
 
         if (msg.getReturnPath() == null) {
@@ -45,19 +44,19 @@ public class DataCommand extends SmtpCommand {
 
         conn.send("354 Start mail input; end with <CRLF>.<CRLF>");
 
-        String value = "Return-Path: <" + msg.getReturnPath() +
-                ">\r\n" + "Received: from " +
-                conn.getClientAddress() + " (HELO " +
-                conn.getHeloName() + "); " +
-                new java.util.Date() + "\r\n";
+        String initialContent = "Return-Path: <" + msg.getReturnPath() +
+            ">\r\n" + "Received: from " +
+            conn.getClientAddress() + " (HELO " +
+            conn.getHeloName() + "); " +
+            new java.util.Date() + "\r\n";
 
-        msg.readDotTerminatedContent(new BufferedReader(StreamUtils.splice(new StringReader(value),
-                conn.getReader())));
+        try (final InputStream messageIs = conn.dotLimitedInputStream(initialContent.getBytes(StandardCharsets.UTF_8))) {
+            msg.setMimeMessage(GreenMailUtil.newMimeMessage(messageIs));
+        }
 
         String err = manager.checkData(state);
         if (err != null) {
             conn.send(err);
-
             return;
         }
 

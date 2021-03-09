@@ -52,13 +52,11 @@ public class SmtpHandler implements ProtocolHandler {
             while (!quitting) {
                 handleCommand();
             }
-
         } catch (SocketTimeoutException ste) {
             conn.send("421 Service shutting down and closing transmission channel");
-
         } catch (Exception e) {
             // Closing socket on blocked read
-            if(!quitting) {
+            if (!quitting) {
                 log.error("Unexpected error handling connection, quitting=", e);
                 throw new IllegalStateException(e);
             }
@@ -71,32 +69,28 @@ public class SmtpHandler implements ProtocolHandler {
 
     protected void sendGreetings() {
         conn.send("220 " + conn.getServerGreetingsName() +
-                " GreenMail SMTP Service v" + BuildInfo.INSTANCE.getProjectVersion() + " ready");
+            " GreenMail SMTP Service v" + BuildInfo.INSTANCE.getProjectVersion() + " ready");
     }
 
     protected void handleCommand()
-            throws IOException {
-        currentLine = conn.receiveLine();
+        throws IOException {
+        currentLine = conn.readLine();
 
         if (currentLine == null) {
             close();
-
             return;
         }
 
         // eliminate invalid line lengths before parsing
         if (!commandLegalSize()) {
-
             return;
         }
 
         String commandName = currentLine.substring(0, 4).toUpperCase();
-
         SmtpCommand command = registry.getCommand(commandName);
 
         if (command == null) {
             conn.send("500 Command not recognized");
-
             return;
         }
 
@@ -106,20 +100,17 @@ public class SmtpHandler implements ProtocolHandler {
     protected boolean commandLegalSize() {
         if (currentLine.length() < 4) {
             conn.send("500 Invalid command. Must be 4 characters");
-
             return false;
         }
 
         if (currentLine.length() > 4 &&
-                currentLine.charAt(4) != ' ') {
+            currentLine.charAt(4) != ' ') {
             conn.send("500 Invalid command. Must be 4 characters");
-
             return false;
         }
 
         if (currentLine.length() > 1000) {
             conn.send("500 Command too long.  1000 character maximum.");
-
             return false;
         }
 
@@ -132,7 +123,7 @@ public class SmtpHandler implements ProtocolHandler {
             final StringBuilder msg = new StringBuilder("Closing SMTP(s) handler connection");
             if (null != socket) {
                 msg.append(' ').append(socket.getInetAddress()).append(':')
-                        .append(socket.getPort());
+                    .append(socket.getPort());
             }
             log.trace(msg.toString());
         }
@@ -141,7 +132,7 @@ public class SmtpHandler implements ProtocolHandler {
             if (socket != null && !socket.isClosed()) {
                 socket.close();
             }
-        } catch(IOException ignored) {
+        } catch (IOException ignored) {
             //empty
         }
     }

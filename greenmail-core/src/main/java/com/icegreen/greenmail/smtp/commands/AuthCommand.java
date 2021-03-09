@@ -6,15 +6,15 @@
  */
 package com.icegreen.greenmail.smtp.commands;
 
-import java.io.IOException;
-import java.util.Arrays;
-
 import com.icegreen.greenmail.smtp.SmtpConnection;
 import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpState;
 import com.icegreen.greenmail.user.UserManager;
 import com.icegreen.greenmail.util.EncodingUtil;
 import com.icegreen.greenmail.util.SaslMessage;
+
+import java.io.IOException;
+import java.util.Arrays;
 
 
 /**
@@ -29,8 +29,7 @@ import com.icegreen.greenmail.util.SaslMessage;
  * <a href="http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml">SASL mechanisms</a></a>
  * <a href="https://datatracker.ietf.org/doc/draft-murchison-sasl-login/">SASL LOGIN</a>
  */
-public class AuthCommand
-        extends SmtpCommand {
+public class AuthCommand extends SmtpCommand {
     public static final String AUTH_SUCCEDED = "235 2.7.0  Authentication Succeeded";
     public static final String AUTH_CREDENTIALS_INVALID = "535 5.7.8  Authentication credentials invalid";
     public static final String AUTH_ALREADY_AUTHENTICATED = "503 already authenticated";
@@ -68,16 +67,16 @@ public class AuthCommand
             authPlain(conn, manager, commandParts);
         } else {
             conn.send(SMTP_SYNTAX_ERROR + " : Unsupported auth mechanism " + authMechanismValue +
-                    ". Only auth mechanism <" + Arrays.toString(AuthMechanism.values()) + "> supported.");
+                ". Only auth mechanism <" + Arrays.toString(AuthMechanism.values()) + "> supported.");
         }
     }
 
-    private void authPlain(SmtpConnection conn, SmtpManager manager, String[] commandParts) throws IOException {
+    private void authPlain(SmtpConnection conn, SmtpManager manager, String[] commandParts) {
         // Continuation?
         String initialResponse;
         if (commandParts.length == 2) {
             conn.send(SMTP_SERVER_CONTINUATION);
-            initialResponse = conn.receiveLine();
+            initialResponse = conn.readLine();
         } else {
             initialResponse = commandParts[2];
         }
@@ -90,16 +89,16 @@ public class AuthCommand
         }
     }
 
-    private void authLogin(SmtpConnection conn, SmtpManager manager, String commandLine, String[] commandParts, String authMechanismValue) throws IOException {
+    private void authLogin(SmtpConnection conn, SmtpManager manager, String commandLine, String[] commandParts, String authMechanismValue) {
         // https://www.samlogic.net/articles/smtp-commands-reference-auth.htm
         if (commandParts.length != 2) {
             conn.send(SMTP_SYNTAX_ERROR + " : Unsupported auth mechanism " + authMechanismValue +
-                    " with unexpected values. Line is: <" + commandLine + ">");
+                " with unexpected values. Line is: <" + commandLine + ">");
         } else {
             conn.send(SMTP_SERVER_CONTINUATION + "VXNlcm5hbWU6"); // "Username:"
-            String username = conn.receiveLine();
+            String username = conn.readLine();
             conn.send(SMTP_SERVER_CONTINUATION + "UGFzc3dvcmQ6"); // "Password:"
-            String pwd = conn.receiveLine();
+            String pwd = conn.readLine();
 
             if (manager.getUserManager().test(EncodingUtil.decodeBase64(username), EncodingUtil.decodeBase64(pwd))) {
                 conn.setAuthenticated(true);

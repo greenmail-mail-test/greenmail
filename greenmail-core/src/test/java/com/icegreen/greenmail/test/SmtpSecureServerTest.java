@@ -17,14 +17,14 @@ public class SmtpSecureServerTest {
 
     @Test
     public void testSmtpsServerReceive() throws Throwable {
-        assertThat(greenMail.getReceivedMessages().length).isEqualTo(0);
+        assertThat(greenMail.getReceivedMessages()).isEmpty();
 
         String subject = GreenMailUtil.random();
         String body = GreenMailUtil.random();
         GreenMailUtil.sendTextEmailSecureTest("test@localhost", "from@localhost", subject, body);
         greenMail.waitForIncomingEmail(1500, 1);
         MimeMessage[] emails = greenMail.getReceivedMessages();
-        assertThat(emails.length).isEqualTo(1);
+        assertThat(emails).hasSize(1);
         assertThat(emails[0].getSubject()).isEqualTo(subject);
         assertThat(GreenMailUtil.getBody(emails[0]).trim()).isEqualTo(body);
     }
