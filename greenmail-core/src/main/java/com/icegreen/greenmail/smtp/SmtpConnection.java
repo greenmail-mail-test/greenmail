@@ -53,7 +53,7 @@ public class SmtpConnection {
                 int b = in.read();
                 if (b < 0) { // End
                     if(log.isDebugEnabled()) {
-                        log.debug("Unexpected end of stream, read {0} bytes: {1}",bos.size(), bos.toString());
+                        log.debug("Unexpected end of stream, read {} bytes: {}", bos.size(), bos.toString());
                     }
                     if(bos.size()>0) {
                         // Best effort?
