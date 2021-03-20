@@ -9,6 +9,7 @@ package com.icegreen.greenmail.imap;
 import com.icegreen.greenmail.server.BuildInfo;
 import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.user.UserManager;
+import com.icegreen.greenmail.util.LoggingOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,9 +54,8 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
     public void run() {
         // Closed automatically when socket is closed via #close()
         try (InputStream ins = new BufferedInputStream(socket.getInputStream(), 512);
-             OutputStream outs = new BufferedOutputStream(socket.getOutputStream(), 1024)
+             OutputStream outs = prepareOutputStream()
         ) {
-
             response = new ImapResponse(outs);
 
             // Write welcome message
@@ -76,6 +76,14 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
         } finally {
             close();
         }
+    }
+
+    private OutputStream prepareOutputStream() throws IOException {
+        OutputStream outputStream = new BufferedOutputStream(socket.getOutputStream(), 1024);
+        if (log.isDebugEnabled()) {
+            outputStream = new LoggingOutputStream(outputStream, "S: ");
+        }
+        return outputStream;
     }
 
     /**
@@ -104,4 +112,3 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
         }
     }
 }
-
