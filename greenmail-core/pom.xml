@@ -8,12 +8,12 @@
 
   <artifactId>greenmail</artifactId>
   <packaging>jar</packaging>
-  <version>1.6.3</version>
+  <version>1.6.4-SNAPSHOT</version>
 
   <parent>
     <groupId>com.icegreen</groupId>
     <artifactId>greenmail-parent</artifactId>
-    <version>1.6.3</version>
+    <version>1.6.4-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
