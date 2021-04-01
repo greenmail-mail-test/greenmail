@@ -14,7 +14,7 @@
     <param name="Threshold" value="INFO"/>
 
     <layout class="org.apache.log4j.PatternLayout">
-      <param name="ConversionPattern" value="%-7.7r %-5.5p %25.25c{2}| %m%n"/>
+      <param name="ConversionPattern" value="%d %-5.5p %25.25c{2}| %m%n"/>
     </layout>
   </appender>
 
