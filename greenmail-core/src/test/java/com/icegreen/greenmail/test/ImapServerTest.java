@@ -16,6 +16,8 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import javax.mail.*;
+import javax.mail.event.MessageCountEvent;
+import javax.mail.event.MessageCountListener;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
@@ -589,6 +591,44 @@ public class ImapServerTest {
             assertThat(messages[1].getSubject()).isEqualTo("Test subject #3");
             assertThat(messages[2].getSubject()).isEqualTo("Test subject #4");
             assertThat(messages[3].getSubject()).isEqualTo("Test subject #5");
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test(timeout = 10000)
+    public void testIdle() throws MessagingException {
+        greenMail.setUser("foo@localhost", "pwd");
+
+        final IMAPStore store = greenMail.getImap().createStore();
+        store.connect("foo@localhost", "pwd");
+        try {
+            Folder inboxFolder = store.getFolder("INBOX");
+            inboxFolder.open(Folder.READ_ONLY);
+            int[] messages = new int[] { 0 };
+            MessageCountListener listener = new MessageCountListener() {
+                @Override
+                public void messagesRemoved(MessageCountEvent e) {
+                }
+
+                @Override
+                public void messagesAdded(MessageCountEvent e) {
+                    messages[0] = e.getMessages()[0].getMessageNumber();
+                }
+            };
+            inboxFolder.addMessageCountListener(listener);
+            new Thread(() -> {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e1) {
+                }
+                GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject", "Test message",
+                        ServerSetupTest.SMTP);
+            }).start();
+            ((IMAPFolder) inboxFolder).idle(true);
+            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages[0]).isGreaterThan(0);
+            inboxFolder.close();
         } finally {
             store.close();
         }

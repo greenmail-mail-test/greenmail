@@ -72,6 +72,9 @@ public class ImapCommandFactory {
         imapCommands.put(SetQuotaCommand.NAME, SetQuotaCommand.class);
         imapCommands.put(QuotaCommand.NAME, QuotaCommand.class);
         imapCommands.put(QuotaRootCommand.NAME, QuotaRootCommand.class);
+
+        // RFC2177: IDLE
+        imapCommands.put(IdleCommand.NAME, IdleCommand.class);
     }
 
     public ImapCommand getCommand(String commandName) {
