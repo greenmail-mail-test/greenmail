@@ -9,10 +9,6 @@ package com.icegreen.greenmail.imap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.regex.Pattern;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Wraps the client input reader with a bunch of convenience methods, allowing lookahead=1
@@ -23,14 +19,11 @@ import org.slf4j.LoggerFactory;
  * @version $Revision: 109034 $
  */
 public class ImapRequestLineReader {
-    private static final Logger log = LoggerFactory.getLogger(ImapRequestLineReader.class);
     private final InputStream input;
     private final OutputStream output;
 
     private boolean nextSeen = false;
     private char nextChar; // unknown
-    private final StringBuilder buf = new StringBuilder();
-    private static final Pattern CARRIAGE_RETURN = Pattern.compile("\r\n");
 
     public ImapRequestLineReader(InputStream input, OutputStream output) {
         this.input = input;
@@ -72,9 +65,7 @@ public class ImapRequestLineReader {
             try {
                 final int read = input.read();
                 final char c = (char) read;
-                buf.append(c);
                 if (read == -1) {
-                    dumpLine();
                     throw new ProtocolException("End of stream");
                 }
                 nextChar = c;
@@ -84,14 +75,6 @@ public class ImapRequestLineReader {
             }
         }
         return nextChar;
-    }
-
-    public void dumpLine() {
-        if (log.isDebugEnabled()) {
-            // Replace carriage return to avoid confusing multiline log output
-            log.debug("IMAP Line received : <" + CARRIAGE_RETURN.matcher(buf).replaceAll("\\\\r\\\\n") + '>');
-        }
-        buf.delete(0, buf.length());
     }
 
     /**
@@ -120,7 +103,6 @@ public class ImapRequestLineReader {
         if (next != '\n') {
             throw new ProtocolException("Expected end-of-line, found more character(s): " + next);
         }
-        dumpLine();
     }
 
     /**

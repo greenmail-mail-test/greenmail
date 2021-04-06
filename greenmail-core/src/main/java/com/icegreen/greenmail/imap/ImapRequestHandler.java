@@ -80,8 +80,6 @@ public final class ImapRequestHandler {
             return;
         }
 
-        log.debug("C: tag={}, command={}", tag, commandName);
-
         ImapCommand command = imapCommands.getCommand(commandName);
         if (command == null) {
             log.error("Command '{}' not valid", commandName);

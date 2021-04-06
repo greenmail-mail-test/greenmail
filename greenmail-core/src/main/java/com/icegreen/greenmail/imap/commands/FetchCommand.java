@@ -483,7 +483,6 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
                 throws ProtocolException {
             char next = request.nextChar();
             if (isCrOrLf(next)) {
-                request.dumpLine();
                 throw new ProtocolException("Unexpected end of line (CR or LF).");
             }
             return next;
