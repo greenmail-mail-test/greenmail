@@ -164,10 +164,9 @@ public class ImapServerTest {
             testQuota.setResourceLimit("STORAGE", 1024L * 42L);
             testQuota.setResourceLimit("MESSAGES", 5L);
 
-            final QuotaAwareStore quotaAwareStore = store;
-            quotaAwareStore.setQuota(testQuota);
+            store.setQuota(testQuota);
 
-            Quota[] quotas = quotaAwareStore.getQuota("INBOX");
+            Quota[] quotas = store.getQuota("INBOX");
             assertThat(quotas).isNotNull();
             assertThat(quotas.length).isEqualTo(1);
             assertThat(quotas[0].resources).isNotNull();
@@ -178,7 +177,7 @@ public class ImapServerTest {
             assertThat(1).isEqualTo(quotas[0].resources[1].usage);
 //            assertThat(m.getSize()).isEqualTo(quotas[0].resources[0].usage);
 
-            quotas = quotaAwareStore.getQuota("");
+            quotas = store.getQuota("");
             assertThat(quotas).isNotNull();
             assertThat(quotas.length).isEqualTo(0);
             // TODO: Quota on ""
@@ -188,19 +187,21 @@ public class ImapServerTest {
     }
 
     @Test
-    public void testQuotaCapability() {
+    public void testQuotaCapability() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
         greenMail.setQuotaSupported(false);
         try (IMAPStore store = greenMail.getImap().createStore()) {
             store.connect("foo@localhost", "pwd");
 
-            Quota testQuota = new Quota("INBOX");
-            testQuota.setResourceLimit("STORAGE", 1024L * 42L);
-            testQuota.setResourceLimit("MESSAGES", 5L);
-            store.setQuota(testQuota);
-            fail("Excepted MessageException since quota capability is turned off");
-        } catch (MessagingException ex) {
-            assertThat("QUOTA not supported").isEqualTo(ex.getMessage());
+            try {
+                Quota testQuota = new Quota("INBOX");
+                testQuota.setResourceLimit("STORAGE", 1024L * 42L);
+                testQuota.setResourceLimit("MESSAGES", 5L);
+                store.setQuota(testQuota);
+                fail("Excepted MessageException since quota capability is turned off");
+            } catch (MessagingException ex) {
+                assertThat("QUOTA not supported").isEqualTo(ex.getMessage());
+            }
         }
     }
 
