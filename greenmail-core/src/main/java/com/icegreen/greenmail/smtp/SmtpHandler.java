@@ -29,7 +29,7 @@ public class SmtpHandler implements ProtocolHandler {
     protected SmtpState state;
 
     // command parsing stuff
-    protected boolean quitting;
+    protected volatile boolean quitting;
     protected String currentLine;
     protected Socket socket;
 

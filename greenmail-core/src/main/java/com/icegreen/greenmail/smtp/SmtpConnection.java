@@ -8,6 +8,8 @@ package com.icegreen.greenmail.smtp;
 
 import com.icegreen.greenmail.util.EncodingUtil;
 import com.icegreen.greenmail.util.InternetPrintWriter;
+import com.icegreen.greenmail.util.LoggingInputStream;
+import com.icegreen.greenmail.util.LoggingOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,8 +19,6 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
 public class SmtpConnection {
-
-
     private static final Logger log = LoggerFactory.getLogger(SmtpConnection.class);
 
     // networking/io stuff
@@ -34,15 +34,25 @@ public class SmtpConnection {
         throws IOException {
         this.sock = sock;
         clientAddress = sock.getInetAddress();
+
+        // Output
         OutputStream o = sock.getOutputStream();
-        in = new BufferedInputStream(sock.getInputStream());
+        if(log.isDebugEnabled()) {
+            o = new LoggingOutputStream(o, "S: ");
+        }
         out = InternetPrintWriter.createForEncoding(o, true, EncodingUtil.CHARSET_EIGHT_BIT_ENCODING);
+
+        // Input
+        InputStream is = sock.getInputStream();
+        if (log.isDebugEnabled()) {
+            is = new LoggingInputStream(is, "C: ");
+        }
+        in = new BufferedInputStream(is);
 
         this.handler = handler;
     }
 
     public void send(String line) {
-        log.trace("S: {}", line);
         out.println(line);
     }
 
@@ -65,9 +75,7 @@ public class SmtpConnection {
                 if (b == '\r') { // CRLF ?
                     b = in.read();
                     if (b == '\n') {
-                        String line = bos.toString(StandardCharsets.US_ASCII.name());
-                        log.trace("C: {}", line);
-                        return line;
+                        return bos.toString(StandardCharsets.US_ASCII.name());
                     } else {
                         bos.write('\r');
                     }
