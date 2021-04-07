@@ -25,9 +25,9 @@ public class Pop3Handler implements ProtocolHandler {
     Pop3Connection conn;
     UserManager manager;
     Pop3State state;
-    boolean quitting;
+    volatile boolean quitting; // Changed eg by main thread
     String currentLine;
-    private Socket socket;
+    private final Socket socket;
 
     public Pop3Handler(Pop3CommandRegistry registry,
                        UserManager manager, Socket socket) {
@@ -72,18 +72,15 @@ public class Pop3Handler implements ProtocolHandler {
         conn.println("+OK POP3 GreenMail Server v" + BuildInfo.INSTANCE.getProjectVersion() + " ready");
     }
 
-    void handleCommand()
-            throws IOException {
+    void handleCommand() throws IOException {
         currentLine = conn.readLine();
 
         if (currentLine == null) {
             close();
-
             return;
         }
 
         String commandName = new StringTokenizer(currentLine, " ").nextToken().toUpperCase();
-
         Pop3Command command = registry.getCommand(commandName);
 
         if (command == null) {

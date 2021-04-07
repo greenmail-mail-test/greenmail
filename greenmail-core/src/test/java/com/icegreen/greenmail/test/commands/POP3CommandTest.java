@@ -42,6 +42,8 @@ public class POP3CommandTest {
             try (PrintStream printStream = new PrintStream(socket.getOutputStream());
                  final BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
                 handler.apply(printStream, reader);
+                // Gracefully close connection
+                printStream.print("QUIT"+ CRLF);
             }
         }
     }

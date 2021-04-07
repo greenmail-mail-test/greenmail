@@ -8,13 +8,14 @@ package com.icegreen.greenmail.pop3;
 
 import com.icegreen.greenmail.foedus.util.StreamUtils;
 import com.icegreen.greenmail.util.InternetPrintWriter;
+import com.icegreen.greenmail.util.LoggingInputStream;
+import com.icegreen.greenmail.util.LoggingOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-
 
 public class Pop3Connection {
     // Logger.
@@ -40,9 +41,18 @@ public class Pop3Connection {
 
     private void configureStreams()
             throws IOException {
+        // Output
         OutputStream o = socket.getOutputStream();
-        InputStream i = socket.getInputStream();
+        if(log.isDebugEnabled()) {
+            o = new LoggingOutputStream(o, "S: ");
+        }
         out = new InternetPrintWriter(o, true);
+
+        // Input
+        InputStream i = socket.getInputStream();
+        if (log.isDebugEnabled()) {
+            i = new LoggingInputStream(i, "C: ");
+        }
         in = new BufferedReader(new InputStreamReader(i));
     }
 
@@ -51,8 +61,7 @@ public class Pop3Connection {
         clientAddress = this.socket.getInetAddress();
     }
 
-    public void close()
-            throws IOException {
+    public void close() throws IOException {
         socket.close();
     }
 
@@ -61,7 +70,6 @@ public class Pop3Connection {
     }
 
     public void println(String line) {
-        log.debug("S: {}", line);
         out.print(line);
         println();
     }
@@ -71,17 +79,13 @@ public class Pop3Connection {
         out.flush();
     }
 
-    public void print(Reader in)
-            throws IOException {
+    public void print(Reader in) throws IOException {
         StreamUtils.copy(in, out);
         out.flush();
     }
 
-    public String readLine()
-            throws IOException {
-        String line = in.readLine();
-        log.debug("C: {}", line);
-        return line;
+    public String readLine() throws IOException {
+        return in.readLine();
     }
 
     public String getClientAddress() {
