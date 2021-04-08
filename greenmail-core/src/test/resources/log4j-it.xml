@@ -9,7 +9,7 @@
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
   <appender name="FILE" class="org.apache.log4j.FileAppender">
-    <param name="File" value="test.log"/>
+    <param name="File" value="test-it.log"/>
     <param name="Append" value="false"/>
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d{HH:mm:ss,SSS} (%t) %-5.5p %30.30c{2}| %m%n"/>
@@ -25,8 +25,19 @@
     </layout>
   </appender>
 
+  <!-- Toggle protocol logging off by using INFO instead of DEBUG level -->
+  <logger name="com.icegreen.greenmail.pop3.Pop3Connection">
+    <level value="INFO" />
+  </logger>
+  <logger name="com.icegreen.greenmail.imap.ImapHandler">
+    <level value="INFO" />
+  </logger>
+  <logger name="com.icegreen.greenmail.smtp.SmtpConnection">
+    <level value="INFO" />
+  </logger>
+
   <root>
-    <level value="TRACE"/>
+    <level value="DEBUG"/>
     <appender-ref ref="CONSOLE"/>
     <appender-ref ref="FILE"/>
   </root>
