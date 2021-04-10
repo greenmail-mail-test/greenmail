@@ -23,6 +23,10 @@
       <groupId>com.sun.mail</groupId>
       <artifactId>jakarta.mail</artifactId>
     </dependency>
+    <dependency>
+      <groupId>jakarta.activation</groupId>
+      <artifactId>jakarta.activation-api</artifactId>
+    </dependency>
     <dependency> <!-- SLF4J Core -->
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
