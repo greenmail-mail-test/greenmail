@@ -31,6 +31,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         PERMANENT_FLAGS.add(Flags.Flag.DRAFT);
         PERMANENT_FLAGS.add(Flags.Flag.FLAGGED);
         PERMANENT_FLAGS.add(Flags.Flag.SEEN);
+        PERMANENT_FLAGS.add(Flags.Flag.USER);
     }
 
     private final StoredMessageCollection mailMessages = new ListBasedStoredMessageCollection();

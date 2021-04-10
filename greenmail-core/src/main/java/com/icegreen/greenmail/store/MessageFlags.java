@@ -66,6 +66,9 @@ public class MessageFlags {
         if (flags.contains(Flags.Flag.SEEN)) {
             buf.append("\\Seen ");
         }
+        if (flags.contains(Flags.Flag.USER)) {
+            buf.append("\\* ");
+        }
         String[] userFlags = flags.getUserFlags();
         if(null!=userFlags) {
             for(String uf: userFlags) {
