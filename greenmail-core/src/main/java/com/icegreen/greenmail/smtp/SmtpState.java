@@ -23,9 +23,6 @@ public class SmtpState {
      * To destroy a half-constructed message.
      */
     public void clearMessage() {
-        if (currentMessage != null) {
-            currentMessage.releaseContent();
-        }
         currentMessage = new MovingMessage();
     }
 }

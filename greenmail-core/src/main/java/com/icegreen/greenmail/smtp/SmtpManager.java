@@ -88,8 +88,6 @@ public class SmtpManager {
             } catch (Exception e) {
                 throw new IllegalStateException("Can not deliver message " + msg + " to " + mailAddress, e);
             }
-
-            msg.releaseContent();
         }
     }
 
