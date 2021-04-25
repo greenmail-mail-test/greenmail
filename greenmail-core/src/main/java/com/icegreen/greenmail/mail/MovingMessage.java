@@ -7,8 +7,6 @@
 package com.icegreen.greenmail.mail;
 
 import javax.mail.internet.MimeMessage;
-import java.io.Reader;
-import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,7 +18,6 @@ public class MovingMessage {
     private MailAddress returnPath;
     private final List<MailAddress> toAddresses = new LinkedList<>();
     private MimeMessage message;
-    private String content;
 
     public List<MailAddress> getToAddresses() {
         return toAddresses;
@@ -28,14 +25,6 @@ public class MovingMessage {
 
     public MimeMessage getMessage() {
         return message;
-    }
-
-    public Reader getContent() {
-        return new StringReader(content);
-    }
-
-    public void releaseContent() {
-        content = "";
     }
 
     public MailAddress getReturnPath() {
