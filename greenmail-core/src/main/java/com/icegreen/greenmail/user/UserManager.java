@@ -12,10 +12,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.mail.MessagingException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.icegreen.greenmail.imap.ImapHostManager;
+import com.icegreen.greenmail.mail.MailAddress;
+import com.icegreen.greenmail.mail.MovingMessage;
 
 public class UserManager {
     private static final Logger log = LoggerFactory.getLogger(UserManager.class);
@@ -119,5 +123,19 @@ public class UserManager {
     public boolean hasUser(String userId) {
         String normalized = normalizerUserName(userId);
         return loginToUser.containsKey(normalized) || emailToUser.containsKey(normalized);
+    }
+    
+    public void deliver(MovingMessage msg, MailAddress mailAddress) throws MessagingException, UserException {
+        GreenMailUser user = getUserByEmail(mailAddress.getEmail());
+        if (null == user) {
+            String login = mailAddress.getEmail();
+            String email = mailAddress.getEmail();
+            String password = mailAddress.getEmail();
+            user = createUser(email, login, password);
+            log.info("Created user login {} for address {} with password {} because it didn't exist before.",
+                    login, email, password);
+        }
+
+        user.deliver(msg);
     }
 }
