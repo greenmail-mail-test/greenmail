@@ -30,9 +30,11 @@ public class UserManager {
     private Map<String, GreenMailUser> emailToUser = new ConcurrentHashMap<>();
     private ImapHostManager imapHostManager;
     private boolean authRequired = true;
+    private UndeliverableHandler undeliverableHandler;
 
     public UserManager(ImapHostManager imapHostManager) {
         this.imapHostManager = imapHostManager;
+        setUndeliverableHandler(null);
     }
 
     public GreenMailUser getUser(String login) {
@@ -124,16 +126,20 @@ public class UserManager {
         String normalized = normalizerUserName(userId);
         return loginToUser.containsKey(normalized) || emailToUser.containsKey(normalized);
     }
-    
+
+    public void setUndeliverableHandler(UndeliverableHandler undeliverableHandler) {
+        if (undeliverableHandler == null) {
+            this.undeliverableHandler = new UndeliverableHandler();
+        } else {
+            this.undeliverableHandler = undeliverableHandler;
+        }
+        this.undeliverableHandler.setUserManager(this);
+    }
+
     public void deliver(MovingMessage msg, MailAddress mailAddress) throws MessagingException, UserException {
         GreenMailUser user = getUserByEmail(mailAddress.getEmail());
         if (null == user) {
-            String login = mailAddress.getEmail();
-            String email = mailAddress.getEmail();
-            String password = mailAddress.getEmail();
-            user = createUser(email, login, password);
-            log.info("Created user login {} for address {} with password {} because it didn't exist before.",
-                    login, email, password);
+            user = undeliverableHandler.handle(msg, mailAddress);
         }
 
         user.deliver(msg);
