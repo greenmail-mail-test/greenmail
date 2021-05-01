@@ -11,6 +11,7 @@ import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.imap.ImapServer;
 import com.icegreen.greenmail.pop3.Pop3Server;
 import com.icegreen.greenmail.server.AbstractServer;
+import com.icegreen.greenmail.server.BuildInfo;
 import com.icegreen.greenmail.smtp.SmtpServer;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.InMemoryStore;
@@ -61,6 +62,18 @@ public class GreenMail extends ConfiguredGreenMail {
      */
     public GreenMail(ServerSetup[] config) {
         this.config = config;
+
+        // Log support information including JVM and default file encoding
+        if (log.isDebugEnabled()) {
+            log.debug("GreenMail version: {}", BuildInfo.INSTANCE.getProjectVersion());
+            log.debug("{} {} {}",
+                System.getProperty("java.vm.name", "java.vm.name"),
+                System.getProperty("java.vm.vendor", "java.vm.vendor"),
+                System.getProperty("java.vendor.version", "java.vendor.version")
+            );
+            log.debug("file.encoding : {}", System.getProperty("file.encoding", "file.encoding"));
+        }
+
         init();
     }
 
@@ -140,7 +153,7 @@ public class GreenMail extends ConfiguredGreenMail {
         Map<String, AbstractServer> srvc = new HashMap<>();
         for (ServerSetup setup : config) {
             if (srvc.containsKey(setup.getProtocol())) {
-                throw new IllegalArgumentException("Server '" + setup.getProtocol() + "' was found at least twice in the array");
+                throw new IllegalArgumentException("Server '" + setup.getProtocol() + "' was found at least twice in setup config");
             }
             final String protocol = setup.getProtocol();
             if (protocol.startsWith(ServerSetup.PROTOCOL_SMTP)) {
@@ -287,8 +300,8 @@ public class GreenMail extends ConfiguredGreenMail {
 
     @Override
     public void purgeEmailFromAllMailboxes() throws FolderException {
-        ImapHostManager imaphost = getManagers().getImapHostManager();
-        InMemoryStore store = (InMemoryStore) imaphost.getStore();
+        ImapHostManager imapHostManager = getManagers().getImapHostManager();
+        InMemoryStore store = (InMemoryStore) imapHostManager.getStore();
         Collection<MailFolder> mailboxes = store.listMailboxes("*");
         for (MailFolder folder : mailboxes) {
             folder.deleteAllMessages();
