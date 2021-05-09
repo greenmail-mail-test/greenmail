@@ -5,7 +5,7 @@ jobs:
     working_directory: ~/circleci-greenmail
 
     docker:
-        - image: openjdk:8u282-slim-buster
+        - image: openjdk:8u292-slim-buster
           auth:
             username: $DOCKERHUB_IDENTITY
             password: $DOCKERHUB_PASSWORD
@@ -52,7 +52,7 @@ jobs:
     working_directory: ~/circleci-greenmail
 
     docker:
-        - image: openjdk:11.0.10-jdk-slim-buster
+        - image: openjdk:11.0.11-jdk-slim-buster
           auth:
             username: $DOCKERHUB_IDENTITY
             password: $DOCKERHUB_PASSWORD
