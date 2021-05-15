@@ -797,41 +797,70 @@ java -Dgreenmail.smtp.hostname=127.0.0.1 -Dgreenmail.smtp.port=4025 \
                     but you can also build it yourself using our
                     <a href="https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-docker/standalone/Dockerfile">Dockerfile</a>.
                 </p>
-                <p>By default GreenMail standalone runs using the GreenMail test setup, using the following ports
-                    (default ports plus offset of 3000):</p>
-                <table class="table table-striped">
-                    <tr>
-                        <th>Port</th>
-                        <th>Description</th>
-                    </tr>
-                    <tr>
-                        <td>3025</td>
-                        <td>SMTP</td>
-                    </tr>
-                    <tr>
-                        <td>3110</td>
-                        <td>POP3</td>
-                    </tr>
-                    <tr>
-                        <td>3143</td>
-                        <td>IMAP</td>
-                    </tr>
-                    <tr>
-                        <td>3465</td>
-                        <td>SMTPS</td>
-                    </tr>
-                    <tr>
-                        <td>3993</td>
-                        <td>IMAPS</td>
-                    </tr>
-                    <tr>
-                        <td>3995</td>
-                        <td>POP3S</td>
-                    </tr>
-                    <tr>
-                        <td>8080</td>
-                        <td>API</td>
-                    </tr>
+                <p>By default GreenMail standalone runs as user <i>greenmail</i> using the GreenMail test setup with the following default settings and exposed ports.</p>
+                <table class="table table-striped table-sm caption-top">
+                    <caption>Dockerfile configuration options</caption>
+                    <thead>
+                        <tr>
+                            <th>Docker Environment ENV variable</th>
+                            <th>Description</th>
+                            <th>Default</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>GREENMAIL_OPTS</td>
+                            <td>GreenMail standalone options</td>
+                            <td><p class="text-break">-Dgreenmail.setup.test.all</p>
+                                <p class="text-break">-Dgreenmail.hostname=0.0.0.0</p>
+                                <p class="text-break">-Dgreenmail.auth.disabled</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>JAVA_OPTS</td>
+                            <td>Generic JVM options</td>
+                            <td>-Djava.net.preferIPv4Stack=true</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table table-striped table-sm caption-top">
+                    <caption>Exposed ports (default ports plus offset of 3000)</caption>
+                    <thead>
+                        <tr>
+                            <th>Port</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>3025</td>
+                            <td>SMTP</td>
+                        </tr>
+                        <tr>
+                            <td>3110</td>
+                            <td>POP3</td>
+                        </tr>
+                        <tr>
+                            <td>3143</td>
+                            <td>IMAP</td>
+                        </tr>
+                        <tr>
+                            <td>3465</td>
+                            <td>SMTPS</td>
+                        </tr>
+                        <tr>
+                            <td>3993</td>
+                            <td>IMAPS</td>
+                        </tr>
+                        <tr>
+                            <td>3995</td>
+                            <td>POP3S</td>
+                        </tr>
+                        <tr>
+                            <td>8080</td>
+                            <td>API</td>
+                        </tr>
+                    </tbody>
                 </table>
 
                 <h4>Using docker to run the image</h4>
