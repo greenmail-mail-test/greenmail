@@ -14,26 +14,44 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 
 public class ExampleUndeliverableTest {
     @Rule
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
 
     @Test
-    public void testSend() throws MessagingException {
+    public void testSend() throws MessagingException, UserException {
         final UserManager userManager = greenMail.getManagers().getUserManager();
+        userManager.createUser("from@localhost", "from@localhost", "from@localhost");
         MessageDeliveryHandler defaultMessageDeliveryHandler = userManager.getMessageDeliveryHandler();
         userManager.setMessageDeliveryHandler(new MessageDeliveryHandler() {
             @Override
             public GreenMailUser handle(MovingMessage msg, MailAddress mailAddress)
                     throws MessagingException, UserException {
-                msg.getMessage().setSubject("Delivery Report");
-                return defaultMessageDeliveryHandler.handle(msg, mailAddress);
+                String email = mailAddress.getEmail();
+                GreenMailUser user = userManager.getUserByEmail(email);
+                if (user == null) {
+                    user = userManager.getUserByEmail(msg.getReturnPath().getEmail());
+                    if (user != null) {
+                        MimeMessage dsnMessage = new MimeMessage(msg.getMessage().getSession());
+                        dsnMessage.setRecipients(RecipientType.TO, msg.getReturnPath().getEmail());
+                        dsnMessage.setSubject("Delivery Report");
+                        dsnMessage.setText("...");
+                        msg.setMimeMessage(dsnMessage);
+                    } else {
+                        user = defaultMessageDeliveryHandler.handle(msg, mailAddress);
+                        // user = userManager.createUser(mailAddress.getEmail(), mailAddress.getEmail(), mailAddress.getEmail());
+                    }
+                }
+                return user;
             }
         });
         GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost",
                 "some subject", "some body"); // --- Place your sending code here instead
         assertThat(greenMail.getReceivedMessages()[0].getSubject()).isEqualTo("Delivery Report");
+        assertThat(greenMail.getReceivedMessages()[0].getRecipients(RecipientType.TO)[0].toString()).isEqualTo("from@localhost");
     }
 }
