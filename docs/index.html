@@ -999,6 +999,12 @@ docker run -t -i \
                          alt="GreenMail OpenAPI UI invocating new user request"/>
                     <figcaption class="figure-caption text-end">GreenMail OpenAPI UI invoking new user request.</figcaption>
                 </figure>
+
+                <h2>Delivery Status Notification (DSN)</h2>
+                <p>You can provide custom DSN behavior by implementing
+                    <a href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-core/src/main/java/com/icegreen/greenmail/user/MessageDeliveryHandler.java">MessageDeliveryHandler.java</a>.
+                    See <a href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-core/src/test/java/com/icegreen/greenmail/examples/ExampleUndeliverableTest.java">ExampleUndeliverableTest.java</a>
+                </p>
             </section>
 
             <section id="faq" class="anchor">
@@ -1064,6 +1070,7 @@ public final GreenMailRule greenMail = new GreenMailRule(ServerSetup.SMTP.dynami
 GreenMailUtil.sendTextEmail("to@localhost", "from@localhost", "subject", "body",
     greenMail.getSmtp().getServerSetup());
 </code></pre><!-- @formatter:on -->
+
             </section>
 
             <section id="download" class="anchor">
