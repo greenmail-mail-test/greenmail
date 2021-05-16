@@ -3,6 +3,7 @@ package com.icegreen.greenmail.webapp;
 import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
+import com.icegreen.greenmail.user.UserManager;
 import com.icegreen.greenmail.util.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,7 @@ import java.util.Map;
  * @author mm
  */
 public class GreenMailListener implements ServletContextListener {
-    private Logger log = LoggerFactory.getLogger(GreenMailListener.class);
+    private final Logger log = LoggerFactory.getLogger(GreenMailListener.class);
     private Managers managers;
     private List<Service> services;
     private Configuration configuration;
@@ -35,11 +36,12 @@ public class GreenMailListener implements ServletContextListener {
         configuration = ConfigurationFactory.create(extractParameters(ctx));
         services = ServiceFactory.create(configuration, managers);
 
+        final UserManager userManager = managers.getUserManager();
         for (Configuration.User user : configuration.getUsers()) {
-            GreenMailUser greenMailUser = managers.getUserManager().getUser(user.email);
+            GreenMailUser greenMailUser = userManager.getUser(user.email);
             if (null == greenMailUser) {
                 try {
-                    greenMailUser = managers.getUserManager().createUser(
+                    greenMailUser = userManager.createUser(
                             user.email, user.login, user.password);
                     greenMailUser.setPassword(user.password);
                 } catch (UserException e) {

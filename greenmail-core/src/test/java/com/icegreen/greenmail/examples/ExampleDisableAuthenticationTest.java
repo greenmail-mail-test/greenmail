@@ -33,7 +33,7 @@ public class ExampleDisableAuthenticationTest {
         try (Retriever retriever = new Retriever(greenMail.getImap())) {
             Message[] messages = retriever.getMessages("foo@localhost");
             assertThat(messages.length).isEqualTo(0);
-            assertThat(greenMail.getManagers().getUserManager().hasUser("foo@localhost")).isTrue();
+            assertThat(greenMail.getUserManager().hasUser("foo@localhost")).isTrue();
         }
     }
 }

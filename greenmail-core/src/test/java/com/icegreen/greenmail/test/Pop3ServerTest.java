@@ -35,7 +35,7 @@ public class Pop3ServerTest {
     @Test
     public void testPop3Capabillities() throws MessagingException, UserException {
         final POP3Store store = greenMail.getPop3().createStore();
-        greenMail.getManagers().getUserManager().createUser("testPop3Capabillities@localhost",
+        greenMail.getUserManager().createUser("testPop3Capabillities@localhost",
                 "testPop3Capabillities@localhost", "pwd");
         store.connect("testPop3Capabillities@localhost", "pwd");
         try {

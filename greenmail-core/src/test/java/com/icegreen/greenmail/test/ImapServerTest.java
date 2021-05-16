@@ -627,7 +627,7 @@ public class ImapServerTest {
                         ServerSetupTest.SMTP);
             }).start();
             ((IMAPFolder) inboxFolder).idle(true);
-            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages).hasSize(1);
             assertThat(messages[0]).isGreaterThan(0);
             inboxFolder.close();
         } finally {

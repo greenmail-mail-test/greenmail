@@ -19,7 +19,7 @@ public class LineLoggingBuffer {
     private final ByteArrayOutputStream buf = new ByteArrayOutputStream();
     private final String linePrefix;
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    protected final byte[] WRAP = "[WRAP]".getBytes(StandardCharsets.US_ASCII);
+    protected static final byte[] WRAP = "[WRAP]".getBytes(StandardCharsets.US_ASCII);
 
     /**
      * Creates new buffer using given line prefix.

@@ -8,6 +8,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static com.icegreen.greenmail.spring.GreenMailBeanDefinitionParser.DEFAULT_SERVER_STARTUP_TIMEOUT;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests GreenMailBean.
@@ -25,22 +26,23 @@ public class GreenMailBeanTest {
         GreenMail greenMail = greenMailBean.getGreenMail();
 
         // Test if the protocol got activated
-        assert (greenMail.getImap() != null) == greenMailBean.isImapProtocol();
-        assert (greenMail.getImaps() != null) == greenMailBean.isImapsProtocol();
-        assert (greenMail.getPop3() != null) == greenMailBean.isPop3Protocol();
-        assert (greenMail.getPop3s() != null) == greenMailBean.isPop3sProtocol();
-        assert (greenMail.getSmtp() != null) == greenMailBean.isSmtpProtocol();
-        assert (greenMail.getSmtps() != null) == greenMailBean.isSmtpsProtocol();
+        assertThat(greenMail.getImap() != null).isEqualTo(greenMailBean.isImapProtocol());
+        assertThat(greenMail.getImaps() != null).isEqualTo(greenMailBean.isImapsProtocol());
+        assertThat(greenMail.getPop3() != null).isEqualTo(greenMailBean.isPop3Protocol());
+        assertThat(greenMail.getPop3s() != null).isEqualTo(greenMailBean.isPop3sProtocol());
+        assertThat(greenMail.getSmtp() != null).isEqualTo(greenMailBean.isSmtpProtocol());
+        assertThat(greenMail.getSmtps() != null).isEqualTo(greenMailBean.isSmtpsProtocol());
 
-        assert greenMailBean.getHostname().equals(greenMail.getSmtp().getBindTo());
-        assert greenMailBean.getPortOffset()+25 == greenMail.getSmtp().getPort();
+        assertThat(greenMailBean.getHostname()).isEqualTo(greenMail.getSmtp().getBindTo());
+        assertThat(greenMailBean.getPortOffset() + 25).isEqualTo(greenMail.getSmtp().getPort());
 
-        assert greenMailBean.getHostname().equals(greenMail.getPop3().getBindTo());
-        assert greenMailBean.getPortOffset()+110 == greenMail.getPop3().getPort();
+        assertThat(greenMailBean.getHostname()).isEqualTo(greenMail.getPop3().getBindTo());
+        assertThat(greenMailBean.getPortOffset() + 110).isEqualTo(greenMail.getPop3().getPort());
 
-        greenMailBean.sendEmail("to@localhost","from@localhost","subject", "message");
-        assert greenMailBean.getReceivedMessages().length == 1;
+        greenMailBean.sendEmail("to@localhost", "from@localhost", "subject", "message");
+        assertThat(greenMailBean.getReceivedMessages()).hasSize(1);
 
-        assert greenMailBean.getServerStartupTimeout() == DEFAULT_SERVER_STARTUP_TIMEOUT;
+        assertThat(greenMailBean.getServerStartupTimeout()).isEqualTo(DEFAULT_SERVER_STARTUP_TIMEOUT);
+        assertThat(greenMailBean.getUserManager()).isEqualTo(greenMail.getUserManager());
     }
 }

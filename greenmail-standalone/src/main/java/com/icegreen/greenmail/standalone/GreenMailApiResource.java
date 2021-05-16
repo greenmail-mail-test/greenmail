@@ -117,7 +117,7 @@ public class GreenMailApiResource {
     @Path("/api/user")
     @Produces("application/json")
     public Collection<GreenMailUser> listUsers() {
-        return greenMail.getManagers().getUserManager().listUser();
+        return greenMail.getUserManager().listUser();
     }
 
     @POST
@@ -126,7 +126,7 @@ public class GreenMailApiResource {
     @Produces("application/json")
     public Response createUsers(User newUser) {
         try {
-            final GreenMailUser user = greenMail.getManagers().getUserManager().createUser(newUser.email, newUser.login, newUser.password);
+            final GreenMailUser user = greenMail.getUserManager().createUser(newUser.email, newUser.login, newUser.password);
             LOG.debug("Created user {}", user);
             return Response.status(Response.Status.OK)
                 .entity(user)
@@ -142,7 +142,7 @@ public class GreenMailApiResource {
     @Path("/api/user/{emailOrLogin}")
     @Produces("application/json")
     public Response deleteUserById(@PathParam("emailOrLogin") String id) {
-        final UserManager userManager = greenMail.getManagers().getUserManager();
+        final UserManager userManager = greenMail.getUserManager();
         LOG.debug("Searching user using '{}'", id);
         GreenMailUser user = userManager.getUser(id);
         if (null == user) {

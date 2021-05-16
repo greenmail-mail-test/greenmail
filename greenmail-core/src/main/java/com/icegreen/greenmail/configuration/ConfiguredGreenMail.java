@@ -22,7 +22,7 @@ public abstract class ConfiguredGreenMail implements GreenMailOperations {
             for (UserBean user : config.getUsersToCreate()) {
                 setUser(user.getEmail(), user.getLogin(), user.getPassword());
             }
-            getManagers().getUserManager().setAuthRequired(!config.isAuthenticationDisabled());
+            getUserManager().setAuthRequired(!config.isAuthenticationDisabled());
         }
     }
 }

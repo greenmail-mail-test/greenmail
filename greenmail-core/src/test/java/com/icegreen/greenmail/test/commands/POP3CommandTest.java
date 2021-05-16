@@ -57,7 +57,7 @@ public class POP3CommandTest {
             assertThat(reader.readLine()).isEqualTo("-ERR Authentication failed: User <test> doesn't exist");
 
             try {
-                greenMail.getManagers().getUserManager()
+                greenMail.getUserManager()
                         .createUser("test@localhost", "test", "testpass");
             } catch (UserException e) {
                 throw new IllegalStateException(e);
@@ -75,7 +75,7 @@ public class POP3CommandTest {
 
     @Test
     public void authPlainWithContinuation() throws IOException, UserException {
-        greenMail.getManagers().getUserManager()
+        greenMail.getUserManager()
                 .createUser("test@localhost", "test", "testpass");
         withConnection((printStream, reader) -> {
             assertThat(reader.readLine()).startsWith("+OK POP3 GreenMail Server v");
@@ -88,7 +88,7 @@ public class POP3CommandTest {
 
     @Test
     public void authDisabled() throws IOException {
-        greenMail.getManagers().getUserManager().setAuthRequired(false);
+        greenMail.getUserManager().setAuthRequired(false);
         withConnection((printStream, reader) -> {
             assertThat(reader.readLine()).startsWith("+OK POP3 GreenMail Server v");
             printStream.print("USER blar@blar.com" + CRLF);
@@ -98,7 +98,7 @@ public class POP3CommandTest {
 
     @Test
     public void authEnabled() throws IOException {
-        greenMail.getManagers().getUserManager().setAuthRequired(true);
+        greenMail.getUserManager().setAuthRequired(true);
         withConnection((printStream, reader) -> {
             assertThat(reader.readLine()).startsWith("+OK POP3 GreenMail Server v");
             printStream.print("USER blar@blar.com" + CRLF);

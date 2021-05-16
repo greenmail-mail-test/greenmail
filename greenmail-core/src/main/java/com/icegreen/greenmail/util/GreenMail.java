@@ -204,6 +204,11 @@ public class GreenMail extends ConfiguredGreenMail {
         return managers;
     }
 
+    @Override
+    public UserManager getUserManager() {
+        return getManagers().getUserManager();
+    }
+
     //~ Convenience Methods, often needed while testing ---------------------------------------------------------------
     @Override
     public boolean waitForIncomingEmail(long timeout, int emailCount) {
@@ -263,7 +268,7 @@ public class GreenMail extends ConfiguredGreenMail {
 
     @Override
     public GreenMailUser setUser(String email, String login, String password) {
-        final UserManager userManager = getManagers().getUserManager();
+        final UserManager userManager = getUserManager();
         GreenMailUser user = userManager.getUser(login);
         if (null == user) {
             try {

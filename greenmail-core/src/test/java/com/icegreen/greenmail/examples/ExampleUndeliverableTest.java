@@ -24,7 +24,7 @@ public class ExampleUndeliverableTest {
 
     @Test
     public void testSend() throws MessagingException, UserException {
-        final UserManager userManager = greenMail.getManagers().getUserManager();
+        final UserManager userManager = greenMail.getUserManager();
         userManager.createUser("from@localhost", "from@localhost", "from@localhost");
         MessageDeliveryHandler defaultMessageDeliveryHandler = userManager.getMessageDeliveryHandler();
         userManager.setMessageDeliveryHandler(new MessageDeliveryHandler() {

@@ -63,7 +63,7 @@ public class SMTPCommandTest {
                 assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace(AuthCommand.AUTH_CREDENTIALS_INVALID);
 
                 // Try again but create user
-                greenMail.getManagers().getUserManager().createUser("test@localhost", "test", "testpass");
+                greenMail.getUserManager().createUser("test@localhost", "test", "testpass");
                 smtpTransport.issueCommand("AUTH PLAIN dGVzdAB0ZXN0AHRlc3RwYXNz" /* test / test / testpass */, -1);
                 assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace(AuthCommand.AUTH_SUCCEDED);
             }
@@ -102,7 +102,7 @@ public class SMTPCommandTest {
             assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace(AuthCommand.AUTH_CREDENTIALS_INVALID);
 
             // Try again but create user
-            greenMail.getManagers().getUserManager().createUser("test@localhost", "test", "testpass");
+            greenMail.getUserManager().createUser("test@localhost", "test", "testpass");
             smtpTransport.issueCommand("AUTH LOGIN ", 334);
             assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace("334 VXNlcm5hbWU6" /* Username: */);
             smtpTransport.issueCommand(Base64.getEncoder().encodeToString("test".getBytes(StandardCharsets.US_ASCII)), -1);

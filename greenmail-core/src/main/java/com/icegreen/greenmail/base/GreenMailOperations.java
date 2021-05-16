@@ -7,6 +7,7 @@ import com.icegreen.greenmail.pop3.Pop3Server;
 import com.icegreen.greenmail.smtp.SmtpServer;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.user.GreenMailUser;
+import com.icegreen.greenmail.user.UserManager;
 
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
@@ -49,6 +50,11 @@ public interface GreenMailOperations {
      * @return Greenmail protocol managers
      */
     Managers getManagers();
+
+    /**
+     * @return the user manager for
+     */
+    UserManager getUserManager();
 
     /**
      * Use this method if you are sending email in a different thread from the one you're testing from.

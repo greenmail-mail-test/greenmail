@@ -26,9 +26,9 @@ public class UserManager {
     /**
      * User list by their trimmed, lower-cased user names
      */
-    private Map<String, GreenMailUser> loginToUser = new ConcurrentHashMap<>();
-    private Map<String, GreenMailUser> emailToUser = new ConcurrentHashMap<>();
-    private ImapHostManager imapHostManager;
+    private final Map<String, GreenMailUser> loginToUser = new ConcurrentHashMap<>();
+    private final Map<String, GreenMailUser> emailToUser = new ConcurrentHashMap<>();
+    private final ImapHostManager imapHostManager;
     private boolean authRequired = true;
 
     private MessageDeliveryHandler messageDeliveryHandler = new MessageDeliveryHandler(){

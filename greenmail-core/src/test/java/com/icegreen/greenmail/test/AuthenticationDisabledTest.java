@@ -77,7 +77,7 @@ public class AuthenticationDisabledTest {
 
     @Test
     public void testPop3ConnectNoAuth() throws UserException, FolderException {
-        UserManager userManager = greenMail.getManagers().getUserManager();
+        UserManager userManager = greenMail.getUserManager();
         Pop3State status = new Pop3State(userManager);
         userManager.setAuthRequired(false);
 
@@ -88,7 +88,7 @@ public class AuthenticationDisabledTest {
 
     @Test(expected = UserException.class)
     public void testPop3ConnectAuth() throws UserException, FolderException {
-        UserManager userManager = greenMail.getManagers().getUserManager();
+        UserManager userManager = greenMail.getUserManager();
         Pop3State status = new Pop3State(userManager);
         userManager.setAuthRequired(true);
 

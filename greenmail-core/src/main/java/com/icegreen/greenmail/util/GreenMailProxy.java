@@ -7,6 +7,7 @@ import com.icegreen.greenmail.pop3.Pop3Server;
 import com.icegreen.greenmail.smtp.SmtpServer;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.user.GreenMailUser;
+import com.icegreen.greenmail.user.UserManager;
 
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
@@ -48,6 +49,11 @@ public abstract class GreenMailProxy extends ConfiguredGreenMail {
     @Override
     public Managers getManagers() {
         return getGreenMail().getManagers();
+    }
+
+    @Override
+    public UserManager getUserManager() {
+        return getGreenMail().getUserManager();
     }
 
     @Override

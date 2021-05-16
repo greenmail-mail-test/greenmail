@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.mail.internet.MimeMessage;
 
+import com.icegreen.greenmail.user.UserManager;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
@@ -344,6 +345,15 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
      */
     public int getPortOffset() {
         return portOffset;
+    }
+
+    /**
+     * Convenience method for directly accessing UserManager.
+     *
+     * @return the user manager.
+     */
+    public UserManager getUserManager() {
+        return getGreenMail().getUserManager();
     }
 
     /**
