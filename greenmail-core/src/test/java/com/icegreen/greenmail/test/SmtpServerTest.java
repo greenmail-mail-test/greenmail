@@ -8,6 +8,7 @@ import static com.icegreen.greenmail.util.GreenMailUtil.createTextEmail;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.ByteArrayOutputStream;
+import java.net.SocketException;
 import java.util.Properties;
 
 import javax.mail.AuthenticationFailedException;
@@ -21,6 +22,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
 import javax.mail.internet.MimeMultipart;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -150,6 +152,37 @@ public class SmtpServerTest {
 
         MimeMessage[] emails = greenMail.getReceivedMessages();
         assertThat(emails.length).isEqualTo(3);
+    }
+
+    @Test
+    public void testSendWithReusedConnection() throws Throwable {
+        String subject = GreenMailUtil.random();
+        String body = GreenMailUtil.random();
+        final MimeMessage message = createTextEmail("test@localhost", "from@localhost", subject, body,
+                greenMail.getSmtp().getServerSetup());
+
+        assertThat(greenMail.getReceivedMessages().length).isEqualTo(0);
+
+        greenMail.getSmtp().setClientSocketTimeout(2000);
+        Transport transport = message.getSession().getTransport();
+        transport.connect();
+        transport.sendMessage(message, message.getAllRecipients());
+        Thread.sleep(4000);
+        try {
+            transport.sendMessage(message, message.getAllRecipients());
+            Assertions.fail("should have thrown");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            assertThat(e).hasCauseExactlyInstanceOf(SocketException.class);
+            transport.connect();
+            transport.sendMessage(message, message.getAllRecipients());
+        }
+        transport.close();
+
+        assertThat(greenMail.waitForIncomingEmail(1000, 2)).isTrue();
+
+        MimeMessage[] emails = greenMail.getReceivedMessages();
+        assertThat(emails.length).isEqualTo(2);
     }
 
     @Test
