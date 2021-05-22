@@ -30,6 +30,7 @@ public abstract class AbstractServer extends Thread implements Service {
     protected final InetAddress bindTo;
     protected ServerSocket serverSocket = null;
     protected static final int CLIENT_SOCKET_SO_TIMEOUT = 30 * 1000;
+    private int clientSocketTimeout = CLIENT_SOCKET_SO_TIMEOUT;
     protected final Managers managers;
     protected ServerSetup setup;
     private final List<ProtocolHandler> handlers = Collections.synchronizedList(new ArrayList<>());
@@ -149,8 +150,12 @@ public abstract class AbstractServer extends Thread implements Service {
         }
     }
 
+    public void setClientSocketTimeout(int clientSocketTimeout) {
+        this.clientSocketTimeout = clientSocketTimeout;
+    }
+
     protected void handleClientSocket(Socket clientSocket) throws SocketException {
-        clientSocket.setSoTimeout(CLIENT_SOCKET_SO_TIMEOUT);
+        clientSocket.setSoTimeout(clientSocketTimeout);
         final ProtocolHandler handler = createProtocolHandler(clientSocket);
         addHandler(handler);
         String threadName = getName() + "<-" + clientSocket.getInetAddress() + ":" + clientSocket.getPort();
