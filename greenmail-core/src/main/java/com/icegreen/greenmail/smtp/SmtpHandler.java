@@ -54,6 +54,7 @@ public class SmtpHandler implements ProtocolHandler {
             }
         } catch (SocketTimeoutException ste) {
             conn.send("421 Service shutting down and closing transmission channel");
+            conn.quit();
         } catch (Exception e) {
             // Closing socket on blocked read
             if (!quitting) {
