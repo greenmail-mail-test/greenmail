@@ -71,7 +71,7 @@ public class AuthCommand extends SmtpCommand {
         }
     }
 
-    private void authPlain(SmtpConnection conn, SmtpManager manager, String[] commandParts) {
+    private void authPlain(SmtpConnection conn, SmtpManager manager, String[] commandParts) throws IOException {
         // Continuation?
         String initialResponse;
         if (commandParts.length == 2) {
@@ -89,7 +89,8 @@ public class AuthCommand extends SmtpCommand {
         }
     }
 
-    private void authLogin(SmtpConnection conn, SmtpManager manager, String commandLine, String[] commandParts, String authMechanismValue) {
+    private void authLogin(SmtpConnection conn, SmtpManager manager, String commandLine, String[] commandParts,
+            String authMechanismValue) throws IOException {
         // https://www.samlogic.net/articles/smtp-commands-reference-auth.htm
         if (commandParts.length != 2) {
             conn.send(SMTP_SYNTAX_ERROR + " : Unsupported auth mechanism " + authMechanismValue +

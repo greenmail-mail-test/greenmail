@@ -56,34 +56,30 @@ public class SmtpConnection {
         out.println(line);
     }
 
-    public String readLine() {
+    public String readLine() throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream(256);
-        try {
-            while (true) {
-                int b = in.read();
-                if (b < 0) { // End
-                    if(log.isDebugEnabled()) {
-                        log.debug("Unexpected end of stream, read {} bytes: {}", bos.size(), bos.toString());
-                    }
-                    if(bos.size()>0) {
-                        // Best effort?
-                        return bos.toString(StandardCharsets.US_ASCII.name());
-                    } else {
-                        return null; // No input received
-                    }
+        while (true) {
+            int b = in.read();
+            if (b < 0) { // End
+                if (log.isDebugEnabled()) {
+                    log.debug("Unexpected end of stream, read {} bytes: {}", bos.size(), bos.toString());
                 }
-                if (b == '\r') { // CRLF ?
-                    b = in.read();
-                    if (b == '\n') {
-                        return bos.toString(StandardCharsets.US_ASCII.name());
-                    } else {
-                        bos.write('\r');
-                    }
+                if (bos.size() > 0) {
+                    // Best effort?
+                    return bos.toString(StandardCharsets.US_ASCII.name());
+                } else {
+                    return null; // No input received
                 }
-                bos.write(b);
             }
-        } catch (IOException ex) {
-            throw new IllegalStateException("Can not read line, read " + bos.size() + " bytes: " + bos.toString(), ex);
+            if (b == '\r') { // CRLF ?
+                b = in.read();
+                if (b == '\n') {
+                    return bos.toString(StandardCharsets.US_ASCII.name());
+                } else {
+                    bos.write('\r');
+                }
+            }
+            bos.write(b);
         }
     }
 
