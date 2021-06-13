@@ -73,12 +73,12 @@ Development [![Build status](https://circleci.com/gh/greenmail-mail-test/greenma
 Roadmap
 -------
 
-* [1.6](https://github.com/greenmail-mail-test/greenmail/issues?q=is%3Aopen+is%3Aissue+milestone%3A1.6) ([current](https://github.com/greenmail-mail-test/greenmail/tree/master))
-  * Bugfix / maintenance
-* [2.x](https://github.com/greenmail-mail-test/greenmail/milestone/3) ([release 2.x preview branch](https://github.com/greenmail-mail-test/greenmail/tree/release_2_0_preview))
+* [2.x](https://github.com/greenmail-mail-test/greenmail/milestone/3) ([branch master](https://github.com/greenmail-mail-test/greenmail/tree/master))
   * JakartaMail 2.x
   * Deprecations (no GreenMailRule in greenmail-core, ...)
   * Jersey 3.x (jakarta)
+* [1.6](https://github.com/greenmail-mail-test/greenmail/issues?q=is%3Aopen+is%3Aissue+milestone%3A1.6) ([branch releases/1.6.x](https://github.com/greenmail-mail-test/greenmail/tree/releases/1.6.x))
+  * Bugfix and maintenance
 
 Contribution guidelines
 -----------------------
