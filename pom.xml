@@ -31,7 +31,7 @@
     <url>
       https://github.com/greenmail-mail-test/greenmail
     </url>
-    <tag>release-1.6.4</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <issueManagement>
