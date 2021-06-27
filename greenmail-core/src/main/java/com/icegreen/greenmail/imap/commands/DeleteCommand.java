@@ -41,6 +41,7 @@ class DeleteCommand extends AuthenticatedStateCommand {
                 folder.getFullName().equals(session.getSelected().getFullName())) {
             session.deselect();
         }
+
         session.getHost().deleteMailbox(session.getUser(), mailboxName);
 
         session.unsolicitedResponses(response);
