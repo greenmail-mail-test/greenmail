@@ -139,6 +139,11 @@ public class ImapHostManagerImpl
     @Override
     public void deleteMailbox(GreenMailUser user, String mailboxName)
             throws FolderException {
+
+        if (mailboxName.toLowerCase().equals("inbox")) {
+            throw new FolderException("Can not delete INBOX mailbox");
+        }
+
         MailFolder toDelete = getFolder(user, mailboxName, true);
         if (store.getChildren(toDelete).isEmpty()) {
             toDelete.deleteAllMessages();
