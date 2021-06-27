@@ -41,6 +41,11 @@ class DeleteCommand extends AuthenticatedStateCommand {
                 folder.getFullName().equals(session.getSelected().getFullName())) {
             session.deselect();
         }
+
+        if (mailboxName.toLowerCase().equals("inbox")) {
+            throw new FolderException("Can not delete INBOX mailbox");
+        }
+
         session.getHost().deleteMailbox(session.getUser(), mailboxName);
 
         session.unsolicitedResponses(response);

@@ -164,6 +164,10 @@ public class ImapHostManagerImpl
             throws FolderException {
 
         MailFolder existingFolder = getFolder(user, oldMailboxName, true);
+       
+        if (getFolder(user, newMailboxName) != null) {
+            throw new FolderException("Cannot rename mailbox to the name already existed mailbox");
+        }
 
         // TODO: check permissions.
 
