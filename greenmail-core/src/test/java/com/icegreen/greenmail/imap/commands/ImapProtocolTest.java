@@ -336,6 +336,52 @@ public class ImapProtocolTest {
     }
 
     @Test
+    public void testDeleteInbox() throws MessagingException {
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_WRITE);
+
+            Response[] ret = (Response[]) folder.doCommand(protocol -> protocol.command("DELETE INBOX", null));
+
+            IMAPResponse response = (IMAPResponse) ret[0];
+            assertThat(response.isNO()).isTrue();
+
+            final Folder inbox = store.getFolder("INBOX");
+            inbox.open(Folder.READ_ONLY);
+            assertThat(inbox.exists()).isTrue();
+
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
+    public void testRenameToExistedFolder() throws MessagingException {
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_WRITE);
+            Response[] ret = (Response[]) folder.doCommand(protocol -> protocol.command("CREATE foo", null));
+
+            IMAPResponse response = (IMAPResponse) ret[0];
+            assertThat(response.isBAD()).isFalse();
+
+            ret = (Response[]) folder.doCommand(protocol -> protocol.command("CREATE bar", null));
+
+            response = (IMAPResponse) ret[0];
+            assertThat(response.isBAD()).isFalse();
+
+            ret = (Response[]) folder.doCommand(protocol -> protocol.command("RENAME foo bar", null));
+
+            Response response2 = ret[0];
+            assertThat(response2.isNO()).isTrue();
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
     public void testUidSearchTextWithCharset() throws MessagingException, IOException {
         greenMail.setUser("foo2@localhost", "pwd");
         store.connect("foo2@localhost", "pwd");
