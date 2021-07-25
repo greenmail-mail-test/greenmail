@@ -13,27 +13,23 @@ import java.util.StringTokenizer;
 
 import com.icegreen.greenmail.pop3.commands.Pop3Command;
 import com.icegreen.greenmail.pop3.commands.Pop3CommandRegistry;
+import com.icegreen.greenmail.server.AbstractSocketProtocolHandler;
 import com.icegreen.greenmail.server.BuildInfo;
-import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.user.UserManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class Pop3Handler implements ProtocolHandler {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+
+public class Pop3Handler extends AbstractSocketProtocolHandler {
     Pop3CommandRegistry registry;
     Pop3Connection conn;
     UserManager manager;
     Pop3State state;
-    volatile boolean quitting; // Changed eg by main thread
     String currentLine;
-    private final Socket socket;
 
     public Pop3Handler(Pop3CommandRegistry registry,
                        UserManager manager, Socket socket) {
+        super(socket);
         this.registry = registry;
         this.manager = manager;
-        this.socket = socket;
     }
 
     @Override
@@ -42,30 +38,25 @@ public class Pop3Handler implements ProtocolHandler {
             conn = new Pop3Connection(this, socket);
             state = new Pop3State(manager);
 
-            quitting = false;
-
             sendGreetings();
 
-            while (!quitting) {
+            while (!isQuitting()) {
                 handleCommand();
             }
 
             conn.close();
         } catch (SocketTimeoutException ste) {
-            conn.println("421 Service shutting down and closing transmission channel");
+            conn.println("421 Service shutting down and closing transmission channel " +
+                "(socket timeout, SO_TIMEOUT: " + getSoTimeout() + "ms)");
+            conn.quit();
         } catch (Exception e) {
-            if (!quitting) {
+            if (!isQuitting()) {
                 log.error("Can not handle POP3 connection", e);
                 throw new IllegalStateException("Can not handle POP3 connection", e);
             }
         } finally {
-            try {
-                socket.close();
-            } catch (IOException ioe) {
-                // Nothing
-            }
+            close();
         }
-
     }
 
     void sendGreetings() {
@@ -94,17 +85,5 @@ public class Pop3Handler implements ProtocolHandler {
         }
 
         command.execute(conn, state, currentLine);
-    }
-
-    @Override
-    public void close() {
-        quitting = true;
-        try {
-            if (socket != null && !socket.isClosed()) {
-                socket.close();
-            }
-        } catch (IOException ignored) {
-            //empty
-        }
     }
 }

@@ -6,13 +6,11 @@
  */
 package com.icegreen.greenmail.imap;
 
+import com.icegreen.greenmail.server.AbstractSocketProtocolHandler;
 import com.icegreen.greenmail.server.BuildInfo;
-import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.user.UserManager;
 import com.icegreen.greenmail.util.LoggingInputStream;
 import com.icegreen.greenmail.util.LoggingOutputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.Socket;
@@ -23,17 +21,9 @@ import java.net.Socket;
  * @author Federico Barbieri &lt;scoobie@systemy.it&gt;
  * @author Peter M. Goldstein &lt;farsight@alum.mit.edu&gt;
  */
-public class ImapHandler implements ImapConstants, ProtocolHandler {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+public class ImapHandler extends AbstractSocketProtocolHandler implements ImapConstants {
     private final ImapRequestHandler requestHandler = new ImapRequestHandler();
-    private final Object closeMonitor = new Object();
     private ImapSession session;
-
-    /**
-     * The TCP/IP socket over which the IMAP interaction
-     * is occurring
-     */
-    private Socket socket;
 
     private ImapResponse response;
 
@@ -41,9 +31,9 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
     private final ImapHostManager imapHost;
 
     public ImapHandler(UserManager userManager, ImapHostManager imapHost, Socket socket) {
+        super(socket);
         this.userManager = userManager;
         this.imapHost = imapHost;
-        this.socket = socket;
     }
 
     public void forceConnectionClose(final String message) {
@@ -100,24 +90,10 @@ public class ImapHandler implements ImapConstants, ProtocolHandler {
      */
     @Override
     public void close() {
-        // Use monitor to avoid race between external close and handler thread run()
-        synchronized (closeMonitor) {
-            // Close and clear streams, sockets etc.
-            if (socket != null) {
-                try {
-                    // Terminates thread blocking on socket read
-                    // and automatically closed depending streams
-                    socket.close();
-                } catch (IOException e) {
-                    log.warn("Can not close socket", e);
-                } finally {
-                    socket = null;
-                }
-            }
+        super.close();
 
-            // Clear user data
-            session = null;
-            response = null;
-        }
+        // Clear user data
+        session = null;
+        response = null;
     }
 }
