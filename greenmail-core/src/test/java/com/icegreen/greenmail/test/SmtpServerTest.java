@@ -161,8 +161,7 @@ public class SmtpServerTest {
         final MimeMessage message = createTextEmail("test@localhost", "from@localhost", subject, body,
                 greenMail.getSmtp().getServerSetup());
 
-        assertThat(greenMail.getReceivedMessages().length).isEqualTo(0);
-
+        assertThat(greenMail.getReceivedMessages()).isEmpty();
         greenMail.getSmtp().setClientSocketTimeout(2000);
         Transport transport = message.getSession().getTransport();
         transport.connect();
@@ -171,12 +170,16 @@ public class SmtpServerTest {
         try {
             transport.sendMessage(message, message.getAllRecipients());
             Assertions.fail("should have thrown");
+        } catch (com.sun.mail.smtp.SMTPSendFailedException e) { // Graceful server-side-close with 421
+            assertThat(e).hasNoCause();
         } catch (MessagingException e) {
-            e.printStackTrace();
             assertThat(e).hasCauseExactlyInstanceOf(SocketException.class);
-            transport.connect();
-            transport.sendMessage(message, message.getAllRecipients());
         }
+
+        // Re-send
+        transport.connect();
+        transport.sendMessage(message, message.getAllRecipients());
+
         transport.close();
 
         assertThat(greenMail.waitForIncomingEmail(1000, 2)).isTrue();
