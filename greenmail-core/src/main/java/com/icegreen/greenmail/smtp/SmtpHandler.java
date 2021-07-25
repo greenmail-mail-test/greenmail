@@ -6,20 +6,16 @@
  */
 package com.icegreen.greenmail.smtp;
 
+import com.icegreen.greenmail.server.AbstractSocketProtocolHandler;
 import com.icegreen.greenmail.server.BuildInfo;
-import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.smtp.commands.SmtpCommand;
 import com.icegreen.greenmail.smtp.commands.SmtpCommandRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
-public class SmtpHandler implements ProtocolHandler {
-    protected static final Logger log = LoggerFactory.getLogger(SmtpHandler.class);
-
+public class SmtpHandler extends AbstractSocketProtocolHandler {
     // protocol and configuration global stuff
     protected SmtpCommandRegistry registry;
     protected SmtpManager manager;
@@ -29,15 +25,13 @@ public class SmtpHandler implements ProtocolHandler {
     protected SmtpState state;
 
     // command parsing stuff
-    protected volatile boolean quitting;
     protected String currentLine;
-    protected Socket socket;
 
     public SmtpHandler(SmtpCommandRegistry registry,
                        SmtpManager manager, Socket socket) {
+        super(socket);
         this.registry = registry;
         this.manager = manager;
-        this.socket = socket;
     }
 
     @Override
@@ -45,26 +39,26 @@ public class SmtpHandler implements ProtocolHandler {
         try {
             conn = new SmtpConnection(this, socket);
             state = new SmtpState();
-            quitting = false;
 
             sendGreetings();
 
-            while (!quitting) {
+            while (!isQuitting()) {
                 handleCommand();
             }
         } catch (SocketTimeoutException ste) {
-            conn.send("421 Service shutting down and closing transmission channel");
+            conn.send("421 Service shutting down and closing transmission channel " +
+                "(socket timeout, SO_TIMEOUT: " + getSoTimeout() + "ms)");
             conn.quit();
         } catch (Exception e) {
             // Closing socket on blocked read
-            if (!quitting) {
-                log.error("Unexpected error handling connection, quitting=", e);
-                throw new IllegalStateException(e);
+            if (!isQuitting()) {
+                throw new IllegalStateException("Unexpected error handling connection", e);
             }
         } finally {
             if (null != state) {
                 state.clearMessage();
             }
+            close();
         }
     }
 
@@ -116,25 +110,5 @@ public class SmtpHandler implements ProtocolHandler {
         }
 
         return true;
-    }
-
-    @Override
-    public void close() {
-        if (log.isTraceEnabled()) {
-            final StringBuilder msg = new StringBuilder("Closing SMTP(s) handler connection");
-            if (null != socket) {
-                msg.append(' ').append(socket.getInetAddress()).append(':')
-                    .append(socket.getPort());
-            }
-            log.trace(msg.toString());
-        }
-        quitting = true;
-        try {
-            if (socket != null && !socket.isClosed()) {
-                socket.close();
-            }
-        } catch (IOException ignored) {
-            //empty
-        }
     }
 }
