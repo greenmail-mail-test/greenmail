@@ -102,10 +102,14 @@ public class GreenMailStandaloneRunner {
             {"-Dgreenmail.<protocol>.port=...", "Specifies port. Requires additional hostname parameter."},
             {"-Dgreenmail.users=<logon:pwd@domain>[,...]", "Specifies mail users, eg foo:pwd@bar.com,foo2:pwd@bar2.com."},
             {"Note: domain must be DNS resolvable!"},
+            {"-Dgreenmail.users.login=(local_part|email)",
+                "Configures if local_part (default) or full email should be used for login when" +
+                    " configuring users via -Dgreenmail.users=foo@bar.com,...."},
+            {"Note: Only has effect if configured user is of type email (i.e. contains '@')"},
             {"-Dgreenmail.auth.disabled ", "Disables authentication check so that any password works."},
             {"Also automatically provisions previously non-existent users."},
             {"-Dgreenmail.verbose ", "Enables verbose mode, including JavaMail debug output"},
-            {"-Dgreenmail.startup.timeout=<TIMEOUT_IN_MILLISECS>",
+            {"-Dgreenmail.startup.timeout=<TIMEOUT_IN_MILLISECONDS>",
                 "Overrides the default server startup timeout of 1000ms."},
         };
         for (String[] opt : options) {
