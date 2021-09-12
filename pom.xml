@@ -185,7 +185,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-war-plugin</artifactId>
-          <version>3.3.1</version>
+          <version>3.3.2</version>
         </plugin>
         <plugin>
           <artifactId>maven-dependency-plugin</artifactId>
@@ -198,7 +198,7 @@
         <plugin>
           <groupId>io.fabric8</groupId>
           <artifactId>docker-maven-plugin</artifactId>
-          <version>0.36.1</version>
+          <version>0.37.0</version>
         </plugin>
         <!-- IDE plugins -->
         <plugin>
@@ -240,7 +240,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-pmd-plugin</artifactId>
-          <version>3.14.0</version>
+          <version>3.15.0</version>
           <configuration>
             <format>html</format>
             <linkXRef>true</linkXRef>
@@ -261,7 +261,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.3.0</version>
+          <version>3.3.1</version>
           <configuration>
             <links>
               <link>https://docs.oracle.com/javase/8/docs/api/</link>
@@ -302,7 +302,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-enforcer-plugin</artifactId>
-          <version>3.0.0-M3</version>
+          <version>3.0.0</version>
         </plugin>
         <!-- Inject POM version and scm version -->
         <plugin>
