@@ -13,9 +13,10 @@ Go to the [project site][greenmail_project_site] for details:
 * [Download][greenmail_download]
 * [Maven coordinates][maven_repository_com]: com.icegreen:greenmail:\<[VERSION](https://github.com/greenmail-mail-test/greenmail/releases/)\>
 
-The GreenMail project welcomes any contribution, so go ahead and fork/open a pull request! See the guidelines below.
+Containerized integration of GreenMail with various web mail clients can be found in the
+separate [GreenMail Client Integrations project](https://github.com/greenmail-mail-test/greenmail-client-integrations).
 
-***Note***: GreenMail recently moved to Github and was previously hosted on [SF][greenmail_sf_site].
+The GreenMail project welcomes any contribution, so go ahead and fork/open a pull request! See the guidelines below.
 
 Development [![Build status](https://circleci.com/gh/greenmail-mail-test/greenmail/tree/master.svg?style=shield)](https://app.circleci.com/pipelines/github/greenmail-mail-test) [![Maven Central](https://img.shields.io/maven-central/v/com.icegreen/greenmail.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.icegreen%22%20AND%20a%3A%22greenmail%22) [![StackOverflow](http://img.shields.io/badge/stackoverflow-greenmail-green.svg)](http://stackoverflow.com/questions/tagged/greenmail) [![Docker Pulls](https://img.shields.io/docker/pulls/greenmail/standalone.svg?maxAge=604800)][docker-hub] [![javadoc](https://javadoc.io/badge2/com.icegreen/greenmail/javadoc.svg)](https://javadoc.io/doc/com.icegreen/greenmail)
 -----------
