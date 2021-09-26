@@ -25,14 +25,16 @@ public class InMemoryStore
     private final RootFolder rootMailbox = new RootFolder();
     private final Map<String, Set<Quota>> quotaMap = new HashMap<>();
 
+
     @Override
     public MailFolder getMailbox(String absoluteMailboxName) {
+        // #mail.3564001.INBOX
         StringTokenizer tokens = new StringTokenizer(absoluteMailboxName, HIERARCHY_DELIMITER);
 
         // The first token must be "#mail"
         if (!tokens.hasMoreTokens() ||
                 !tokens.nextToken().equalsIgnoreCase(USER_NAMESPACE)) {
-            return null;
+            throw new IllegalStateException("Can not extract mail root '"+USER_NAMESPACE+"' from  "+absoluteMailboxName);
         }
 
         HierarchicalFolder parent = rootMailbox;

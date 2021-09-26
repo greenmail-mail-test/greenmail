@@ -46,4 +46,13 @@ public class MovingMessage {
     public void setMimeMessage(MimeMessage message) {
         this.message = message;
     }
+
+    @Override
+    public String toString() {
+        return "MovingMessage{" +
+            "toAddresses=" + toAddresses +
+            ", returnPath=" + returnPath +
+            ", message=" + message +
+            '}';
+    }
 }
