@@ -47,7 +47,7 @@ public abstract class AbstractServer extends Thread implements Service {
         try {
             bindTo = InetAddress.getByName(bindAddress);
         } catch (UnknownHostException e) {
-            throw new RuntimeException("Failed to setup bind address for " + getName(), e);
+            throw new IllegalStateException("Failed to setup bind address for " + getName(), e);
         }
         this.managers = managers;
         // Will be updated after bind for dynamic ports

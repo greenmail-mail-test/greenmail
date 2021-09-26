@@ -11,13 +11,13 @@ import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MessageFlags;
 import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.util.GreenMailUtil;
-
 import jakarta.mail.BodyPart;
 import jakarta.mail.Flags;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Multipart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
@@ -38,7 +38,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
     private static final Flags FLAGS_SEEN = new Flags(Flags.Flag.SEEN);
     private static final Pattern NUMBER_MATCHER = Pattern.compile("^\\d+$");
 
-    private FetchCommandParser fetchParser = new FetchCommandParser();
+    private final FetchCommandParser fetchParser = new FetchCommandParser();
 
     FetchCommand() {
         super(NAME, ARGS);
@@ -48,7 +48,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session)
-            throws ProtocolException, FolderException {
+        throws ProtocolException, FolderException {
         doProcess(request, response, session, false);
     }
 
@@ -57,7 +57,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
                           ImapResponse response,
                           ImapSession session,
                           boolean useUids)
-            throws ProtocolException, FolderException {
+        throws ProtocolException, FolderException {
         IdRange[] idSet = fetchParser.parseIdRange(request);
         FetchRequest fetch = fetchParser.fetchRequest(request);
         fetchParser.endLine(request);
@@ -72,7 +72,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             int msn = mailbox.getMsn(uid);
 
             if ((useUids && includes(idSet, uid)) ||
-                    (!useUids && includes(idSet, msn))) {
+                (!useUids && includes(idSet, msn))) {
                 String msgData = getMessageData(useUids, fetch, mailbox, uid);
                 response.fetchResponse(msn, msgData);
             }
@@ -99,7 +99,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
     private String outputMessage(FetchRequest fetch, StoredMessage message,
                                  ImapSessionFolder folder, boolean useUids)
-            throws FolderException {
+        throws FolderException {
         // Check if this fetch will cause the "SEEN" flag to be set on this message
         // If so, update the flags, and ensure that a flags response is included in the response.
         boolean ensureFlagsResponse = false;
@@ -190,8 +190,8 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
                                  Partial partial,
                                  StringBuilder response) throws IOException, MessagingException {
         if (log.isDebugEnabled()) {
-            log.debug("Fetching body part for section specifier " + sectionSpecifier +
-                    " and mime message (contentType=" + mimeMessage.getContentType());
+            log.debug("Fetching body part for section specifier {} and mime message (contentType={})",
+                sectionSpecifier, mimeMessage.getContentType());
         }
 
         if (sectionSpecifier.length() == 0) {
@@ -337,7 +337,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             buf.append(line).append("\r\n");
         }
 
-        if(null != partial) {
+        if (null != partial) {
             final String partialContent = buf.toString();
             int len = partial.computeLength(partialContent.length()); // TODO : Charset?
             int start = partial.computeStart(partialContent.length());
@@ -362,7 +362,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
     private static class FetchCommandParser extends CommandParser {
 
         FetchRequest fetchRequest(ImapRequestLineReader request)
-                throws ProtocolException {
+            throws ProtocolException {
             FetchRequest fetch = new FetchRequest();
 
             // Parenthesis optional if single 'atom'
@@ -387,7 +387,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         }
 
         private void addNextElement(ImapRequestLineReader command, FetchRequest fetch)
-                throws ProtocolException {
+            throws ProtocolException {
             char next = nextCharInLine(command);
             StringBuilder element = new StringBuilder();
             while (next != ' ' && next != '[' && next != ')' && !isCrOrLf(next)) {
@@ -480,7 +480,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         }
 
         private char nextCharInLine(ImapRequestLineReader request)
-                throws ProtocolException {
+            throws ProtocolException {
             char next = request.nextChar();
             if (isCrOrLf(next)) {
                 throw new ProtocolException("Unexpected end of line (CR or LF).");
@@ -489,7 +489,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         }
 
         private char nextNonSpaceChar(ImapRequestLineReader request)
-                throws ProtocolException {
+            throws ProtocolException {
             char next = request.nextChar();
             while (next == ' ') {
                 request.consume();
@@ -528,13 +528,16 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             bodyElements.add(element);
         }
     }
-    /** See https://tools.ietf.org/html/rfc3501#page-55 : partial */
+
+    /**
+     * See https://tools.ietf.org/html/rfc3501#page-55 : partial
+     */
     private static class Partial {
         int start;
         int size;
 
         int computeLength(final int contentSize) {
-            if ( size > 0) {
+            if (size > 0) {
                 return Math.min(size, contentSize - start); // Only up to max available bytes
             } else {
                 // First len bytes
@@ -555,9 +558,9 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
     }
 
     private static class BodyFetchElement {
-        private String name;
-        private String sectionIdentifier;
-        private Partial partial;
+        private final String name;
+        private final String sectionIdentifier;
+        private final Partial partial;
 
         public BodyFetchElement(String name, String sectionIdentifier) {
             this(name, sectionIdentifier, null);

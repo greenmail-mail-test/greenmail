@@ -140,7 +140,7 @@ public class ImapHostManagerImpl
     public void deleteMailbox(GreenMailUser user, String mailboxName)
             throws FolderException {
 
-        if (mailboxName.toLowerCase().equals("inbox")) {
+        if (mailboxName.equalsIgnoreCase("inbox")) {
             throw new FolderException("Can not delete INBOX mailbox");
         }
 
@@ -169,7 +169,7 @@ public class ImapHostManagerImpl
             throws FolderException {
 
         MailFolder existingFolder = getFolder(user, oldMailboxName, true);
-       
+
         if (getFolder(user, newMailboxName) != null) {
             throw new FolderException("Cannot rename mailbox to the name already existed mailbox");
         }
