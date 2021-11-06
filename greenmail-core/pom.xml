@@ -48,8 +48,18 @@
 
     <!-- Test scope -->
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -133,7 +143,7 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <configuration>
           <systemPropertyVariables>
-            <log4j.configuration>file:${project.build.testOutputDirectory}/log4j-it.xml</log4j.configuration>
+            <log4j2.configurationFile>file:${project.build.testOutputDirectory}/log4j2-it.xml</log4j2.configurationFile>
           </systemPropertyVariables>
         </configuration>
       </plugin>

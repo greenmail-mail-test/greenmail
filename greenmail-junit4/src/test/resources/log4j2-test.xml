@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration status="debug">
+    <Appenders>
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <PatternLayout pattern="%-7.7r %-5.5p %25.25c{2}| %m%n"/>
+        </Console>
+        <File name="FILE" fileName="test.log" append="false">
+            <PatternLayout pattern="%d{HH:mm:ss,SSS} (%t) %-5.5p %30.30c{2}| %m%n"/>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Root level="trace">
+            <AppenderRef ref="CONSOLE" level="info"/>
+            <AppenderRef ref="FILE"/>
+        </Root>
+    </Loggers>
+</Configuration>

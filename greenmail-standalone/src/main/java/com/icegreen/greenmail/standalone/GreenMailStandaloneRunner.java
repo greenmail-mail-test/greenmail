@@ -6,13 +6,14 @@ import com.icegreen.greenmail.server.BuildInfo;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.PropertiesBasedServerSetupBuilder;
 import com.icegreen.greenmail.util.ServerSetup;
-import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.xml.DOMConfigurator;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.io.PrintStream;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -58,22 +59,37 @@ public class GreenMailStandaloneRunner {
     }
 
     protected static void configureLogging(Properties properties) {
-        // Init logging: Try standard log4j configuration mechanism before falling back to
+        // Init logging: Try standard log4j2 configuration mechanism before falling back to
         // provided logging configuration
-        String log4jConfig = System.getProperty("log4j.configuration");
+        String log4jConfig = System.getProperty("log4j2.configurationFile");
         if (null == log4jConfig) {
             if (properties.containsKey(PropertiesBasedServerSetupBuilder.GREENMAIL_VERBOSE)) {
-                DOMConfigurator.configure(GreenMailStandaloneRunner.class.getResource("/log4j-verbose.xml"));
+                System.setProperty("log4j2.configurationFile", "log4j2-verbose.xml");
+//                try {
+//                    Configurator.initialize("",GreenMailStandaloneRunner.class.getResource("/log4j2-verbose.xml").toURI().toString());
+//                } catch (URISyntaxException e) {
+//                    e.printStackTrace();
+//                }
+//                DOMConfigurator.configure(GreenMailStandaloneRunner.class.getResource("/log4j2-verbose.xml"));
             } else {
-                DOMConfigurator.configure(GreenMailStandaloneRunner.class.getResource("/log4j.xml"));
-            }
-        } else {
-            if (log4jConfig.toLowerCase().endsWith(".xml")) {
-                DOMConfigurator.configure(log4jConfig);
-            } else {
-                PropertyConfigurator.configure(log4jConfig);
+                System.setProperty("log4j2.configurationFile", "log4j2.xml");
+//                try {
+//                    Configurator.initialize("",GreenMailStandaloneRunner.class.getResource("/log4j2.xml").toURI().toString());
+//                } catch (URISyntaxException e) {
+//                    e.printStackTrace();
+//                }
+//                DOMConfigurator.configure(GreenMailStandaloneRunner.class.getResource("/log4j2.xml"));
             }
         }
+//        else {
+//            if (log4jConfig.toLowerCase().endsWith(".xml")) {
+//                DOMConfigurator.configure(log4jConfig);
+//            } else {
+//                PropertyConfigurator.configure(log4jConfig);
+//            }
+//        }
+//        Configurator.initialize();
+        LoggerContext.getContext();
 
         // Bridge Java Util Logging to SLF4j for Jersey
         SLF4JBridgeHandler.removeHandlersForRootLogger();
