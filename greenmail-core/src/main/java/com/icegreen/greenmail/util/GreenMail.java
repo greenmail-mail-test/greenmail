@@ -69,7 +69,7 @@ public class GreenMail extends ConfiguredGreenMail {
             log.debug("{} {} {}",
                 System.getProperty("java.vm.name", "java.vm.name"),
                 System.getProperty("java.vm.vendor", "java.vm.vendor"),
-                System.getProperty("java.vendor.version", "java.vendor.version")
+                System.getProperty("java.runtime.version", "java.runtime.version")
             );
             log.debug("file.encoding : {}", System.getProperty("file.encoding", "file.encoding"));
         }
