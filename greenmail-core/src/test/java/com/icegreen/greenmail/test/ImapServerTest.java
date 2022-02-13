@@ -47,7 +47,7 @@ public class ImapServerTest {
      * @throws Exception on error.
      */
     @Test
-    public void testRetreiveSimple() throws Exception {
+    public void testRetrieveSimple() throws Exception {
         assertThat(greenMail.getImap()).isNotNull();
         final String subject = GreenMailUtil.random() + UMLAUTS;
         final String body = GreenMailUtil.random()
@@ -91,7 +91,7 @@ public class ImapServerTest {
     }
 
     @Test
-    public void testRetreiveSimpleWithNonDefaultPassword() throws Exception {
+    public void testRetrieveSimpleWithNonDefaultPassword() throws Exception {
         assertThat(greenMail.getImap()).isNotNull();
         final String to = "test@localhost";
         final String password = "donotharmanddontrecipricateharm";
@@ -114,7 +114,7 @@ public class ImapServerTest {
     }
 
     @Test
-    public void testRetriveMultipart() throws Exception {
+    public void testRetrieveMultipart() throws Exception {
         assertThat(greenMail.getImap()).isNotNull();
 
         String subject = GreenMailUtil.random();
@@ -373,6 +373,49 @@ public class ImapServerTest {
     }
 
     @Test
+    public void testFolderMoveMessages() throws MessagingException {
+        greenMail.setUser("foo@localhost", "pwd");
+
+        int msgCount = 3;
+        for (int i = 0; i < 3; i++) {
+            GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject #" + i,
+                    "Test message", ServerSetupTest.SMTP);
+        }
+        greenMail.waitForIncomingEmail(msgCount);
+
+        final IMAPStore store = greenMail.getImap().createStore();
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder inboxFolder = (IMAPFolder) store.getFolder("INBOX");
+
+            // Target folder
+            IMAPFolder targetFolder = (IMAPFolder) inboxFolder.getFolder("target-folder");
+            assertThat(targetFolder.create(Folder.HOLDS_FOLDERS | Folder.HOLDS_MESSAGES)).isTrue();
+            assertThat(targetFolder.exists()).isTrue();
+
+            inboxFolder.open(Folder.READ_WRITE);
+            try {
+                final Message[] messages = inboxFolder.getMessages();
+                assertThat(messages).hasSize(msgCount);
+                assertThat(targetFolder.getMessageCount()).isEqualTo(0);
+                inboxFolder.moveMessages(messages, targetFolder);
+            } finally {
+                inboxFolder.close();
+            }
+
+            targetFolder.open(Folder.READ_ONLY); // Refresh for new messages
+            try {
+                assertThat(targetFolder.getMessageCount()).isEqualTo(msgCount);
+            } finally {
+                targetFolder.close();
+            }
+        } finally {
+            store.close();
+        }
+    }
+
+
+    @Test
     public void testFolderRequiringEscaping() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
         GreenMailUtil.sendTextEmail("foo@localhost", "foo@localhost", "test subject", "", greenMail.getSmtp().getServerSetup());
@@ -622,6 +665,7 @@ public class ImapServerTest {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e1) {
+                    // Ignore
                 }
                 GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject", "Test message",
                         ServerSetupTest.SMTP);

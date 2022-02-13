@@ -17,6 +17,8 @@ public interface StoredMessageCollection extends Iterable<StoredMessage> {
 
     void add(StoredMessage storedMessage);
 
+    StoredMessage remove(long uid);
+
     void clear();
 
     int getFirstUnseen();

@@ -67,6 +67,7 @@ public class ImapCommandFactory {
         imapCommands.put(StoreCommand.NAME, StoreCommand.class);
         imapCommands.put(UidCommand.NAME, UidCommand.class);
         imapCommands.put(SortCommand.NAME, SortCommand.class);
+        imapCommands.put(MoveCommand.NAME, MoveCommand.class);
 
         // Quota support
         imapCommands.put(SetQuotaCommand.NAME, SetQuotaCommand.class);

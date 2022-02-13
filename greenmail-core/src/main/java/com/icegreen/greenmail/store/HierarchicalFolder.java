@@ -241,7 +241,12 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         }
         StoredMessage storedMessage = new StoredMessage(message,
                 receivedDate, uid);
+        storeAndNotifyListeners(storedMessage);
 
+        return uid;
+    }
+
+    private void storeAndNotifyListeners(StoredMessage storedMessage) {
         int newMsn;
         synchronized (mailMessages) {
             mailMessages.add(storedMessage);
@@ -254,8 +259,6 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
                 _mailboxListener.added(newMsn);
             }
         }
-
-        return uid;
     }
 
     @Override
@@ -372,6 +375,25 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         }
 
         return toFolder.appendMessage(newMime, originalMessage.getFlags(), originalMessage.getReceivedDate());
+    }
+
+    @Override
+    public long moveMessage(long uid, MailFolder toFolder) throws FolderException {
+        int msn = mailMessages.getMsn(uid);
+        StoredMessage msg = mailMessages.remove(uid);
+        synchronized (_mailboxListeners) { // Notify listeners of message deleted
+            for (FolderListener _mailboxListener : _mailboxListeners) {
+                _mailboxListener.expunged(msn);
+            }
+        }
+
+        final HierarchicalFolder targetFolder = (HierarchicalFolder) toFolder;
+        final long newUid = targetFolder.nextUid.getAndIncrement();
+        StoredMessage storedMessage = new StoredMessage(msg.getMimeMessage(), msg.getReceivedDate(), newUid);
+        storedMessage.setFlag(Flags.Flag.RECENT, true); // Behaves as COPY
+        targetFolder.storeAndNotifyListeners(storedMessage);
+
+        return newUid;
     }
 
     @Override

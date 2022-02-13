@@ -27,6 +27,20 @@ public class ListBasedStoredMessageCollection implements StoredMessageCollection
     }
 
     @Override
+    public StoredMessage remove(long uid) {
+        synchronized (mailMessages) {
+            for (int i = 0; i < mailMessages.size(); i++) {
+                StoredMessage message = mailMessages.get(i);
+                if (message.getUid() == uid) {
+                    mailMessages.remove(i);
+                    return message;
+                }
+            }
+        }
+        throw new IllegalArgumentException("No message for uid " + uid + " exists");
+    }
+
+    @Override
     public void clear() {
         mailMessages.clear();
     }
@@ -68,7 +82,7 @@ public class ListBasedStoredMessageCollection implements StoredMessageCollection
                 }
             }
         }
-        throw new FolderException("No such message.");
+        throw new FolderException("No such message of uid " + uid + ".");
     }
 
     @Override

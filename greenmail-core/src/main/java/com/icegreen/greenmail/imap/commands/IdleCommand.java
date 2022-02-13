@@ -16,6 +16,7 @@ import com.icegreen.greenmail.store.FolderListener;
 class IdleCommand extends SelectedStateCommand {
     public static final String NAME = "IDLE";
     public static final String ARGS = null;
+    public static final String CAPABILITY = "IDLE";
 
     IdleCommand() {
         super(NAME, ARGS);

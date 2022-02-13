@@ -34,6 +34,15 @@ public class MapBasedStoredMessageCollection implements StoredMessageCollection 
     }
 
     @Override
+    public StoredMessage remove(long uid) {
+        final StoredMessage msg = mailMessages.remove(uid);
+        if (null == msg) {
+            throw new IllegalArgumentException("No message for uid " + uid + " exists");
+        }
+        return msg;
+    }
+
+    @Override
     public void clear() {
         mailMessages.clear();
     }
