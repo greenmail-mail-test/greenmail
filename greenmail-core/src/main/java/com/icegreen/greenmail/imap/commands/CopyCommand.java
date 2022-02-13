@@ -34,7 +34,7 @@ class CopyCommand extends SelectedStateCommand implements UidEnabledCommand {
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session)
-            throws ProtocolException, FolderException {
+        throws ProtocolException, FolderException {
         doProcess(request, response, session, false);
     }
 
@@ -43,7 +43,7 @@ class CopyCommand extends SelectedStateCommand implements UidEnabledCommand {
                           ImapResponse response,
                           ImapSession session,
                           boolean useUids)
-            throws ProtocolException, FolderException {
+        throws ProtocolException, FolderException {
         IdRange[] idSet = parser.parseIdRange(request);
         String mailboxName = parser.mailbox(request);
         parser.endLine(request);
@@ -78,25 +78,25 @@ class CopyCommand extends SelectedStateCommand implements UidEnabledCommand {
         }
 
         session.unsolicitedResponses(response);
-        response.commandComplete(this, generateCopyUidResponseCode(currentMailbox, copiedUidsOld, copiedUidsNew));
+        response.commandComplete(this, generateCopyUidResponseCode(toFolder, copiedUidsOld, copiedUidsNew));
     }
 
     /**
      * Generates <b>COPYUID</b> response code
      * (see <a href="http://tools.ietf.org/html/rfc2359#page-4">http://tools.ietf.org/html/rfc2359</a>)
      * using format : <i>COPYUID UIDVALIDITY SOURCE-UIDS TARGET-UIDS</i>.
-     *
+     * <p>
      * For example <i>COPYUID 38505 304,319,320 3956,3957,3958</i>
      *
-     * @param currentMailbox imap folder which is target of copy command
-     * @param copiedUidsFrom List of source uids which was successfully copied
-     * @param copiedUidsTo   List of message uids which was successfully copied
+     * @param destinationFolder imap folder which is target of copy command
+     * @param copiedUidsFrom    List of source uids which was successfully copied
+     * @param copiedUidsTo      List of message uids which was successfully copied
      * @return response code
      */
-    private String generateCopyUidResponseCode(ImapSessionFolder currentMailbox,
-                                               List<Long> copiedUidsFrom, List<Long> copiedUidsTo) {
+    static String generateCopyUidResponseCode(MailFolder destinationFolder,
+                                              List<Long> copiedUidsFrom, List<Long> copiedUidsTo) {
         return "COPYUID" + SP +
-            currentMailbox.getUidValidity() + SP +
+            destinationFolder.getUidValidity() + SP +
             IdRange.uidsToRangeString(copiedUidsFrom) + SP +
             IdRange.uidsToRangeString(copiedUidsTo);
     }
