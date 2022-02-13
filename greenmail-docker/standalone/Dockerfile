@@ -1,4 +1,4 @@
-FROM openjdk:8u302-jre-slim-buster
+FROM openjdk:8u322-jre-slim-buster
 MAINTAINER https://github.com/greenmail-mail-test/greenmail (marcel.may.de@gmail.com)
 
 #######################
