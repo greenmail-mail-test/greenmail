@@ -6,8 +6,8 @@ package com.icegreen.greenmail.store;
 
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import com.icegreen.greenmail.imap.commands.IdRange;
-
 import jakarta.mail.Flags;
+
 import java.util.*;
 
 /**
@@ -24,6 +24,20 @@ public class ListBasedStoredMessageCollection implements StoredMessageCollection
     @Override
     public void add(StoredMessage storedMessage) {
         mailMessages.add(storedMessage);
+    }
+
+    @Override
+    public StoredMessage remove(long uid) {
+        synchronized (mailMessages) {
+            for (int i = 0; i < mailMessages.size(); i++) {
+                StoredMessage message = mailMessages.get(i);
+                if (message.getUid() == uid) {
+                    mailMessages.remove(i);
+                    return message;
+                }
+            }
+        }
+        throw new IllegalArgumentException("No message for uid " + uid + " exists");
     }
 
     @Override
@@ -68,7 +82,7 @@ public class ListBasedStoredMessageCollection implements StoredMessageCollection
                 }
             }
         }
-        throw new FolderException("No such message.");
+        throw new FolderException("No such message of uid " + uid + ".");
     }
 
     @Override

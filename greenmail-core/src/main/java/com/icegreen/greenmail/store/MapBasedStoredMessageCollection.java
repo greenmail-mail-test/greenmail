@@ -7,8 +7,8 @@ package com.icegreen.greenmail.store;
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import com.icegreen.greenmail.imap.commands.IdRange;
 import com.icegreen.greenmail.util.MaxSizeLinkedHashMap;
-
 import jakarta.mail.Flags;
+
 import java.util.*;
 
 import static java.lang.String.format;
@@ -31,6 +31,15 @@ public class MapBasedStoredMessageCollection implements StoredMessageCollection 
     @Override
     public void add(StoredMessage storedMessage) {
         mailMessages.put(storedMessage.getUid(), storedMessage);
+    }
+
+    @Override
+    public StoredMessage remove(long uid) {
+        final StoredMessage msg = mailMessages.remove(uid);
+        if (null == msg) {
+            throw new IllegalArgumentException("No message for uid " + uid + " exists");
+        }
+        return msg;
     }
 
     @Override

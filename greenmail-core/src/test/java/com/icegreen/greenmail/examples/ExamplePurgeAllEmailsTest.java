@@ -21,9 +21,8 @@ public class ExamplePurgeAllEmailsTest {
     @Rule
     public final GreenMailRule greenMailRule = new GreenMailRule(ServerSetupTest.SMTP_POP3_IMAP);
 
-
     @Test
-    public void testremoveAllMessagesInImapMailbox() throws FolderException {
+    public void testRemoveAllMessagesInImapMailbox() throws FolderException {
         try (Retriever retriever = new Retriever(greenMailRule.getImap())) {
             greenMailRule.setUser("foo@localhost", "pwd");
             GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost",
@@ -33,7 +32,6 @@ public class ExamplePurgeAllEmailsTest {
             Message[] messages = retriever.getMessages("foo@localhost", "pwd");
             assertThat(messages.length).isEqualTo(0);
         }
-
     }
 
 }

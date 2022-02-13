@@ -242,6 +242,11 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
     }
 
     @Override
+    public long moveMessage(long uid, MailFolder toFolder) throws FolderException {
+        return folder.moveMessage(uid, toFolder);
+    }
+
+    @Override
     public void addListener(FolderListener listener) {
         folder.addListener(listener);
     }

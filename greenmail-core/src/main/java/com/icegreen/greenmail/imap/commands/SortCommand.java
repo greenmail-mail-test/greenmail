@@ -18,6 +18,7 @@ class SortCommand extends SelectedStateCommand implements UidEnabledCommand {
 
     public static final String NAME = "SORT";
     public static final String ARGS = "(<sort criteria>) <charset specification> <search term>";
+    public static final String CAPABILITY = "SORT";
 
     private final SortCommandParser sortCommandParser = new SortCommandParser();
 
