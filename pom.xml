@@ -360,7 +360,7 @@
   </build>
 
   <properties>
-    <slf4j.version>1.7.32</slf4j.version>
+    <slf4j.version>1.7.36</slf4j.version>
     <spring.version>4.3.30.RELEASE</spring.version>
     <junit5.version>5.8.2</junit5.version>
     <jetty.version>9.4.45.v20220203</jetty.version>
