@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- Log4j2 config for unit tests' -->
-
 <Configuration>
     <Appenders>
         <Console name="CONSOLE" target="SYSTEM_OUT">

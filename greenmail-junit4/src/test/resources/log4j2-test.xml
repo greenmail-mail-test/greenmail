@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<Configuration status="debug">
+<Configuration>
     <Appenders>
         <Console name="CONSOLE" target="SYSTEM_OUT">
             <PatternLayout pattern="%-7.7r %-5.5p %25.25c{2}| %m%n"/>
