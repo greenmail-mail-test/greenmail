@@ -367,7 +367,7 @@
     <slf4j.version>1.7.36</slf4j.version>
     <log4j2.version>2.17.1</log4j2.version>
     <spring.version>4.3.30.RELEASE</spring.version>
-    <junit5.version>5.8.1</junit5.version>
+    <junit5.version>5.8.2</junit5.version>
     <jetty.version>9.4.45.v20220203</jetty.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
