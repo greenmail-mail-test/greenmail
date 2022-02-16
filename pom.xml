@@ -505,7 +505,7 @@
       <dependency>
         <groupId>org.easymock</groupId>
         <artifactId>easymock</artifactId>
-        <version>4.2</version>
+        <version>4.3</version>
       </dependency>
       <!-- Transitively by junit:junit -->
       <dependency>
