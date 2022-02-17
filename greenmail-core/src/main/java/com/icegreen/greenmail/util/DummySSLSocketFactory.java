@@ -27,7 +27,7 @@ import static com.icegreen.greenmail.util.DummySSLServerSocketFactory.addAnonCip
  */
 public class DummySSLSocketFactory extends SSLSocketFactory {
     protected static final Logger log = LoggerFactory.getLogger(DummySSLSocketFactory.class);
-    private SSLSocketFactory factory;
+    private final SSLSocketFactory factory;
 
     public DummySSLSocketFactory() {
         try {
@@ -101,7 +101,7 @@ public class DummySSLSocketFactory extends SSLSocketFactory {
     }
 
     /**
-     * We set the host name of the remote machine because otherwise the SSL implementation is going to try
+     * We set the host name of the remote machine because otherwise the SSL implementation is going
      * to try to do a reverse lookup to find out the host name for the host which is really slow.
      * Of course we don't know the host name of the remote machine so we just set a fake host name that is unique.
      * <p/>
@@ -117,11 +117,7 @@ public class DummySSLSocketFactory extends SSLSocketFactory {
             final Method setHostMethod = socket.getClass().getMethod("setHost", String.class);
             String fakeHostName = "greenmailHost" + new BigInteger(130, new Random()).toString(32);
             setHostMethod.invoke(socket, fakeHostName);
-        } catch (NoSuchMethodException e) {
-            log.debug("Could not set fake remote host. SSL connection setup may be slow.");
-        } catch (InvocationTargetException e) {
-            log.debug("Could not set fake remote host. SSL connection setup may be slow.");
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             log.debug("Could not set fake remote host. SSL connection setup may be slow.");
         }
     }
