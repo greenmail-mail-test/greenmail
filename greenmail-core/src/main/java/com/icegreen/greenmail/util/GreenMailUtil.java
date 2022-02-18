@@ -144,6 +144,19 @@ public class GreenMailUtil {
         }
     }
 
+    /**
+     * @return Both header and body for an email (or a Part) as encoding-agnostic byte[]
+     */
+    public static byte[] getWholeMessageAsBytes(Part msg) {
+        try {
+            ByteArrayOutputStream bodyOut = new ByteArrayOutputStream();
+            msg.writeTo(bodyOut);
+            return bodyOut.toByteArray();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     public static byte[] getBodyAsBytes(Part msg) {
         return getBody(msg).getBytes(EncodingUtil.CHARSET_EIGHT_BIT_ENCODING);
     }

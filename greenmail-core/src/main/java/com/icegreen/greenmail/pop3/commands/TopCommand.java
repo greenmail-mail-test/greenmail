@@ -14,7 +14,9 @@ import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.util.GreenMailUtil;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.List;
 
@@ -48,8 +50,8 @@ public class TopCommand
 
             int numLines = Integer.parseInt(cmdLine[2]);
 
-            try (BufferedReader in = new BufferedReader(
-                    new StringReader(GreenMailUtil.getWholeMessage(msg.getMimeMessage())))) {
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(
+                new ByteArrayInputStream(GreenMailUtil.getWholeMessageAsBytes(msg.getMimeMessage()))))) {
                 conn.println("+OK");
 
                 copyHeaders(in, conn);

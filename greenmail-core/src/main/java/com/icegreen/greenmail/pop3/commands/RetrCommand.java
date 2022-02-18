@@ -14,7 +14,9 @@ import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.util.GreenMailUtil;
 
 import javax.mail.Flags;
-import java.io.StringReader;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 
 
@@ -42,9 +44,9 @@ public class RetrCommand
             }
 
             StoredMessage msg = msgList.get(0);
-            String email = GreenMailUtil.getWholeMessage(msg.getMimeMessage());
+            ByteArrayInputStream bis = new ByteArrayInputStream(GreenMailUtil.getWholeMessageAsBytes(msg.getMimeMessage()));
             conn.println("+OK");
-            conn.print(new StringReader(email));
+            conn.print(new InputStreamReader(bis));
             conn.println();
             conn.println(".");
             msg.setFlag(Flags.Flag.SEEN, true);
