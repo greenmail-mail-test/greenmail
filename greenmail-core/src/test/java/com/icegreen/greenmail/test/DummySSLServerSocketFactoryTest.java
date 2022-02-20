@@ -38,8 +38,9 @@ public class DummySSLServerSocketFactoryTest {
 
         // Create dummy entry
         String testAlias = "greenmail-testLoadKeyStoreViaSystemProperty-alias";
-        final Certificate letsencryptisrgx1 = systemKs.getCertificate("letsencryptisrgx1 [jdk]");
-        testKs.setCertificateEntry(testAlias, letsencryptisrgx1);
+        final Certificate testCert = systemKs.getCertificate("amazonrootca1");
+        assertThat(testCert).isNotNull();
+        testKs.setCertificateEntry(testAlias, testCert);
 
         // Save to file
         String password = "some password";
