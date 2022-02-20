@@ -7,6 +7,7 @@
 package com.icegreen.greenmail.pop3;
 
 import com.icegreen.greenmail.foedus.util.StreamUtils;
+import com.icegreen.greenmail.util.EncodingUtil;
 import com.icegreen.greenmail.util.InternetPrintWriter;
 import com.icegreen.greenmail.util.LoggingInputStream;
 import com.icegreen.greenmail.util.LoggingOutputStream;
@@ -46,7 +47,7 @@ public class Pop3Connection {
         if(log.isDebugEnabled()) {
             o = new LoggingOutputStream(o, "S: ");
         }
-        out = new InternetPrintWriter(o, true);
+        out = InternetPrintWriter.createForEncoding(o, true, EncodingUtil.CHARSET_EIGHT_BIT_ENCODING);
 
         // Input
         InputStream i = socket.getInputStream();
