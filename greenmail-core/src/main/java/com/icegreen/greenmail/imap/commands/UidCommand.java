@@ -24,7 +24,7 @@ class UidCommand extends SelectedStateCommand {
     private ImapCommandFactory commandFactory;
 
     UidCommand() {
-        super(NAME, "<fetch-command>|<store-command>|<copy-command>|<search-command>|<expunge-command>");
+        super(NAME, "<fetch-command>|<store-command>|<copy-command>|<search-command>|<expunge-command>|<move-command>");
     }
 
     @Override
