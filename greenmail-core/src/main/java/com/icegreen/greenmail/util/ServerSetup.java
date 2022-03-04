@@ -217,10 +217,10 @@ public class ServerSetup {
      * <p/>
      * For details see
      * <ul>
-     * <li>http://docs.oracle.com/javaee/6/api/javax/mail/package-summary.html for some general settings</li>
-     * <li>https://javamail.java.net/nonav/docs/api/com/sun/mail/smtp/package-summary.html for valid SMTP properties.</li>
-     * <li>https://javamail.java.net/nonav/docs/api/com/sun/mail/imap/package-summary.html for valid IMAP properties</li>
-     * <li>https://javamail.java.net/nonav/docs/api/com/sun/mail/pop3/package-summary.html for valid POP3 properties.</li>
+     * <li>https://jakarta.ee/specifications/mail/2.0/apidocs/jakarta.mail/module-summary.html for some general settings</li>
+     * <li>https://jakarta.ee/specifications/mail/1.6/apidocs/index.html?com/sun/mail/smtp/package-summary.html for valid SMTP properties.</li>
+     * <li>https://jakarta.ee/specifications/mail/1.6/apidocs/index.html?com/sun/mail/imap/package-summary.html for valid IMAP properties</li>
+     * <li>https://jakarta.ee/specifications/mail/1.6/apidocs/index.html?com/sun/mail/pop3/package-summary.html for valid POP3 properties.</li>
      * </ul
      *
      * @param properties additional and optional properties which overwrite automatically added properties. Can be null.
@@ -235,8 +235,7 @@ public class ServerSetup {
 //            System.setProperty("mail.socket.debug", "true");
         }
 
-        // Set local host address (makes tests much faster. If this is not set java mail always looks for the address)
-        props.setProperty(MAIL_DOT + getProtocol() + ".localaddress", ServerSetup.getLocalHostAddress());
+        // Port and host
         props.setProperty(MAIL_DOT + getProtocol() + ".port", String.valueOf(getPort()));
         final String address = getBindAddress();
         props.setProperty(MAIL_DOT + getProtocol() + ".host", String.valueOf(address));
