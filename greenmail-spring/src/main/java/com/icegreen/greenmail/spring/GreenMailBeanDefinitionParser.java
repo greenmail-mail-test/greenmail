@@ -14,7 +14,7 @@ public class GreenMailBeanDefinitionParser extends AbstractSingleBeanDefinitionP
     /** The default hostname ({@value}). */
     public static final String DEFAULT_HOSTNAME = "localhost";
     /** The default port offset ({@value}). */
-    private static final Integer DEFAULT_PORT_OFFSET = Integer.valueOf(3000);
+    private static final Integer DEFAULT_PORT_OFFSET = 3000;
     /** The default time to wait for server startup in millis ({@value}). */
     public static final long DEFAULT_SERVER_STARTUP_TIMEOUT = 1000L;
 

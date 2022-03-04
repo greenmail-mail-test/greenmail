@@ -62,7 +62,7 @@ public class SmtpConnection {
             int b = in.read();
             if (b < 0) { // End
                 if (log.isDebugEnabled()) {
-                    log.debug("Unexpected end of stream, read {} bytes: {}", bos.size(), bos.toString());
+                    log.debug("Unexpected end of stream, read {} bytes: {}", bos.size(), bos);
                 }
                 if (bos.size() > 0) {
                     // Best effort?
@@ -102,7 +102,7 @@ public class SmtpConnection {
             while (true) {
                 int b = in.read();
                 if (b < 0) {
-                    throw new IllegalStateException("Unexpected end of stream, read " + bos.size() + " bytes: " + bos.toString());
+                    throw new IllegalStateException("Unexpected end of stream, read " + bos.size() + " bytes: " + bos);
                 }
 
                 if (cbuf == CR_LF_DOT_CR && b == '\n') { // CRLF-DOT-CRLF
@@ -122,7 +122,7 @@ public class SmtpConnection {
                 cbuf = (cbuf << 8) | b;
             }
         } catch (IOException ex) {
-            throw new IllegalStateException("Can not read line, read " + bos.size() + " bytes: " + bos.toString(), ex);
+            throw new IllegalStateException("Can not read line, read " + bos.size() + " bytes: " + bos, ex);
         }
     }
 

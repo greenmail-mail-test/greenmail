@@ -23,8 +23,8 @@ abstract class CommandTemplate
         implements ImapCommand, ImapConstants {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected CommandParser parser = new CommandParser();
-    private String name;
-    private String argSyntax;
+    private final String name;
+    private final String argSyntax;
 
     CommandTemplate(String name, String argSyntax) {
         this.name = name;

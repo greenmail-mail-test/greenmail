@@ -15,7 +15,7 @@ public class ConfigurationFactoryTest {
 
     @Test
     public void testCreate() {
-        Map<String, String> paramValues = new HashMap<String, String>();
+        Map<String, String> paramValues = new HashMap<>();
         paramValues.put("greenmail.defaultHostname", "127.0.0.1");
         paramValues.put("greenmail.portOffset", "20000");
         paramValues.put("greenmail.smtp", "");

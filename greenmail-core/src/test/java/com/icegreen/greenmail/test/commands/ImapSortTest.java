@@ -75,7 +75,6 @@ public class ImapSortTest {
      * @param session Session to set on the messages
      * @param folder Folder to add to
      * @param flags Flags to set on both messages
-     * @throws Exception
      */
     private void storeSortTestMessages(Session session, MailFolder folder, Flags flags) throws Exception {
         MimeMessage message1 = new MimeMessage(session);

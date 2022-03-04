@@ -20,7 +20,7 @@ public enum Protocol {
     IMAPS(993);
 
     /** The default port. */
-    int port;
+    final int port;
 
     /** Private constructor, including default port */
     Protocol(final int pPort) {
@@ -44,6 +44,6 @@ public enum Protocol {
 
     @Override
     public String toString() {
-        return name() + '(' +Integer.toString(port)+')';
+        return name() + '(' + port +')';
     }
 }

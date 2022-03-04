@@ -7,13 +7,11 @@ import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.PropertiesBasedServerSetupBuilder;
 import com.icegreen.greenmail.util.ServerSetup;
 import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.io.PrintStream;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Properties;
 
