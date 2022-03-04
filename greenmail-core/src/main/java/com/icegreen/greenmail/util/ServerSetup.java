@@ -4,6 +4,7 @@
  */
 package com.icegreen.greenmail.util;
 
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -290,9 +291,8 @@ public class ServerSetup {
         if (connectionTimeout != that.connectionTimeout) return false;
         if (writeTimeout != that.writeTimeout) return false;
         if (serverStartupTimeout != that.serverStartupTimeout) return false;
-        if (bindAddress != null ? !bindAddress.equals(that.bindAddress) : that.bindAddress != null) return false;
-        return !(protocol != null ? !protocol.equals(that.protocol) : that.protocol != null);
-
+        if (!Objects.equals(bindAddress, that.bindAddress)) return false;
+        return Objects.equals(protocol, that.protocol);
     }
 
     @Override
@@ -375,7 +375,7 @@ public class ServerSetup {
     }
 
     /**
-     * Creates a copy with dynamic ports (auto detecting available ports) enabled.
+     * Creates a copy with dynamic ports (auto-detecting available ports) enabled.
      *
      * @param serverSetups the server setups.
      * @return copies of server setups with verbose mode enabled.

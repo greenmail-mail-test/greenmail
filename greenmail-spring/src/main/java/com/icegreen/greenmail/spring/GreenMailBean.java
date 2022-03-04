@@ -122,7 +122,7 @@ public class GreenMailBean implements InitializingBean, DisposableBean, BeanName
         if (imapsProtocol) {
             setups.add(createTestServerSetup(ServerSetup.IMAPS));
         }
-        return setups.toArray(new ServerSetup[setups.size()]);
+        return setups.toArray(new ServerSetup[0]);
     }
 
     /** Starts the server. */

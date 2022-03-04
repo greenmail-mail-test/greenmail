@@ -32,7 +32,7 @@ public class SmtpManager {
         this.imapHostManager = imapHostManager;
         this.userManager = userManager;
         incomingQueue = new Incoming();
-        notifyList = Collections.synchronizedList(new ArrayList<CountDownLatch>());
+        notifyList = Collections.synchronizedList(new ArrayList<>());
     }
 
 

@@ -1,5 +1,7 @@
 package com.icegreen.greenmail.configuration;
 
+import java.util.Objects;
+
 /**
  * A user to create when servers start
  */
@@ -58,9 +60,9 @@ public class UserBean {
 
         UserBean userBean = (UserBean) o;
 
-        if (email != null ? !email.equals(userBean.email) : userBean.email != null) return false;
-        if (login != null ? !login.equals(userBean.login) : userBean.login != null) return false;
-        return !(password != null ? !password.equals(userBean.password) : userBean.password != null);
+        if (!Objects.equals(email, userBean.email)) return false;
+        if (!Objects.equals(login, userBean.login)) return false;
+        return Objects.equals(password, userBean.password);
 
     }
 

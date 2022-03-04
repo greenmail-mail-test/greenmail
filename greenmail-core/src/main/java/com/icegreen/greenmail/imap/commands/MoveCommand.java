@@ -83,7 +83,7 @@ class MoveCommand extends SelectedStateCommand implements UidEnabledCommand {
             }
         }
 
-        // Always send COPYUID, even if not UID MOVE 
+        // Always send COPYUID, even if not UID MOVE
         response.okResponse(CopyCommand.generateCopyUidResponseCode(toFolder, copiedUidsOld, copiedUidsNew), "");
 
         session.unsolicitedResponses(response);  // EXPUNGE responses

@@ -19,7 +19,7 @@ import java.io.OutputStream;
  * @author Darrell DeBoer <darrell@apache.org>
  */
 public final class ImapRequestHandler {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private final ImapCommandFactory imapCommands = new ImapCommandFactory();
     private final CommandParser parser = new CommandParser();
     private static final String REQUEST_SYNTAX = "Protocol Error: Was expecting <tag SPACE command [arguments]>";

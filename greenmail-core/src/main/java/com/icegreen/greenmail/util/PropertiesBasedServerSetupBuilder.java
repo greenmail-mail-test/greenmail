@@ -85,7 +85,7 @@ public class PropertiesBasedServerSetupBuilder {
             }
         }
 
-        return serverSetups.toArray(new ServerSetup[serverSetups.size()]);
+        return serverSetups.toArray(new ServerSetup[0]);
     }
 
     protected void addSetup(String hostname, String protocol, Properties properties, List<ServerSetup> serverSetups) {

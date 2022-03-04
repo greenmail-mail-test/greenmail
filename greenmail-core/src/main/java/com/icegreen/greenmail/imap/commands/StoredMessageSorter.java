@@ -92,7 +92,7 @@ class StoredMessageSorter implements Comparator<StoredMessage> {
         return String.valueOf(addresses[0]);
     }
 
-    private int doCompare(Comparable c1, Comparable c2) {
+    private <T extends Comparable<T>> int doCompare(T c1, T c2) {
         int multiplier = reverse.getAndSet(false) ? -1 : 1;
         if (c1 == c2) {
             return 0;

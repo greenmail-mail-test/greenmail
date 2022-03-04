@@ -104,9 +104,7 @@ class StoreCommand extends SelectedStateCommand implements UidEnabledCommand {
             } else if (next == '-') {
                 sign = -1;
                 request.consume();
-            } else {
-                sign = 0;
-            }
+            } // else default 0
 
             String directive = consumeWord(request, new NoopCharValidator());
             if ("FLAGS".equalsIgnoreCase(directive)) {
