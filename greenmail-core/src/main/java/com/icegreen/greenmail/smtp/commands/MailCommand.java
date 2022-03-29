@@ -45,11 +45,11 @@ public class MailCommand
                     conn.send(err);
                     return;
                 }
-                state.clearMessage();
+                state.clearMessagePreservingAuthenticationState();
                 state.getMessage().setReturnPath(fromAddr);
                 conn.send("250 OK");
             } else {
-                state.clearMessage();
+                state.clearMessagePreservingAuthenticationState();
                 state.getMessage();
                 conn.send("250 OK");
             }

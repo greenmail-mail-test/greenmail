@@ -267,6 +267,21 @@ public class GreenMailUtil {
     }
 
     /**
+     * Send the message using the JavaMail session defined in the message
+     *
+     * @param mimeMessage Message to send
+     * @param username Username for authentication.
+     * @param password Password for authentication.
+     */
+    public static void sendMimeMessage(MimeMessage mimeMessage, String username, String password) {
+        try {
+            Transport.send(mimeMessage, username, password);
+        } catch (MessagingException e) {
+            throw new IllegalStateException("Can not send message " + mimeMessage, e);
+        }
+    }
+
+    /**
      * Send the message with the given attributes and the given body using the specified SMTP settings
      *
      * @param to          Destination address(es)
