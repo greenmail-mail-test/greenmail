@@ -52,6 +52,7 @@
               <type>jar</type>
               <overWrite>false</overWrite>
               <destFileName>greenmail-standalone.jar</destFileName>
+              <includes>greenmail.p12</includes>
             </artifactItem>
           </artifactItems>
           <outputDirectory>${project.build.directory}</outputDirectory>
@@ -61,6 +62,7 @@
             <phase>initialize</phase>
             <goals>
               <goal>copy</goal>
+              <goal>unpack</goal>
             </goals>
           </execution>
         </executions>
