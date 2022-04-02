@@ -4,6 +4,9 @@
  */
 package com.icegreen.greenmail.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.*;
 import java.io.File;
@@ -36,6 +39,7 @@ import java.security.cert.CertificateException;
  * @since Feb 2006
  */
 public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
+    protected final Logger log = LoggerFactory.getLogger(GreenMail.class);
     public static final String GREENMAIL_KEYSTORE_FILE_PROPERTY = "greenmail.tls.keystore.file";
     public static final String GREENMAIL_KEYSTORE_PASSWORD_PROPERTY = "greenmail.tls.keystore.password";
     public static final String GREENMAIL_KEYSTORE_P12 = "greenmail.p12";
@@ -96,6 +100,7 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
 
     private void loadKeystore(KeyStore keyStore, char[] pass, String keystoreResource)
         throws NoSuchAlgorithmException, CertificateException {
+        log.debug("Loading keystore from resource {} ...", keystoreResource);
         try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(keystoreResource)) {
             keyStore.load(is, pass);
         } catch (IOException ex) {
@@ -107,6 +112,7 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
 
     private void loadKeystore(KeyStore keyStore, char[] pass, File keystoreResource)
         throws NoSuchAlgorithmException, CertificateException {
+        log.debug("Loading keystore from file {} ...", keystoreResource);
         try (InputStream is = new FileInputStream(keystoreResource)) {
             keyStore.load(is, pass);
         } catch (IOException ex) {
@@ -128,8 +134,13 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
         return newCiphers;
     }
 
+    private enum Holder {
+        INSTANCE;
+        final DummySSLServerSocketFactory value = new DummySSLServerSocketFactory();
+    }
+
     public static ServerSocketFactory getDefault() {
-        return new DummySSLServerSocketFactory();
+        return Holder.INSTANCE.value;
     }
 
     @Override

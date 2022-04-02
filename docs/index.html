@@ -737,6 +737,24 @@ java [OPTIONS] -jar greenmail-standalone.jar
                         </td>
                     </tr>
                     <tr>
+                        <td class="text-nowrap">-Dgreenmail.tls.keystore.file<br><mark><b>Requires 1.6.8/2.0.0-alpha-3</b></mark></td>
+                        <td>Configures a PKCS12 keystore for secure IMAP/SMTP/POP3 TLS certificates (see also <i>-Dgreenmail.tls.keystore.password</i>)
+                            <div class="bd-example">
+                                Example and default used in GreenMail container image:
+                                <code>-Dgreenmail.tls.keystore.file=/home/greenmail/greenmail.p12</code>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-nowrap">-Dgreenmail.tls.keystore.password<br><mark><b>Requires 1.6.8/2.0.0-alpha-3</b></mark></td>
+                        <td>Configures a PKCS12 keystore password (see also <i>-Dgreenmail.tls.keystore.file</i>)
+                            <div class="bs-example">
+                                Example and default used in GreenMail container image:
+                                <code>-Dgreenmail.tls.keystore.password=changeit</code>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
                         <td class="text-nowrap">-Dgreenmail.auth.disabled</td>
                         <td>Disables user authentication check, so that any password works.
                             Useful if you do not want to preconfigure user/passwords.
@@ -1052,16 +1070,24 @@ docker run -t -i \
                     <li>slf4j-api.jar (for logging)</li>
                     <li>junit.jar (for test rules)</li>
                 </ul>
-                <h4>How come I don't need to install any SSL/TLS related certificates?</h4>
 
+                <h4>How come I don't need to install any SSL/TLS related certificates?</h4>
                 <p>GreenMail is designed to be used out of the box with no need to generate, sign or install any
                     certificates into your keystore.
                     GreenMail ships with a builtin keystore with a self signed RSA key. Refer to the source code of
                     <a
                             href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-core/src/main/java/com/icegreen/greenmail/util/DummySSLSocketFactory.java">DummySSLServerSocketFactory</a>
                     for details.</p>
-                <h4>How can I use IMAP quotas?</h4>
+                <h4>How can I replace the included default certificate?</h4>
+                <p>You can use the system properties <code>-Dgreenmail.tls.keystore.file</code> and <code>-Dgreenmail.tls.keystore.password</code>
+                   for pointing to your own PKCS12 file and password, if you do not want to use the provided default one (included in GreenMail JAR).
+                </p>
+                <div class="alert alert-warning" role="alert">
+                    Note: For the GreenMail container image, you would replace the default PKCS12 store located at <i>/home/greenmail/greenmail.p12</i>.
+                    For details checkout the <a href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-docker/standalone/Dockerfile">Dockerfile</a>.
+                </div>
 
+                <h4>How can I use IMAP quotas?</h4>
                 <p>GreenMail supports IMAP quota. Quota capbility can be toggled on and off. For details see <a
                         href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-core/src/test/java/com/icegreen/greenmail/test/ImapServerTest.java">
                     ImapServerTest.java</a> quota test</p>
