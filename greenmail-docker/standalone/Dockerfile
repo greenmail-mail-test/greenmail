@@ -1,5 +1,7 @@
 FROM openjdk:8u322-jre-slim-buster
-MAINTAINER https://github.com/greenmail-mail-test/greenmail (marcel.may.de@gmail.com)
+
+LABEL org.opencontainers.image.url https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-docker/standalone
+LABEL org.opencontainers.image.source https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-docker/standalone/Dockerfile
 
 #######################
 # Expose ports:
@@ -27,9 +29,9 @@ ENV GREENMAIL_OPTS -Dgreenmail.setup.test.all \
 # Run as user greenmail
 RUN groupadd -r greenmail && useradd --no-log-init -r -g greenmail greenmail
 # Note: If using Dockerfile without Maven, you must manually copy the JAR
-ADD target/greenmail-standalone.jar /home/greenmail/greenmail-standalone.jar
-ADD target/greenmail.p12 /home/greenmail/greenmail.p12
-ADD run_greenmail.sh /home/greenmail/run_greenmail.sh
+COPY target/greenmail-standalone.jar /home/greenmail/greenmail-standalone.jar
+COPY target/greenmail.p12 /home/greenmail/greenmail.p12
+COPY run_greenmail.sh /home/greenmail/run_greenmail.sh
 RUN chown greenmail:greenmail /home/greenmail/greenmail-standalone.jar /home/greenmail/run_greenmail.sh /home/greenmail/greenmail.p12 && \
     chmod +x /home/greenmail/run_greenmail.sh
 USER greenmail
