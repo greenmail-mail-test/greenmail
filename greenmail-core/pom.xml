@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <name>== GreenMail Core ==</name>
   <description>GreenMail - Email Test Servers</description>
-  <url>http://www.icegreen.com/greenmail/</url>
+  <url>https://greenmail-mail-test.github.io/greenmail/</url>
 
   <artifactId>greenmail</artifactId>
   <packaging>jar</packaging>
