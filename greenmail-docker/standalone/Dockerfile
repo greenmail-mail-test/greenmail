@@ -1,4 +1,4 @@
-FROM openjdk:8u322-jre-slim-buster
+FROM openjdk:8u332-jre-slim-bullseye
 
 LABEL org.opencontainers.image.url https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-docker/standalone
 LABEL org.opencontainers.image.source https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-docker/standalone/Dockerfile
