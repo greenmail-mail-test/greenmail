@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.icegreen</groupId>
   <artifactId>greenmail-spring</artifactId>
-  <version>1.6.9</version>
+  <version>1.6.10-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>== GreenMail Spring ==</name>
   <description>GreenMail support for Spring</description>
@@ -10,7 +10,7 @@
   <parent>
     <groupId>com.icegreen</groupId>
     <artifactId>greenmail-parent</artifactId>
-    <version>1.6.9</version>
+    <version>1.6.10-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
