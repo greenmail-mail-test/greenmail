@@ -25,7 +25,7 @@ public class DummySSLServerSocketFactoryTest {
     @Test
     public void testLoadKeyStoreViaSystemProperty() throws KeyStoreException, CertificateException,
         IOException, NoSuchAlgorithmException {
-        // Load default KS, as re-using an existing cert is easier then creating one for testing
+        // Load default KS, as re-using an existing cert is easier than creating one for testing
         KeyStore systemKs = KeyStore.getInstance(KeyStore.getDefaultType());
         try (final FileInputStream stream = new FileInputStream(
             System.getProperty("java.home") + "/lib/security/cacerts")) {
@@ -38,7 +38,8 @@ public class DummySSLServerSocketFactoryTest {
 
         // Create dummy entry
         String testAlias = "greenmail-testLoadKeyStoreViaSystemProperty-alias";
-        final Certificate testCert = systemKs.getCertificate("amazonrootca1");
+        String baseAlias = systemKs.aliases().nextElement(); // Any alias is fine
+        final Certificate testCert = systemKs.getCertificate(baseAlias);
         assertThat(testCert).isNotNull();
         testKs.setCertificateEntry(testAlias, testCert);
 
