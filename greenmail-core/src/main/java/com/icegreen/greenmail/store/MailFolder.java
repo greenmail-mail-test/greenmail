@@ -46,14 +46,6 @@ public interface MailFolder {
     boolean isSelectable();
 
     /**
-     * @deprecated Use #getUIDNext()
-     *
-     * Deprecated in 1.6, to be removed in 1.7 (TODO)
-     */
-    @Deprecated
-    long getUidNext();
-
-    /**
      * {@inheritDoc}
      */
     long getUIDNext();

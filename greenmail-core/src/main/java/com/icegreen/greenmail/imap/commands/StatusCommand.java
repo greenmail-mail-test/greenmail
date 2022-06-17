@@ -78,7 +78,7 @@ class StatusCommand extends AuthenticatedStateCommand {
         if (statusDataItems.uidNext) {
             buffer.append(UIDNEXT);
             buffer.append(SP);
-            buffer.append(folder.getUidNext());
+            buffer.append(folder.getUIDNext());
             buffer.append(SP);
         }
 

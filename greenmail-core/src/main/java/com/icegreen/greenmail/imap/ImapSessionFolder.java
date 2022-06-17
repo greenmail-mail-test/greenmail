@@ -187,11 +187,6 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
     }
 
     @Override
-    public long getUidNext() { // TODO: Remove in 1.7
-        return getUIDNext();
-    }
-
-    @Override
     public int getUnseenCount() {
         return folder.getUnseenCount();
     }

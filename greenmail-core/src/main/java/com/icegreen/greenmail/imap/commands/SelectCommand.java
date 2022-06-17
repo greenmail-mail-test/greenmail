@@ -52,7 +52,7 @@ class SelectCommand extends AuthenticatedStateCommand {
         final boolean resetRecent = !isExamine;
         response.recentResponse(mailbox.getRecentCount(resetRecent));
         response.okResponse("UIDVALIDITY " + mailbox.getUidValidity(), null);
-        response.okResponse("UIDNEXT " + mailbox.getUidNext(), null);
+        response.okResponse("UIDNEXT " + mailbox.getUIDNext(), null);
 
         int firstUnseen = mailbox.getFirstUnseen();
         if (firstUnseen > 0) {

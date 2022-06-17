@@ -134,11 +134,6 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     }
 
     @Override
-    public long getUidNext() { // TODO: Remove in 1.7
-        return getUIDNext();
-    }
-
-    @Override
     public long getUIDNext() {
         return nextUid.get();
     }
