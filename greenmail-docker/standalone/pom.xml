@@ -90,10 +90,12 @@
               <build>
                 <tags>${greenmail.docker.tags}</tags>
                 <contextDir>${basedir}</contextDir>
-                 <createImageOptions>
-                     <platform>linux/amd64</platform>
-                     <platform>linux/arm64</platform>
-                 </createImageOptions>
+                <buildx>
+                  <platforms>
+                    <platform>linux/amd64</platform>
+                    <platform>linux/arm64</platform>
+                  </platforms>
+                </buildx>
               </build>
               <run>
                 <ports>
