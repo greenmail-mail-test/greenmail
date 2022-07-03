@@ -11,10 +11,10 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeUtility;
 
 public class MailAddress {
-    String host;
-    String user;
-    String email;
-    String name;
+    final String host;
+    final String user;
+    final String email;
+    final String name;
 
     public MailAddress(String str) {
         // Decoding the mail address in

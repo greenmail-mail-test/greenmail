@@ -123,7 +123,7 @@ public abstract class AbstractServer extends Thread implements Service {
             throw new IllegalStateException(msg, e);
         } finally {
             // Notify everybody that we're ready to accept connections or failed to start.
-            // Otherwise will run into startup timeout, see #waitTillRunning(long).
+            // Otherwise, will run into startup timeout, see #waitTillRunning(long).
             startupMonitor.countDown();
         }
     }
@@ -173,7 +173,7 @@ public abstract class AbstractServer extends Thread implements Service {
     }
 
     /**
-     * Adds a protocol handler, for eg. shutting down.
+     * Adds a protocol handler, for e.g. shutting down.
      *
      * @param handler the handler.
      */
@@ -182,7 +182,7 @@ public abstract class AbstractServer extends Thread implements Service {
     }
 
     /**
-     * Removes protocol handler, eg.  when shutting down.
+     * Removes protocol handler, e.g.  when shutting down.
      *
      * @param handler the handler.
      */
@@ -277,7 +277,7 @@ public abstract class AbstractServer extends Thread implements Service {
                 }
             }
         } catch (InterruptedException e) {
-            //its possible that the thread exits between the lines keepRunning=false and interrupt above
+            //it's possible that the thread exits between the lines keepRunning=false and interrupt above
             log.warn("Got interrupted while stopping {}", this, e);
 
             Thread.currentThread().interrupt();

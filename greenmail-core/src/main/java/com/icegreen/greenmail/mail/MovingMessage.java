@@ -23,7 +23,7 @@ public class MovingMessage {
     private MailAddress returnPath;
     private final List<MailAddress> toAddresses = new LinkedList<>();
     private MimeMessage message;
-    
+
     /**
      * Retrieves the state object with the data used for authentication. Currently
      * {@link PlainAuthenticationState PLAIN} and {@link LoginAuthenticationState LOGIN}
@@ -37,7 +37,7 @@ public class MovingMessage {
     public AuthenticationState getAuthenticationState() {
         return authenticationState;
     }
-    
+
     /**
      * Retrieves the state object with the data used for authentication. Currently
      * {@link PlainAuthenticationState PLAIN} and {@link LoginAuthenticationState LOGIN}
@@ -45,8 +45,6 @@ public class MovingMessage {
      * or password that was sent by the client.
      *
      * Note that this will return {@code null} when no authentication was performed or needed.
-     *
-     * @return The state used by the AUTH command, if any.
      */
     public void setAuthenticationState(AuthenticationState authenticationState) {
         this.authenticationState = authenticationState;
@@ -93,7 +91,6 @@ public class MovingMessage {
     /**
      * Adds an address from which the email was sent. Note that these are the {@code RCPT TO}
      * addresses from the SMTP envelope, not the {@code TO} addresses from the mail header.
-     * @return The address to which the mail is directed.
      */
     public void addRecipient(MailAddress s) {
         toAddresses.add(s);
@@ -103,7 +100,6 @@ public class MovingMessage {
      * Removes an address from the list of addresses from which the email was sent. Note
      * that these are the {@code RCPT TO} addresses from the SMTP envelope, not the {@code TO}
      * addresses from the mail header.
-     * @return An address to remove form the addresses to which the mail is directed.
      */
     public void removeRecipient(MailAddress s) {
         toAddresses.remove(s);

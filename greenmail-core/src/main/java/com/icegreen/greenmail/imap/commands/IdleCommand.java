@@ -58,7 +58,7 @@ class IdleCommand extends SelectedStateCommand {
     }
 
     private static class IdleFolderListener implements FolderListener {
-        private ImapResponse response;
+        private final ImapResponse response;
 
         private IdleFolderListener(ImapResponse response) {
             this.response = response;

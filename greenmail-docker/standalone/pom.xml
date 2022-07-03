@@ -72,7 +72,6 @@
         <artifactId>docker-maven-plugin</artifactId>
         <configuration>
           <autoPull>true</autoPull>
-          <autoRemove>true</autoRemove>
           <verbose>true</verbose>
           <images>
             <image>
@@ -88,6 +87,7 @@
                 </buildx>
               </build>
               <run>
+                <autoRemove>true</autoRemove>
                 <ports>
                   <port>3025:3025</port>
                   <port>3110:3110</port>

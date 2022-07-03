@@ -1,6 +1,5 @@
 package com.icegreen.greenmail.examples;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.mail.MailAddress;
 import com.icegreen.greenmail.mail.MovingMessage;
 import com.icegreen.greenmail.smtp.auth.AuthenticationState;
@@ -41,7 +40,7 @@ public class ExampleFindUserByAuthLoginTest {
         final UserManager userManager = greenMail.getUserManager();
         // Create a new user
         userManager.createUser("from@localhost", "login", "pass");
-        
+
         // Set a message delivery handler that find the user and inbox by
         // the login that was used.
         userManager.setMessageDeliveryHandler(new MessageDeliveryHandler() {
@@ -60,12 +59,12 @@ public class ExampleFindUserByAuthLoginTest {
                 return user;
             }
         });
-        
+
         // Send a mail with an arbitrary FROM / TO address
         MimeMessage message = GreenMailUtil.createTextEmail("john@example.com", "mary@example.com",
                 "some subject", "some body", ServerSetupTest.SMTP); // --- Place your sending code here instead
         GreenMailUtil.sendMimeMessage(message, "login", "pass");
-        
+
         // Check that the mail was still sent to the user we created.
         GreenMailUser user = greenMail.getUserManager().getUser("login");
         MailFolder inbox = greenMail.getManagers().getImapHostManager().getInbox(user);
@@ -73,13 +72,13 @@ public class ExampleFindUserByAuthLoginTest {
         assertThat(inbox.getMessages().get(0).getMimeMessage().getRecipients(RecipientType.TO)[0].toString()).isEqualTo("john@example.com");
         assertThat(inbox.getMessages().get(0).getMimeMessage().getFrom()[0].toString()).isEqualTo("mary@example.com");
     }
-    
+
     @Before
     public void setupMail() {
         greenMail = new GreenMail(ServerSetupTest.SMTP);
         greenMail.start();
     }
-    
+
     @After
     public void tearDownMail() {
         greenMail.stop();

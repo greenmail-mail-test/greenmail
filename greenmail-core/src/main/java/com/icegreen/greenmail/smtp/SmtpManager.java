@@ -23,10 +23,10 @@ import org.slf4j.LoggerFactory;
 public class SmtpManager {
     protected static final Logger log = LoggerFactory.getLogger(SmtpManager.class);
 
-    Incoming incomingQueue;
-    UserManager userManager;
-    private ImapHostManager imapHostManager;
-    List<CountDownLatch> notifyList;
+    final Incoming incomingQueue;
+    final UserManager userManager;
+    private final ImapHostManager imapHostManager;
+    final List<CountDownLatch> notifyList;
 
     public SmtpManager(ImapHostManager imapHostManager, UserManager userManager) {
         this.imapHostManager = imapHostManager;
@@ -59,7 +59,7 @@ public class SmtpManager {
     }
 
     /**
-     * @return null if no need to wait. Otherwise caller must call wait() on the returned object
+     * @return null if no need to wait. Otherwise, caller must call wait() on the returned object
      */
     public synchronized CountDownLatch createAndAddNewWaitObject(int emailCount) {
         final int existingCount = imapHostManager.getAllMessages().size();
