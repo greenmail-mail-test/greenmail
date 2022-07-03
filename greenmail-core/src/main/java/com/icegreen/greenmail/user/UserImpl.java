@@ -17,12 +17,12 @@ import com.icegreen.greenmail.store.MailFolder;
 
 
 public class UserImpl implements GreenMailUser {
-    String email;
+    final String email;
     private final int cachedHashCode;
     private final String cachedHashCodeAsString;
-    String login;
+    final String login;
     String password;
-    private ImapHostManager imapHostManager;
+    private final ImapHostManager imapHostManager;
 
     public UserImpl(String email, String login, String password, ImapHostManager imapHostManager) {
         this.email = email;

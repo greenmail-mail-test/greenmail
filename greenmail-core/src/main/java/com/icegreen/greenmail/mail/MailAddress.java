@@ -11,10 +11,10 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeUtility;
 
 public class MailAddress {
-    String host;
-    String user;
-    String email;
-    String name;
+    final String host;
+    final String user;
+    final String email;
+    final String name;
 
     public MailAddress(String str) {
         // Decoding the mail address in

@@ -246,7 +246,7 @@ public class ServerSetup {
         }
 
         if (isSecure()) {
-            props.put(MAIL_DOT + getProtocol() + ".starttls.enable", Boolean.TRUE);
+            props.setProperty(MAIL_DOT + getProtocol() + ".starttls.enable", Boolean.TRUE.toString());
             props.setProperty(MAIL_DOT + getProtocol() + ".socketFactory.class", DummySSLSocketFactory.class.getName());
             props.setProperty(MAIL_DOT + getProtocol() + ".socketFactory.fallback", "false");
         }
@@ -257,7 +257,7 @@ public class ServerSetup {
         props.setProperty(MAIL_DOT + getProtocol() + ".timeout",
             Long.toString(getReadTimeout() < 0L ? ServerSetup.READ_TIMEOUT : getReadTimeout()));
         // Note: "mail." + setup.getProtocol() + ".writetimeout" breaks TLS/SSL Dummy Socket and makes tests run 6x slower!!!
-        //       Therefore we do not by default configure writetimeout.
+        //       Therefore, we do not by default configure writetimeout.
         if (getWriteTimeout() >= 0L) {
             props.setProperty(MAIL_DOT + getProtocol() + ".writetimeout", Long.toString(getWriteTimeout()));
         }

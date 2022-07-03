@@ -27,7 +27,7 @@ public class ImapHandler extends AbstractSocketProtocolHandler implements ImapCo
 
     private ImapResponse response;
 
-    UserManager userManager;
+    final UserManager userManager;
     private final ImapHostManager imapHost;
 
     public ImapHandler(UserManager userManager, ImapHostManager imapHost, Socket socket) {

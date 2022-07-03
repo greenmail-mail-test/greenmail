@@ -16,9 +16,9 @@ import com.icegreen.greenmail.user.UserManager;
  * @since Jan 27, 2006
  */
 public class Managers {
-    private ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
-    private UserManager userManager = new UserManager(imapHostManager);
-    private SmtpManager smtpManager = new SmtpManager(imapHostManager, userManager);
+    private final ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
+    private final UserManager userManager = new UserManager(imapHostManager);
+    private final SmtpManager smtpManager = new SmtpManager(imapHostManager, userManager);
 
     public SmtpManager getSmtpManager() {
         return smtpManager;

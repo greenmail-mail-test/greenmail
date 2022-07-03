@@ -20,10 +20,10 @@ import com.icegreen.greenmail.util.SaslMessage;
 /**
  * SASL : PLAIN
  * <p>
- * https://tools.ietf.org/html/rfc5034
+ * <a href="https://tools.ietf.org/html/rfc5034">...</a>
  * <p>
  * AUTH mechanism [initial-response]
- * mechanism PLAIN : See https://tools.ietf.org/html/rfc4616
+ * mechanism PLAIN : See <a href="https://tools.ietf.org/html/rfc4616">...</a>
  */
 public class AuthCommand
         extends Pop3Command {

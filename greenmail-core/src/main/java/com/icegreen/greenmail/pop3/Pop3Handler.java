@@ -19,9 +19,9 @@ import com.icegreen.greenmail.user.UserManager;
 
 
 public class Pop3Handler extends AbstractSocketProtocolHandler {
-    Pop3CommandRegistry registry;
+    final Pop3CommandRegistry registry;
     Pop3Connection conn;
-    UserManager manager;
+    final UserManager manager;
     Pop3State state;
     String currentLine;
 
