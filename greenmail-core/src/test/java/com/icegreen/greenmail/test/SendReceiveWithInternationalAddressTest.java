@@ -13,6 +13,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeUtility;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Properties;
@@ -33,8 +34,7 @@ public class SendReceiveWithInternationalAddressTest {
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
 
     @Test
-    public void testSend() throws MessagingException, UnsupportedEncodingException {
-
+    public void testSend() throws MessagingException, IOException {
         Session session = GreenMailUtil.getSession(ServerSetupTest.SMTP, properties);
         MimeMessage mimeMessage = new MockInternationalizedMimeMessage(session);
         mimeMessage.setSubject("subject");
@@ -45,13 +45,14 @@ public class SendReceiveWithInternationalAddressTest {
         mimeMessage.setRecipients(Message.RecipientType.BCC, "राममो@हन.ईन्फो");
 
         // The body text needs to be encoded if it contains non us-ascii characters
-        mimeMessage.setText(MimeUtility.encodeText("用户@例子"));
+        mimeMessage.setText("用户@例子","UTF-8");
 
         GreenMailUtil.sendMimeMessage(mimeMessage);
 
         // Decoding the body text to verify equality
-        String decodedText = MimeUtility.decodeText(GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
-        assertThat(decodedText).isEqualTo("用户@例子");
+        final MimeMessage receivedMessage = greenMail.getReceivedMessages()[0];
+        assertThat(receivedMessage.getContentType()).isEqualTo("text/plain; charset=UTF-8");
+        assertThat(receivedMessage.getContent()).isEqualTo("用户@例子");
     }
 
     // This is a mock message that doesn't implement the full functionality from MimeMessage.

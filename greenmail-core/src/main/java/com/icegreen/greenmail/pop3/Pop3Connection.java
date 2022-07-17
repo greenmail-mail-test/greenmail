@@ -80,9 +80,18 @@ public class Pop3Connection {
         out.flush();
     }
 
+    public void print(String line) {
+        out.print(line);
+    }
+
     public void print(Reader in) throws IOException {
         StreamUtils.copy(in, out);
         out.flush();
+    }
+
+    public void println(Reader in) throws IOException {
+        StreamUtils.copy(in, out);
+        println();
     }
 
     public String readLine() throws IOException {

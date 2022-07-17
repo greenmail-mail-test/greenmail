@@ -8,6 +8,7 @@ import static com.icegreen.greenmail.util.GreenMailUtil.createTextEmail;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.SocketException;
 import java.util.Properties;
 
@@ -42,12 +43,12 @@ public class SmtpServerTest {
     public final GreenMailRule greenMail = new GreenMailRule(new ServerSetup[]{ServerSetupTest.SMTP});
 
     @Test
-    public void testSmtpServerBasic() throws MessagingException {
+    public void testSmtpServerBasic() throws MessagingException, IOException {
         GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "subject", "body");
         MimeMessage[] emails = greenMail.getReceivedMessages();
         assertThat(emails.length).isEqualTo(1);
         assertThat(emails[0].getSubject()).isEqualTo("subject");
-        assertThat(GreenMailUtil.getBody(emails[0])).isEqualTo("body");
+        assertThat(emails[0].getContent()).isEqualTo("body");
     }
 
     @Test
@@ -71,7 +72,7 @@ public class SmtpServerTest {
         MimeMessage[] emails = greenMail.getReceivedMessages();
         assertThat(emails.length).isEqualTo(1);
         assertThat(emails[0].getSubject()).isEqualTo(subject);
-        assertThat(GreenMailUtil.getBody(emails[0]).trim()).isEqualTo(body);
+        assertThat(emails[0].getContent()).isEqualTo(body);
     }
 
 
@@ -113,10 +114,10 @@ public class SmtpServerTest {
         assertThat(mp.getCount()).isEqualTo(2);
         BodyPart bp;
         bp = mp.getBodyPart(0);
-        assertThat(GreenMailUtil.getBody(bp).trim()).isEqualTo(body);
+        assertThat(bp.getContent()).isEqualTo(body);
 
         bp = mp.getBodyPart(1);
-        assertThat(GreenMailUtil.getBody(bp).trim()).isEqualTo("AAEC");
+        assertThat(GreenMailUtil.getBody(bp)).isEqualTo("AAEC");
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         GreenMailUtil.copyStream(bp.getInputStream(), bout);
@@ -127,13 +128,13 @@ public class SmtpServerTest {
     }
 
     @Test
-    public void testSmtpServerLeadingPeriods() throws MessagingException {
+    public void testSmtpServerLeadingPeriods() throws MessagingException, IOException {
         String body = ". body with leading period";
         GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "subject", body);
         MimeMessage[] emails = greenMail.getReceivedMessages();
         assertThat(emails.length).isEqualTo(1);
         assertThat(emails[0].getSubject()).isEqualTo("subject");
-        assertThat(GreenMailUtil.getBody(emails[0])).isEqualTo(body);
+        assertThat(emails[0].getContent()).isEqualTo(body);
     }
 
     @Test
@@ -210,7 +211,7 @@ public class SmtpServerTest {
         assertThat(emails.length).isEqualTo(2);
         for (MimeMessage receivedMsg : emails) {
             assertThat(receivedMsg.getSubject()).isEqualTo(subject);
-            assertThat(GreenMailUtil.getBody(receivedMsg).trim()).isEqualTo(body);
+            assertThat(receivedMsg.getContent()).isEqualTo(body);
         }
     }
 

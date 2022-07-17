@@ -111,4 +111,20 @@ public class EncodingTest {
             store.close();
         }
     }
+
+    @Test
+    public void testTextPlainWithUTF8AndGreenMailApi() throws MessagingException, IOException {
+        String content = "This is a test with ünicöde: \uD83C\uDF36";
+        String subject = "Some sübject";
+
+        GreenMailUtil.sendTextEmailTest(
+            "to@localhost", "from@localhost", subject,
+            content
+        );
+
+        MimeMessage msg = greenMail.getReceivedMessages()[0];
+        assertThat(msg.getSubject()).isEqualTo(subject);
+        assertThat(msg.getContentType()).isEqualTo( "text/plain; charset=UTF-8");
+        assertThat(msg.getContent()).isEqualTo(content);
+    }
 }

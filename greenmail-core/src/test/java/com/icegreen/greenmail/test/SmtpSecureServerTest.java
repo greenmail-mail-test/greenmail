@@ -26,6 +26,6 @@ public class SmtpSecureServerTest {
         MimeMessage[] emails = greenMail.getReceivedMessages();
         assertThat(emails).hasSize(1);
         assertThat(emails[0].getSubject()).isEqualTo(subject);
-        assertThat(GreenMailUtil.getBody(emails[0]).trim()).isEqualTo(body);
+        assertThat(emails[0].getContent()).isEqualTo(body);
     }
 }

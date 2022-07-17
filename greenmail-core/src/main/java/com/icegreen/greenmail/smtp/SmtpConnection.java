@@ -107,7 +107,7 @@ public class SmtpConnection {
 
                 if (cbuf == CR_LF_DOT_CR && b == '\n') { // CRLF-DOT-CRLF
                     final byte[] buf = bos.toByteArray();
-                    int maxLen = Math.min(bos.size(), bos.size() - 2 /* DOT + CR */);
+                    int maxLen = Math.min(bos.size(), bos.size() - 4 /* CR + LF + DOT + CR */);
                     return new ByteArrayInputStream(buf, 0, maxLen);
                 } else if ((cbuf & 0xffffff) == CR_LF_DOT && b == '.') { // CR_LF_DOT and DOT => Skip dot once
                     // https://tools.ietf.org/html/rfc5321#section-4.5.2 :

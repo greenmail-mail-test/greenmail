@@ -44,8 +44,7 @@ public class RetrCommand
             StoredMessage msg = msgList.get(0);
             String email = GreenMailUtil.getWholeMessage(msg.getMimeMessage());
             conn.println("+OK");
-            conn.print(new StringReader(email));
-            conn.println();
+            conn.println(email);
             conn.println(".");
             msg.setFlag(Flags.Flag.SEEN, true);
         } catch (Exception e) {

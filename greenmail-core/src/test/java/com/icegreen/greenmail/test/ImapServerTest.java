@@ -69,7 +69,7 @@ public class ImapServerTest {
             Message[] messages = retriever.getMessages(to);
             assertThat(messages.length).isEqualTo(1);
             assertThat(messages[0].getSubject()).isEqualTo(subject);
-            assertThat(((String) messages[0].getContent()).trim()).isEqualTo(body);
+            assertThat(((String) messages[0].getContent())).isEqualTo(body);
         }
     }
 
@@ -86,7 +86,7 @@ public class ImapServerTest {
             Message[] messages = retriever.getMessages(to);
             assertThat(messages.length).isEqualTo(1);
             assertThat(messages[0].getSubject()).isEqualTo(subject);
-            assertThat(((String) messages[0].getContent()).trim()).isEqualTo(body);
+            assertThat(((String) messages[0].getContent())).isEqualTo(body);
         }
     }
 
@@ -109,7 +109,7 @@ public class ImapServerTest {
             Message[] messages = retriever.getMessages(to, password);
             assertThat(messages.length).isEqualTo(1);
             assertThat(messages[0].getSubject()).isEqualTo(subject);
-            assertThat(((String) messages[0].getContent()).trim()).isEqualTo(body);
+            assertThat(((String) messages[0].getContent())).isEqualTo(body);
         }
     }
 
@@ -132,10 +132,10 @@ public class ImapServerTest {
             assertThat(mp.getCount()).isEqualTo(2);
             BodyPart bp;
             bp = mp.getBodyPart(0);
-            assertThat(GreenMailUtil.getBody(bp).trim()).isEqualTo(body);
+            assertThat(bp.getContent()).isEqualTo(body);
 
             bp = mp.getBodyPart(1);
-            assertThat(GreenMailUtil.getBody(bp).trim()).isEqualTo("AAEC");
+            assertThat(GreenMailUtil.getBody(bp)).isEqualTo("AAEC");
 
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             GreenMailUtil.copyStream(bp.getInputStream(), bout);

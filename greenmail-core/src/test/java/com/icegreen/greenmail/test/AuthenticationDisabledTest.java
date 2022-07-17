@@ -38,7 +38,7 @@ public class AuthenticationDisabledTest {
         MimeMessage[] emails = greenMail.getReceivedMessages();
         assertThat(emails.length).isEqualTo(1);
         assertThat(emails[0].getSubject()).isEqualTo(subject);
-        assertThat(GreenMailUtil.getBody(emails[0])).isEqualTo(body);
+        assertThat(emails[0].getContent()).isEqualTo(body);
 
         greenMail.waitForIncomingEmail(5000, 1);
 
