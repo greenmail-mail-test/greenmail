@@ -213,7 +213,7 @@ public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
 public void testSend() throws MessagingException {
     GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost",
         "some subject", "some body"); // --- Place your sending code here instead
-    assertEquals("some body", GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
+    assertEquals("some body", greenMail.getReceivedMessages()[0].getContent());
 }
         </code></pre><!-- @formatter:on -->
 
@@ -432,7 +432,7 @@ public void testReceive() throws MessagingException {
                 <pre><code class="language-java"><!-- @formatter:off -->
 /** [See code on GitHub](https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-core/src/test/java/com/icegreen/greenmail/examples/ExampleRuleTest.java) */
 @Rule
-public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
+public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
 
 @Test
 public void testSomething() {
@@ -440,7 +440,7 @@ public void testSomething() {
     MimeMessage[] emails = greenMail.getReceivedMessages();
     assertEquals(1, emails.length);
     assertEquals("subject", emails[0].getSubject());
-    assertEquals("body", GreenMailUtil.getBody(emails[0]));
+    assertEquals("body", emails[0].getContent());
     // ...
 }
         </code></pre><!-- @formatter:on -->
@@ -460,7 +460,7 @@ void testSend() {
     GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "some subject", "some body");
     final MimeMessage[] receivedMessages = greenMail.getReceivedMessages();
     final MimeMessage receivedMessage = receivedMessages[0];
-    assertEquals("some body", GreenMailUtil.getBody(receivedMessage));
+    assertEquals("some body", receivedMessage.getContent());
 }
         </code></pre><!-- @formatter:on -->
 
@@ -471,7 +471,7 @@ GreenMail greenMail = new GreenMail(); //uses test ports by default
 greenMail.start();
 GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "some subject",
                                 "some body"); // --- Place your sending code here
-assertEquals("some body", GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
+assertEquals("some body", greenMail.getReceivedMessages()[0].getContent());
 greenMail.stop();
         </code></pre><!-- @formatter:on -->
 
@@ -497,14 +497,14 @@ assertEquals(2, messages.length);
 
 // Simple message
 assertEquals(subject, messages[0].getSubject());
-assertEquals(body, GreenMailUtil.getBody(messages[0]).trim());
+assertEquals(body, messages[0].getContent());
 
 //if you send content as a 2 part multipart...
 assertTrue(messages[1].getContent() instanceof MimeMultipart);
 MimeMultipart mp = (MimeMultipart) messages[1].getContent();
 assertEquals(2, mp.getCount());
-assertEquals("body1", GreenMailUtil.getBody(mp.getBodyPart(0)).trim());
-assertEquals("body2", GreenMailUtil.getBody(mp.getBodyPart(1)).trim());
+assertEquals("body1", mp.getBodyPart(0).getContent());
+assertEquals("body2", mp.getBodyPart(1).getContent());
 
 greenMail.stop();
         </code></pre><!-- @formatter:on -->

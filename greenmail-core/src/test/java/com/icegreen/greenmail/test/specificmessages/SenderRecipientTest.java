@@ -86,10 +86,10 @@ public class SenderRecipientTest {
     }
 
     @Test
-    public void testSendWithoutSubject() {
+    public void testSendWithoutSubject() throws MessagingException, IOException {
         GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost",
                 null, "some subject less body");
-        assertThat(GreenMailUtil.getBody(greenMail.getReceivedMessages()[0])).isEqualTo("some subject less body");
+        assertThat(greenMail.getReceivedMessages()[0].getContent()).isEqualTo("some subject less body");
     }
 
     @Test

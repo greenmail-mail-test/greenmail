@@ -5,6 +5,8 @@
 package com.icegreen.greenmail.test;
 
 import java.io.ByteArrayOutputStream;
+
+import com.icegreen.greenmail.util.ServerSetup;
 import jakarta.mail.AuthenticationFailedException;
 import jakarta.mail.BodyPart;
 import jakarta.mail.Message;
@@ -25,12 +27,12 @@ import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author Wael Chatila
- * @version $Id: $
- * @since Jan 28, 2006
  */
 public class Pop3ServerTest {
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
+    public final GreenMailRule greenMail = new GreenMailRule(new ServerSetup[]{
+        ServerSetupTest.SMTP, ServerSetupTest.SMTPS,
+        ServerSetupTest.POP3, ServerSetupTest.POP3S});
 
     @Test
     public void testPop3Capabillities() throws MessagingException, UserException {
@@ -57,12 +59,13 @@ public class Pop3ServerTest {
         try (Retriever retriever = new Retriever(greenMail.getPop3())) {
             Message[] messages = retriever.getMessages(to);
             assertThat(messages.length).isEqualTo(1);
-            assertThat(messages[0].getSubject()).isEqualTo(subject);
-            assertThat(GreenMailUtil.getBody(messages[0]).trim()).isEqualTo(body);
+            final Message message = messages[0];
+            assertThat(message.getSubject()).isEqualTo(subject);
+            assertThat(message.getContent().toString().trim()).isEqualTo(body);
 
             // UID
-            POP3Folder f = (POP3Folder) messages[0].getFolder();
-            assertThat(f.getUID(messages[0])).isNotEqualTo("UNKNOWN");
+            POP3Folder f = (POP3Folder) message.getFolder();
+            assertThat(f.getUID(message)).isNotEqualTo("UNKNOWN");
         }
     }
 
@@ -79,7 +82,7 @@ public class Pop3ServerTest {
             Message[] messages = retriever.getMessages(to);
             assertThat(messages.length).isEqualTo(1);
             assertThat(messages[0].getSubject()).isEqualTo(subject);
-            assertThat(GreenMailUtil.getBody(messages[0]).trim()).isEqualTo(body);
+            assertThat(messages[0].getContent().toString().trim()).isEqualTo(body);
         }
     }
 
@@ -102,7 +105,7 @@ public class Pop3ServerTest {
             Message[] messages = retriever.getMessages(to, password);
             assertThat(messages.length).isEqualTo(1);
             assertThat(messages[0].getSubject()).isEqualTo(subject);
-            assertThat(GreenMailUtil.getBody(messages[0]).trim()).isEqualTo(body);
+            assertThat(messages[0].getContent().toString().trim()).isEqualTo(body);
         }
     }
 
@@ -127,10 +130,10 @@ public class Pop3ServerTest {
             assertThat(mp.getCount()).isEqualTo(2);
             BodyPart bp;
             bp = mp.getBodyPart(0);
-            assertThat(GreenMailUtil.getBody(bp).trim()).isEqualTo(body);
+            assertThat(bp.getContent()).isEqualTo(body);
 
             bp = mp.getBodyPart(1);
-            assertThat(GreenMailUtil.getBody(bp).trim()).isEqualTo("AAEC");
+            assertThat(GreenMailUtil.getBody(bp)).isEqualTo("AAEC");
 
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             GreenMailUtil.copyStream(bp.getInputStream(), bout);

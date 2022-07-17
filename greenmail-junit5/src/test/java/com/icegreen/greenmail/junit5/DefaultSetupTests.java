@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -19,12 +21,12 @@ class DefaultSetupTests {
 
     @Test
     @DisplayName("Send test")
-    void testSend() throws MessagingException {
+    void testSend() throws MessagingException, IOException {
         GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "subject", "body");
         final MimeMessage[] emails = greenMail.getReceivedMessages();
         assertEquals(1, emails.length);
         final MimeMessage email = emails[0];
         assertEquals("subject", email.getSubject());
-        assertEquals("body", GreenMailUtil.getBody(email));
+        assertEquals("body", email.getContent());
     }
 }

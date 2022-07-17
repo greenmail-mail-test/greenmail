@@ -114,7 +114,10 @@ public class GreenMailUtil {
     }
 
     /**
-     * @return The content of an email (or a Part)
+     * @return The content part of an email (or a Part)
+     *
+     * Note: You might have to use  MimeUtility.decodeText(contentPart)
+     * on the result to decode the (possibly) quoted-printable encoded special characters.
      */
     public static String getBody(Part msg) {
         String all = getWholeMessage(msg);
@@ -153,7 +156,7 @@ public class GreenMailUtil {
     }
 
     /**
-     * @return same as {@link #getWholeMessage(jakarta.mail.Part)} }
+     * @return same as {@link #getWholeMessage(jakarta.mail.Part)}
      */
     public static String toString(Part msg) {
         return getWholeMessage(msg);

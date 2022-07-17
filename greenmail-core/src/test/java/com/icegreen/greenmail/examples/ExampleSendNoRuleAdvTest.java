@@ -36,14 +36,15 @@ public class ExampleSendNoRuleAdvTest {
 
             // Simple message
             assertThat(messages[0].getSubject()).isEqualTo(subject);
-            assertThat(GreenMailUtil.getBody(messages[0]).trim()).isEqualTo(body);
+            assertThat(messages[0].getContentType()).isEqualTo("text/plain; charset=us-ascii");
+            assertThat(messages[0].getContent()).isEqualTo(body);
 
             //if you send content as a 2 part multipart...
             assertThat(messages[1].getContent() instanceof MimeMultipart).isTrue();
             MimeMultipart mp = (MimeMultipart) messages[1].getContent();
             assertThat(mp.getCount()).isEqualTo(2);
-            assertThat(GreenMailUtil.getBody(mp.getBodyPart(0)).trim()).isEqualTo("body1");
-            assertThat(GreenMailUtil.getBody(mp.getBodyPart(1)).trim()).isEqualTo("body2");
+            assertThat(mp.getBodyPart(0).getContent()).isEqualTo("body1");
+            assertThat(mp.getBodyPart(1).getContent()).isEqualTo("body2");
         } finally {
             greenMail.stop();
         }
