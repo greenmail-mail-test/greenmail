@@ -25,7 +25,7 @@ Development [![Build status](https://circleci.com/gh/greenmail-mail-test/greenma
 
   `mvn clean install -Pdocker`
 
-  Make sure you got [Maven 3.6][maven_download] or higher, and run a JDK 8 or newer.
+  Make sure you got [Maven 3.8][maven_download] or higher, and run a JDK 8 or newer.
   If you want to skip building the docker image, leave out the `-Pdocker` profile option.
 
   If you want to skip the long running tests, use the Maven option `-DskipITs` .

@@ -13,10 +13,6 @@
   <!-- This version should get inherited to all subprojects. -->
   <version>2.0.0-SNAPSHOT</version>
 
-  <prerequisites>
-    <maven>3.6</maven>
-  </prerequisites>
-
   <licenses>
     <license>
       <name>Apache 2.0</name>
@@ -213,7 +209,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
-          <version>4.0.0-M1</version>
+          <version>4.0.0-M2</version>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-report-plugin</artifactId>
@@ -316,7 +312,7 @@
         <plugin>
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
-          <version>5.1.6</version>
+          <version>5.1.7</version>
         </plugin>
         <plugin>
           <groupId>org.eclipse.jetty</groupId>
@@ -349,7 +345,7 @@
                   <configuration>
                       <rules>
                           <requireMavenVersion>
-                              <version>3.6</version>
+                              <version>3.8</version>
                           </requireMavenVersion>
                       </rules>
                   </configuration>
