@@ -80,6 +80,7 @@
                     <a class="nav-item nav-link ml-3" href="#ex_junit_rule">Using JUnit4 rule based setup</a>
                     <a class="nav-item nav-link ml-3" href="#ex_junit_extension">Using JUnit5 extension</a>
                     <a class="nav-item nav-link ml-3" href="#ex_send_simple">Testing your sending code (simple)</a>
+                    <a class="nav-item nav-link ml-3" href="#ex_send_dynamic_port">Testing your sending code (detecting available port)</a>
                     <a class="nav-item nav-link ml-3" href="#ex_send_adv">Testing your sending code (advanced)</a>
                     <a class="nav-item nav-link ml-3" href="#ex_retrieve">Testing your retrieving code</a>
                     <a class="nav-item nav-link ml-3" href="#ex_javamail_send_retrieve">Testing using plain JavaMail for
@@ -473,6 +474,23 @@ GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "some subject"
                                 "some body"); // --- Place your sending code here
 assertEquals("some body", greenMail.getReceivedMessages()[0].getContent());
 greenMail.stop();
+        </code></pre><!-- @formatter:on -->
+
+                <h3 id="ex_send_dynamic_port" class="anchor">Testing your sending code (detecting available port)</h3>
+                This example starts an SMTP server trying to find an available, unused port and helps when <a href="https://github.com/greenmail-mail-test/greenmail/issues/464">colliding with Windows 'reserved' port ranges</a> or if multiple tests run in parallel:
+                <pre><code class="language-java"><!-- @formatter:off -->
+/** [See code on GitHub](https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-core/src/test/java/com/icegreen/greenmail/examples/ExampleSendTest.java) */
+GreenMail greenMailWithDynamicPort = new GreenMail(ServerSetupTest.SMTP.dynamicPort()); // Try to find available port
+greenMailWithDynamicPort.start();
+try {
+    GreenMailUtil.sendTextEmail(
+        "to@localhost", "from@localhost", "some subject", "Sent using available port detection",
+        greenMailWithDynamicPort.getSmtp().getServerSetup()); // Important: Pass dynamic port setup here
+    assertEquals("Sent using available port detection", greenMailWithDynamicPort.getReceivedMessages()[0].getContent());
+    assertNotEquals("Dynamic port must differ", ServerSetupTest.SMTP.getPort(), greenMailWithDynamicPort.getSmtp().getPort());
+} finally {
+    greenMailWithDynamicPort.stop();
+}
         </code></pre><!-- @formatter:on -->
 
                 <h3 id="ex_send_adv" class="anchor">Testing your sending code (advanced)</h3>
