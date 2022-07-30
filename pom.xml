@@ -11,7 +11,7 @@
   <artifactId>greenmail-parent</artifactId>
   <packaging>pom</packaging>
   <!-- This version should get inherited to all subprojects. -->
-  <version>1.6.10</version>
+  <version>1.6.11-SNAPSHOT</version>
 
   <licenses>
     <license>
@@ -31,7 +31,7 @@
     <url>
       https://github.com/greenmail-mail-test/greenmail
     </url>
-    <tag>release-1.6.10</tag>
+    <tag>release-1.6.8</tag>
   </scm>
 
   <issueManagement>
@@ -373,32 +373,32 @@
       <dependency>
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail</artifactId>
-        <version>1.6.10</version>
+        <version>1.6.11-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail-standalone</artifactId>
-        <version>1.6.10</version>
+        <version>1.6.11-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail-webapp</artifactId>
-        <version>1.6.10</version>
+        <version>1.6.11-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail-spring</artifactId>
-        <version>1.6.10</version>
+        <version>1.6.11-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail-junit4</artifactId>
-        <version>1.6.10</version>
+        <version>1.6.11-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail-junit5</artifactId>
-        <version>1.6.10</version>
+        <version>1.6.11-SNAPSHOT</version>
       </dependency>
 
       <!-- Third party -->
