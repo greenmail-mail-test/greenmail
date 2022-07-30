@@ -87,7 +87,6 @@
                 </buildx>
               </build>
               <run>
-                <autoRemove>true</autoRemove>
                 <ports>
                   <port>3025:3025</port>
                   <port>3110:3110</port>
