@@ -42,7 +42,9 @@ public class RetrCommand
             }
 
             StoredMessage msg = msgList.get(0);
-            String email = GreenMailUtil.getWholeMessage(msg.getMimeMessage());
+            String email = GreenMailUtil.getWholeMessage(msg.getMimeMessage())
+                // Byte-stuffing
+                .replaceAll("\r\n\\.","\r\n..");
             conn.println("+OK");
             conn.println(email);
             conn.println(".");
