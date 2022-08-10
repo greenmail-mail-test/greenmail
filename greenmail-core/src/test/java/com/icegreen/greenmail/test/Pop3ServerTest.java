@@ -50,7 +50,8 @@ public class Pop3ServerTest {
     public void testRetrieve() throws Exception {
         assertThat(greenMail.getPop3()).isNotNull();
         final String subject = GreenMailUtil.random();
-        final String body = GreenMailUtil.random() + "\r\n" + GreenMailUtil.random() + "\r\n" + GreenMailUtil.random();
+        final String body = GreenMailUtil.random() + "\r\n.\r\n"
+            + GreenMailUtil.random() + "\r\n." + GreenMailUtil.random()+  "\r\n" + GreenMailUtil.random();
         String to = "test@localhost";
         GreenMailUtil.sendTextEmailTest(to, "from@localhost", subject, body);
         greenMail.waitForIncomingEmail(5000, 1);
