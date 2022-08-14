@@ -1,19 +1,18 @@
 package com.icegreen.greenmail.test.specificmessages;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import javax.mail.*;
-import javax.mail.internet.*;
-
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.EncodingUtil;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.sun.mail.imap.IMAPStore;
+import javax.mail.*;
+import javax.mail.internet.*;
 import org.junit.Rule;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,15 +43,15 @@ public class EncodingTest {
 
         MimeBodyPart html = new MimeBodyPart();
         html.setContent(MimeUtility.encodeText("<!doctype html>" +
-                "<html lang=en>" +
-                "<head>" +
-                "<meta charset=utf-8>" +
-                "<title>Title with Umlaut \u00FC</title>" +
-                "</head>" +
-                "<body>" +
-                "<p>8BIT Content with umlaut ü</p>" +
-                "</body>" +
-                "</html>", "UTF-8", "B"), "text/html; charset=utf-8");
+            "<html lang=en>" +
+            "<head>" +
+            "<meta charset=utf-8>" +
+            "<title>Title with Umlaut \u00FC</title>" +
+            "</head>" +
+            "<body>" +
+            "<p>8BIT Content with umlaut ü</p>" +
+            "</body>" +
+            "</html>", "UTF-8", "B"), "text/html; charset=utf-8");
         html.setHeader("Content-Transfer-Encoding", "8BIT");
         multipart.addBodyPart(html);
 
@@ -84,7 +83,6 @@ public class EncodingTest {
             inboxFolder.open(Folder.READ_WRITE);
             Message[] messages = inboxFolder.getMessages();
             MimeMessage msg = (MimeMessage) messages[0];
-            message.writeTo(new FileOutputStream("t.eml"));
             assertThat(msg.getContentType().startsWith("multipart/alternative")).isTrue();
             Multipart multipartReceived = (Multipart) msg.getContent();
 
@@ -124,7 +122,7 @@ public class EncodingTest {
 
         MimeMessage msg = greenMail.getReceivedMessages()[0];
         assertThat(msg.getSubject()).isEqualTo(subject);
-        assertThat(msg.getContentType()).isEqualTo( "text/plain; charset=UTF-8");
+        assertThat(msg.getContentType()).isEqualTo("text/plain; charset=UTF-8");
         assertThat(msg.getContent()).isEqualTo(content);
     }
 }
