@@ -18,7 +18,7 @@ jobs:
       - checkout
 
       - run: >
-          apt-get update && apt-get install -y curl
+          (apt-get update || true ) && apt-get install -y curl
           && mkdir -p /usr/share/maven
           && curl -fsSL -o /tmp/apache-maven.tar.gz https://downloads.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz
           && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
@@ -65,7 +65,7 @@ jobs:
       - checkout
 
       - run: >
-          apt-get update && apt-get install -y curl
+          (apt-get update || true ) && apt-get install -y curl
           && mkdir -p /usr/share/maven
           && curl -fsSL -o /tmp/apache-maven.tar.gz https://downloads.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz
           && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
@@ -112,7 +112,7 @@ jobs:
       - checkout
 
       - run: >
-          apt-get update && apt-get install -y curl
+          (apt-get update || true ) && apt-get install -y curl
           && mkdir -p /usr/share/maven
           && curl -fsSL -o /tmp/apache-maven.tar.gz https://downloads.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz
           && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
