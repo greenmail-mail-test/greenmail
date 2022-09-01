@@ -4,8 +4,11 @@ import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.EncodingUtil;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.imap.IMAPStore;
 import jakarta.mail.*;
+import jakarta.mail.event.MessageCountEvent;
+import jakarta.mail.event.MessageCountListener;
 import jakarta.mail.internet.*;
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,6 +16,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -124,5 +128,76 @@ public class EncodingTest {
         assertThat(msg.getSubject()).isEqualTo(subject);
         assertThat(msg.getContentType()).isEqualTo("text/plain; charset=UTF-8");
         assertThat(msg.getContent()).isEqualTo(content);
+    }
+
+    @Test(timeout = 10000)
+    public void testTextPlainWithUTF8SenderAndReceiverAndGreenMailApi() throws MessagingException, IOException {
+        // this intermediate `InternetAddress` is needed because of:
+        // https://stackoverflow.com/questions/31859901/java-mail-sender-address-gets-non-ascii-chars-removed/31865820#31865820
+        InternetAddress address = new InternetAddress("\"кирилица\" <to@localhost>");
+        InternetAddress toAddress = new InternetAddress(address.getAddress(), address.getPersonal());
+        address = new InternetAddress("\"кирилица\" <from@localhost>");
+        InternetAddress fromAddress = new InternetAddress(address.getAddress(), address.getPersonal());
+
+        sendMessage(fromAddress, toAddress);
+
+        MimeMessage receivedMessage = greenMail.getReceivedMessages()[0];
+        assertThat(receivedMessage.getFrom()[0].toString()).isEqualTo(fromAddress.toString());
+        assertThat(Arrays.stream(receivedMessage.getAllRecipients()).map(Object::toString).toArray())
+            .isEqualTo(new String[] { toAddress.toString() });
+
+        greenMail.setUser("to@localhost", "pwd");
+
+        final IMAPStore store = greenMail.getImap().createStore();
+        store.connect("to@localhost", "pwd");
+        try {
+            Folder inboxFolder = store.getFolder("INBOX");
+            inboxFolder.open(Folder.READ_ONLY);
+            Message[] messages = new Message[] { null };
+            MessageCountListener listener = new MessageCountListener() {
+                @Override
+                public void messagesRemoved(MessageCountEvent e) {
+                }
+
+                @Override
+                public void messagesAdded(MessageCountEvent e) {
+                    messages[0] = e.getMessages()[0];
+                }
+            };
+            inboxFolder.addMessageCountListener(listener);
+            new Thread(() -> {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e1) {
+                    // Ignore
+                }
+                try {
+                    sendMessage(fromAddress, toAddress);
+                } catch (MessagingException ex) {
+                    assertThat(false).isTrue();
+                }
+            }).start();
+            ((IMAPFolder) inboxFolder).idle(true);
+
+            assertThat(messages[0].getFrom()[0].toString()).isEqualTo(fromAddress.toString());
+            assertThat(Arrays.stream(messages[0].getAllRecipients()).map(Object::toString).toArray())
+                .isEqualTo(new String[] { toAddress.toString() });
+
+            inboxFolder.close();
+        } finally {
+            store.close();
+        }
+    }
+
+    private void sendMessage(InternetAddress fromAddress, InternetAddress toAddress) throws MessagingException {
+        final Session session = greenMail.getSmtp().createSession();
+        MimeMessage message = new MimeMessage(session);
+        message.setRecipient(Message.RecipientType.TO, toAddress);
+        message.setSubject("Some subject", "UTF-8");
+        message.setFrom(fromAddress);
+        message.setContent("This is a test", "text/plain; charset=UTF-8");
+        message.saveChanges();
+
+        GreenMailUtil.sendMimeMessage(message);
     }
 }
