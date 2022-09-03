@@ -7,16 +7,18 @@
 package com.icegreen.greenmail.store;
 
 
-import java.util.*;
-import jakarta.mail.BodyPart;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.*;
-
 import com.icegreen.greenmail.mail.MailAddress;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.sun.mail.imap.protocol.INTERNALDATE;
+import jakarta.mail.BodyPart;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 /**
  * Attributes of a Message in IMAP4rev1 style. Message
@@ -371,7 +373,13 @@ public class SimpleMessageAttributes
 
                 String personal = netAddr.getPersonal();
                 if (personal != null && (personal.length() != 0)) {
-                    buf.append(Q).append(personal).append(Q);
+                    try {
+                        String encodedPersonal = MimeUtility.encodeWord(personal, StandardCharsets.UTF_8.name(),null);
+                        buf.append(Q).append(encodedPersonal).append(Q);
+                    } catch (UnsupportedEncodingException e) {
+                        log.warn("Failed to encode personal address part "+personal+" for "+netAddr+", using personal 'as is'");
+                        buf.append(Q).append(personal).append(Q);
+                    }
                 } else {
                     buf.append(NIL);
                 }
