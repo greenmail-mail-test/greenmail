@@ -15,6 +15,9 @@ import com.sun.mail.imap.AppendUID;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.imap.IMAPStore;
 import jakarta.mail.*;
+import jakarta.mail.Flags;
+import jakarta.mail.event.MessageChangedEvent;
+import jakarta.mail.event.MessageChangedListener;
 import jakarta.mail.event.MessageCountEvent;
 import jakarta.mail.event.MessageCountListener;
 import jakarta.mail.internet.MimeMessage;
@@ -24,6 +27,8 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static jakarta.mail.Flags.Flag.DELETED;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -787,4 +792,55 @@ public class ImapServerTest {
         }
     }
 
+    @Test
+    public void testMessageChangedListener() throws MessagingException {
+        CountDownLatch latch = new CountDownLatch(1);
+
+        greenMail.setUser("foo@localhost", "pwd");
+
+        final IMAPStore store = greenMail.getImap().createStore();
+        store.connect("foo@localhost", "pwd");
+
+        GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject", "Test message",
+                ServerSetupTest.SMTP);
+
+        try {
+            Folder inboxFolder = store.getFolder("INBOX");
+            inboxFolder.open(Folder.READ_ONLY);
+            int[] messages = new int[] { 0 };
+            MessageChangedListener listener = new MessageChangedListener() {
+                @Override
+                public void messageChanged(MessageChangedEvent e) {
+                    assert e.getMessageChangeType() == MessageChangedEvent.FLAGS_CHANGED;
+                    messages[0] = e.getMessage().getMessageNumber();
+                    latch.countDown();
+                }
+            };
+            inboxFolder.addMessageChangedListener(listener);
+            new Thread(() -> {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e1) {
+                    // Ignore
+                }
+
+                try {
+                    greenMail.getReceivedMessages()[0].setFlag(Flags.Flag.DELETED, true);
+                    greenMail.getReceivedMessages()[0].saveChanges();
+                } catch (MessagingException ex) {
+                    assertThat(false).isTrue();
+                }
+            }).start();
+            try {
+                assert latch.await(5, TimeUnit.SECONDS);
+            } catch (InterruptedException e1) {
+                // Ignore
+            }
+            assertThat(messages).hasSize(1);
+            assertThat(messages[0]).isGreaterThan(0);
+            inboxFolder.close();
+        } finally {
+            store.close();
+        }
+    }
 }
