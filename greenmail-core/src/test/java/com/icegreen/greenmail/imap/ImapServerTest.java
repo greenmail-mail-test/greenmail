@@ -804,9 +804,21 @@ public class ImapServerTest {
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject", "Test message",
                 ServerSetupTest.SMTP);
 
+        Thread thread = null;
         try {
             Folder inboxFolder = store.getFolder("INBOX");
             inboxFolder.open(Folder.READ_ONLY);
+            thread = new Thread(() -> {
+                try {
+                    while (!Thread.currentThread().isInterrupted()) {
+                        ((IMAPFolder) inboxFolder).idle(true);
+                    }
+                } catch (MessagingException ex) {
+                    assertThat(false).isTrue();
+                }
+            });
+            thread.start();
+
             int[] messages = new int[] { 0 };
             MessageChangedListener listener = new MessageChangedListener() {
                 @Override
@@ -817,6 +829,7 @@ public class ImapServerTest {
                 }
             };
             inboxFolder.addMessageChangedListener(listener);
+
             new Thread(() -> {
                 try {
                     Thread.sleep(100);
@@ -831,6 +844,7 @@ public class ImapServerTest {
                     assertThat(false).isTrue();
                 }
             }).start();
+
             try {
                 assert latch.await(5, TimeUnit.SECONDS);
             } catch (InterruptedException e1) {
@@ -840,6 +854,9 @@ public class ImapServerTest {
             assertThat(messages[0]).isGreaterThan(0);
             inboxFolder.close();
         } finally {
+            if (thread != null) {
+                thread.interrupt();
+            }
             store.close();
         }
     }
