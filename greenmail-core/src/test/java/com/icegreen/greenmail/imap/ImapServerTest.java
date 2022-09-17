@@ -26,7 +26,9 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -794,7 +796,7 @@ public class ImapServerTest {
 
     @Test
     public void testMessageChangedListener() throws MessagingException {
-        CountDownLatch latch = new CountDownLatch(1);
+        CountDownLatch latch = new CountDownLatch(2);
 
         greenMail.setUser("foo@localhost", "pwd");
 
@@ -803,10 +805,11 @@ public class ImapServerTest {
 
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject", "Test message",
                 ServerSetupTest.SMTP);
+        GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject 2", "Test message 2",
+                ServerSetupTest.SMTP);
 
         Thread thread = null;
-        try {
-            Folder inboxFolder = store.getFolder("INBOX");
+        try (Folder inboxFolder = store.getFolder("INBOX")) {
             inboxFolder.open(Folder.READ_ONLY);
             thread = new Thread(() -> {
                 try {
@@ -819,12 +822,12 @@ public class ImapServerTest {
             });
             thread.start();
 
-            int[] messages = new int[] { 0 };
+            List<Integer> messages = new ArrayList<>(2);
             MessageChangedListener listener = new MessageChangedListener() {
                 @Override
                 public void messageChanged(MessageChangedEvent e) {
                     assert e.getMessageChangeType() == MessageChangedEvent.FLAGS_CHANGED;
-                    messages[0] = e.getMessage().getMessageNumber();
+                    messages.add(e.getMessage().getMessageNumber());
                     latch.countDown();
                 }
             };
@@ -837,9 +840,13 @@ public class ImapServerTest {
                     // Ignore
                 }
 
-                try {
-                    greenMail.getReceivedMessages()[0].setFlag(Flags.Flag.DELETED, true);
-                    greenMail.getReceivedMessages()[0].saveChanges();
+                try (Folder anotherInboxFolder = store.getFolder("INBOX")) {
+                    // test changing a flag from the same folder that we're listening on
+                    inboxFolder.getMessages()[0].setFlag(Flags.Flag.DELETED, true);
+
+                    // test changing a flag from the "outside"
+                    anotherInboxFolder.open(Folder.READ_ONLY);
+                    anotherInboxFolder.getMessages()[1].setFlag(Flags.Flag.DELETED, true);
                 } catch (MessagingException ex) {
                     assertThat(false).isTrue();
                 }
@@ -850,9 +857,9 @@ public class ImapServerTest {
             } catch (InterruptedException e1) {
                 // Ignore
             }
-            assertThat(messages).hasSize(1);
-            assertThat(messages[0]).isGreaterThan(0);
-            inboxFolder.close();
+            assertThat(messages).hasSize(2);
+            assertThat(messages.get(0)).isPositive();
+            assertThat(messages.get(1)).isPositive();
         } finally {
             if (thread != null) {
                 thread.interrupt();
