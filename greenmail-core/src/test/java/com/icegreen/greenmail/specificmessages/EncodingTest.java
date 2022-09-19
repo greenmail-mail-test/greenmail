@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
@@ -191,6 +192,52 @@ public class EncodingTest {
             assertThat(messages[0].getFrom()[0]).hasToString(fromAddress.toString());
             assertThat(Arrays.stream(messages[0].getAllRecipients()).map(Object::toString).toArray())
                 .isEqualTo(new String[]{toAddress.toString()});
+
+            inboxFolder.close();
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
+    public void testAttachmentWithUTF8NameAndGreenMailApi() throws MessagingException, IOException {
+        greenMail.setUser("to@localhost", "pwd");
+        final IMAPStore store = greenMail.getImap().createStore();
+        store.connect("to@localhost", "pwd");
+        try {
+            Folder inboxFolder = store.getFolder("INBOX");
+            inboxFolder.open(Folder.READ_ONLY);
+            Message[] messages = new Message[] { null };
+            MessageCountListener listener = new MessageCountListener() {
+                @Override
+                public void messagesRemoved(MessageCountEvent e) {
+                }
+
+                @Override
+                public void messagesAdded(MessageCountEvent e) {
+                    messages[0] = e.getMessages()[0];
+                }
+            };
+            inboxFolder.addMessageCountListener(listener);
+            new Thread(() -> {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e1) {
+                    // Ignore
+                }
+                try {
+                    String fileName = MimeUtility.encodeText("кирилица testimage_ünicöde_\uD83C\uDF36");
+                    GreenMailUtil.sendAttachmentEmail(
+                        "to@localhost", "from@localhost", "subject", "body",
+                        new byte[]{0, 1, 2}, "image/gif", fileName,
+                        "testimage_description", greenMail.getSmtp().getServerSetup());
+                } catch (UnsupportedEncodingException ex) {
+                    assertThat(false).isTrue();
+                }
+            }).start();
+            ((IMAPFolder) inboxFolder).idle(true);
+
+            assertThat(messages[0].getContent() != null).isTrue();
 
             inboxFolder.close();
         } finally {
