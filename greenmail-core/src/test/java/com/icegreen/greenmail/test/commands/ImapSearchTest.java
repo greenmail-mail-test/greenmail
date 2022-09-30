@@ -92,6 +92,12 @@ public class ImapSearchTest {
             assertThat(imapMessages[1].getFlags().contains(fooFlags)).isFalse();
             assertThat(imapMessages[2].getFlags().contains(fooFlags)).isFalse();
 
+            imapMessages = imapFolder.search(new NotTerm(new FlagTerm(fooFlags, true)));
+            assertThat(imapMessages.length).isEqualTo(5);
+            assertThat(imapMessages[0].getFlags().contains(fooFlags)).isFalse();
+            assertThat(imapMessages[1].getFlags().contains(fooFlags)).isFalse();
+            assertThat(imapMessages[2].getFlags().contains(fooFlags)).isFalse();
+
             // Search header ids
             String id = m0.getHeader("Message-ID")[0];
             imapMessages = imapFolder.search(new HeaderTerm("Message-ID", id));
