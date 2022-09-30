@@ -69,6 +69,16 @@ public class SearchCommandParserTest {
         assertThat(searchTerm).isEqualTo(expectedTerm);
     }
 
+    @Test
+    public void testNotKeyword() throws ProtocolException {
+        Flags flags = new Flags();
+        flags.add("ABC");
+		SearchTerm expectedTerm = new NotTerm(new FlagTerm(flags, true));
+        SearchTerm searchTerm = parse("NOT (KEYWORD ABC)");
+
+        assertThat(searchTerm).isEqualTo(expectedTerm);
+    }
+
     private SearchTerm parse(String line) throws ProtocolException {
         final byte[] bytes = (line.endsWith("\n") ? line : (line + '\n')).getBytes();
         ByteArrayInputStream ins = new ByteArrayInputStream(bytes);

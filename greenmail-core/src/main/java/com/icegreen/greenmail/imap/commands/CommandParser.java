@@ -85,7 +85,7 @@ public class CommandParser {
             case '{':
                 return new String(consumeLiteralAsBytes(request), charset);
             default:
-                return consumeWord(request);
+                return consumeWordOnly(request, chr -> chr != ')');
         }
     }
 
