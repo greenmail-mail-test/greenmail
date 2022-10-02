@@ -4,10 +4,12 @@
 */
 package com.icegreen.greenmail.imap.commands;
 
+import com.icegreen.greenmail.imap.commands.SearchCommandParser.DataFormats;
+
 /**
  * SearchKey as defined in "RFC3501" section "6.4.4. SEARCH Command"
  * <p>
- * Read more: https://tools.ietf.org/html/rfc3501
+ * Read more: <a href="https://tools.ietf.org/html/rfc3501">rfc3501</a>
  * </p>
  * <ul>
  * <li>SEQUENCE_SET &lt;SEQUENCE SET&gt; of message ids</li>
@@ -76,7 +78,7 @@ public enum SearchKey {
     FLAGGED(),
     FROM(1, true),
     HEADER(2, true),
-    KEYWORD(1),
+    KEYWORD(1, false, DataFormats.ATOM),
     NEW(),
     NOT(true),
     OLD(),
@@ -90,7 +92,7 @@ public enum SearchKey {
     UNDELETED(),
     UNDRAFT(),
     UNFLAGGED(),
-    UNKEYWORD(1),
+    UNKEYWORD(1, false, DataFormats.ATOM),
     UNSEEN(),
     /**
      * &lt;sequence set&gt; - Messages with message sequence numbers corresponding
@@ -110,6 +112,7 @@ public enum SearchKey {
     private int minArgs = 0; // expected additional arguments
     private boolean operator = false; // Is an operator, such as AND, OR, NOT ...
     private boolean charsetAware = false;
+    private DataFormats argDataFormat = DataFormats.STRING; // Argument data format, such as STRING or ATOM ...
 
     SearchKey() {
         // Nothing
@@ -122,6 +125,12 @@ public enum SearchKey {
     SearchKey(int pMinArgs, boolean charsetAware) {
         this(pMinArgs);
         this.charsetAware = charsetAware;
+    }
+
+    SearchKey(int pMinArgs, boolean charsetAware, DataFormats argDataFormat) {
+        this(pMinArgs);
+        this.charsetAware = charsetAware;
+        this.argDataFormat = argDataFormat;
     }
 
     SearchKey(boolean pOperator) {
@@ -138,5 +147,9 @@ public enum SearchKey {
 
     public boolean isCharsetAware() {
         return charsetAware;
+    }
+
+    public DataFormats getArgDataFormat() {
+        return argDataFormat;
     }
 }

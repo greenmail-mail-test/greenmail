@@ -6,6 +6,14 @@
  */
 package com.icegreen.greenmail.imap.commands;
 
+import com.icegreen.greenmail.imap.ImapConstants;
+import com.icegreen.greenmail.imap.ImapRequestLineReader;
+import com.icegreen.greenmail.imap.ProtocolException;
+import com.icegreen.greenmail.store.MessageFlags;
+import com.sun.mail.imap.protocol.BASE64MailboxDecoder;
+
+import jakarta.mail.Flags;
+
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,13 +21,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import jakarta.mail.Flags;
-
-import com.icegreen.greenmail.imap.ImapConstants;
-import com.icegreen.greenmail.imap.ImapRequestLineReader;
-import com.icegreen.greenmail.imap.ProtocolException;
-import com.icegreen.greenmail.store.MessageFlags;
-import com.sun.mail.imap.protocol.BASE64MailboxDecoder;
 
 /**
  * @author Darrell DeBoer <darrell@apache.org>
@@ -85,13 +86,12 @@ public class CommandParser {
             case '{':
                 return new String(consumeLiteralAsBytes(request), charset);
             default:
-                return consumeWordOnly(request, chr -> chr != ')');
+                return consumeWord(request);
         }
     }
 
     /**
      * Reads an argument of type "nstring" from the request.
-     *
      * https://tools.ietf.org/html/rfc3501#page-88 :
      * nstring         = string / nil
      * nil             = "NIL"
@@ -157,14 +157,14 @@ public class CommandParser {
     }
 
     /**
-     * Reads the next "word from the request, comprising all characters up to the next SPACE.
+     * Reads the next "word" from the request, comprising all characters up to the next SPACE.
      */
     protected String consumeWord(ImapRequestLineReader request) throws ProtocolException {
         return consumeWord(request, new NoopCharValidator());
     }
 
     /**
-     * Reads the next "word from the request, comprising all characters up to the next SPACE.
+     * Reads the next "word" from the request, comprising all characters up to the next SPACE.
      * Characters are tested by the supplied CharacterValidator, and an exception is thrown
      * if invalid characters are encountered.
      */
