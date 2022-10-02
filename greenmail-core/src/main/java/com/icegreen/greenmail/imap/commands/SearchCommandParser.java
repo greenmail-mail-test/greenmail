@@ -6,26 +6,27 @@
  */
 package com.icegreen.greenmail.imap.commands;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.charset.UnsupportedCharsetException;
-import java.util.*;
-import javax.mail.search.AndTerm;
-import javax.mail.search.NotTerm;
-import javax.mail.search.OrTerm;
-import javax.mail.search.SearchTerm;
-
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ProtocolException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.mail.search.AndTerm;
+import javax.mail.search.NotTerm;
+import javax.mail.search.OrTerm;
+import javax.mail.search.SearchTerm;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.charset.UnsupportedCharsetException;
+import java.util.Deque;
+import java.util.LinkedList;
 
 import static com.icegreen.greenmail.imap.commands.IdRange.SEQUENCE;
 
 /**
  * Handles processing for the SEARCH imap command.
  * <p>
- * https://tools.ietf.org/html/rfc3501#section-6.4.4
+ * <a href="https://tools.ietf.org/html/rfc3501#section-6.4.4">https://tools.ietf.org/html/rfc3501#section-6.4.4</a>
  *
  * @author Darrell DeBoer <darrell@apache.org>
  * @author Marcel May
@@ -42,10 +43,17 @@ class SearchCommandParser extends CommandParser {
     }
 
     /**
+     * IMAP <a href="https://www.rfc-editor.org/rfc/rfc3501.html#section-4">RFC 3501 Data Formats</a>
+     */
+    protected enum DataFormats {
+        ATOM,
+        STRING
+        // Complete further types on demand
+    }
+    /**
      * Parses the request argument into a valid search term. Not yet fully implemented - see SearchKey enum.
      * <p>
      * Other searches will return everything for now.
-     *
      * Throws an UnsupportedCharsetException if provided CHARSET is not supported.
      */
     public SearchTerm searchTerm(ImapRequestLineReader request)
@@ -119,19 +127,31 @@ class SearchCommandParser extends CommandParser {
                         if (b.expectsParameter()) {
                             for (int pi = 0; pi < key.getNumberOfParameters(); pi++) {
                                 request.consumeAll(CHR_SPACE);
-                                String paramValue = string(request, charset);
-                                b.addParameter(paramValue);
+                                handleSearchArg(request, key, b, charset);
                             }
                         }
                         stack.push(b.build());
                     }
-
                 }
             }
         }
 
         // Phase two : Build search terms by operators
         return handleOperators(stack);
+    }
+
+    private void handleSearchArg(ImapRequestLineReader request, SearchKey key, SearchTermBuilder searchTermBuilder, Charset charset) throws ProtocolException {
+        String paramValue;
+        switch(key.getArgDataFormat()) {
+            case STRING:
+                paramValue = string(request, charset);
+                break;
+            case ATOM:
+                paramValue = atomOnly(request);
+                break;
+            default: throw new IllegalStateException("Argument type "+key.getArgDataFormat()+" not implemented for key "+key);
+        }
+        searchTermBuilder.addParameter(paramValue);
     }
 
     private SearchTerm handleOperators(Deque<Object> stack) {
