@@ -57,28 +57,30 @@ class CopyCommand extends SelectedStateCommand implements UidEnabledCommand {
             throw e;
         }
 
-        List<Long> copiedUidsOld = new ArrayList<>();
-        List<Long> copiedUidsNew = new ArrayList<>();
-
-        long[] uids = currentMailbox.getMessageUids();
-        for (long uid : uids) {
-            boolean inSet;
-            if (useUids) {
-                inSet = includes(idSet, uid);
-            } else {
-                int msn = currentMailbox.getMsn(uid);
-                inSet = includes(idSet, msn);
+        List<Long> uidsFilteredByIdSet = new ArrayList<>();
+        currentMailbox.getMessages().forEach(storedMessage -> {
+            final long uid = storedMessage.getUid();
+            try {
+                if( useUids
+                    ? includes(idSet, uid)
+                    : includes(idSet, currentMailbox.getMsn(uid))
+                ) {
+                    uidsFilteredByIdSet.add(uid);
+                }
+            } catch (FolderException e) {
+                throw new IllegalStateException("Can not get msn for message in folder "+currentMailbox.getName()+" using uid +"+uid, e);
             }
+        });
 
-            if (inSet) {
-                long copiedUid = currentMailbox.copyMessage(uid, toFolder);
-                copiedUidsOld.add(uid);
-                copiedUidsNew.add(copiedUid);
-            }
+        List<Long> uidsAfterAction = new ArrayList<>();
+        for(long uid:uidsFilteredByIdSet) {
+            // Track new uid
+            long copiedUid = currentMailbox.copyMessage(uid, toFolder);
+            uidsAfterAction.add(copiedUid);
         }
 
         session.unsolicitedResponses(response);
-        response.commandComplete(this, generateCopyUidResponseCode(toFolder, copiedUidsOld, copiedUidsNew));
+        response.commandComplete(this, generateCopyUidResponseCode(toFolder, uidsFilteredByIdSet, uidsAfterAction));
     }
 
     /**

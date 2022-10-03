@@ -30,10 +30,10 @@ public class ImapServerTest {
     private static final String UMLAUTS = "öäü \u00c4 \u00e4";
     @Rule
     public final GreenMailRule greenMail = new GreenMailRule(new ServerSetup[]{
-            ServerSetupTest.IMAP,
-            ServerSetupTest.IMAPS,
-            ServerSetupTest.SMTP,
-            ServerSetupTest.SMTPS
+        ServerSetupTest.IMAP,
+        ServerSetupTest.IMAPS,
+        ServerSetupTest.SMTP,
+        ServerSetupTest.SMTPS
     });
 
     /**
@@ -46,8 +46,8 @@ public class ImapServerTest {
         assertThat(greenMail.getImap()).isNotNull();
         final String subject = GreenMailUtil.random() + UMLAUTS;
         final String body = GreenMailUtil.random()
-                + "\r\n" + " öäü \u00c4 \u00e4"
-                + "\r\n" + GreenMailUtil.random();
+            + "\r\n" + " öäü \u00c4 \u00e4"
+            + "\r\n" + GreenMailUtil.random();
         final String to = "test@localhost";
         MimeMessage mimeMessage = new MimeMessage(greenMail.getSmtp().createSession());
         mimeMessage.setSentDate(new Date());
@@ -136,7 +136,7 @@ public class ImapServerTest {
             GreenMailUtil.copyStream(bp.getInputStream(), bout);
             byte[] gif = bout.toByteArray();
             for (int i = 0; i < gif.length; i++) {
-                assertThat((int)gif[i]).isEqualTo(i);
+                assertThat((int) gif[i]).isEqualTo(i);
             }
         }
     }
@@ -274,21 +274,20 @@ public class ImapServerTest {
     }
 
     /**
-     *
      * https://tools.ietf.org/html/rfc3501#page-37 :
      * <q>
-     *     Renaming INBOX is permitted, and has special behavior.  It moves
-     *     all messages in INBOX to a new mailbox with the given name,
-     *     leaving INBOX empty.  If the server implementation supports
-     *     inferior hierarchical names of INBOX, these are unaffected by a
-     *     rename of INBOX.
-     *  </q>
+     * Renaming INBOX is permitted, and has special behavior.  It moves
+     * all messages in INBOX to a new mailbox with the given name,
+     * leaving INBOX empty.  If the server implementation supports
+     * inferior hierarchical names of INBOX, these are unaffected by a
+     * rename of INBOX.
+     * </q>
      */
     @Test
     public void testRenameINBOXFolder() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject",
-                "Test message", greenMail.getSmtp().getServerSetup());
+            "Test message", greenMail.getSmtp().getServerSetup());
 
         final IMAPStore store = greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
@@ -369,14 +368,8 @@ public class ImapServerTest {
 
     @Test
     public void testFolderMoveMessages() throws MessagingException {
-        greenMail.setUser("foo@localhost", "pwd");
-
         int msgCount = 3;
-        for (int i = 0; i < 3; i++) {
-            GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject #" + i,
-                    "Test message", ServerSetupTest.SMTP);
-        }
-        greenMail.waitForIncomingEmail(msgCount);
+        sendMessages(msgCount);
 
         final IMAPStore store = greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
@@ -407,6 +400,54 @@ public class ImapServerTest {
         } finally {
             store.close();
         }
+    }
+
+    @Test
+    public void testFolderMoveMessagesBasedOnUid() throws MessagingException {
+        int msgCount = 3;
+        sendMessages(msgCount);
+        IMAPStore store = greenMail.getImap().createStore();
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder inboxFolder = (IMAPFolder) store.getFolder("INBOX");
+
+            // Target folder
+            IMAPFolder targetFolder = (IMAPFolder) inboxFolder.getFolder("target-folder");
+            assertThat(targetFolder.create(Folder.HOLDS_FOLDERS | Folder.HOLDS_MESSAGES)).isTrue();
+            assertThat(targetFolder.exists()).isTrue();
+
+            inboxFolder.open(Folder.READ_WRITE);
+
+            Message[] existingMessages = inboxFolder.getMessages();
+            assertThat(existingMessages.length).isEqualTo(3);
+            for (int i = 0; i < 3; i++) {
+                final int uid = i + 1;
+                Message[] messages = inboxFolder.getMessagesByUID(
+                    new long[]{uid});
+                assertThat(messages).hasSize(1);
+                inboxFolder.moveMessages(messages, targetFolder);
+            }
+            targetFolder.open(Folder.READ_ONLY); // Refresh for new messages
+            try {
+                assertThat(targetFolder.getMessageCount()).isEqualTo(msgCount);
+            } finally {
+                targetFolder.close();
+            }
+        } finally {
+            store.close();
+        }
+    }
+
+    private void sendMessages(int n) {
+        greenMail.setUser("foo@localhost", "pwd");
+
+        int msgCount = n;
+        for (int i = 0; i < n; i++) {
+            GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject #" + i,
+                "Test message", ServerSetupTest.SMTP);
+        }
+        greenMail.waitForIncomingEmail(msgCount);
+
     }
 
     @Test
@@ -485,7 +526,7 @@ public class ImapServerTest {
         greenMail.setUser("foo@localhost", "pwd");
 
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test UIDFolder",
-                "Test message", greenMail.getSmtp().getServerSetup());
+            "Test message", greenMail.getSmtp().getServerSetup());
         final IMAPStore store = greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
         try {
@@ -520,7 +561,7 @@ public class ImapServerTest {
         long[] uids = new long[numberOfEmails];
         for (int i = 0; i < numberOfEmails; i++) {
             GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test UID expunge #" + i,
-                    "Test message", greenMail.getSmtp().getServerSetup());
+                "Test message", greenMail.getSmtp().getServerSetup());
         }
 
         final IMAPStore store = greenMail.getImap().createStore();
@@ -566,7 +607,7 @@ public class ImapServerTest {
         greenMail.setUser("foo@localhost", "pwd");
 
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test Append",
-                "Test message", greenMail.getSmtp().getServerSetup());
+            "Test message", greenMail.getSmtp().getServerSetup());
 
         final IMAPStore store = greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
@@ -579,7 +620,7 @@ public class ImapServerTest {
             Message message = messages[0];
 
             Message[] toBeAppended = new Message[]{
-                    new MimeMessage((MimeMessage) message) // Copy
+                new MimeMessage((MimeMessage) message) // Copy
             };
             toBeAppended[0].setSubject("testAppend#1");
 
@@ -608,10 +649,10 @@ public class ImapServerTest {
         greenMail.setUser("foo@localhost", "pwd");
 
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test UIDFolder",
-                "Test message", ServerSetupTest.SMTP);
+            "Test message", ServerSetupTest.SMTP);
 
         GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test UIDFolder 2",
-                "Test message 2", ServerSetupTest.SMTP);
+            "Test message 2", ServerSetupTest.SMTP);
         final IMAPStore store = greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
         try {
@@ -643,7 +684,7 @@ public class ImapServerTest {
 
         for (int i = 0; i < 6; i++) {
             GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject #" + i,
-                    "Test message", ServerSetupTest.SMTP);
+                "Test message", ServerSetupTest.SMTP);
         }
         final IMAPStore store = greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
@@ -685,7 +726,7 @@ public class ImapServerTest {
         try {
             Folder inboxFolder = store.getFolder("INBOX");
             inboxFolder.open(Folder.READ_ONLY);
-            int[] messages = new int[] { 0 };
+            int[] messages = new int[]{0};
             MessageCountListener listener = new MessageCountListener() {
                 @Override
                 public void messagesRemoved(MessageCountEvent e) {
@@ -704,7 +745,7 @@ public class ImapServerTest {
                     // Ignore
                 }
                 GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject", "Test message",
-                        ServerSetupTest.SMTP);
+                    ServerSetupTest.SMTP);
             }).start();
             ((IMAPFolder) inboxFolder).idle(true);
             assertThat(messages).hasSize(1);
