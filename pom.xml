@@ -359,7 +359,7 @@
   <properties>
     <slf4j.version>1.7.36</slf4j.version>
     <spring.version>4.3.30.RELEASE</spring.version>
-    <junit5.version>5.9.0</junit5.version>
+    <junit5.version>5.9.1</junit5.version>
     <jetty.version>9.4.49.v20220914</jetty.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
