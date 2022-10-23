@@ -22,7 +22,12 @@
   <dependencies>
     <!-- Compile scope (=default) -->
     <dependency>
-      <groupId>com.sun.mail</groupId>
+      <groupId>jakarta.mail</groupId>
+      <artifactId>jakarta.mail-api</artifactId>
+      <version>2.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.angus</groupId>
       <artifactId>jakarta.mail</artifactId>
     </dependency>
     <dependency>
@@ -32,6 +37,13 @@
     <dependency> <!-- SLF4J Core -->
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
+    </dependency>
+
+    <!-- Runtime scope -->
+    <dependency>
+      <groupId>org.eclipse.angus</groupId>
+      <artifactId>angus-activation</artifactId>
+      <scope>runtime</scope>
     </dependency>
 
     <!-- We need junit in compile scope since we want to offer Junit specific functionality (e.g. the GreenMailRule) -->
