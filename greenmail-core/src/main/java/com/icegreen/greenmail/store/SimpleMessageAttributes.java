@@ -27,7 +27,7 @@ import java.util.*;
  * Message Sequence Numbers or UIDs.
  * <p> reinitialize() must be called on deserialization to reset Logger
  *
- * Reference: RFC 2060 - para 2.3 https://www.ietf.org/rfc/rfc2060.txt
+ * Reference: <a href="https://www.ietf.org/rfc/rfc2060.txt">RFC 2060 - para 2.3</a>
  *
  * @author <a href="mailto:sascha@kulawik.de">Sascha Kulawik</a>
  * @author <a href="mailto:charles@benett1.demon.co.uk">Charles Benett</a>
@@ -122,7 +122,7 @@ public class SimpleMessageAttributes
     }
 
     /**
-     * Parses key data items from a MimeMessage for seperate storage.
+     * Parses key data items from a MimeMessage for separate storage.
      * TODO this is a mess, and should be completely revamped.
      */
     void parseMimePart(MimePart part) {
@@ -652,12 +652,15 @@ public class SimpleMessageAttributes
             String[] strs = line.split(";");
             if (0 != strs.length) {
                 value = strs[0];
-                params = new HashSet<>(strs.length);
+                params = new HashSet<>();
                 for (int i = 1; i < strs.length; i++) {
                     String p = strs[i].trim();
                     int e = p.indexOf('=');
                     String key = p.substring(0, e);
-                    String val = p.substring(e + 1);
+                    String val = p.substring(e + 1)
+                        // Workaround for continuation bug?
+                        // https://github.com/greenmail-mail-test/greenmail/issues/498
+                        .replaceAll("\r\n[\t\u0020]"," ");
                     p = Q + strip(key) + Q + SP + Q + strip(val) + Q;
                     params.add(p);
                 }

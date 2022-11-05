@@ -144,7 +144,7 @@ public class EncodingTest {
         MimeMessage receivedMessage = greenMail.getReceivedMessages()[0];
         assertThat(receivedMessage.getFrom()[0].toString()).isEqualTo(fromAddress.toString());
         assertThat(Arrays.stream(receivedMessage.getAllRecipients()).map(Object::toString).toArray())
-            .isEqualTo(new String[] { toAddress.toString() });
+            .isEqualTo(new String[]{toAddress.toString()});
 
         greenMail.setUser("to@localhost", "pwd");
 
@@ -153,7 +153,7 @@ public class EncodingTest {
         try {
             Folder inboxFolder = store.getFolder("INBOX");
             inboxFolder.open(Folder.READ_ONLY);
-            Message[] messages = new Message[] { null };
+            Message[] messages = new Message[]{null};
             MessageCountListener listener = new MessageCountListener() {
                 @Override
                 public void messagesRemoved(MessageCountEvent e) {
@@ -181,7 +181,7 @@ public class EncodingTest {
 
             assertThat(messages[0].getFrom()[0].toString()).isEqualTo(fromAddress.toString());
             assertThat(Arrays.stream(messages[0].getAllRecipients()).map(Object::toString).toArray())
-                .isEqualTo(new String[] { toAddress.toString() });
+                .isEqualTo(new String[]{toAddress.toString()});
 
             inboxFolder.close();
         } finally {
@@ -199,5 +199,47 @@ public class EncodingTest {
         message.saveChanges();
 
         GreenMailUtil.sendMimeMessage(message);
+    }
+
+    @Test
+    public void testAttachmentWithLongEncodedUTF8Name() throws MessagingException, IOException {
+        // Prepare mail
+        greenMail.setUser("to@localhost", "pwd");
+        String fileName = "кирилица testimage_ünicöde_\uD83C\uDF36";
+        final String fileNameEncoded = MimeUtility.encodeText(fileName);
+        GreenMailUtil.sendAttachmentEmail(
+            "to@localhost", "from@localhost", "subject", "body",
+            new byte[]{0, 1, 2}, "image/gif",
+            fileNameEncoded,
+            "testimage_description", greenMail.getSmtp().getServerSetup());
+
+        greenMail.waitForIncomingEmail(1);
+
+        // Verify
+        final IMAPStore store = greenMail.getImap().createStore();
+        store.connect("to@localhost", "pwd");
+        try {
+            Folder inboxFolder = store.getFolder("INBOX");
+            inboxFolder.open(Folder.READ_ONLY);
+            try {
+                Message[] messages = inboxFolder.getMessages();
+                assertThat(messages).hasSize(1);
+                final MimeMultipart content = (MimeMultipart) messages[0].getContent();
+                assertThat(messages[0].getContent() != null).isTrue();
+                String receivedFileName = "";
+                for (int i = 0; i < content.getCount(); i++) {
+                    final MimeBodyPart bodyPart = (MimeBodyPart) content.getBodyPart(i);
+                    if (bodyPart.getContentType().startsWith("IMAGE/GIF")) {
+                        receivedFileName = bodyPart.getFileName();
+                    }
+                }
+                assertThat(receivedFileName).isEqualTo(fileNameEncoded);
+                assertThat(MimeUtility.decodeText(receivedFileName)).isEqualTo(fileName);
+            } finally {
+                inboxFolder.close();
+            }
+        } finally {
+            store.close();
+        }
     }
 }
