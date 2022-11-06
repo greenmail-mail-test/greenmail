@@ -35,7 +35,9 @@ jobs:
             - ~/.m2
           key: greenmail-{{ checksum "pom.xml" }}
 
-      - run: mvn -V clean install
+      - run:
+          command: mvn -V clean install
+          no_output_timeout: 15m
 
       - run:
           name: Save test results
@@ -82,7 +84,9 @@ jobs:
             - ~/.m2
           key: greenmail-{{ checksum "pom.xml" }}
 
-      - run: mvn -V clean install
+      - run:
+          command: mvn -V clean install
+          no_output_timeout: 15m
 
       - run:
           name: Save test results
@@ -129,7 +133,9 @@ jobs:
             - ~/.m2
           key: greenmail-{{ checksum "pom.xml" }}
 
-      - run: mvn -V clean install
+      - run:
+          command: mvn -V clean install
+          no_output_timeout: 15m
 
       - run:
           name: Save test results
