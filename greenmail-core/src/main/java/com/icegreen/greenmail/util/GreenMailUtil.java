@@ -4,20 +4,24 @@
  */
 package com.icegreen.greenmail.util;
 
-import java.io.*;
-import java.util.Date;
-import java.util.Properties;
-import java.util.Random;
+import com.icegreen.greenmail.user.GreenMailUser;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
 import jakarta.mail.*;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
-
-import com.icegreen.greenmail.user.GreenMailUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Date;
+import java.util.Properties;
+import java.util.Random;
 
 /**
  * @author Wael Chatila
@@ -432,7 +436,7 @@ public class GreenMailUtil {
      * Gets the quotas for the user.
      *
      * @param user      the user.
-     * @param quotaRoot the quota root, eg 'INBOX.
+     * @param quotaRoot the quota root, eg 'INBOX'.
      * @return array of current quotas, or an empty array if not set.
      */
     public static Quota[] getQuota(final GreenMailUser user, final String quotaRoot) {

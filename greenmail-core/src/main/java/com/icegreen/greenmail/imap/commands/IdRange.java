@@ -90,7 +90,7 @@ public class IdRange {
     }
 
     /**
-     * Parses a uid sequence, a comma separated list of uid ranges.
+     * Parses an uid sequence, a comma separated list of uid ranges.
      * Note that the wildcard '*' denotes the largest number in use.
      * <p/>
      * Example: 1,2:5,8:*
@@ -200,7 +200,7 @@ public class IdRange {
      * @return true, if ranges contain given uid
      */
     public static boolean containsUid(IdRange[] idRanges, long uid) {
-        if (null != idRanges && idRanges.length > 0) {
+        if (null != idRanges) {
             for (IdRange range : idRanges) {
                 if (range.includes(uid)) {
                     return true;

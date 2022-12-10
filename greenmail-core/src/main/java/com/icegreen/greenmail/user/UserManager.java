@@ -6,44 +6,41 @@
  */
 package com.icegreen.greenmail.user;
 
+import com.icegreen.greenmail.imap.ImapHostManager;
+import com.icegreen.greenmail.mail.MailAddress;
+import com.icegreen.greenmail.mail.MovingMessage;
+import jakarta.mail.MessagingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import jakarta.mail.MessagingException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.icegreen.greenmail.imap.ImapHostManager;
-import com.icegreen.greenmail.mail.MailAddress;
-import com.icegreen.greenmail.mail.MovingMessage;
-
 public class UserManager {
     private static final Logger log = LoggerFactory.getLogger(UserManager.class);
     /**
-     * User list by their trimmed, lower-cased user names
+     * User list by their trimmed, lower-cased usernames
      */
     private final Map<String, GreenMailUser> loginToUser = new ConcurrentHashMap<>();
     private final Map<String, GreenMailUser> emailToUser = new ConcurrentHashMap<>();
     private final ImapHostManager imapHostManager;
     private boolean authRequired = true;
 
-    private MessageDeliveryHandler messageDeliveryHandler = new MessageDeliveryHandler(){
-        public GreenMailUser handle(MovingMessage msg, MailAddress mailAddress) throws UserException {
-            GreenMailUser user = getUserByEmail(mailAddress.getEmail());
-            if(null==user) {
-                String login = mailAddress.getEmail();
-                String email = mailAddress.getEmail();
-                String password = mailAddress.getEmail();
-                user = createUser(email, login, password);
-                log.info("Created user login {} for address {} with password {} because it didn't exist before.", login, email,
-                    password);
-            }
-            return user;
+    private MessageDeliveryHandler messageDeliveryHandler = (msg, mailAddress) -> {
+        GreenMailUser user = getUserByEmail(mailAddress.getEmail());
+        if(null==user) {
+            String login = mailAddress.getEmail();
+            String email = mailAddress.getEmail();
+            String password = mailAddress.getEmail();
+            user = createUser(email, login, password);
+            log.info(
+                "Created user login {} for address {} with password {} because it didn't exist before.",
+                login, email, password);
         }
+        return user;
     };
 
     public UserManager(ImapHostManager imapHostManager) {
@@ -59,6 +56,7 @@ public class UserManager {
     }
 
     public GreenMailUser createUser(String email, String login, String password) throws UserException {
+        log.debug("Creating user {}", email);
         GreenMailUser user = new UserImpl(email, login, password, imapHostManager);
         user.create();
         loginToUser.put(normalizerUserName(user.getLogin()), user);
@@ -67,6 +65,7 @@ public class UserManager {
     }
 
     public void deleteUser(GreenMailUser user) {
+        log.debug("Deleting user {}", user);
         GreenMailUser deletedUser = loginToUser.remove(normalizerUserName(user.getLogin()));
         if (deletedUser != null) {
             emailToUser.remove(normalizerUserName(deletedUser.getEmail()));
@@ -115,7 +114,7 @@ public class UserManager {
     }
 
     /**
-     * Normalize the user name (to lowercase, trim)
+     * Normalize the username (to lowercase, trim)
      *
      * @param login Login name
      * @return Normalized name

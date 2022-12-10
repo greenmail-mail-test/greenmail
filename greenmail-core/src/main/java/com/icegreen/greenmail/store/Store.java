@@ -87,7 +87,7 @@ public interface Store {
             throws FolderException;
 
     /**
-     * Lists all of the mailboxes in the store which have a name
+     * Lists all the mailboxes in the store which have a name
      * matching the supplied search pattern.
      * <pre>
      * Valid wildcards are:

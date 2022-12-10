@@ -90,7 +90,7 @@ public class ImapCommandFactory {
 
     private ImapCommand createCommand(Class<? extends ImapCommand> commandClass) {
         try {
-            ImapCommand cmd = commandClass.newInstance();
+            ImapCommand cmd = commandClass.getDeclaredConstructor().newInstance();
 
             if (cmd instanceof UidCommand) {
                 ((UidCommand) cmd).setCommandFactory(this);

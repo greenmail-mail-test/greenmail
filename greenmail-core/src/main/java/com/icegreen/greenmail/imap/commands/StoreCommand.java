@@ -95,7 +95,7 @@ class StoreCommand extends SelectedStateCommand implements UidEnabledCommand {
     private static class StoreCommandParser extends CommandParser {
         StoreDirective storeDirective(ImapRequestLineReader request) throws ProtocolException {
             int sign = 0;
-            boolean silent = false;
+            boolean silent;
 
             char next = request.nextWordChar();
             if (next == '+') {

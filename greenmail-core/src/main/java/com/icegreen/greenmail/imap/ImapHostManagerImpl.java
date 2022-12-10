@@ -21,7 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version $Revision: 109034 $
  */
 public class ImapHostManagerImpl
-        implements ImapHostManager, ImapConstants {
+    implements ImapHostManager, ImapConstants {
+
     private final Store store;
     private final MailboxSubscriptions subscriptions;
 
@@ -67,10 +68,10 @@ public class ImapHostManagerImpl
 
     @Override
     public MailFolder getFolder(GreenMailUser user, String mailboxName, boolean mustExist)
-            throws FolderException {
+        throws FolderException {
         MailFolder folder = getFolder(user, mailboxName);
         if (mustExist && (folder == null)) {
-            throw new FolderException("No such folder : "+mailboxName);
+            throw new FolderException("No such folder : " + mailboxName);
         }
         return folder;
     }
@@ -98,14 +99,14 @@ public class ImapHostManagerImpl
      */
     @Override
     public MailFolder createMailbox(GreenMailUser user, String mailboxName)
-            throws FolderException {
+        throws FolderException {
         String qualifiedName = getQualifiedMailboxName(user, mailboxName);
         if (store.getMailbox(qualifiedName) != null) {
             throw new FolderException("Mailbox " + mailboxName + " already exists.");
         }
 
         StringTokenizer tokens = new StringTokenizer(qualifiedName,
-                HIERARCHY_DELIMITER);
+            HIERARCHY_DELIMITER);
 
         if (tokens.countTokens() < 2) {
             throw new FolderException("Cannot create store at namespace level.");
@@ -138,10 +139,10 @@ public class ImapHostManagerImpl
      */
     @Override
     public void deleteMailbox(GreenMailUser user, String mailboxName)
-            throws FolderException {
+        throws FolderException {
 
         if (mailboxName.equalsIgnoreCase("inbox")) {
-            throw new FolderException("Can not delete INBOX mailbox");
+            throw new FolderException("Can not delete INBOX mailbox for user " + user.getEmail());
         }
 
         MailFolder toDelete = getFolder(user, mailboxName, true);
@@ -154,7 +155,8 @@ public class ImapHostManagerImpl
                 toDelete.deleteAllMessages();
                 store.setSelectable(toDelete, false);
             } else {
-                throw new FolderException("Can't delete a non-selectable store with children.");
+                throw new FolderException("Can't delete a non-selectable store " +
+                    toDelete.getName() + " with children for user " + user.getEmail());
             }
         }
     }
@@ -166,12 +168,13 @@ public class ImapHostManagerImpl
     public void renameMailbox(GreenMailUser user,
                               String oldMailboxName,
                               String newMailboxName)
-            throws FolderException {
+        throws FolderException {
 
         MailFolder existingFolder = getFolder(user, oldMailboxName, true);
 
         if (getFolder(user, newMailboxName) != null) {
-            throw new FolderException("Cannot rename mailbox to the name already existed mailbox");
+            throw new FolderException("Cannot rename mailbox " + oldMailboxName + " to " +
+                newMailboxName + ", the name already existed mailbox for user " + user.getEmail());
         }
 
         // TODO: check permissions.
@@ -198,8 +201,8 @@ public class ImapHostManagerImpl
      */
     @Override
     public Collection<MailFolder> listSubscribedMailboxes(GreenMailUser user,
-                                              String mailboxPattern)
-            throws FolderException {
+                                                          String mailboxPattern)
+        throws FolderException {
         return listMailboxes(user, mailboxPattern, true);
     }
 
@@ -208,8 +211,8 @@ public class ImapHostManagerImpl
      */
     @Override
     public Collection<MailFolder> listMailboxes(GreenMailUser user,
-                                    String mailboxPattern)
-            throws FolderException {
+                                                String mailboxPattern)
+        throws FolderException {
         return listMailboxes(user, mailboxPattern, false);
     }
 
@@ -221,9 +224,9 @@ public class ImapHostManagerImpl
      * @see com.icegreen.greenmail.imap.ImapHostManager#listMailboxes
      */
     private Collection<MailFolder> listMailboxes(GreenMailUser user,
-                                     String mailboxPattern,
-                                     boolean subscribedOnly)
-            throws FolderException {
+                                                 String mailboxPattern,
+                                                 boolean subscribedOnly)
+        throws FolderException {
         List<MailFolder> mailboxes = new ArrayList<>();
         String qualifiedPattern = getQualifiedMailboxName(user, mailboxPattern);
 
@@ -246,7 +249,7 @@ public class ImapHostManagerImpl
      */
     @Override
     public void subscribe(GreenMailUser user, String mailboxName)
-            throws FolderException {
+        throws FolderException {
         MailFolder folder = getFolder(user, mailboxName, true);
         subscriptions.subscribe(user, folder);
     }
@@ -256,7 +259,7 @@ public class ImapHostManagerImpl
      */
     @Override
     public void unsubscribe(GreenMailUser user, String mailboxName)
-            throws FolderException {
+        throws FolderException {
         MailFolder folder = getFolder(user, mailboxName, true);
         subscriptions.unsubscribe(user, folder);
     }
@@ -277,7 +280,7 @@ public class ImapHostManagerImpl
 
         if ("INBOX".equalsIgnoreCase(mailboxName)) {
             return USER_NAMESPACE + HIERARCHY_DELIMITER + userNamespace +
-                    HIERARCHY_DELIMITER + INBOX_NAME;
+                HIERARCHY_DELIMITER + INBOX_NAME;
         }
 
         if (mailboxName.startsWith(NAMESPACE_PREFIX)) {
@@ -287,7 +290,7 @@ public class ImapHostManagerImpl
                 return USER_NAMESPACE + HIERARCHY_DELIMITER + userNamespace;
             } else {
                 return USER_NAMESPACE + HIERARCHY_DELIMITER + userNamespace +
-                        HIERARCHY_DELIMITER + mailboxName;
+                    HIERARCHY_DELIMITER + mailboxName;
             }
         }
     }

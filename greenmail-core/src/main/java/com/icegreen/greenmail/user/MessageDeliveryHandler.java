@@ -8,7 +8,7 @@ import jakarta.mail.MessagingException;
 /**
  * Handles delivery when receiving messages.
  *
- * Can be used for alternative implementation (eg Delivery Status Notification DSN).
+ * Can be used for alternative implementation (e.g. Delivery Status Notification DSN).
  */
 public interface MessageDeliveryHandler {
     GreenMailUser handle(MovingMessage msg, MailAddress mailAddress) throws MessagingException, UserException;

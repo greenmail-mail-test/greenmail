@@ -511,7 +511,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
 
         private boolean setSeen = false;
 
-        private Set<BodyFetchElement> bodyElements = new HashSet<>();
+        private final Set<BodyFetchElement> bodyElements = new HashSet<>();
 
         public Collection<BodyFetchElement> getBodyElements() {
             return bodyElements;

@@ -24,7 +24,7 @@ public class UserBean {
     }
 
     /**
-     * @return Email address of mail box
+     * @return Email address of mailbox
      */
     public String getEmail() {
         return this.email;

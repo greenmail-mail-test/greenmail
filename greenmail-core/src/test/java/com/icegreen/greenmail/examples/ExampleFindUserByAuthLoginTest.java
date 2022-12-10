@@ -1,29 +1,24 @@
 package com.icegreen.greenmail.examples;
 
-import com.icegreen.greenmail.mail.MailAddress;
-import com.icegreen.greenmail.mail.MovingMessage;
 import com.icegreen.greenmail.smtp.auth.AuthenticationState;
 import com.icegreen.greenmail.smtp.auth.UsernameAuthentication;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.user.GreenMailUser;
-import com.icegreen.greenmail.user.MessageDeliveryHandler;
 import com.icegreen.greenmail.user.NoSuchUserException;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.user.UserManager;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
-
+import jakarta.mail.Message.RecipientType;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
-import jakarta.mail.Message.RecipientType;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 
 /**
  * By default, GreenMail delivers messages to the user based on the email address
@@ -43,21 +38,17 @@ public class ExampleFindUserByAuthLoginTest {
 
         // Set a message delivery handler that find the user and inbox by
         // the login that was used.
-        userManager.setMessageDeliveryHandler(new MessageDeliveryHandler() {
-            @Override
-            public GreenMailUser handle(MovingMessage msg, MailAddress mailAddress)
-                    throws MessagingException, UserException {
-                AuthenticationState authState = msg.getAuthenticationState();
-                if (!(authState instanceof UsernameAuthentication)) {
-                    throw new MessagingException("Authentication is required");
-                }
-                String login = ((UsernameAuthentication)authState).getUsername();
-                GreenMailUser user = userManager.getUser(login);
-                if (user == null) {
-                    throw new NoSuchUserException("No user found for login " + login + ", make sure to create the user first");
-                }
-                return user;
+        userManager.setMessageDeliveryHandler((msg, mailAddress) -> {
+            AuthenticationState authState = msg.getAuthenticationState();
+            if (!(authState instanceof UsernameAuthentication)) {
+                throw new MessagingException("Authentication is required");
             }
+            String login = ((UsernameAuthentication)authState).getUsername();
+            GreenMailUser user = userManager.getUser(login);
+            if (user == null) {
+                throw new NoSuchUserException("No user found for login " + login + ", make sure to create the user first");
+            }
+            return user;
         });
 
         // Send a mail with an arbitrary FROM / TO address

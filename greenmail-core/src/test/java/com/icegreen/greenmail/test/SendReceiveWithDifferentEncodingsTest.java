@@ -39,23 +39,24 @@ public class SendReceiveWithDifferentEncodingsTest {
         String sentMailText = new String(getBytes(mimeMessage), charset);
         assertThat(sentMailText).contains("Schön");
         greenMail.waitForIncomingEmail(1000, 1);
-        Retriever retriever = new Retriever(greenMail.getPop3());
-        MimeMessage receivedMessage = (MimeMessage) retriever.getMessages("bar@example.com")[0];
+        try (Retriever retriever = new Retriever(greenMail.getPop3())) {
+            MimeMessage receivedMessage = (MimeMessage) retriever.getMessages("bar@example.com")[0];
 
-        // Verify that the Message's raw data is in the correct encoding
-        String receivedPureMessage = new String(getBytes(receivedMessage), charset);
-        assertThat(receivedPureMessage).contains("Schön");
+            // Verify that the Message's raw data is in the correct encoding
+            String receivedPureMessage = new String(getBytes(receivedMessage), charset);
+            assertThat(receivedPureMessage).contains("Schön");
 
-        // Verify that the Message's 'getContent' method correctly determines the charset when returning the content.
-        // Note that here, we retrieve a String without explicitly providing the encoding.
-        String content = (String) receivedMessage.getContent();
-        assertThat(content).contains("Schön");
+            // Verify that the Message's 'getContent' method correctly determines the charset when returning the content.
+            // Note that here, we retrieve a String without explicitly providing the encoding.
+            String content = (String) receivedMessage.getContent();
+            assertThat(content).contains("Schön");
+        }
     }
 
     /**
      * @param charset the Charset which should be used to encode the sample email
      * @return an InputStream to create a MimeMessage from, which uses the specified encoding and
-     *   sets the corresponding email-header "Content-Type" accordingly.
+     * sets the corresponding email-header "Content-Type" accordingly.
      */
     private InputStream mailDataInputStream(Charset charset) {
         return new ByteArrayInputStream(String.format(RAW_MAIL_STRING, charset.toString()).getBytes(charset));
