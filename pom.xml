@@ -498,7 +498,7 @@
       <dependency>
         <groupId>org.easymock</groupId>
         <artifactId>easymock</artifactId>
-        <version>4.3</version>
+        <version>5.0.1</version>
       </dependency>
       <!-- Transitively by junit:junit -->
       <dependency>
