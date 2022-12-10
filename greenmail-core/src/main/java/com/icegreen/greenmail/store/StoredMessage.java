@@ -6,14 +6,14 @@
  */
 package com.icegreen.greenmail.store;
 
-import java.util.Date;
-
 import javax.mail.Flags;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import java.util.Date;
+
 /**
- * A mail message with all of the extra stuff that IMAP requires.
+ * A mail message with all the extra stuff that IMAP requires.
  * This is just a placeholder object, while I work out what's really required. A common
  * way of handling *all* messages needs to be available for James (maybe MovingMessage?)
  *

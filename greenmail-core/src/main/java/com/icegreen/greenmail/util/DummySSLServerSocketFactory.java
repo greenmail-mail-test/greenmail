@@ -8,13 +8,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ServerSocketFactory;
-import javax.net.ssl.*;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.TrustManager;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.nio.file.Files;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -39,7 +44,7 @@ import java.security.cert.CertificateException;
  * @since Feb 2006
  */
 public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
-    protected final Logger log = LoggerFactory.getLogger(GreenMail.class);
+    protected final Logger log = LoggerFactory.getLogger(DummySSLServerSocketFactory.class);
     public static final String GREENMAIL_KEYSTORE_FILE_PROPERTY = "greenmail.tls.keystore.file";
     public static final String GREENMAIL_KEYSTORE_PASSWORD_PROPERTY = "greenmail.tls.keystore.password";
     public static final String GREENMAIL_KEYSTORE_P12 = "greenmail.p12";
@@ -87,18 +92,18 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
     private void loadKeyStore(char[] pass) throws NoSuchAlgorithmException, CertificateException {
         String keystore = System.getProperty(GREENMAIL_KEYSTORE_FILE_PROPERTY);
         if (null != keystore) {
-            loadKeystore(ks, pass, new File(keystore));
+            loadKeyStore(ks, pass, new File(keystore));
         } else {
             try {
-                loadKeystore(ks, pass, GREENMAIL_KEYSTORE_P12);
+                loadKeyStore(ks, pass, GREENMAIL_KEYSTORE_P12);
             } catch (IllegalStateException ex) {
                 // Fallback to legacy JKS keystore
-                loadKeystore(ks, pass, GREENMAIL_KEYSTORE_JKS);
+                loadKeyStore(ks, pass, GREENMAIL_KEYSTORE_JKS);
             }
         }
     }
 
-    private void loadKeystore(KeyStore keyStore, char[] pass, String keystoreResource)
+    private void loadKeyStore(KeyStore keyStore, char[] pass, String keystoreResource)
         throws NoSuchAlgorithmException, CertificateException {
         log.debug("Loading keystore from resource {} ...", keystoreResource);
         try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(keystoreResource)) {
@@ -110,14 +115,15 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
         }
     }
 
-    private void loadKeystore(KeyStore keyStore, char[] pass, File keystoreResource)
+    private void loadKeyStore(KeyStore keyStore, char[] pass, File keystoreResource)
         throws NoSuchAlgorithmException, CertificateException {
         log.debug("Loading keystore from file {} ...", keystoreResource);
-        try (InputStream is = new FileInputStream(keystoreResource)) {
+        try (InputStream is = Files.newInputStream(keystoreResource.toPath())) {
             keyStore.load(is, pass);
         } catch (IOException ex) {
             // Try hard coded default keystore
-            throw new IllegalStateException("Can not load greenmail keystore from file '" + keystoreResource + "'", ex);
+            throw new IllegalStateException(
+                "Can not load greenmail keystore from file '" + keystoreResource + "'", ex);
         }
     }
 

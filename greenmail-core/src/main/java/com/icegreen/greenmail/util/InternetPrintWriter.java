@@ -120,7 +120,7 @@ public class InternetPrintWriter
     }
 
     /**
-     * Print a int followed by a line separator.
+     * Print an int followed by a line separator.
      *
      * @param x the int to print
      */

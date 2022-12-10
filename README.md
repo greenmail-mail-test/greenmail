@@ -27,7 +27,7 @@ Development [![Build status](https://circleci.com/gh/greenmail-mail-test/greenma
   Make sure you got [Maven 3.8][maven_download] or higher, and run a JDK 8 or newer.
   If you want to skip building the docker image, leave out the `-Pdocker` profile option.
 
-  If you want to skip the long running tests, use the Maven option `-DskipITs` .
+  If you want to skip the long-running tests, use the Maven option `-DskipITs` .
 
 * Build the Maven site (and the optional example report)
 
@@ -44,7 +44,7 @@ Development [![Build status](https://circleci.com/gh/greenmail-mail-test/greenma
 
   `mvn clean deploy -Prelease,release-ossrh,docker,docker-tag-latest`
 
-  Note: Do only use docker-tag-latest profile if you really want the tag latest, e.g. for newest release of highest version.
+  Note: Do only use docker-tag-latest profile if you really want the tag latest, e.g. for newest release of the highest version.
 
 * Build and deploy a snapshot
 
@@ -89,7 +89,7 @@ To make it easier for integrating your contribution, have a look at the followin
 ### Be concise
 
 Try to keep your changes focused. Please avoid (major) refactorings and avoid re-formatting existing code.
-A good check is looking at the diff of the your pull requrest.
+A good check is looking at the diff of your pull request.
 Also, please refer to the open issue you're fixing by including a reference in your commit message.
 
 ### Code formatter ###
@@ -106,7 +106,7 @@ If you think you require a new dependencies or dependency update,
 discuss this up front with committers.
 
 ### Starting your pull request ###
-The best strategy for opening a [pull request][github_pull_request] after a [fork][github_fork] is to add the this [repository](https://github.com/greenmail-mail-test/greenmail)
+The best strategy for opening a [pull request][github_pull_request] after a [fork][github_fork] is to add this [repository](https://github.com/greenmail-mail-test/greenmail)
 as the "upstream" to your .git/config such as:
 
     [remote "upstream"]
@@ -115,7 +115,7 @@ as the "upstream" to your .git/config such as:
 
 Then you fetch "upstream" and create a new branch at upstream/master (name it issue-XXX or something like that).
 Now you can add commits on that branch and then create a pull request for that branch (after pushing it to your
-github). That way commits are isolated for one feature.
+GitHub). That way commits are isolated for one feature.
 
 ### Tests for your pull request ###
 Please also create a test for every feature you add. We know that currently there aren't many tests but in

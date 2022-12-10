@@ -63,8 +63,8 @@ public class Configuration {
 
     private String defaultHostname;
     private int portOffset;
-    private List<ServiceConfiguration> services;
-    private List<User> users;
+    private final List<ServiceConfiguration> services;
+    private final List<User> users;
 
     /**
      * Initializes configuration with

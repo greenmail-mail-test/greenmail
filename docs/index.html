@@ -1034,7 +1034,7 @@ docker run -t -i \
                 <p>Operations include
                 <ul>
                     <li>Getting currently configured user and adding new users</li>
-                    <li>Getting current configuration (eg which service like SMTP runs on which port)</li>
+                    <li>Getting current configuration (e.g. which service like SMTP runs on which port)</li>
                     <li>Purging all mailboxes of emails</li>
                     <li>Resetting GreenMail to original configuration (restarts server, purges all mails and users added
                         via API)
@@ -1048,10 +1048,10 @@ docker run -t -i \
                      alt="GreenMail OpenAPI UI"/>
                     <figcaption class="figure-caption text-end">GreenMail OpenAPI UI.</figcaption>
                 </figure>
-                <p>The OpenAPI rendered UI can be used for invoking the API, eg for adding a new user:</p>
+                <p>The OpenAPI rendered UI can be used for invoking the API, e.g. for adding a new user:</p>
                 <figure class="figure">
                     <img src="images/greenmail_standalone_openapi_try.png" class="figure-img img-fluid"
-                         alt="GreenMail OpenAPI UI invocating new user request"/>
+                         alt="GreenMail OpenAPI UI invoking new user request"/>
                     <figcaption class="figure-caption text-end">GreenMail OpenAPI UI invoking new user request.</figcaption>
                 </figure>
 
@@ -1084,7 +1084,7 @@ docker run -t -i \
                 <h4>How come I don't need to install any SSL/TLS related certificates?</h4>
                 <p>GreenMail is designed to be used out of the box with no need to generate, sign or install any
                     certificates into your keystore.
-                    GreenMail ships with a builtin keystore with a self signed RSA key. Refer to the source code of
+                    GreenMail ships with a builtin keystore with a self-signed RSA key. Refer to the source code of
                     <a
                             href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-core/src/main/java/com/icegreen/greenmail/util/DummySSLSocketFactory.java">DummySSLServerSocketFactory</a>
                     for details.</p>
@@ -1134,10 +1134,10 @@ GreenMailUtil.sendTextEmail("to@localhost", "from@localhost", "subject", "body",
     greenMail.getSmtp().getServerSetup());
 </code></pre><!-- @formatter:on -->
 
-                <h4>How can I pre-load an existing (eml) message?</h4>
-                <p>You can load an existing electronic mail (eml) messsage and store the message for a user in a mailbox folder.</p>
+                <h4>How can I preload an existing (eml) message?</h4>
+                <p>You can load an existing electronic mail (eml) message and store the message for a user in a mailbox folder.</p>
                 <p>
-                    Example: 
+                    Example:
                     <a href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-core/src/test/java/com/icegreen/greenmail/examples/ExamplePreloadMailFromFsTest.java">ExamplePreloadMailFromFsTest.java</a>
                     </p>
             </section>

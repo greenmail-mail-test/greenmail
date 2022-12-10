@@ -12,7 +12,7 @@ import com.icegreen.greenmail.store.FolderException;
 /**
  * Implements IMAP Quota Extension.
  *
- * See http://rfc-ref.org/RFC-TEXTS/2087
+ * See <a href="https://datatracker.ietf.org/doc/html/rfc2087#section-4-1">rfc2087</a>
  *
  * @author mm
  */
