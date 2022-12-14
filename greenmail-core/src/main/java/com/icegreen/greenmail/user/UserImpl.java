@@ -6,14 +6,14 @@
  */
 package com.icegreen.greenmail.user;
 
-import java.util.Collection;
-import javax.mail.internet.MimeMessage;
-
 import com.icegreen.greenmail.imap.AuthorizationException;
 import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.mail.MovingMessage;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
+import javax.mail.internet.MimeMessage;
+
+import java.util.Collection;
 
 
 
@@ -53,6 +53,9 @@ public class UserImpl implements GreenMailUser {
         } catch (FolderException | AuthorizationException e) {
             throw new IllegalStateException("Can not delete user mailboxes " + this, e);
         }
+
+        // Delete Quota
+        imapHostManager.getStore().deleteQuota(getQualifiedMailboxName());
     }
 
     @Override

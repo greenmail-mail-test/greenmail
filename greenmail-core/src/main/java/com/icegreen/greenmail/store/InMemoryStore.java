@@ -7,6 +7,7 @@
 package com.icegreen.greenmail.store;
 
 import java.util.*;
+
 import javax.mail.MessagingException;
 import javax.mail.Quota;
 
@@ -20,7 +21,7 @@ import com.icegreen.greenmail.imap.ImapConstants;
  * @version $Revision: 109034 $
  */
 public class InMemoryStore
-        implements Store, ImapConstants {
+    implements Store, ImapConstants {
     boolean quotaSupported = true;
     private final RootFolder rootMailbox = new RootFolder();
     private final Map<String, Set<Quota>> quotaMap = new HashMap<>();
@@ -33,8 +34,8 @@ public class InMemoryStore
 
         // The first token must be "#mail"
         if (!tokens.hasMoreTokens() ||
-                !tokens.nextToken().equalsIgnoreCase(USER_NAMESPACE)) {
-            throw new IllegalStateException("Can not extract mail root '"+USER_NAMESPACE+"' from  "+absoluteMailboxName);
+            !tokens.nextToken().equalsIgnoreCase(USER_NAMESPACE)) {
+            throw new IllegalStateException("Can not extract mail root '" + USER_NAMESPACE + "' from  " + absoluteMailboxName);
         }
 
         HierarchicalFolder parent = rootMailbox;
@@ -54,9 +55,9 @@ public class InMemoryStore
     public MailFolder createMailbox(MailFolder parent,
                                     String mailboxName,
                                     boolean selectable)
-            throws FolderException {
+        throws FolderException {
         if (mailboxName.indexOf(HIERARCHY_DELIMITER_CHAR) != -1) {
-            throw new FolderException("Invalid mailbox name "+mailboxName);
+            throw new FolderException("Invalid mailbox name " + mailboxName);
         }
         HierarchicalFolder castParent = (HierarchicalFolder) parent;
         HierarchicalFolder child = castParent.createChild(mailboxName);
@@ -69,11 +70,11 @@ public class InMemoryStore
         HierarchicalFolder toDelete = (HierarchicalFolder) folder;
 
         if (toDelete.hasChildren()) {
-            throw new FolderException("Cannot delete mailbox with children.");
+            throw new FolderException("Cannot delete mailbox " + folder.getName() + " with children.");
         }
 
         if (toDelete.getMessageCount() != 0) {
-            throw new FolderException("Cannot delete non-empty mailbox");
+            throw new FolderException("Cannot delete non-empty mailbox " + folder.getName());
         }
 
         HierarchicalFolder parent = toDelete.getParent();
@@ -115,7 +116,7 @@ public class InMemoryStore
 
     private HierarchicalFolder getInboxOrUserRootFolder(HierarchicalFolder folder) {
         final HierarchicalFolder inboxFolder = findParentByName(folder);
-        if(null==inboxFolder) {
+        if (null == inboxFolder) {
             return folder.getParent();
         }
         return inboxFolder.getParent();
@@ -142,15 +143,15 @@ public class InMemoryStore
 
     @Override
     public Collection<MailFolder> listMailboxes(String searchPattern)
-            throws FolderException {
+        throws FolderException {
         int starIndex = searchPattern.indexOf('*');
         int percentIndex = searchPattern.indexOf('%');
 
         // We only handle wildcard at the end of the search pattern.
         if ((starIndex > -1 && starIndex < searchPattern.length() - 1) ||
-                (percentIndex > -1 && percentIndex < searchPattern.length() - 1)) {
+            (percentIndex > -1 && percentIndex < searchPattern.length() - 1)) {
             throw new FolderException("Wildcard characters <" + searchPattern
-                    + "> are only handled as the last character of a list argument");
+                + "> are only handled as the last character of a list argument");
         }
 
         List<MailFolder> mailboxes = new ArrayList<>();
@@ -221,19 +222,25 @@ public class InMemoryStore
 
     private void updateQuota(final Quota quota, final String pQualifiedRootPrefix) {
         MailFolder folder = getMailbox(
-                ImapConstants.USER_NAMESPACE + ImapConstants.HIERARCHY_DELIMITER +
-                        pQualifiedRootPrefix + ImapConstants.HIERARCHY_DELIMITER +
-                        quota.quotaRoot);
+            ImapConstants.USER_NAMESPACE + ImapConstants.HIERARCHY_DELIMITER +
+                pQualifiedRootPrefix + ImapConstants.HIERARCHY_DELIMITER +
+                quota.quotaRoot);
         try {
             for (Quota.Resource r : quota.resources) {
                 if (STORAGE.equals(r.name)) {
                     long size = 0;
-                    for (StoredMessage m : folder.getMessages()) {
-                        size += m.getMimeMessage().getSize();
+                    if (null != folder) { // Could be deleted
+                        for (StoredMessage m : folder.getMessages()) {
+                            size += m.getMimeMessage().getSize();
+                        }
                     }
                     r.usage = size;
                 } else if (MESSAGES.equals(r.name)) {
-                    r.usage = folder.getMessageCount();
+                    if (null != folder) { // Could be deleted
+                        r.usage = folder.getMessageCount();
+                    } else {
+                        r.usage = 0L;
+                    }
                 } else {
                     throw new IllegalStateException("Quota " + r.name + " not supported");
                 }
@@ -261,6 +268,11 @@ public class InMemoryStore
             quotas.clear(); // " Any previous resource limits for the named quota root are discarded"
         }
         quotas.add(quota);
+    }
+
+    @Override
+    public void deleteQuota(String qualifiedRootPrefix) {
+        quotaMap.keySet().removeIf(key -> key.startsWith(qualifiedRootPrefix));
     }
 
     private void addAllChildren(HierarchicalFolder mailbox, Collection<MailFolder> mailboxes) {

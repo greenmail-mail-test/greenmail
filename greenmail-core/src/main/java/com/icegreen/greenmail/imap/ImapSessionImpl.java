@@ -17,7 +17,6 @@ import java.util.List;
 
 /**
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 public final class ImapSessionImpl implements ImapSession {
     private ImapSessionState state = ImapSessionState.NON_AUTHENTICATED;
@@ -108,39 +107,39 @@ public final class ImapSessionImpl implements ImapSession {
 
     @Override
     public void setAuthenticated(GreenMailUser user) {
-        this.state = ImapSessionState.AUTHENTICATED;
+        state = ImapSessionState.AUTHENTICATED;
         this.user = user;
     }
 
     @Override
     public GreenMailUser getUser() {
-        return this.user;
+        return user;
     }
 
     @Override
     public void deselect() {
-        this.state = ImapSessionState.AUTHENTICATED;
+        state = ImapSessionState.AUTHENTICATED;
         if (selectedMailbox != null) {
             // TODO is there more to do here, to cleanup the mailbox.
-            selectedMailbox.removeListener(selectedMailbox);
-            this.selectedMailbox = null;
+            selectedMailbox.deselect();
+            selectedMailbox = null;
         }
     }
 
     @Override
     public void setSelected(MailFolder folder, boolean readOnly) {
         ImapSessionFolder sessionMailbox = new ImapSessionFolder(folder, this, readOnly);
-        this.state = ImapSessionState.SELECTED;
-        this.selectedMailbox = sessionMailbox;
+        state = ImapSessionState.SELECTED;
+        selectedMailbox = sessionMailbox;
     }
 
     @Override
     public ImapSessionFolder getSelected() {
-        return this.selectedMailbox;
+        return selectedMailbox;
     }
 
     @Override
     public ImapSessionState getState() {
-        return this.state;
+        return state;
     }
 }

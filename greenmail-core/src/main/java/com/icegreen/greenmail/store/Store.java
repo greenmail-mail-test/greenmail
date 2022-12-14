@@ -122,6 +122,13 @@ public interface Store {
     void setQuota(Quota quota, String qualifiedRootPrefix);
 
     /**
+     * Deletes the quota.
+     *
+     * @param qualifiedRootPrefix the user specific prefix
+     */
+    void deleteQuota(String qualifiedRootPrefix);
+
+    /**
      * Checks if quota capability is activated.
      *
      * @return true, if quota is supported.
