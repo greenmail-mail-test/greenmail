@@ -32,17 +32,32 @@ public class SetQuotaCommand extends AuthenticatedStateCommand {
             Quota quota = new Quota(root);
             parser.consumeChar(request, ' ');
             parser.consumeChar(request, '(');
-            quota.setResourceLimit(parser.astring(request), parser.consumeLong(request));
+            parseAndUpdateResourceLimit(request, quota);
             char c =request.nextWordChar();
             if(')' != c) {
-                quota.setResourceLimit(parser.astring(request), parser.consumeLong(request));
+                parseAndUpdateResourceLimit(request, quota);
             }
             parser.consumeChar(request, ')');
             session.getHost().getStore().setQuota(
                     quota, session.getUser().getQualifiedMailboxName());
             response.commandComplete(this);
         } catch (ProtocolException e) {
-            response.commandFailed(this, "Can not parse command"+e.getMessage());
+            response.commandFailed(this,
+                "Can not parse command " + getName() +": " + e.getMessage());
+        }
+    }
+
+    private void parseAndUpdateResourceLimit(ImapRequestLineReader request, Quota quota) throws ProtocolException {
+        final String astring = parser.astring(request);
+        try {
+            String value = parser.atomOnly(request);
+            final long limit = Long.parseLong(value);
+            if(limit<0) {
+                throw new ProtocolException("Expected number (positive integer) but got "+limit);
+            }
+            quota.setResourceLimit(astring, limit);
+        } catch(ProtocolException|NumberFormatException ex) {
+            throw new ProtocolException("Failed to parse quota " + quota.quotaRoot+" resource limit "+astring+" value: "+ex.getMessage(), ex);
         }
     }
 }

@@ -205,6 +205,23 @@ public class ImapServerTest {
     }
 
     @Test
+    public void testQuotaInvalidResourceLimit() throws Exception {
+        greenMail.setUser("foo@localhost", "pwd");
+
+        try (IMAPStore store = greenMail.getImap().createStore()) {
+            store.connect("foo@localhost", "pwd");
+            Quota testQuota = new Quota("INBOX");
+            testQuota.setResourceLimit("MESSAGES", -5L);
+            assertThatThrownBy(() -> store.setQuota(testQuota))
+                .hasMessageContaining("NO SETQUOTA failed. Can not parse command SETQUOTA: " +
+                    "Failed to parse quota INBOX resource limit MESSAGES value:" +
+                    " Expected number (positive integer) but got -5");
+            testQuota.setResourceLimit("MESSAGES", 5L);
+            store.setQuota(testQuota);
+        }
+    }
+
+    @Test
     public void testQuotaCapability() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
         greenMail.setQuotaSupported(false);
