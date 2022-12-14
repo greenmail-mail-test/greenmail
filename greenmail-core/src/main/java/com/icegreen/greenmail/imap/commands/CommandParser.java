@@ -373,7 +373,11 @@ public class CommandParser {
      */
     public long number(ImapRequestLineReader request) throws ProtocolException {
         String digits = consumeWord(request, new DigitCharValidator());
-        return Long.parseLong(digits);
+        try {
+            return Long.parseLong(digits);
+        } catch (NumberFormatException ex) {
+            throw new ProtocolException("Can not parse '" + digits + "' as number", ex);
+        }
     }
 
     /**
