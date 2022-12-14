@@ -5,6 +5,8 @@
 package com.icegreen.greenmail.test;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.user.GreenMailUser;
+import com.icegreen.greenmail.user.UserManager;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetup;
@@ -24,7 +26,8 @@ import java.io.ByteArrayOutputStream;
 import java.util.Date;
 
 import static jakarta.mail.Flags.Flag.DELETED;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class ImapServerTest {
     private static final String UMLAUTS = "öäü \u00c4 \u00e4";
@@ -143,22 +146,24 @@ public class ImapServerTest {
 
     @Test
     public void testQuota() throws Exception {
-        greenMail.setUser("foo@localhost", "pwd");
-        GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject", "Test message", ServerSetupTest.SMTP);
+        GreenMailUser user = greenMail.setUser("foo@localhost", "pwd");
+        GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject",
+            "Test message", ServerSetupTest.SMTP);
         greenMail.waitForIncomingEmail(1);
 
-        final IMAPStore store = greenMail.getImap().createStore();
+        IMAPStore store = greenMail.getImap().createStore();
         store.connect("foo@localhost", "pwd");
-        try {
-            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+        try (IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX")) {
             folder.open(Folder.READ_ONLY);
             Message[] msgs = folder.getMessages();
             assertThat(null != msgs && msgs.length == 1).isTrue();
 
+            Quota[] initialQuota = store.getQuota("INBOX");
+            assertThat(initialQuota).isEmpty();
+
             Quota testQuota = new Quota("INBOX");
             testQuota.setResourceLimit("STORAGE", 1024L * 42L);
             testQuota.setResourceLimit("MESSAGES", 5L);
-
             store.setQuota(testQuota);
 
             Quota[] quotas = store.getQuota("INBOX");
@@ -167,15 +172,28 @@ public class ImapServerTest {
             assertThat(quotas[0].resources).isNotNull();
             assertThat(quotas[0].resources.length).isEqualTo(2);
             assertThat(quotas[0].quotaRoot).isEqualTo(testQuota.quotaRoot);
+            assertThat(testQuota.resources[0].name).isEqualTo("STORAGE");
             assertThat(testQuota.resources[0].limit).isEqualTo(quotas[0].resources[0].limit);
+            assertThat(quotas[0].resources[0].usage).isEqualTo(12L);
+            assertThat(testQuota.resources[1].name).isEqualTo("MESSAGES");
             assertThat(testQuota.resources[1].limit).isEqualTo(quotas[0].resources[1].limit);
-            assertThat(1).isEqualTo(quotas[0].resources[1].usage);
-//            assertThat(m.getSize()).isEqualTo(quotas[0].resources[0].usage);
+            assertThat(quotas[0].resources[1].usage).isEqualTo(1L);
 
             quotas = store.getQuota("");
             assertThat(quotas).isNotNull();
             assertThat(quotas.length).isEqualTo(0);
-            // TODO: Quota on ""
+        } finally {
+            store.close();
+        }
+
+        // Deleting/recreating a user should delete the quota
+        final UserManager userManager = greenMail.getUserManager();
+        userManager.deleteUser(user);
+        userManager.createUser(user.getEmail(), user.getLogin(), user.getPassword());
+        store.connect("foo@localhost", "pwd");
+        try {
+            assertThat(store.getQuota("INBOX")).isEmpty();
+            assertThat(store.getQuota("")).isEmpty();
         } finally {
             store.close();
         }
@@ -188,15 +206,12 @@ public class ImapServerTest {
         try (IMAPStore store = greenMail.getImap().createStore()) {
             store.connect("foo@localhost", "pwd");
 
-            try {
-                Quota testQuota = new Quota("INBOX");
-                testQuota.setResourceLimit("STORAGE", 1024L * 42L);
-                testQuota.setResourceLimit("MESSAGES", 5L);
-                store.setQuota(testQuota);
-                fail("Excepted MessageException since quota capability is turned off");
-            } catch (MessagingException ex) {
-                assertThat("QUOTA not supported").isEqualTo(ex.getMessage());
-            }
+            Quota testQuota = new Quota("INBOX");
+            testQuota.setResourceLimit("STORAGE", 1024L * 42L);
+            testQuota.setResourceLimit("MESSAGES", 5L);
+
+            assertThatThrownBy(() -> store.setQuota(testQuota))
+                .hasMessage("QUOTA not supported");
         }
     }
 
@@ -441,12 +456,11 @@ public class ImapServerTest {
     private void sendMessages(int n) {
         greenMail.setUser("foo@localhost", "pwd");
 
-        int msgCount = n;
         for (int i = 0; i < n; i++) {
             GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject #" + i,
                 "Test message", ServerSetupTest.SMTP);
         }
-        greenMail.waitForIncomingEmail(msgCount);
+        greenMail.waitForIncomingEmail(n);
 
     }
 
