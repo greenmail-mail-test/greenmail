@@ -219,6 +219,7 @@ public class EncodingTest {
                 }
             };
             inboxFolder.addMessageCountListener(listener);
+            String fileName = "кирилица testimage_ünicöde_\uD83C\uDF36";
             new Thread(() -> {
                 try {
                     Thread.sleep(100);
@@ -226,10 +227,9 @@ public class EncodingTest {
                     // Ignore
                 }
                 try {
-                    String fileName = MimeUtility.encodeText("кирилица testimage_ünicöde_\uD83C\uDF36");
                     GreenMailUtil.sendAttachmentEmail(
                         "to@localhost", "from@localhost", "subject", "body",
-                        new byte[]{0, 1, 2}, "image/gif", fileName,
+                        new byte[]{0, 1, 2}, "image/gif", MimeUtility.encodeText(fileName),
                         "testimage_description", greenMail.getSmtp().getServerSetup());
                 } catch (UnsupportedEncodingException ex) {
                     assertThat(false).isTrue();
@@ -238,6 +238,7 @@ public class EncodingTest {
             ((IMAPFolder) inboxFolder).idle(true);
 
             assertThat(messages[0].getContent() != null).isTrue();
+            assertThat(((Multipart) messages[0].getContent()).getBodyPart(1).getFileName()).isEqualTo(fileName);
 
             inboxFolder.close();
         } finally {
