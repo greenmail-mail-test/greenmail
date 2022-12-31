@@ -5,10 +5,12 @@ on:
     paths-ignore:
       - "**/*.md"
       - "docs/**"
+      - ".circleci/**"
   pull_request:
     paths-ignore:
       - "**/*.md"
       - "docs/**"
+      - ".circleci/**"
 jobs:
   build:
     runs-on: ubuntu-latest
