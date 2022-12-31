@@ -1,4 +1,15 @@
-version: 2
+version: 2.1
+
+commands:
+  prepare-maven:
+    steps:
+      - run: >
+          (apt-get update || true ) && apt-get install -y curl
+          && mkdir -p /usr/share/maven
+          && curl -fsSL -o /tmp/apache-maven.tar.gz https://archive.apache.org/dist/maven/maven-3/3.8.7/binaries/apache-maven-3.8.7-bin.tar.gz
+          && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
+          && rm -f /tmp/apache-maven.tar.gz
+          && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
 
 jobs:
   "openjdk-8":
@@ -17,13 +28,7 @@ jobs:
     steps:
       - checkout
 
-      - run: >
-          (apt-get update || true ) && apt-get install -y curl
-          && mkdir -p /usr/share/maven
-          && curl -fsSL -o /tmp/apache-maven.tar.gz https://downloads.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz
-          && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
-          && rm -f /tmp/apache-maven.tar.gz
-          && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+      - prepare-maven
 
       - restore_cache:
           key: greenmail-{{ checksum "pom.xml" }}
@@ -66,13 +71,7 @@ jobs:
     steps:
       - checkout
 
-      - run: >
-          (apt-get update || true ) && apt-get install -y curl
-          && mkdir -p /usr/share/maven
-          && curl -fsSL -o /tmp/apache-maven.tar.gz https://downloads.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz
-          && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
-          && rm -f /tmp/apache-maven.tar.gz
-          && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+      - prepare-maven
 
       - restore_cache:
           key: greenmail-{{ checksum "pom.xml" }}
@@ -115,13 +114,7 @@ jobs:
     steps:
       - checkout
 
-      - run: >
-          (apt-get update || true ) && apt-get install -y curl
-          && mkdir -p /usr/share/maven
-          && curl -fsSL -o /tmp/apache-maven.tar.gz https://downloads.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz
-          && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
-          && rm -f /tmp/apache-maven.tar.gz
-          && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+      - prepare-maven
 
       - restore_cache:
           key: greenmail-{{ checksum "pom.xml" }}
