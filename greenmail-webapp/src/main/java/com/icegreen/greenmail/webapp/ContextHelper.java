@@ -1,6 +1,6 @@
 package com.icegreen.greenmail.webapp;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import com.icegreen.greenmail.Managers;
 

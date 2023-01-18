@@ -8,10 +8,10 @@ import org.junit.After;
 import org.junit.Test;
 
 import jakarta.mail.*;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.client.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.client.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;

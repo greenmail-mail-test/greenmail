@@ -8,8 +8,8 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.ServerSetup;
 
-import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.ext.ContextResolver;
+import jakarta.ws.rs.ext.Provider;
 import java.io.IOException;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.FAIL_ON_EMPTY_BEANS;
