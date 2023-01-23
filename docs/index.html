@@ -1140,6 +1140,37 @@ GreenMailUtil.sendTextEmail("to@localhost", "from@localhost", "subject", "body",
                     Example:
                     <a href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-core/src/test/java/com/icegreen/greenmail/examples/ExamplePreloadMailFromFsTest.java">ExamplePreloadMailFromFsTest.java</a>
                     </p>
+                <h4>How can I use nested test classes (with @Nested)?</h4>
+                <p>When specifying <code>.withPerMethodLifecycle(false)</code>, greenmail will initialize as "before all" for every test class. When using nested test classes this leads to an initialization in the main test class and in every nested test class. This in turn leads to the following error: "Address already in use: bind".</p>
+                <p>To circumvent that you need to override the before all behaviour and suppress the initialization in nested test classes.</p>
+                <pre><code class="language-java"><!-- @formatter:off -->
+public class NestedTest {
+    @RegisterExtension
+    protected static GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP) {
+        @Override
+        public void beforeAll(ExtensionContext context) {
+            if (context.getTestClass().isPresent()) {
+                Class<?> currentClass = context.getTestClass().get();
+                if (!ModifierSupport.isStatic(currentClass) && currentClass.isMemberClass()) {
+                    return;
+                }
+            }
+            super.beforeAll(context);
+        }
+    }
+        .withConfiguration(
+            GreenMailConfiguration.aConfig().withUser("user", "pw"))
+        .withPerMethodLifecycle(false);
+
+    @Nested
+    class NestedTestClass {
+        @Test
+        public void testA() {
+            // test something
+        }
+    }
+}
+</code></pre><!-- @formatter:on -->
             </section>
 
             <section id="download" class="anchor">
