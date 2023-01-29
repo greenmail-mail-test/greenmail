@@ -786,4 +786,5 @@ public class ImapServerTest {
             store.close();
         }
     }
+
 }

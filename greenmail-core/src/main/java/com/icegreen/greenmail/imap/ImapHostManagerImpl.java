@@ -94,6 +94,26 @@ public class ImapHostManagerImpl
         store.createMailbox(userRoot, INBOX_NAME, true);
     }
 
+    @Override
+    public void deletePrivateMailAccount(GreenMailUser user) {
+        try {
+            // Delete mail boxes
+            Collection<MailFolder> mailfolders = listMailboxes(user, "*");
+            for(MailFolder mf : mailfolders) {
+                deleteMailbox(user, mf.getFullName());
+            }
+
+            // Delete account mail box
+            MailFolder root = store.getMailbox(USER_NAMESPACE);
+            store.deleteMailbox(store.getMailbox(root,user.getQualifiedMailboxName()));
+
+            // Delete Quota
+            getStore().deleteQuota(user.getQualifiedMailboxName());
+        } catch (FolderException e) {
+            throw new IllegalStateException("Can not delete private mail account for " + user, e);
+        }
+    }
+
     /**
      * @see ImapHostManager#createMailbox
      */

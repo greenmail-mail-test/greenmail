@@ -4,14 +4,12 @@
  */
 package com.icegreen.greenmail.test;
 
-import static com.icegreen.greenmail.util.GreenMailUtil.createTextEmail;
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.SocketException;
-import java.util.Properties;
-
+import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.smtp.commands.AuthCommand;
+import com.icegreen.greenmail.user.GreenMailUser;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetup;
+import com.icegreen.greenmail.util.ServerSetupTest;
 import jakarta.mail.AuthenticationFailedException;
 import jakarta.mail.BodyPart;
 import jakarta.mail.Message;
@@ -22,16 +20,17 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMessage.RecipientType;
 import jakarta.mail.internet.MimeMultipart;
-
 import org.assertj.core.api.Assertions;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.smtp.commands.AuthCommand;
-import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.ServerSetup;
-import com.icegreen.greenmail.util.ServerSetupTest;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.SocketException;
+import java.util.Properties;
+
+import static com.icegreen.greenmail.util.GreenMailUtil.createTextEmail;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Wael Chatila
@@ -242,4 +241,16 @@ public class SmtpServerTest {
         assertThat(emails[0].getSubject()).isEqualTo(subject);
     }
 
+    @Test
+    public void testSendAndReCreateUser() {
+        GreenMailUser user = greenMail.setUser("foo@localhost", "pwd");
+        GreenMailUtil.sendTextEmail(user.getEmail(), user.getEmail(), "Test subject",
+            "Test message", greenMail.getSmtp().getServerSetup());
+
+        greenMail.getUserManager().deleteUser(user);
+        user = greenMail.setUser("foo@localhost", "pwd");
+
+        GreenMailUtil.sendTextEmail(user.getEmail(), user.getEmail(), "Test subject",
+            "Test message", greenMail.getSmtp().getServerSetup());
+    }
 }

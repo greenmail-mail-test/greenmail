@@ -1,16 +1,5 @@
 package com.icegreen.greenmail.test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.io.IOException;
-
-import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
-
-import org.junit.Rule;
-import org.junit.Test;
-
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.pop3.Pop3State;
@@ -22,6 +11,15 @@ import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import org.junit.Rule;
+import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class AuthenticationDisabledTest {
     @Rule
@@ -65,7 +63,7 @@ public class AuthenticationDisabledTest {
     @Test
     public void testReceiveWithAuthDisabledAndProvisionedUser() {
         final String to = "to@localhost";
-        greenMail.setUser(to, "to", "secret");
+        greenMail.setUser(to, to, "secret");
 
         greenMail.waitForIncomingEmail(500, 1);
 
