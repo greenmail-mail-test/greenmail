@@ -274,7 +274,7 @@ public class GreenMail extends ConfiguredGreenMail {
             try {
                 user = userManager.createUser(email, login, password);
             } catch (UserException e) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
         } else {
             user.setPassword(password);

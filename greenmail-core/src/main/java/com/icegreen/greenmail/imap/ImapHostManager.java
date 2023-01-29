@@ -99,6 +99,13 @@ public interface ImapHostManager {
     void createPrivateMailAccount(GreenMailUser user) throws FolderException;
 
     /**
+     * Deletes given user data, such as mail boxes or quotas.
+     *
+     * @param user the user.
+     */
+    void deletePrivateMailAccount(GreenMailUser user);
+
+    /**
      * Returns a reference to a newly created Mailbox. The request should
      * specify a mailbox that does not already exist on this server, that
      * could exist on this server and that the user has rights to create.

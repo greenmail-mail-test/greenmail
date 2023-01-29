@@ -4,9 +4,10 @@
  */
 package com.icegreen.greenmail.store;
 
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicLong;
+import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
+import com.icegreen.greenmail.imap.ImapConstants;
+import com.icegreen.greenmail.imap.commands.IdRange;
+import com.icegreen.greenmail.mail.MovingMessage;
 import javax.mail.Flags;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -14,10 +15,15 @@ import javax.mail.UIDFolder;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
 
-import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
-import com.icegreen.greenmail.imap.ImapConstants;
-import com.icegreen.greenmail.imap.commands.IdRange;
-import com.icegreen.greenmail.mail.MovingMessage;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Raimund Klein <raimund.klein@gmx.de>
@@ -90,6 +96,9 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
 
     HierarchicalFolder createChild(String mailboxName) {
         HierarchicalFolder child = new HierarchicalFolder(this, mailboxName);
+        if(children.stream().anyMatch(it->mailboxName.equals(it.name))) {
+            throw new IllegalStateException("Mailbox "+mailboxName+ " already exists in "+children);
+        }
         children.add(child);
         return child;
     }
