@@ -189,6 +189,52 @@ public class EncodingTest {
         }
     }
 
+    @Test(timeout = 10000)
+    public void testTextPlainWithUTF8SubjectAndGreenMailApi() throws MessagingException, IOException {
+        greenMail.setUser("to@localhost", "pwd");
+        final IMAPStore store = greenMail.getImap().createStore();
+        store.connect("to@localhost", "pwd");
+        try {
+            String subject = "кирилица ünicöde_\uD83C\uDF36";
+            Folder inboxFolder = store.getFolder("INBOX");
+            inboxFolder.open(Folder.READ_ONLY);
+            Message[] messages = new Message[] { null };
+            MessageCountListener listener = new MessageCountListener() {
+                @Override
+                public void messagesRemoved(MessageCountEvent e) {
+                }
+
+                @Override
+                public void messagesAdded(MessageCountEvent e) {
+                    messages[0] = e.getMessages()[0];
+                }
+            };
+            inboxFolder.addMessageCountListener(listener);
+            new Thread(() -> {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e1) {
+                    // Ignore
+                }
+                try {
+                    MimeMessage message = GreenMailUtil.createTextEmail(
+                        "to@localhost", "from@localhost", "will be replaced", "body", greenMail.getSmtp().getServerSetup());
+                    message.setHeader("Subject", subject);
+                    GreenMailUtil.sendMimeMessage(message);
+                } catch (MessagingException ex) {
+                    assertThat(false).isTrue();
+                }
+            }).start();
+            ((IMAPFolder) inboxFolder).idle(true);
+
+            assertThat(messages[0].getSubject()).isEqualTo(subject);
+
+            inboxFolder.close();
+        } finally {
+            store.close();
+        }
+    }
+
     private void sendMessage(InternetAddress fromAddress, InternetAddress toAddress) throws MessagingException {
         final Session session = greenMail.getSmtp().createSession();
         MimeMessage message = new MimeMessage(session);
