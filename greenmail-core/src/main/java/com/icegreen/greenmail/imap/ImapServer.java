@@ -10,7 +10,7 @@ import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.util.ServerSetup;
-import com.sun.mail.imap.IMAPStore; // NOSONAR
+import org.eclipse.angus.mail.imap.IMAPStore; // NOSONAR
 
 import jakarta.mail.NoSuchProviderException;
 import java.net.Socket;

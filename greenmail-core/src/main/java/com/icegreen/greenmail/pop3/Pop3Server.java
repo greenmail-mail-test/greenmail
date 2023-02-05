@@ -11,7 +11,7 @@ import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.pop3.commands.Pop3CommandRegistry;
 import com.icegreen.greenmail.server.ProtocolHandler;
 import com.icegreen.greenmail.util.ServerSetup;
-import com.sun.mail.pop3.POP3Store; // NOSONAR
+import org.eclipse.angus.mail.pop3.POP3Store; // NOSONAR
 
 import jakarta.mail.NoSuchProviderException;
 import java.net.Socket;
