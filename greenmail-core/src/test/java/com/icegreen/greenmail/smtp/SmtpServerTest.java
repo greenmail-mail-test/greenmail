@@ -171,7 +171,7 @@ public class SmtpServerTest {
         try {
             transport.sendMessage(message, message.getAllRecipients());
             Assertions.fail("should have thrown");
-        } catch (com.sun.mail.smtp.SMTPSendFailedException e) { // Graceful server-side-close with 421
+        } catch (org.eclipse.angus.mail.smtp.SMTPSendFailedException e) { // Graceful server-side-close with 421
             assertThat(e).hasNoCause();
         } catch (MessagingException e) {
             assertThat(e).hasCauseExactlyInstanceOf(SocketException.class);

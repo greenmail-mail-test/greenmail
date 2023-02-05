@@ -12,8 +12,8 @@ import com.icegreen.greenmail.imap.ImapSession;
 import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
-import com.sun.mail.imap.protocol.BASE64MailboxDecoder; // NOSONAR
-import com.sun.mail.imap.protocol.BASE64MailboxEncoder; // NOSONAR
+import org.eclipse.angus.mail.imap.protocol.BASE64MailboxDecoder; // NOSONAR
+import org.eclipse.angus.mail.imap.protocol.BASE64MailboxEncoder; // NOSONAR
 
 import java.util.ArrayList;
 import java.util.Collection;

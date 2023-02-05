@@ -2,7 +2,7 @@ package com.icegreen.greenmail.examples;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import com.sun.mail.imap.IMAPStore;
+import org.eclipse.angus.mail.imap.IMAPStore;
 import org.junit.Rule;
 import org.junit.Test;
 

@@ -3,7 +3,7 @@ package com.icegreen.greenmail.specificmessages;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import com.sun.mail.imap.IMAPStore;
+import org.eclipse.angus.mail.imap.IMAPStore;
 import org.junit.Rule;
 import org.junit.Test;
 
