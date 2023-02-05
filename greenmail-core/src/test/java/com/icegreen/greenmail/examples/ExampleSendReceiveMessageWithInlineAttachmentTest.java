@@ -43,8 +43,8 @@ public class ExampleSendReceiveMessageWithInlineAttachmentTest {
         Folder folder = openFolder(store, "INBOX");
 
         Message[] messages = folder.getMessages();
-        assertThat(messages.length).isEqualTo(1);
-        assertThat(messages[0].getContentType().startsWith("multipart/mixed;")).isTrue();
+        assertThat(messages).hasSize(1);
+        assertThat(messages[0].getContentType()).startsWith("multipart/mixed;");
 
         final Multipart part = (Multipart) messages[0].getContent();
         assertThat(part.getCount()).isEqualTo(1);

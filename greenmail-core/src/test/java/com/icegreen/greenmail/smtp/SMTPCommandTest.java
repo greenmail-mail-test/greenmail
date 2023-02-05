@@ -1,21 +1,21 @@
-package com.icegreen.greenmail.test.commands;
-
-import java.io.IOException;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.URLName;
+package com.icegreen.greenmail.smtp;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.smtp.commands.AuthCommand;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.sun.mail.smtp.SMTPTransport;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.URLName;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,7 +45,7 @@ public class SMTPCommandTest {
             smtpTransport.connect(smtpSocket);
             assertThat(smtpTransport.isConnected()).isTrue();
             smtpTransport.issueCommand("MAIL FROM: <>", -1);
-            assertThat("250 OK").isEqualToNormalizingWhitespace(smtpTransport.getLastServerResponse());
+            assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace("250 OK");
         }
     }
 
@@ -78,7 +78,7 @@ public class SMTPCommandTest {
                 assertThat(smtpTransport.isConnected()).isTrue();
 
                 smtpTransport.issueCommand("AUTH PLAIN", -1);
-                assertThat(smtpTransport.getLastServerResponse().startsWith(AuthCommand.SMTP_SERVER_CONTINUATION)).isTrue();
+                assertThat(smtpTransport.getLastServerResponse()).startsWith(AuthCommand.SMTP_SERVER_CONTINUATION);
                 smtpTransport.issueCommand("dGVzdAB0ZXN0AHRlc3RwYXNz" /* test / test / testpass */, -1);
                 assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace(AuthCommand.AUTH_SUCCEDED);
             }
@@ -121,7 +121,7 @@ public class SMTPCommandTest {
             smtpTransport.connect(smtpSocket);
             assertThat(smtpTransport.isConnected()).isTrue();
             smtpTransport.issueCommand("MAIL FROM: <test.test@test.net> AUTH <>", -1);
-            assertThat("250 OK").isEqualToNormalizingWhitespace(smtpTransport.getLastServerResponse());
+            assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace("250 OK");
         }
     }
 

@@ -2,7 +2,7 @@
  * Copyright (c) 2014 Wael Chatila / Icegreen Technologies. All Rights Reserved.
  * This software is released under the Apache license 2.0
  */
-package com.icegreen.greenmail.test;
+package com.icegreen.greenmail.imap;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.user.GreenMailUser;
@@ -70,7 +70,7 @@ public class ImapServerTest {
 
         try (Retriever retriever = new Retriever(greenMail.getImap())) {
             Message[] messages = retriever.getMessages(to);
-            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages).hasSize(1);
             assertThat(messages[0].getSubject()).isEqualTo(subject);
             assertThat(((String) messages[0].getContent())).isEqualTo(body);
         }
@@ -87,7 +87,7 @@ public class ImapServerTest {
 
         try (Retriever retriever = new Retriever(greenMail.getImaps())) {
             Message[] messages = retriever.getMessages(to);
-            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages).hasSize(1);
             assertThat(messages[0].getSubject()).isEqualTo(subject);
             assertThat(((String) messages[0].getContent())).isEqualTo(body);
         }
@@ -110,7 +110,7 @@ public class ImapServerTest {
                 .hasCauseInstanceOf(AuthenticationFailedException.class);
 
             Message[] messages = retriever.getMessages(to, password);
-            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages).hasSize(1);
             assertThat(messages[0].getSubject()).isEqualTo(subject);
             assertThat(((String) messages[0].getContent())).isEqualTo(body);
         }
@@ -130,7 +130,7 @@ public class ImapServerTest {
             Message[] messages = retriever.getMessages(to);
 
             Object o = messages[0].getContent();
-            assertThat(o instanceof MimeMultipart).isTrue();
+            assertThat(o).isInstanceOf(MimeMultipart.class);
             MimeMultipart mp = (MimeMultipart) o;
             assertThat(mp.getCount()).isEqualTo(2);
             BodyPart bp;
@@ -173,9 +173,9 @@ public class ImapServerTest {
 
             Quota[] quotas = store.getQuota("INBOX");
             assertThat(quotas).isNotNull();
-            assertThat(quotas.length).isEqualTo(1);
+            assertThat(quotas).hasSize(1);
             assertThat(quotas[0].resources).isNotNull();
-            assertThat(quotas[0].resources.length).isEqualTo(2);
+            assertThat(quotas[0].resources).hasSize(2);
             assertThat(quotas[0].quotaRoot).isEqualTo(testQuota.quotaRoot);
             assertThat(testQuota.resources[0].name).isEqualTo("STORAGE");
             assertThat(testQuota.resources[0].limit).isEqualTo(quotas[0].resources[0].limit);
@@ -186,7 +186,7 @@ public class ImapServerTest {
 
             quotas = store.getQuota("");
             assertThat(quotas).isNotNull();
-            assertThat(quotas.length).isEqualTo(0);
+            assertThat(quotas).isEmpty();
         } finally {
             store.close();
         }
@@ -311,7 +311,7 @@ public class ImapServerTest {
     }
 
     /**
-     * https://tools.ietf.org/html/rfc3501#page-37 :
+     * <a href="https://tools.ietf.org/html/rfc3501#page-37">RFC3501</a> :
      * <q>
      * Renaming INBOX is permitted, and has special behavior.  It moves
      * all messages in INBOX to a new mailbox with the given name,
@@ -334,7 +334,7 @@ public class ImapServerTest {
             Folder inboxFolder = store.getFolder("INBOX");
             assertThat(inboxFolder.exists()).isTrue();
             inboxFolder.open(Folder.READ_ONLY);
-            assertThat(inboxFolder.getMessages().length).isEqualTo(1);
+            assertThat(inboxFolder.getMessages()).hasSize(1);
 
             Folder inboxRenamedFolder = store.getFolder("INBOX-renamed");
             assertThat(inboxRenamedFolder.exists()).isFalse();
@@ -343,12 +343,12 @@ public class ImapServerTest {
             inboxFolder.renameTo(inboxRenamedFolder);
             assertThat(inboxRenamedFolder.exists()).isTrue();
             inboxRenamedFolder.open(Folder.READ_ONLY);
-            assertThat(inboxRenamedFolder.getMessages().length).isEqualTo(1);
+            assertThat(inboxRenamedFolder.getMessages()).hasSize(1);
 
             inboxFolder = store.getFolder("INBOX");
             assertThat(inboxFolder.exists()).isTrue();
             inboxFolder.open(Folder.READ_ONLY);
-            assertThat(inboxFolder.getMessages().length).isEqualTo(0);
+            assertThat(inboxFolder.getMessages()).isEmpty();
         } finally {
             store.close();
         }
@@ -422,7 +422,7 @@ public class ImapServerTest {
             try {
                 final Message[] messages = inboxFolder.getMessages();
                 assertThat(messages).hasSize(msgCount);
-                assertThat(targetFolder.getMessageCount()).isEqualTo(0);
+                assertThat(targetFolder.getMessageCount()).isZero();
                 inboxFolder.moveMessages(messages, targetFolder);
             } finally {
                 inboxFolder.close();
@@ -456,7 +456,7 @@ public class ImapServerTest {
             inboxFolder.open(Folder.READ_WRITE);
 
             Message[] existingMessages = inboxFolder.getMessages();
-            assertThat(existingMessages.length).isEqualTo(3);
+            assertThat(existingMessages).hasSize(3);
             for (int i = 0; i < 3; i++) {
                 final int uid = i + 1;
                 Message[] messages = inboxFolder.getMessagesByUID(
@@ -511,7 +511,7 @@ public class ImapServerTest {
             try {
                 final Message[] messages = inboxFolder.getMessages();
                 assertThat(messages).hasSize(msgCount);
-                assertThat(targetFolder.getMessageCount()).isEqualTo(0);
+                assertThat(targetFolder.getMessageCount()).isZero();
                 inboxFolder.moveUIDMessages(messages, targetFolder);
             } finally {
                 inboxFolder.close();
@@ -545,7 +545,7 @@ public class ImapServerTest {
             assertThat(folderRequiringEscaping.create(Folder.HOLDS_FOLDERS | Folder.HOLDS_MESSAGES)).isTrue();
             folderRequiringEscaping.open(Folder.READ_WRITE);
 
-            assertThat(folderRequiringEscaping.getMessageCount()).isEqualTo(0);
+            assertThat(folderRequiringEscaping.getMessageCount()).isZero();
             assertThat(inboxFolder.getMessageCount()).isEqualTo(1);
 
             inboxFolder.copyMessages(inboxFolder.getMessages(), folderRequiringEscaping);
@@ -570,7 +570,7 @@ public class ImapServerTest {
             inboxFolder.open(Folder.READ_WRITE);
 
             Message[] messages = inboxFolder.getMessages();
-            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages).hasSize(1);
             Message message = messages[0];
 
             assert inboxFolder instanceof UIDFolder;
@@ -578,10 +578,10 @@ public class ImapServerTest {
             long uid = uidFolder.getUID(message);
             assertThat(uidFolder.getMessageByUID(uid)).isEqualTo(message);
             Message[] uidMessages = uidFolder.getMessagesByUID(new long[]{uid});
-            assertThat(uidMessages.length).isEqualTo(1);
+            assertThat(uidMessages).hasSize(1);
             assertThat(uidMessages[0]).isEqualTo(message);
             uidMessages = uidFolder.getMessagesByUID(uid, uid);
-            assertThat(uidMessages.length).isEqualTo(1);
+            assertThat(uidMessages).hasSize(1);
             assertThat(uidMessages[0]).isEqualTo(message);
         } finally {
             store.close();
@@ -607,7 +607,7 @@ public class ImapServerTest {
             folder.open(Folder.READ_WRITE);
 
             Message[] messages = folder.getMessages();
-            assertThat(messages.length).isEqualTo(numberOfEmails);
+            assertThat(messages).hasSize(numberOfEmails);
 
             // Mark even as deleted ...
             Message[] msgsForDeletion = new Message[uids.length / 2];
@@ -652,7 +652,7 @@ public class ImapServerTest {
             inboxFolder.open(Folder.READ_WRITE);
 
             Message[] messages = inboxFolder.getMessages();
-            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages).hasSize(1);
             Message message = messages[0];
 
             Message[] toBeAppended = new Message[]{
@@ -662,7 +662,7 @@ public class ImapServerTest {
 
             inboxFolder.appendMessages(toBeAppended);
             messages = inboxFolder.getMessages();
-            assertThat(messages.length).isEqualTo(2);
+            assertThat(messages).hasSize(2);
 
             // UIDPLUS
             toBeAppended[0] = new MimeMessage((MimeMessage) message);
@@ -674,7 +674,7 @@ public class ImapServerTest {
             assertThat(newMsg.getSubject()).isEqualTo(toBeAppended[0].getSubject());
             assertThat(inboxFolder.getUIDValidity()).isEqualTo(appendUIDs[0].uidvalidity);
             messages = inboxFolder.getMessages();
-            assertThat(messages.length).isEqualTo(3);
+            assertThat(messages).hasSize(3);
         } finally {
             store.close();
         }
@@ -696,7 +696,7 @@ public class ImapServerTest {
             inboxFolder.open(Folder.READ_WRITE);
 
             Message[] messages = inboxFolder.getMessages();
-            assertThat(messages.length).isEqualTo(2);
+            assertThat(messages).hasSize(2);
             Message message = messages[1];
 
             assert inboxFolder instanceof UIDFolder;
@@ -704,10 +704,10 @@ public class ImapServerTest {
             long uid = uidFolder.getUID(message);
             assertThat(uidFolder.getMessageByUID(uid)).isEqualTo(message);
             Message[] uidMessages = uidFolder.getMessagesByUID(uid, UIDFolder.LASTUID);
-            assertThat(uidMessages.length).isEqualTo(1);
+            assertThat(uidMessages).hasSize(1);
             assertThat(uidMessages[0]).isEqualTo(message);
             uidMessages = uidFolder.getMessagesByUID(uid + 1, UIDFolder.LASTUID);
-            assertThat(uidMessages.length).isEqualTo(1);
+            assertThat(uidMessages).hasSize(1);
             assertThat(uidMessages[0]).isEqualTo(message);
         } finally {
             store.close();
@@ -729,7 +729,7 @@ public class ImapServerTest {
             inboxFolder.open(Folder.READ_WRITE);
 
             Message[] messages = inboxFolder.getMessages();
-            assertThat(messages.length).isEqualTo(6);
+            assertThat(messages).hasSize(6);
             inboxFolder.setFlags(new int[]{2, 3}, new Flags(DELETED), true); // 1 and 2, offset is not zero-based
 
             assertThat(inboxFolder.getMessage(1).isSet(DELETED)).isFalse();
@@ -740,10 +740,10 @@ public class ImapServerTest {
             assertThat(inboxFolder.getMessage(6).isSet(DELETED)).isFalse();
             assertThat(inboxFolder.getDeletedMessageCount()).isEqualTo(2);
             Message[] expunged = inboxFolder.expunge();
-            assertThat(expunged.length).isEqualTo(2);
+            assertThat(expunged).hasSize(2);
 
             messages = inboxFolder.getMessages();
-            assertThat(messages.length).isEqualTo(4);
+            assertThat(messages).hasSize(4);
             assertThat(messages[0].getSubject()).isEqualTo("Test subject #0");
             assertThat(messages[1].getSubject()).isEqualTo("Test subject #3");
             assertThat(messages[2].getSubject()).isEqualTo("Test subject #4");
@@ -785,7 +785,7 @@ public class ImapServerTest {
             }).start();
             ((IMAPFolder) inboxFolder).idle(true);
             assertThat(messages).hasSize(1);
-            assertThat(messages[0]).isGreaterThan(0);
+            assertThat(messages[0]).isPositive();
             inboxFolder.close();
         } finally {
             store.close();

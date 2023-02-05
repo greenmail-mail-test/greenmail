@@ -1,4 +1,4 @@
-package com.icegreen.greenmail.test;
+package com.icegreen.greenmail;
 
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit.GreenMailRule;
@@ -34,7 +34,7 @@ public class AuthenticationDisabledTest {
         final String body = "body";
         GreenMailUtil.sendTextEmailTest(to, "from@localhost", subject, body);
         MimeMessage[] emails = greenMail.getReceivedMessages();
-        assertThat(emails.length).isEqualTo(1);
+        assertThat(emails).hasSize(1);
         assertThat(emails[0].getSubject()).isEqualTo(subject);
         assertThat(emails[0].getContent()).isEqualTo(body);
 
@@ -42,7 +42,7 @@ public class AuthenticationDisabledTest {
 
         try (Retriever retriever = new Retriever(greenMail.getImap())) {
             Message[] messages = retriever.getMessages(to);
-            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages).hasSize(1);
             assertThat(messages[0].getSubject()).isEqualTo(subject);
             assertThat(messages[0].getContent()).isEqualTo(body);
         }
@@ -56,7 +56,7 @@ public class AuthenticationDisabledTest {
 
         try (Retriever retriever = new Retriever(greenMail.getImap())) {
             Message[] messages = retriever.getMessages(to);
-            assertThat(messages.length).isEqualTo(0);
+            assertThat(messages).isEmpty();
         }
     }
 
@@ -69,7 +69,7 @@ public class AuthenticationDisabledTest {
 
         try (Retriever retriever = new Retriever(greenMail.getImap())) {
             Message[] messages = retriever.getMessages(to);
-            assertThat(messages.length).isEqualTo(0);
+            assertThat(messages).isEmpty();
         }
     }
 

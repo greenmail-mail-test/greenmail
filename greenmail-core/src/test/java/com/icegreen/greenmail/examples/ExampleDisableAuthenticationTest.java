@@ -24,7 +24,7 @@ public class ExampleDisableAuthenticationTest {
     public void testNoAuthIMAP() {
         try (Retriever retriever = new Retriever(greenMail.getImap())) {
             Message[] messages = retriever.getMessages("foo@localhost");
-            assertThat(messages.length).isEqualTo(0);
+            assertThat(messages).isEmpty();
         }
     }
 
@@ -32,7 +32,7 @@ public class ExampleDisableAuthenticationTest {
     public void testExistingUserNotRecreated() {
         try (Retriever retriever = new Retriever(greenMail.getImap())) {
             Message[] messages = retriever.getMessages("foo@localhost");
-            assertThat(messages.length).isEqualTo(0);
+            assertThat(messages).isEmpty();
             assertThat(greenMail.getUserManager().hasUser("foo@localhost")).isTrue();
         }
     }

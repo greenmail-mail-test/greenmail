@@ -22,7 +22,8 @@ public class ExampleReceiveTest {
         GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost",
                 "subject", "body"); // ...or use the default messages
 
-        assertThat(greenMail.getReceivedMessages().length).isEqualTo(2); // // --- Place your POP3 or IMAP retrieve code here
+        // --- Place your POP3 or IMAP retrieve code here
+        assertThat(greenMail.getReceivedMessages()).hasSize(2);
     }
 
     private MimeMessage createMimeMessage() {

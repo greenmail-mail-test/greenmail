@@ -30,7 +30,7 @@ public class ExamplePurgeAllEmailsTest {
             assertThat(greenMailRule.waitForIncomingEmail(1)).isTrue();
             greenMailRule.purgeEmailFromAllMailboxes();
             Message[] messages = retriever.getMessages("foo@localhost", "pwd");
-            assertThat(messages.length).isEqualTo(0);
+            assertThat(messages).isEmpty();
         }
     }
 

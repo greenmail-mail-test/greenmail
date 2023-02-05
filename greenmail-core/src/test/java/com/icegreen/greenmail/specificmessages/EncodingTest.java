@@ -1,4 +1,4 @@
-package com.icegreen.greenmail.test.specificmessages;
+package com.icegreen.greenmail.specificmessages;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.EncodingUtil;
@@ -6,10 +6,19 @@ import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.imap.IMAPStore;
-import javax.mail.*;
+import javax.mail.BodyPart;
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Session;
 import javax.mail.event.MessageCountEvent;
 import javax.mail.event.MessageCountListener;
-import javax.mail.internet.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimeUtility;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -87,10 +96,10 @@ public class EncodingTest {
             inboxFolder.open(Folder.READ_WRITE);
             Message[] messages = inboxFolder.getMessages();
             MimeMessage msg = (MimeMessage) messages[0];
-            assertThat(msg.getContentType().startsWith("multipart/alternative")).isTrue();
+            assertThat(msg.getContentType()).startsWith("multipart/alternative");
             Multipart multipartReceived = (Multipart) msg.getContent();
 
-            assertThat(multipartReceived.getContentType().startsWith("multipart/alternative")).isTrue();
+            assertThat(multipartReceived.getContentType()).startsWith("multipart/alternative");
 
             // QP-encoded
             final BodyPart bodyPart0 = multipartReceived.getBodyPart(0);
@@ -142,7 +151,7 @@ public class EncodingTest {
         sendMessage(fromAddress, toAddress);
 
         MimeMessage receivedMessage = greenMail.getReceivedMessages()[0];
-        assertThat(receivedMessage.getFrom()[0].toString()).isEqualTo(fromAddress.toString());
+        assertThat(receivedMessage.getFrom()[0]).hasToString(fromAddress.toString());
         assertThat(Arrays.stream(receivedMessage.getAllRecipients()).map(Object::toString).toArray())
             .isEqualTo(new String[]{toAddress.toString()});
 
@@ -179,7 +188,7 @@ public class EncodingTest {
             }).start();
             ((IMAPFolder) inboxFolder).idle(true);
 
-            assertThat(messages[0].getFrom()[0].toString()).isEqualTo(fromAddress.toString());
+            assertThat(messages[0].getFrom()[0]).hasToString(fromAddress.toString());
             assertThat(Arrays.stream(messages[0].getAllRecipients()).map(Object::toString).toArray())
                 .isEqualTo(new String[]{toAddress.toString()});
 
@@ -225,7 +234,7 @@ public class EncodingTest {
                 Message[] messages = inboxFolder.getMessages();
                 assertThat(messages).hasSize(1);
                 final MimeMultipart content = (MimeMultipart) messages[0].getContent();
-                assertThat(messages[0].getContent() != null).isTrue();
+                assertThat(messages[0].getContent()).isNotNull();
                 String receivedFileName = "";
                 for (int i = 0; i < content.getCount(); i++) {
                     final MimeBodyPart bodyPart = (MimeBodyPart) content.getBodyPart(i);

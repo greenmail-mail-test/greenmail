@@ -161,7 +161,7 @@ public class GreenMailUtil {
     }
 
     /**
-     * @return same as {@link #getWholeMessage(jakarta.mail.Part)}
+     * @return same as {@link #getWholeMessage(javax.mail.Part)}
      */
     public static String toString(Part msg) {
         return getWholeMessage(msg);

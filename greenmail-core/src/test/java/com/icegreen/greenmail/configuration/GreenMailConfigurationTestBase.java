@@ -6,7 +6,7 @@ import com.icegreen.greenmail.util.Retriever;
 import javax.mail.Message;
 
 import static com.icegreen.greenmail.configuration.GreenMailConfiguration.aConfig;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test methods that are used in both GreenMailConfiguration tests
@@ -26,11 +26,11 @@ public final class GreenMailConfigurationTestBase {
         try (Retriever retriever = new Retriever(greenMail.getImap())) {
             final Message[] messages = retriever.getMessages("user@localhost", "password");
             // if getMessage is successful this means that the user account has been created
-            assertEquals(messages.length, 0);
+            assertThat(messages).isEmpty();
 
             // Now check second user. this one has a different user id
             final Message[] messages2 = retriever.getMessages("secondUserLogin", "password2");
-            assertEquals(messages2.length, 0);
+            assertThat(messages2).isEmpty();
         }
     }
 

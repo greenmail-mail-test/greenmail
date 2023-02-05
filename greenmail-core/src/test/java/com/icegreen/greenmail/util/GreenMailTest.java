@@ -37,7 +37,7 @@ public class GreenMailTest {
         GreenMailUtil.sendTextEmailTest(to, "from@localhost", "subject", "body");
 
         final MimeMessage[] receivedMessagesForDomain = greenMail.getReceivedMessagesForDomain(to);
-        assertThat(receivedMessagesForDomain.length).isEqualTo(1);
+        assertThat(receivedMessagesForDomain).hasSize(1);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class GreenMailTest {
         GreenMailUtil.sendTextEmailTest(to, "from@localhost", "subject", "body");
 
         final MimeMessage[] receivedMessagesForDomain = greenMail.getReceivedMessagesForDomain(to);
-        assertThat(receivedMessagesForDomain.length).isEqualTo(1);
+        assertThat(receivedMessagesForDomain).hasSize(1);
     }
 }
 

@@ -1,13 +1,4 @@
-package com.icegreen.greenmail.test.specificmessages;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import javax.mail.Address;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+package com.icegreen.greenmail.specificmessages;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.server.AbstractServer;
@@ -17,10 +8,19 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import com.icegreen.greenmail.util.UserUtil;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.imap.IMAPStore;
+import javax.mail.Address;
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests if senders and recipients of received messages are set correctly and if messages are received by the correct
@@ -123,7 +123,7 @@ public class SenderRecipientTest {
                 assertThat(((InternetAddress)msg.getRecipients(Message.RecipientType.TO)[0]).getAddress()).isEqualTo(to);
                 assertThat(((InternetAddress)msg.getFrom()[0]).getAddress()).isEqualTo(from);
                 assertThat(msg.getSubject()).isEqualTo(subject);
-                assertThat(msg.getContent().toString()).isEqualTo(content);
+                assertThat(msg.getContent()).hasToString(content);
                 assertThat(msg.getRecipients(Message.RecipientType.TO)).isEqualTo(toAddress);
             } finally {
                 store.close();
@@ -152,7 +152,7 @@ public class SenderRecipientTest {
     private void retrieveAndCheck(AbstractServer server, String login) throws MessagingException {
         try (Retriever retriever = new Retriever(server)) {
             Message[] messages = retriever.getMessages(login);
-            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages).hasSize(1);
             Message message = messages[0];
 
             assertThat(toInetAddr(message.getRecipients(Message.RecipientType.TO))).isEqualTo(TO_ADDRESSES);

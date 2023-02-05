@@ -46,6 +46,6 @@ public class ExampleUndeliverableTest {
         GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost",
                 "some subject", "some body"); // --- Place your sending code here instead
         assertThat(greenMail.getReceivedMessages()[0].getSubject()).isEqualTo("Delivery Report");
-        assertThat(greenMail.getReceivedMessages()[0].getRecipients(RecipientType.TO)[0].toString()).isEqualTo("from@localhost");
+        assertThat(greenMail.getReceivedMessages()[0].getRecipients(RecipientType.TO)[0]).hasToString("from@localhost");
     }
 }

@@ -17,7 +17,7 @@ public class AllocateAvailablePortTest {
 
     @Test
     public void returnTheActuallyAllocatedPort() {
-        assertThat(greenMail.getSmtp().getPort()).isNotEqualTo(0);
+        assertThat(greenMail.getSmtp().getPort()).isNotZero();
     }
 
     @Test
@@ -26,6 +26,6 @@ public class AllocateAvailablePortTest {
                 greenMail.getSmtp().getServerSetup());
 
         MimeMessage[] emails = greenMail.getReceivedMessages();
-        assertThat(emails.length).isEqualTo(1);
+        assertThat(emails).hasSize(1);
     }
 }

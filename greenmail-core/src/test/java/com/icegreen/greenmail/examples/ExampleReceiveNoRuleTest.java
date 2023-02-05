@@ -24,7 +24,7 @@ public class ExampleReceiveNoRuleTest {
             MimeMessage message = createMimeMessage(subject, body, greenMail); // Construct message
             GreenMailUser user = greenMail.setUser("wael@localhost", "waelc", "soooosecret");
             user.deliver(message);
-            assertThat(greenMail.getReceivedMessages().length).isEqualTo(1);
+            assertThat(greenMail.getReceivedMessages()).hasSize(1);
 
             // --- Place your retrieve code here
 

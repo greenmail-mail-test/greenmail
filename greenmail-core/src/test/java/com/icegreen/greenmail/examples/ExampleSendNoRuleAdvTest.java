@@ -32,7 +32,7 @@ public class ExampleSendNoRuleAdvTest {
 
             //Retrieve using GreenMail API
             Message[] messages = greenMail.getReceivedMessages();
-            assertThat(messages.length).isEqualTo(2);
+            assertThat(messages).hasSize(2);
 
             // Simple message
             assertThat(messages[0].getSubject()).isEqualTo(subject);
@@ -40,7 +40,7 @@ public class ExampleSendNoRuleAdvTest {
             assertThat(messages[0].getContent()).isEqualTo(body);
 
             //if you send content as a 2 part multipart...
-            assertThat(messages[1].getContent() instanceof MimeMultipart).isTrue();
+            assertThat(messages[1].getContent()).isInstanceOf(MimeMultipart.class);
             MimeMultipart mp = (MimeMultipart) messages[1].getContent();
             assertThat(mp.getCount()).isEqualTo(2);
             assertThat(mp.getBodyPart(0).getContent()).isEqualTo("body1");

@@ -1,11 +1,4 @@
-package com.icegreen.greenmail.test.specificmessages;
-
-import java.io.UnsupportedEncodingException;
-import javax.mail.Address;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+package com.icegreen.greenmail.specificmessages;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.server.AbstractServer;
@@ -13,8 +6,15 @@ import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.icegreen.greenmail.util.UserUtil;
+import javax.mail.Address;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import org.junit.Rule;
 import org.junit.Test;
+
+import java.io.UnsupportedEncodingException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -135,7 +135,7 @@ public class ReplyToTest {
             throws MessagingException {
         try (Retriever retriever = new Retriever(server)) {
             Message[] messages = retriever.getMessages(login);
-            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages).hasSize(1);
             Message message = messages[0];
 
             assertThat(toInetAddr(message.getReplyTo())).isEqualTo(replyToAddrs);

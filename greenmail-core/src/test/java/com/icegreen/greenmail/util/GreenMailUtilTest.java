@@ -4,7 +4,7 @@
  * This file has been modified by the copyright holder.
  * -------------------------------------------------------------------
  */
-package com.icegreen.greenmail.test;
+package com.icegreen.greenmail.util;
 
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMail;
@@ -65,7 +65,7 @@ public class GreenMailUtilTest {
                         GreenMailUtil.getHeaders(bp).trim());
 
                 bp = mp.getBodyPart(1);
-                assertThat("AAEC").isEqualTo(GreenMailUtil.getBody(bp));
+                assertThat(GreenMailUtil.getBody(bp)).isEqualTo("AAEC");
                 assertThat(
                         "Content-Type: image/gif; name=testimage_filename\r\n" +
                         "Content-Transfer-Encoding: base64\r\n" +
@@ -106,7 +106,7 @@ public class GreenMailUtilTest {
                 a = m.getFrom();
                 assertThat(null != a && a.length == 1
                         && a[0].toString().equals("\"Bar, Foo\" <bar@localhost>")).isTrue();
-                assertThat(m.getContentType().toLowerCase().startsWith("text/plain")).isTrue();
+                assertThat(m.getContentType().toLowerCase()).startsWith("text/plain");
                 assertThat(m.getContent()).isEqualTo("Test message");
             } finally {
                 store.close();
@@ -131,12 +131,12 @@ public class GreenMailUtilTest {
             testQuota.setResourceLimit("STORAGE", 1024L * 42L);
             testQuota.setResourceLimit("MESSAGES", 5L);
 
-            assertThat(0).isEqualTo(GreenMailUtil.getQuota(user, testQuota.quotaRoot).length);
+            assertThat(GreenMailUtil.getQuota(user, testQuota.quotaRoot)).isEmpty();
             GreenMailUtil.setQuota(user, testQuota);
 
             final Quota[] quota = GreenMailUtil.getQuota(user, testQuota.quotaRoot);
-            assertThat(quota.length).isEqualTo(1);
-            assertThat(quota[0].resources.length).isEqualTo(2);
+            assertThat(quota).hasSize(1);
+            assertThat(quota[0].resources).hasSize(2);
 
             store.close();
         } finally {

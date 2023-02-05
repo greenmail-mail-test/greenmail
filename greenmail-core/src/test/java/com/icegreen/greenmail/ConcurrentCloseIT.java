@@ -1,4 +1,4 @@
-package com.icegreen.greenmail.test;
+package com.icegreen.greenmail;
 
 import javax.mail.internet.MimeMessage;
 
@@ -36,7 +36,7 @@ public class ConcurrentCloseIT {
             sendThread.start();
             greenMail.waitForIncomingEmail(3000, 1);
             final MimeMessage[] emails = greenMail.getReceivedMessages();
-            assertThat(1).isEqualTo(emails.length);
+            assertThat(emails).hasSize(1);
             sendThread.join(10000);
         } finally {
             greenMail.stop();
