@@ -3,7 +3,7 @@
 * This software is released under the Apache license 2.0
 * -------------------------------------------------------------------
 */
-package com.icegreen.greenmail.test;
+package com.icegreen.greenmail;
 
 import java.util.ArrayList;
 import java.util.List;

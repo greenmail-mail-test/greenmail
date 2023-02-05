@@ -1,4 +1,4 @@
-package com.icegreen.greenmail.test.specificmessages;
+package com.icegreen.greenmail.specificmessages;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
@@ -70,11 +70,11 @@ public class Rfc822MessageTest {
             inboxFolder.open(Folder.READ_WRITE);
             Message[] messages = inboxFolder.getMessages();
             MimeMessage msg = (MimeMessage) messages[0];
-            assertThat(msg.getContentType().startsWith("multipart/mixed")).isTrue();
+            assertThat(msg.getContentType()).startsWith("multipart/mixed");
             Multipart multipartReceived = (Multipart) msg.getContent();
-            assertThat(multipartReceived.getContentType().startsWith("multipart/mixed")).isTrue();
+            assertThat(multipartReceived.getContentType()).startsWith("multipart/mixed");
             MimeBodyPart mimeBodyPartReceived = (MimeBodyPart) multipartReceived.getBodyPart(0);
-            assertThat(mimeBodyPartReceived.getContentType().toLowerCase().startsWith("message/rfc822")).isTrue();
+            assertThat(mimeBodyPartReceived.getContentType().toLowerCase()).startsWith("message/rfc822");
 
             MimeMessage msgAttached = (MimeMessage) mimeBodyPartReceived.getContent();
             assertThat(msgAttached.getContentType().toLowerCase()).startsWith("text/plain");

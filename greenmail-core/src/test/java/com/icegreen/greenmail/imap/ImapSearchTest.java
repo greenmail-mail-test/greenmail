@@ -2,26 +2,32 @@
  * Copyright (c) 2014 Wael Chatila / Icegreen Technologies. All Rights Reserved.
  * This software is released under the Apache license 2.0
  */
-package com.icegreen.greenmail.test.commands;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import jakarta.mail.*;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
-import jakarta.mail.search.*;
+package com.icegreen.greenmail.imap;
 
 import com.icegreen.greenmail.imap.commands.SearchKey;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.Address;
+import jakarta.mail.Flags;
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.Store;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.search.*;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import static junit.framework.TestCase.fail;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Wael Chatila
@@ -51,49 +57,49 @@ public class ImapSearchTest {
             imapFolder.open(Folder.READ_WRITE);
 
             Message[] allImapMessages = imapFolder.getMessages();
-            assertThat(allImapMessages.length).isEqualTo(6);
+            assertThat(allImapMessages).hasSize(6);
             Message m0 = allImapMessages[0];
             assertThat(m0.getFlags().contains(Flags.Flag.ANSWERED)).isTrue();
-            assertThat(m0.getSubject().startsWith("#0")).isTrue();
+            assertThat(m0.getSubject()).startsWith("#0");
             Message m1 = allImapMessages[1];
-            assertThat(m1.getSubject().startsWith("#1")).isTrue();
+            assertThat(m1.getSubject()).startsWith("#1");
             Message m2 = allImapMessages[2];
-            assertThat(m2.getSubject().startsWith("#2")).isTrue();
+            assertThat(m2.getSubject()).startsWith("#2");
             Message m3 = allImapMessages[3];
-            assertThat(m3.getSubject().startsWith("#3")).isTrue();
+            assertThat(m3.getSubject()).startsWith("#3");
             Message m4 = allImapMessages[4];
-            assertThat(m4.getSubject().startsWith("#4")).isTrue();
+            assertThat(m4.getSubject()).startsWith("#4");
             Message m5 = allImapMessages[5];
-            assertThat(m5.getSubject().startsWith("#5")).isTrue();
+            assertThat(m5.getSubject()).startsWith("#5");
 
             // Search BODY
             Message[] imapMessages = imapFolder.search(new BodyTerm("tent"));
-            assertThat(imapMessages.length).isEqualTo(allImapMessages.length);
+            assertThat(imapMessages).hasSize(allImapMessages.length);
 
             imapMessages = imapFolder.search(new BodyTerm("tent#2"));
-            assertThat(imapMessages.length).isEqualTo(1);
+            assertThat(imapMessages).hasSize(1);
             assertThat(imapMessages[0]).isEqualTo(m2);
 
             imapMessages = imapFolder.search(new BodyTerm("from"));
-            assertThat(imapMessages.length).isEqualTo(0);
+            assertThat(imapMessages).isEmpty();
 
             // Search flags
             imapMessages = imapFolder.search(new FlagTerm(new Flags(Flags.Flag.ANSWERED), true));
-            assertThat(imapMessages.length).isEqualTo(1);
+            assertThat(imapMessages).hasSize(1);
             assertThat(imapMessages[0]).isEqualTo(m0);
 
             imapMessages = imapFolder.search(new FlagTerm(fooFlags, true));
-            assertThat(imapMessages.length).isEqualTo(1);
+            assertThat(imapMessages).hasSize(1);
             assertThat(imapMessages[0].getFlags().contains("foo")).isTrue();
 
             imapMessages = imapFolder.search(new FlagTerm(fooFlags, false));
-            assertThat(imapMessages.length).isEqualTo(5);
+            assertThat(imapMessages).hasSize(5);
             assertThat(imapMessages[0].getFlags().contains(fooFlags)).isFalse();
             assertThat(imapMessages[1].getFlags().contains(fooFlags)).isFalse();
             assertThat(imapMessages[2].getFlags().contains(fooFlags)).isFalse();
 
             imapMessages = imapFolder.search(new NotTerm(new FlagTerm(fooFlags, true)));
-            assertThat(imapMessages.length).isEqualTo(5);
+            assertThat(imapMessages).hasSize(5);
             assertThat(imapMessages[0].getFlags().contains(fooFlags)).isFalse();
             assertThat(imapMessages[1].getFlags().contains(fooFlags)).isFalse();
             assertThat(imapMessages[2].getFlags().contains(fooFlags)).isFalse();
@@ -101,65 +107,65 @@ public class ImapSearchTest {
             // Search header ids
             String id = m0.getHeader("Message-ID")[0];
             imapMessages = imapFolder.search(new HeaderTerm("Message-ID", id));
-            assertThat(imapMessages.length).isEqualTo(1);
+            assertThat(imapMessages).hasSize(1);
             assertThat(imapMessages[0]).isEqualTo(m0);
 
             id = m1.getHeader("Message-ID")[0];
             imapMessages = imapFolder.search(new HeaderTerm("Message-ID", id));
-            assertThat(imapMessages.length).isEqualTo(1);
+            assertThat(imapMessages).hasSize(1);
             assertThat(imapMessages[0]).isEqualTo(m1);
 
             // Search FROM
             imapMessages = imapFolder.search(new FromTerm(new InternetAddress("from2@localhost")));
-            assertThat(imapMessages.length).isEqualTo(1);
+            assertThat(imapMessages).hasSize(1);
             assertThat(imapMessages[0]).isEqualTo(m0);
 
             imapMessages = imapFolder.search(new FromTerm(new InternetAddress("from3@localhost")));
-            assertThat(imapMessages.length).isEqualTo(1);
+            assertThat(imapMessages).hasSize(1);
             assertThat(imapMessages[0]).isEqualTo(m1);
 
             // Search TO
             imapMessages = imapFolder.search(new RecipientTerm(Message.RecipientType.TO, new InternetAddress("to2@localhost")));
-            assertThat(imapMessages.length).isEqualTo(1);
+            assertThat(imapMessages).hasSize(1);
             assertThat(imapMessages[0]).isEqualTo(m0);
 
             imapMessages = imapFolder.search(new RecipientTerm(Message.RecipientType.TO, new InternetAddress("to3@localhost")));
-            assertThat(imapMessages.length).isEqualTo(3);
+            assertThat(imapMessages).hasSize(3);
             assertThat(imapMessages[0]).isEqualTo(m1);
 
             // Search Subject
             imapMessages = imapFolder.search(new SubjectTerm("test0Search"));
-            assertThat(imapMessages.length).isEqualTo(2);
+            assertThat(imapMessages).hasSize(2);
             assertThat(m0).isSameAs(imapMessages[0]);
             imapMessages = imapFolder.search(new SubjectTerm("TeSt0Search")); // Case insensitive
-            assertThat(imapMessages.length).isEqualTo(2);
+            assertThat(imapMessages).hasSize(2);
             assertThat(m0).isSameAs(imapMessages[0]);
             imapMessages = imapFolder.search(new SubjectTerm("0S"));
-            assertThat(imapMessages.length).isEqualTo(2);
+            assertThat(imapMessages).hasSize(2);
             assertThat(m0).isSameAs(imapMessages[0]);
             imapMessages = imapFolder.search(new SubjectTerm("not found"));
-            assertThat(imapMessages.length).isEqualTo(0);
+            assertThat(imapMessages).isEmpty();
             imapMessages = imapFolder.search(new SubjectTerm("test"));
-            assertThat(imapMessages.length).isEqualTo(2);
+            assertThat(imapMessages).hasSize(2);
 
             //Search OrTerm - Search Subject which contains test0Search OR nonexistent
             imapMessages = imapFolder.search(new OrTerm(new SubjectTerm("test0Search"), new SubjectTerm("nonexistent")));
-            assertThat(imapMessages.length).isEqualTo(2);
+            assertThat(imapMessages).hasSize(2);
             assertThat(m0).isSameAs(imapMessages[0]);
 
             // OrTerm : two matching sub terms
             imapMessages = imapFolder.search(new OrTerm(new SubjectTerm("foo"), new SubjectTerm("bar")));
-            assertThat(imapMessages.length).isEqualTo(2);
+            assertThat(imapMessages).hasSize(2);
             assertThat(m2).isSameAs(imapMessages[0]);
             assertThat(m3).isSameAs(imapMessages[1]);
 
             // OrTerm : no matching
             imapMessages = imapFolder.search(new AndTerm(new SubjectTerm("nothing"), new SubjectTerm("nil")));
-            assertThat(imapMessages.length).isEqualTo(0);
+            assertThat(imapMessages).isEmpty();
 
             //Search AndTerm - Search Subject which contains test0Search AND test1Search
             imapMessages = imapFolder.search(new AndTerm(new SubjectTerm("test0Search"), new SubjectTerm("test1Search")));
-            assertThat(imapMessages.length).isEqualTo(1);
+            assertThat(imapMessages).hasSize(1);
             assertThat(m1).isSameAs(imapMessages[0]);
 
             testReceivedDateTerms(imapFolder, m0, m1, m2, m3, m4, m5);
@@ -169,8 +175,8 @@ public class ImapSearchTest {
             // Content
             final String pattern = "\u00e4\u03A0";
             imapMessages = imapFolder.search(new SubjectTerm(pattern));
-            assertThat(imapMessages.length).isEqualTo(1);
-            assertThat(imapMessages[0].getSubject().contains(pattern)).isTrue();
+            assertThat(imapMessages).hasSize(1);
+            assertThat(imapMessages[0].getSubject()).contains(pattern);
         } finally {
             store.close();
         }
@@ -207,8 +213,7 @@ public class ImapSearchTest {
                     new OrTerm(toTerm, fromTerm));
 
             Message[] messages = inbox.search(and);
-
-            assertThat(2).as("Failure on AND search").isEqualTo(messages.length);
+            assertThat(messages).hasSize(2);
         } finally {
             store.close();
         }
@@ -288,7 +293,7 @@ public class ImapSearchTest {
 
     private void testDateTerm(Folder imapFolder, DateTerm term, Message... expectedResults) throws Exception {
         Message[] imapMessages = imapFolder.search(term);
-        assertThat(imapMessages.length).isEqualTo(expectedResults.length);
+        assertThat(imapMessages).hasSameSizeAs(expectedResults);
         for (int i = 0; i < expectedResults.length; i++) {
             assertThat(expectedResults[i]).isSameAs(imapMessages[i]);
         }

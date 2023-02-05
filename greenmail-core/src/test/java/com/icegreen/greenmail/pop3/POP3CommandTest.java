@@ -1,10 +1,4 @@
-package com.icegreen.greenmail.test.commands;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.net.Socket;
+package com.icegreen.greenmail.pop3;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.pop3.commands.AuthCommand;
@@ -13,6 +7,12 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.net.Socket;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -41,7 +41,7 @@ public class GreenMailStandaloneRunnerTest {
             try (Folder folder = store.getFolder("INBOX")) {
                 folder.open(Folder.READ_ONLY);
                 Message msg = folder.getMessages()[0];
-                assertThat(msg.getFrom()[0].toString()).isEqualTo("test1@localhost");
+                assertThat(msg.getFrom()[0]).hasToString("test1@localhost");
                 assertThat(msg.getSubject()).isEqualTo("Standalone test");
             }
         }

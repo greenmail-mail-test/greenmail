@@ -37,6 +37,6 @@ public class MaxSizeLinkedHashMapTest {
         }
 
         // Then
-        assertThat(map.size()).isEqualTo(TEST_MAX_SIZE);
+        assertThat(map).hasSize(TEST_MAX_SIZE);
     }
 }

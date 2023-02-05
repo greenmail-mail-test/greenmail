@@ -1,4 +1,4 @@
-package com.icegreen.greenmail.test.specificmessages;
+package com.icegreen.greenmail.specificmessages;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.server.AbstractServer;
@@ -53,7 +53,7 @@ public class DateTest {
             throws MessagingException {
         try (Retriever retriever = new Retriever(server)) {
             Message[] messages = retriever.getMessages(to);
-            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages).hasSize(1);
             Message message = messages[0];
             assertThat(milliSecondDateDiff(message.getSentDate(), sentDate)).isLessThan(3000L);
             if (checkReceivedDate) {

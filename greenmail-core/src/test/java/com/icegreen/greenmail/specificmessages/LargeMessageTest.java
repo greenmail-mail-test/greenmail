@@ -1,4 +1,4 @@
-package com.icegreen.greenmail.test.specificmessages;
+package com.icegreen.greenmail.specificmessages;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.server.AbstractServer;
@@ -58,11 +58,11 @@ public class LargeMessageTest {
     private void retrieveAndCheck(AbstractServer server, String to) throws MessagingException, IOException {
         try (Retriever retriever = new Retriever(server)) {
             Message[] messages = retriever.getMessages(to);
-            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages).hasSize(1);
             Message message = messages[0];
-            assertThat(message.getContentType().startsWith("multipart/mixed")).isTrue();
+            assertThat(message.getContentType()).startsWith("multipart/mixed");
             MimeMultipart body = (MimeMultipart) message.getContent();
-            assertThat(body.getContentType().startsWith("multipart/mixed")).isTrue();
+            assertThat(body.getContentType()).startsWith("multipart/mixed");
             assertThat(body.getCount()).isEqualTo(2);
 
             // Message text
@@ -71,7 +71,7 @@ public class LargeMessageTest {
             assertThat(text).isEqualTo(createLargeString());
 
             final BodyPart attachment = body.getBodyPart(1);
-            assertThat(attachment.getContentType().equalsIgnoreCase("application/blubb; name=file")).isTrue();
+            assertThat(attachment.getContentType()).isEqualToIgnoringCase("application/blubb; name=file");
             InputStream attachmentStream = (InputStream) attachment.getContent();
             byte[] bytes = toByteArray(attachmentStream);
             assertThat(bytes).isEqualTo(createLargeByteArray());
@@ -87,9 +87,9 @@ public class LargeMessageTest {
     private void retrieveAndCheckBody(AbstractServer server, String to) throws MessagingException, IOException {
         try (Retriever retriever = new Retriever(server)) {
             Message[] messages = retriever.getMessages(to);
-            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages).hasSize(1);
             Message message = messages[0];
-            assertThat(message.getContentType().equalsIgnoreCase("application/blubb")).isTrue();
+            assertThat(message.getContentType()).isEqualToIgnoringCase("application/blubb");
 
             // Check content
             InputStream contentStream = (InputStream) message.getContent();

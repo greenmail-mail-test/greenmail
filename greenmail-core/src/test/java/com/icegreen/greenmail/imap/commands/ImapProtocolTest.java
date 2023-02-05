@@ -253,7 +253,7 @@ public class ImapProtocolTest {
                 "SEARCH NOT (ANSWERED) NOT (DELETED) NOT (SEEN) NOT (FLAGGED) ALL", null));
             IMAPResponse response = (IMAPResponse) ret[0];
             assertThat(response.isBAD()).isFalse();
-            assertThat("1 4 5 6 7 8 9 10" /* 2 and 3 set to answered */).isEqualTo(response.getRest());
+            assertThat(response.getRest()).isEqualTo("1 4 5 6 7 8 9 10" /* 2 and 3 set to answered */);
         } finally {
             store.close();
         }
@@ -290,7 +290,7 @@ public class ImapProtocolTest {
                 uids.put(msg.getMessageNumber(), Long.toString(folder.getUID(msg)));
             }
 
-            // messages[2] contains content with search text, match must be case insensitive
+            // messages[2] contains content with search text, match must be case-insensitive
             final String searchText1 = "conTEnt2";
             Response[] ret = (Response[]) folder.doCommand(
                 protocol -> protocol.command("UID SEARCH TEXT " + searchText1, null));
@@ -406,7 +406,7 @@ public class ImapProtocolTest {
                 email.setSubject("subject " + search, charset);
                 GreenMailUtil.sendMimeMessage(email);
 
-                // messages[2] contains content with search text, match must be case insensitive
+                // messages[2] contains content with search text, match must be case-insensitive
                 final byte[] searchBytes = search.getBytes(charset);
                 final Argument arg = new Argument();
                 arg.writeBytes(searchBytes);
@@ -447,7 +447,7 @@ public class ImapProtocolTest {
             Response[] ret = (Response[]) folder.doCommand(uid_search_all);
             IMAPResponse response = (IMAPResponse) ret[0];
             assertThat(response.isBAD()).isFalse();
-            assertThat(response.toString()).isEqualTo("* SEARCH");
+            assertThat(response).hasToString("* SEARCH");
         } finally {
             store.close();
         }

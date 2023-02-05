@@ -1,11 +1,11 @@
-package com.icegreen.greenmail.test.specificmessages;
+package com.icegreen.greenmail.specificmessages;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.server.AbstractServer;
-import com.icegreen.greenmail.test.util.GreenMailMimeMessage;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.internet.MimeMessage;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -68,13 +68,31 @@ public class EscapingTest {
             throws MessagingException {
         try (Retriever retriever = new Retriever(server)) {
             Message[] messages = retriever.getMessages(to);
-            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages).hasSize(1);
             Message message = messages[0];
 
             // Message subject
             assertThat(message.getSubject()).isEqualTo(subject);
-            assertThat(message.getAllRecipients()[0].toString()).isEqualTo(to);
-            assertThat(message.getFrom()[0].toString()).isEqualTo(from);
+            assertThat(message.getAllRecipients()[0]).hasToString(to);
+            assertThat(message.getFrom()[0]).hasToString(from);
         }
+    }
+
+    /* Utility class that extends MimeMessage forcing every message-id to contain characters that need to be properly escaped
+     * Javamail by default will set the message-id when the MimeMessage is being processed.
+     * See http://www.oracle.com/technetwork/java/faq-135477.html#msgid for more details
+     */
+    static class GreenMailMimeMessage extends MimeMessage {
+
+        public GreenMailMimeMessage(Session session) {
+            super(session);
+        }
+
+        @Override
+        protected void updateMessageID() throws MessagingException {
+            String messageID = "<11111.22222.3333.JavaMail.\"foo.bar\\domain\"@localhost>";
+            setHeader("Message-ID", messageID);
+        }
+
     }
 }

@@ -4,6 +4,7 @@ import com.icegreen.greenmail.smtp.auth.AuthenticationState;
 import com.icegreen.greenmail.smtp.auth.UsernameAuthentication;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
+import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.NoSuchUserException;
 import com.icegreen.greenmail.user.UserException;
@@ -59,9 +60,10 @@ public class ExampleFindUserByAuthLoginTest {
         // Check that the mail was still sent to the user we created.
         GreenMailUser user = greenMail.getUserManager().getUser("login");
         MailFolder inbox = greenMail.getManagers().getImapHostManager().getInbox(user);
-        assertThat(inbox.getMessages().get(0).getMimeMessage().getSubject()).isEqualTo("some subject");
-        assertThat(inbox.getMessages().get(0).getMimeMessage().getRecipients(RecipientType.TO)[0].toString()).isEqualTo("john@example.com");
-        assertThat(inbox.getMessages().get(0).getMimeMessage().getFrom()[0].toString()).isEqualTo("mary@example.com");
+        final StoredMessage createdMessage = inbox.getMessages().get(0);
+        assertThat(createdMessage.getMimeMessage().getSubject()).isEqualTo("some subject");
+        assertThat(createdMessage.getMimeMessage().getRecipients(RecipientType.TO)[0]).hasToString("john@example.com");
+        assertThat(createdMessage.getMimeMessage().getFrom()[0]).hasToString("mary@example.com");
     }
 
     @Before
