@@ -249,6 +249,8 @@ public class ServerSetup {
             props.setProperty(MAIL_DOT + getProtocol() + ".starttls.enable", Boolean.TRUE.toString());
             props.setProperty(MAIL_DOT + getProtocol() + ".socketFactory.class", DummySSLSocketFactory.class.getName());
             props.setProperty(MAIL_DOT + getProtocol() + ".socketFactory.fallback", "false");
+            // Required for Angus Mail, see: https://github.com/eclipse-ee4j/angus-mail/issues/12
+            props.setProperty(MAIL_DOT + getProtocol() + ".ssl.checkserveridentity", "false");
         }
 
         // Timeouts
