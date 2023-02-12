@@ -308,6 +308,13 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>keytool-maven-plugin</artifactId>
           <version>1.6</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.codehaus.plexus</groupId>
+              <artifactId>plexus-utils</artifactId>
+              <version>3.5.0</version>
+            </dependency>
+          </dependencies>
         </plugin>
         <plugin>
           <groupId>org.apache.felix</groupId>
