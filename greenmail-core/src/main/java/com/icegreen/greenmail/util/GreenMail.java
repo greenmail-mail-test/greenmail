@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 public class GreenMail extends ConfiguredGreenMail {
     protected final Logger log = LoggerFactory.getLogger(GreenMail.class);
     protected Managers managers;
-    protected Map<String, AbstractServer> services;
+    protected final Map<String, AbstractServer> services = new HashMap<>();
     protected ServerSetup[] config;
 
     /**
@@ -84,9 +84,9 @@ public class GreenMail extends ConfiguredGreenMail {
         if (managers == null) {
             managers = new Managers();
         }
-        if (services == null) {
-            services = createServices(config, managers);
-        }
+
+        services.clear();
+        services.putAll( createServices(config, managers) );
     }
 
     @Override
@@ -127,14 +127,13 @@ public class GreenMail extends ConfiguredGreenMail {
     public synchronized void stop() {
         log.debug("Stopping GreenMail ...");
 
-        if (services != null) {
-            for (Service service : services.values()) {
-                log.debug("Stopping service {}", service);
-                service.stopService();
-            }
+        for (Service service : services.values()) {
+            log.debug("Stopping service {}", service);
+            service.stopService();
         }
+        services.clear();
+
         managers = new Managers();
-        services = null;
     }
 
     @Override
@@ -321,6 +320,6 @@ public class GreenMail extends ConfiguredGreenMail {
                 return false;
             }
         }
-        return true;
+        return !services.isEmpty();
     }
 }
