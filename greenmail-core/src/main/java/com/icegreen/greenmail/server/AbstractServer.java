@@ -4,21 +4,30 @@
  */
 package com.icegreen.greenmail.server;
 
-import java.io.IOException;
-import java.net.*;
-import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import javax.mail.NoSuchProviderException;
-import javax.mail.Session;
-import javax.mail.Store;
-
 import com.icegreen.greenmail.Managers;
 import com.icegreen.greenmail.util.DummySSLServerSocketFactory;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.Service;
+import javax.mail.NoSuchProviderException;
+import javax.mail.Session;
+import javax.mail.Store;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Wael Chatila
@@ -82,7 +91,7 @@ public abstract class AbstractServer extends Thread implements Service {
         }
 
         // Port gets dynamically allocated if 0, so need to wait till after bind
-        setup = setup.withPort(socket.getLocalPort());
+        setup = setup.port(socket.getLocalPort());
         setName(setup.getProtocol() + ':' + setup.getBindAddress() + ':' + setup.getPort());
 
         return socket;
