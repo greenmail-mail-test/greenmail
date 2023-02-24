@@ -1171,6 +1171,15 @@ public class NestedTest {
     }
 }
 </code></pre><!-- @formatter:on -->
+                <h4>How can I configure mail session properties?</h4>
+                <p>You can configure per protocol specific mail session properties:</p>
+                <pre><code class="language-java"><!-- @formatter:off -->
+GreenMail greenMail = new GreenMail(new ServerSetup[]{
+        ServerSetupTest.SMTP,
+        ServerSetupTest.IMAP.mailSessionProperty("mail.imap.minidletime", "100")
+});
+Session session = greenMail.getImap().createSession(); // Will have configured property set
+</code></pre><!-- @formatter:on -->
             </section>
 
             <section id="download" class="anchor">
