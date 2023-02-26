@@ -5,12 +5,12 @@ import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.user.UserManager;
 import com.icegreen.greenmail.util.Service;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -18,8 +18,6 @@ import java.util.Map;
 
 /**
  * Automatically starts and stops GreenMail server upon deployment/un-deployment.
- *
- * @author mm
  */
 public class GreenMailListener implements ServletContextListener {
     private final Logger log = LoggerFactory.getLogger(GreenMailListener.class);
@@ -42,7 +40,7 @@ public class GreenMailListener implements ServletContextListener {
             if (null == greenMailUser) {
                 try {
                     greenMailUser = userManager.createUser(
-                            user.email, user.login, user.password);
+                        user.email, user.login, user.password);
                     greenMailUser.setPassword(user.password);
                 } catch (UserException e) {
                     throw new IllegalStateException(e);

@@ -46,7 +46,7 @@ public class ConfigurationFactory {
                 protocol = Protocol.valueOf(pParamName.substring(0, dotIdx).toUpperCase());
             }
             Configuration.ServiceConfiguration serviceConf =
-                    pConf.getServiceConfigurationByProtocol(protocol);
+                pConf.getServiceConfigurationByProtocol(protocol);
             if (null == serviceConf) {
                 serviceConf = new Configuration.ServiceConfiguration();
                 serviceConf.protocol = protocol;

@@ -8,8 +8,6 @@ import java.util.Map;
 
 /**
  * Test for ConfigurationFactory.
- *
- * @author mm
  */
 public class ConfigurationFactoryTest {
 
@@ -22,7 +20,8 @@ public class ConfigurationFactoryTest {
         paramValues.put("greenmail.pop3.host", "127.0.0.2");
         paramValues.put("greenmail.pop3.port", "1110");
         paramValues.put("greenmail.imaps", "");
-        paramValues.put("greenmail.users", "user1:pwd1@localhost, user2:pwd2@localhost\nuser3:pwd3@localhost");
+        paramValues.put("greenmail.users",
+            "user1:pwd1@localhost, user2:pwd2@localhost\nuser3:pwd3@localhost");
 
         Configuration conf = ConfigurationFactory.create(paramValues);
 
@@ -30,17 +29,17 @@ public class ConfigurationFactoryTest {
         assert 20000 == conf.getPortOffset();
 
         Configuration.ServiceConfiguration serviceConfSmtp =
-                conf.getServiceConfigurationByProtocol(Protocol.SMTP);
+            conf.getServiceConfigurationByProtocol(Protocol.SMTP);
         assert null != serviceConfSmtp;
 
         Configuration.ServiceConfiguration serviceConfPop3 =
-                conf.getServiceConfigurationByProtocol(Protocol.POP3);
+            conf.getServiceConfigurationByProtocol(Protocol.POP3);
         assert null != serviceConfPop3;
         assert "127.0.0.2".equals(serviceConfPop3.hostname);
         assert 1110 == serviceConfPop3.port;
 
         Configuration.ServiceConfiguration serviceConfImaps =
-                conf.getServiceConfigurationByProtocol(Protocol.IMAPS);
+            conf.getServiceConfigurationByProtocol(Protocol.IMAPS);
         assert null != serviceConfImaps;
 
         List<Configuration.User> users = conf.getUsers();

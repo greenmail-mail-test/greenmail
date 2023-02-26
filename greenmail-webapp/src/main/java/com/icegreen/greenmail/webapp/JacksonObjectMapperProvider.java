@@ -1,15 +1,11 @@
 package com.icegreen.greenmail.webapp;
 
-import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Provider;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.ws.rs.ext.ContextResolver;
+import jakarta.ws.rs.ext.Provider;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.FAIL_ON_EMPTY_BEANS;
 
-/**
- *
- */
 @Provider
 public class JacksonObjectMapperProvider implements ContextResolver<ObjectMapper> {
 

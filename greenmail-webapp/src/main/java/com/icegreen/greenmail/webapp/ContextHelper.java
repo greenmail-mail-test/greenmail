@@ -1,8 +1,7 @@
 package com.icegreen.greenmail.webapp;
 
-import javax.servlet.ServletContext;
-
 import com.icegreen.greenmail.Managers;
+import jakarta.servlet.ServletContext;
 
 /**
  * Helps accessing servlet context attributes.
