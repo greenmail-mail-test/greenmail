@@ -1,6 +1,8 @@
 <?xml version='1.0'?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <name>== GreenMail ==</name>
   <description>GreenMail - Email Test Servers</description>
@@ -42,7 +44,7 @@
   <ciManagement>
     <system>CircleCI</system>
     <url>https://circleci.com/gh/greenmail-mail-test/greenmail</url>
-    <notifiers />
+    <notifiers/>
   </ciManagement>
 
   <!-- details about the organization that 'owns' the project -->
@@ -107,8 +109,8 @@
       <properties>
         <id>zegon</id>
       </properties>
-      <email />
-      <url />
+      <email/>
+      <url/>
     </contributor>
   </contributors>
 
@@ -145,7 +147,9 @@
             <!-- cli -->
             <workingDirectory>target</workingDirectory>
             <!-- Fix https://talk.openmrs.org/t/error-could-not-find-or-load-main-class-org-apache-maven-surefire-booter-forkedbooter/20509 -->
-            <argLine>@{argLine} -Djdk.net.URLClassPath.disableClassPathURLCheck=true -Djava.net.preferIPv4Stack=true</argLine>
+            <argLine>@{argLine} -Djdk.net.URLClassPath.disableClassPathURLCheck=true
+              -Djava.net.preferIPv4Stack=true
+            </argLine>
           </configuration>
         </plugin>
         <plugin>
@@ -157,7 +161,9 @@
             <!-- cli -->
             <workingDirectory>target</workingDirectory>
             <!-- Fix https://talk.openmrs.org/t/error-could-not-find-or-load-main-class-org-apache-maven-surefire-booter-forkedbooter/20509 -->
-            <argLine>@{argLine} -Djdk.net.URLClassPath.disableClassPathURLCheck=true -Djava.net.preferIPv4Stack=true</argLine>
+            <argLine>@{argLine} -Djdk.net.URLClassPath.disableClassPathURLCheck=true
+              -Djava.net.preferIPv4Stack=true
+            </argLine>
           </configuration>
           <executions>
             <execution>
@@ -237,7 +243,6 @@
           <configuration>
             <format>html</format>
             <linkXRef>true</linkXRef>
-            <sourceEncoding>utf-8</sourceEncoding>
             <minimumTokens>100</minimumTokens>
             <targetJdk>1.8</targetJdk>
             <analysisCache>true</analysisCache>
