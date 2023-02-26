@@ -347,22 +347,27 @@
         </executions>
       </plugin>
       <plugin>
-          <artifactId>maven-enforcer-plugin</artifactId>
-          <executions>
-              <execution>
-                  <id>enforce-maven</id>
-                  <goals>
-                      <goal>enforce</goal>
-                  </goals>
-                  <configuration>
-                      <rules>
-                          <requireMavenVersion>
-                              <version>3.8</version>
-                          </requireMavenVersion>
-                      </rules>
-                  </configuration>
-              </execution>
-          </executions>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-maven</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>3.8</version>
+                </requireMavenVersion>
+                <requireJavaVersion>
+                  <version>11</version>
+                  <message>Requires JDK 11 for building. Produced artifacts are compatible with JDK 8.
+                  </message>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
 
