@@ -75,13 +75,17 @@ Roadmap
 -------
 
 * [2.1](https://github.com/greenmail-mail-test/greenmail/milestone/39)
+  * Baseline: Jakarta EE 10
   * JakartaMail 2.1 / Angus Mail
   * Java 11
+  * Jersey 3.1.x
+  * Only junit 5?
 * [2.0](https://github.com/greenmail-mail-test/greenmail/milestone/3) ([branch master](https://github.com/greenmail-mail-test/greenmail/tree/master))
+  * Baseline: Jakarta EE 9
   * JakartaMail 2.0
   * Java 8
   * Deprecations (no GreenMailRule in greenmail-core, ...)
-  * Jersey 3.x (jakarta)
+  * Jersey 3.0.x
 * [1.6](https://github.com/greenmail-mail-test/greenmail/issues?q=is%3Aopen+is%3Aissue+milestone%3A1.6) ([branch releases/1.6.x](https://github.com/greenmail-mail-test/greenmail/tree/releases/1.6.x))
   * Bugfix and maintenance
 
