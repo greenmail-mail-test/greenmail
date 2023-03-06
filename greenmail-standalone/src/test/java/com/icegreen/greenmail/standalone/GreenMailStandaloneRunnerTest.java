@@ -4,14 +4,22 @@ import com.icegreen.greenmail.configuration.PropertiesBasedGreenMailConfiguratio
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.PropertiesBasedServerSetupBuilder;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.Store;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.junit.After;
 import org.junit.Test;
 
-import jakarta.mail.*;
-import jakarta.ws.rs.ProcessingException;
-import jakarta.ws.rs.client.*;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,8 +39,8 @@ public class GreenMailStandaloneRunnerTest {
     public void testDoRun() throws MessagingException {
         runner = createAndConfigureRunner(new Properties());
 
-        GreenMailUtil.sendTextEmail("test2@localhost", "test1@localhost", "Standalone test", "It worked",
-            ServerSetupTest.SMTP);
+        GreenMailUtil.sendTextEmail("test2@localhost", "test1@localhost",
+            "Standalone test", "It worked", ServerSetupTest.SMTP);
 
         final Session session = runner.getGreenMail().getImap().createSession();
         assertThat(session.getDebug()).isTrue();
@@ -41,7 +49,7 @@ public class GreenMailStandaloneRunnerTest {
             try (Folder folder = store.getFolder("INBOX")) {
                 folder.open(Folder.READ_ONLY);
                 Message msg = folder.getMessages()[0];
-                assertThat(msg.getFrom()[0].toString()).isEqualTo("test1@localhost");
+                assertThat(msg.getFrom()[0]).hasToString("test1@localhost");
                 assertThat(msg.getSubject()).isEqualTo("Standalone test");
             }
         }
@@ -90,10 +98,12 @@ public class GreenMailStandaloneRunnerTest {
         String userId = "foo.bar";
         final Response userCreateResponse = api.path("/api/user")
             .request(MediaType.APPLICATION_JSON)
-            .post(Entity.entity("{\"email\":\"foo.bar@localhost\", \"login\":\""+userId+"\", \"password\":\"xxx\"}",
+            .post(Entity.entity(
+                "{\"email\":\"foo.bar@localhost\", \"login\":\"" + userId + "\", \"password\":\"xxx\"}",
                 MediaType.APPLICATION_JSON));
         assertThat(userCreateResponse.getStatus()).isEqualTo(200);
-        assertThat(userCreateResponse.readEntity(String.class)).isEqualTo("{\"login\":\""+userId+"\",\"email\":\"foo.bar@localhost\"}");
+        assertThat(userCreateResponse.readEntity(String.class))
+            .isEqualTo("{\"login\":\"" + userId + "\",\"email\":\"foo.bar@localhost\"}");
 
         final Invocation.Builder deleteRequest = api.path("/api/user/" + userId).request();
         final Response userDeleteResponse = deleteRequest.delete();
@@ -103,7 +113,8 @@ public class GreenMailStandaloneRunnerTest {
         final Response readinessResponse = api.path("/api/service/readiness")
             .request(MediaType.APPLICATION_JSON).get(Response.class);
         assertThat(readinessResponse.getStatus()).isEqualTo(200);
-        assertThat(readinessResponse.readEntity(String.class)).isEqualTo("{\"message\":\"Service running\"}");
+        assertThat(readinessResponse.readEntity(String.class))
+            .isEqualTo("{\"message\":\"Service running\"}");
     }
 
     private GreenMailStandaloneRunner createAndConfigureRunner(Properties properties) {

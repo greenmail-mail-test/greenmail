@@ -104,7 +104,7 @@ public interface Store {
      * Gets the quotas.
      *
      * @link http://www.ietf.org/rfc/rfc2087.txt
-     * @see com.sun.mail.imap.IMAPStore#getQuota(String)
+     * @see org.eclipse.angus.mail.imap.IMAPStore#getQuota(String)
      * @param root the quota root
      * @param qualifiedRootPrefix the user specific prefix
      * @return the quotas, or an empty array.
@@ -115,7 +115,7 @@ public interface Store {
      * Sets the quota.
      *
      * @link http://www.ietf.org/rfc/rfc2087.txt
-     * @see com.sun.mail.imap.IMAPStore#setQuota(jakarta.mail.Quota)
+     * @see org.eclipse.angus.mail.imap.IMAPStore#setQuota(jakarta.mail.Quota)
      * @param quota the quota.
      * @param qualifiedRootPrefix the user specific prefix
      */

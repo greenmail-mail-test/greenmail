@@ -2,16 +2,14 @@
  * Copyright (c) 2014 Wael Chatila / Icegreen Technologies. All Rights Reserved.
  * This software is released under the Apache license 2.0
  */
-package com.icegreen.greenmail.test;
+package com.icegreen.greenmail.smtp;
 
-import static com.icegreen.greenmail.util.GreenMailUtil.createTextEmail;
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.SocketException;
-import java.util.Properties;
-
+import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.smtp.commands.AuthCommand;
+import com.icegreen.greenmail.user.GreenMailUser;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetup;
+import com.icegreen.greenmail.util.ServerSetupTest;
 import jakarta.mail.AuthenticationFailedException;
 import jakarta.mail.BodyPart;
 import jakarta.mail.Message;
@@ -22,16 +20,17 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMessage.RecipientType;
 import jakarta.mail.internet.MimeMultipart;
-
 import org.assertj.core.api.Assertions;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.smtp.commands.AuthCommand;
-import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.ServerSetup;
-import com.icegreen.greenmail.util.ServerSetupTest;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.SocketException;
+import java.util.Properties;
+
+import static com.icegreen.greenmail.util.GreenMailUtil.createTextEmail;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Wael Chatila
@@ -46,31 +45,31 @@ public class SmtpServerTest {
     public void testSmtpServerBasic() throws MessagingException, IOException {
         GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "subject", "body");
         MimeMessage[] emails = greenMail.getReceivedMessages();
-        assertThat(emails.length).isEqualTo(1);
+        assertThat(emails).hasSize(1);
         assertThat(emails[0].getSubject()).isEqualTo("subject");
         assertThat(emails[0].getContent()).isEqualTo("body");
     }
 
     @Test
     public void testSmtpServerTimeout() {
-        assertThat(greenMail.getReceivedMessages().length).isEqualTo(0);
+        assertThat(greenMail.getReceivedMessages()).isEmpty();
         long t0 = System.currentTimeMillis();
         greenMail.waitForIncomingEmail(500, 1);
         assertThat(System.currentTimeMillis() - t0 > 500).isTrue();
         MimeMessage[] emails = greenMail.getReceivedMessages();
-        assertThat(emails.length).isEqualTo(0);
+        assertThat(emails).isEmpty();
     }
 
     @Test
     public void testSmtpServerReceiveWithSetup() throws Throwable {
-        assertThat(greenMail.getReceivedMessages().length).isEqualTo(0);
+        assertThat(greenMail.getReceivedMessages()).isEmpty();
 
         String subject = GreenMailUtil.random();
         String body = GreenMailUtil.random();
         GreenMailUtil.sendTextEmailTest("test@localhost", "from@localhost", subject, body);
         greenMail.waitForIncomingEmail(1500, 1);
         MimeMessage[] emails = greenMail.getReceivedMessages();
-        assertThat(emails.length).isEqualTo(1);
+        assertThat(emails).hasSize(1);
         assertThat(emails[0].getSubject()).isEqualTo(subject);
         assertThat(emails[0].getContent()).isEqualTo(body);
     }
@@ -78,7 +77,7 @@ public class SmtpServerTest {
 
     @Test
     public void testSmtpServerReceiveInThread() throws Throwable {
-        assertThat(greenMail.getReceivedMessages().length).isEqualTo(0);
+        assertThat(greenMail.getReceivedMessages()).isEmpty();
 
         Thread sendThread = new Thread(() -> {
             try {
@@ -91,13 +90,13 @@ public class SmtpServerTest {
         sendThread.start();
         greenMail.waitForIncomingEmail(3000, 1);
         MimeMessage[] emails = greenMail.getReceivedMessages();
-        assertThat(emails.length).isEqualTo(1);
+        assertThat(emails).hasSize(1);
         sendThread.join(10000);
     }
 
     @Test
     public void testSmtpServerReceiveMultipart() throws Exception {
-        assertThat(greenMail.getReceivedMessages().length).isEqualTo(0);
+        assertThat(greenMail.getReceivedMessages()).isEmpty();
 
         String subject = GreenMailUtil.random();
         String body = GreenMailUtil.random();
@@ -105,11 +104,11 @@ public class SmtpServerTest {
             new byte[]{0, 1, 2}, "image/gif", "testimage_filename", "testimage_description", ServerSetupTest.SMTP);
         greenMail.waitForIncomingEmail(1500, 1);
         Message[] emails = greenMail.getReceivedMessages();
-        assertThat(emails.length).isEqualTo(1);
+        assertThat(emails).hasSize(1);
         assertThat(emails[0].getSubject()).isEqualTo(subject);
 
         Object o = emails[0].getContent();
-        assertThat(o instanceof MimeMultipart).isTrue();
+        assertThat(o).isInstanceOf(MimeMultipart.class);
         MimeMultipart mp = (MimeMultipart) o;
         assertThat(mp.getCount()).isEqualTo(2);
         BodyPart bp;
@@ -132,7 +131,7 @@ public class SmtpServerTest {
         String body = ". body with leading period";
         GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "subject", body);
         MimeMessage[] emails = greenMail.getReceivedMessages();
-        assertThat(emails.length).isEqualTo(1);
+        assertThat(emails).hasSize(1);
         assertThat(emails[0].getSubject()).isEqualTo("subject");
         assertThat(emails[0].getContent()).isEqualTo(body);
     }
@@ -145,14 +144,14 @@ public class SmtpServerTest {
             greenMail.getSmtp().getServerSetup());
         message.addRecipients(Message.RecipientType.BCC, "bcc1@localhost,bcc2@localhost");
 
-        assertThat(greenMail.getReceivedMessages().length).isEqualTo(0);
+        assertThat(greenMail.getReceivedMessages()).isEmpty();
 
         GreenMailUtil.sendMimeMessage(message);
 
         assertThat(greenMail.waitForIncomingEmail(1500, 3)).isTrue();
 
         MimeMessage[] emails = greenMail.getReceivedMessages();
-        assertThat(emails.length).isEqualTo(3);
+        assertThat(emails).hasSize(3);
     }
 
     @Test
@@ -172,7 +171,7 @@ public class SmtpServerTest {
         try {
             transport.sendMessage(message, message.getAllRecipients());
             Assertions.fail("should have thrown");
-        } catch (com.sun.mail.smtp.SMTPSendFailedException e) { // Graceful server-side-close with 421
+        } catch (org.eclipse.angus.mail.smtp.SMTPSendFailedException e) { // Graceful server-side-close with 421
             assertThat(e).hasNoCause();
         } catch (MessagingException e) {
             assertThat(e).hasCauseExactlyInstanceOf(SocketException.class);
@@ -192,7 +191,7 @@ public class SmtpServerTest {
 
     @Test
     public void testAuth() throws Throwable {
-        assertThat(greenMail.getReceivedMessages().length).isEqualTo(0);
+        assertThat(greenMail.getReceivedMessages()).isEmpty();
 
         String subject = GreenMailUtil.random();
         String body = GreenMailUtil.random();
@@ -202,14 +201,14 @@ public class SmtpServerTest {
         try {
             Transport.send(message, "foo", "bar");
         } catch (AuthenticationFailedException ex) {
-            assertThat(ex.getMessage().contains(AuthCommand.AUTH_CREDENTIALS_INVALID)).isTrue();
+            assertThat(ex.getMessage()).contains(AuthCommand.AUTH_CREDENTIALS_INVALID);
         }
         greenMail.setUser("foo", "bar");
         Transport.send(message, "foo", "bar");
 
         greenMail.waitForIncomingEmail(1500, 3);
         MimeMessage[] emails = greenMail.getReceivedMessages();
-        assertThat(emails.length).isEqualTo(2);
+        assertThat(emails).hasSize(2);
         for (MimeMessage receivedMsg : emails) {
             assertThat(receivedMsg.getSubject()).isEqualTo(subject);
             assertThat(receivedMsg.getContent()).isEqualTo(body);
@@ -218,7 +217,7 @@ public class SmtpServerTest {
 
     @Test
     public void testSmtpServerReceiveWithAUTHSuffix() throws Throwable {
-        assertThat(greenMail.getReceivedMessages().length).isEqualTo(0);
+        assertThat(greenMail.getReceivedMessages()).isEmpty();
 
         String subject = GreenMailUtil.random();
 
@@ -238,8 +237,23 @@ public class SmtpServerTest {
 
         greenMail.waitForIncomingEmail(1500, 1);
         MimeMessage[] emails = greenMail.getReceivedMessages();
-        assertThat(emails.length).isEqualTo(1);
+        assertThat(emails).hasSize(1);
         assertThat(emails[0].getSubject()).isEqualTo(subject);
     }
 
+    @Test
+    public void testSendAndReCreateUser() throws MessagingException {
+        GreenMailUser user = greenMail.setUser("foo@localhost", "pwd");
+        GreenMailUtil.sendTextEmail(user.getEmail(), user.getEmail(), "Test subject",
+            "Test message", greenMail.getSmtp().getServerSetup());
+
+        greenMail.getUserManager().deleteUser(user);
+        assertThat(greenMail.getReceivedMessages()).isEmpty();
+        user = greenMail.setUser("foo@localhost", "pwd");
+
+        GreenMailUtil.sendTextEmail(user.getEmail(), user.getEmail(), "Test subject: 2nd msg",
+            "Test message", greenMail.getSmtp().getServerSetup());
+        assertThat(greenMail.getReceivedMessages()).hasSize(1);
+        assertThat(greenMail.getReceivedMessages()[0].getSubject()).isEqualTo("Test subject: 2nd msg");
+    }
 }

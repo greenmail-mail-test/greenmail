@@ -9,7 +9,7 @@ package com.icegreen.greenmail.store;
 
 import com.icegreen.greenmail.mail.MailAddress;
 import com.icegreen.greenmail.util.GreenMailUtil;
-import com.sun.mail.imap.protocol.INTERNALDATE;
+import org.eclipse.angus.mail.imap.protocol.INTERNALDATE;
 import jakarta.mail.BodyPart;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.*;

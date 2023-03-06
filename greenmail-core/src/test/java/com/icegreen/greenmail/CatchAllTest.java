@@ -1,4 +1,4 @@
-package com.icegreen.greenmail.test;
+package com.icegreen.greenmail;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
@@ -25,9 +25,9 @@ public class CatchAllTest {
         GreenMailUtil.sendTextEmailTest("to31@domain3.com", "from@localhost", "subject", "body");
         GreenMailUtil.sendTextEmailTest("to32@domain3.com", "from@localhost", "subject", "body");
         GreenMailUtil.sendTextEmailTest("to33@domain3.com", "from@localhost", "subject", "body");
-        assertThat(greenMail.getReceivedMessages().length).isEqualTo(6);
-        assertThat(2).isEqualTo(greenMail.getReceivedMessagesForDomain("domain1.com").length);
-        assertThat(1).isEqualTo(greenMail.getReceivedMessagesForDomain("domain2.com").length);
-        assertThat(3).isEqualTo(greenMail.getReceivedMessagesForDomain("domain3.com").length);
+        assertThat(greenMail.getReceivedMessages()).hasSize(6);
+        assertThat(greenMail.getReceivedMessagesForDomain("domain1.com")).hasSize(2);
+        assertThat(greenMail.getReceivedMessagesForDomain("domain2.com")).hasSize(1);
+        assertThat(greenMail.getReceivedMessagesForDomain("domain3.com")).hasSize(3);
     }
 }

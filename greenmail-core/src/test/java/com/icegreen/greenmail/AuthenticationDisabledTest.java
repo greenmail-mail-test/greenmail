@@ -1,15 +1,4 @@
-package com.icegreen.greenmail.test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.io.IOException;
-
-import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
-
-import org.junit.Rule;
-import org.junit.Test;
+package com.icegreen.greenmail;
 
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit.GreenMailRule;
@@ -22,6 +11,15 @@ import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import org.junit.Rule;
+import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class AuthenticationDisabledTest {
     @Rule
@@ -36,7 +34,7 @@ public class AuthenticationDisabledTest {
         final String body = "body";
         GreenMailUtil.sendTextEmailTest(to, "from@localhost", subject, body);
         MimeMessage[] emails = greenMail.getReceivedMessages();
-        assertThat(emails.length).isEqualTo(1);
+        assertThat(emails).hasSize(1);
         assertThat(emails[0].getSubject()).isEqualTo(subject);
         assertThat(emails[0].getContent()).isEqualTo(body);
 
@@ -44,7 +42,7 @@ public class AuthenticationDisabledTest {
 
         try (Retriever retriever = new Retriever(greenMail.getImap())) {
             Message[] messages = retriever.getMessages(to);
-            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages).hasSize(1);
             assertThat(messages[0].getSubject()).isEqualTo(subject);
             assertThat(messages[0].getContent()).isEqualTo(body);
         }
@@ -58,20 +56,20 @@ public class AuthenticationDisabledTest {
 
         try (Retriever retriever = new Retriever(greenMail.getImap())) {
             Message[] messages = retriever.getMessages(to);
-            assertThat(messages.length).isEqualTo(0);
+            assertThat(messages).isEmpty();
         }
     }
 
     @Test
     public void testReceiveWithAuthDisabledAndProvisionedUser() {
         final String to = "to@localhost";
-        greenMail.setUser(to, "to", "secret");
+        greenMail.setUser(to, to, "secret");
 
         greenMail.waitForIncomingEmail(500, 1);
 
         try (Retriever retriever = new Retriever(greenMail.getImap())) {
             Message[] messages = retriever.getMessages(to);
-            assertThat(messages.length).isEqualTo(0);
+            assertThat(messages).isEmpty();
         }
     }
 

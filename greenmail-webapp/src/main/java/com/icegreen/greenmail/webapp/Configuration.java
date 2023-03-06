@@ -20,52 +20,10 @@ public class Configuration {
      * Example: A port offset of 10000 results in SMTP port 10025.
      */
     public static final int DEFAULT_PORT_OFFSET = 10000;
-
-    /**
-     * A mail service configuration entry.
-     * <p>
-     * An entry contains a mandatory protocol and optional hostname and port.
-     * If the hostname and port are not configured, GreenMail uses
-     * the default hostname and the default protocol port plus the port offset.
-     */
-    public static class ServiceConfiguration {
-        Protocol protocol;
-        String hostname;
-        int port;
-
-        public Protocol getProtocol() {
-            return protocol;
-        }
-
-        public String getHostname() {
-            return hostname;
-        }
-
-        public int getPort() {
-            return port;
-        }
-    }
-
-    public static class User {
-        String login;
-        String password;
-
-        public String getLogin() {
-            return login;
-        }
-
-        public String getEmail() {
-            return email;
-        }
-
-        String email;
-    }
-
-    private String defaultHostname;
-    private int portOffset;
     private final List<ServiceConfiguration> services;
     private final List<User> users;
-
+    private String defaultHostname;
+    private int portOffset;
     /**
      * Initializes configuration with
      */
@@ -115,5 +73,44 @@ public class Configuration {
             }
         }
         return null;
+    }
+
+    /**
+     * A mail service configuration entry.
+     * <p>
+     * An entry contains a mandatory protocol and optional hostname and port.
+     * If the hostname and port are not configured, GreenMail uses
+     * the default hostname and the default protocol port plus the port offset.
+     */
+    public static class ServiceConfiguration {
+        Protocol protocol;
+        String hostname;
+        int port;
+
+        public Protocol getProtocol() {
+            return protocol;
+        }
+
+        public String getHostname() {
+            return hostname;
+        }
+
+        public int getPort() {
+            return port;
+        }
+    }
+
+    public static class User {
+        String login;
+        String password;
+        String email;
+
+        public String getLogin() {
+            return login;
+        }
+
+        public String getEmail() {
+            return email;
+        }
     }
 }

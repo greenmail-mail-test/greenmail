@@ -59,34 +59,15 @@ public class GreenMailStandaloneRunner {
     protected static void configureLogging(Properties properties) {
         // Init logging: Try standard log4j2 configuration mechanism before falling back to
         // provided logging configuration
-        String log4jConfig = System.getProperty("log4j2.configurationFile");
+        final String log4jConfigFilePropertyName = "log4j2.configurationFile";
+        String log4jConfig = System.getProperty(log4jConfigFilePropertyName);
         if (null == log4jConfig) {
             if (properties.containsKey(PropertiesBasedServerSetupBuilder.GREENMAIL_VERBOSE)) {
-                System.setProperty("log4j2.configurationFile", "log4j2-verbose.xml");
-//                try {
-//                    Configurator.initialize("",GreenMailStandaloneRunner.class.getResource("/log4j2-verbose.xml").toURI().toString());
-//                } catch (URISyntaxException e) {
-//                    e.printStackTrace();
-//                }
-//                DOMConfigurator.configure(GreenMailStandaloneRunner.class.getResource("/log4j2-verbose.xml"));
+                System.setProperty(log4jConfigFilePropertyName, "log4j2-verbose.xml");
             } else {
-                System.setProperty("log4j2.configurationFile", "log4j2.xml");
-//                try {
-//                    Configurator.initialize("",GreenMailStandaloneRunner.class.getResource("/log4j2.xml").toURI().toString());
-//                } catch (URISyntaxException e) {
-//                    e.printStackTrace();
-//                }
-//                DOMConfigurator.configure(GreenMailStandaloneRunner.class.getResource("/log4j2.xml"));
+                System.setProperty(log4jConfigFilePropertyName, "log4j2.xml");
             }
         }
-//        else {
-//            if (log4jConfig.toLowerCase().endsWith(".xml")) {
-//                DOMConfigurator.configure(log4jConfig);
-//            } else {
-//                PropertyConfigurator.configure(log4jConfig);
-//            }
-//        }
-//        Configurator.initialize();
         LoggerContext.getContext();
 
         // Bridge Java Util Logging to SLF4j for Jersey

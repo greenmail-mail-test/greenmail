@@ -1,4 +1,4 @@
-package com.icegreen.greenmail.test;
+package com.icegreen.greenmail.smtp;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;

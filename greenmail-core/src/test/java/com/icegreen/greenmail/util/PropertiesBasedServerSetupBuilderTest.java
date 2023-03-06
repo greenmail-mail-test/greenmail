@@ -1,8 +1,8 @@
 package com.icegreen.greenmail.util;
 
-import java.util.Properties;
-
 import org.junit.Test;
+
+import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,8 +37,8 @@ public class PropertiesBasedServerSetupBuilderTest {
         properties.setProperty("greenmail.setup.test.smtp", "");
         properties.setProperty(PropertiesBasedServerSetupBuilder.GREENMAIL_VERBOSE, "");
         setups = setupBuilder.build(properties);
-        assertThat(setups).isEqualTo(new ServerSetup[]{ServerSetupTest.SMTP});
         assertThat(setups[0].isVerbose()).isTrue();
+        assertThat(setups).isEqualTo(new ServerSetup[]{ServerSetupTest.SMTP.verbose(true)});
 
         // With hostname
         properties.clear();

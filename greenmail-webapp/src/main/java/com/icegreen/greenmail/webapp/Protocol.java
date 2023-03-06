@@ -22,7 +22,9 @@ public enum Protocol {
     /** The default port. */
     final int port;
 
-    /** Private constructor, including default port */
+    /**
+     * Private constructor, including default port
+     */
     Protocol(final int pPort) {
         port = pPort;
     }
@@ -34,16 +36,16 @@ public enum Protocol {
      * @return the protocol.
      */
     static Protocol findByPort(int pPort) {
-        for(Protocol p: values()) {
-            if(pPort == p.port) {
+        for (Protocol p : values()) {
+            if (pPort == p.port) {
                 return p;
             }
         }
-        throw new IllegalArgumentException("Unknown port "+pPort+", supported ports are "+ Arrays.toString(values()));
+        throw new IllegalArgumentException("Unknown port " + pPort + ", supported ports are " + Arrays.toString(values()));
     }
 
     @Override
     public String toString() {
-        return name() + '(' + port +')';
+        return name() + '(' + port + ')';
     }
 }

@@ -2,7 +2,7 @@ package com.icegreen.greenmail.examples;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import com.sun.mail.imap.IMAPStore;
+import org.eclipse.angus.mail.imap.IMAPStore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -52,7 +52,7 @@ public class ExampleJavaMailTest {
         assertThat(msgReceived.getSubject()).isEqualTo(msg.getSubject());
 
         // Alternative 3: ... directly fetch sent message using GreenMail API
-        assertThat(1).isEqualTo(greenMail.getReceivedMessagesForDomain("bar@example.com").length);
+        assertThat(greenMail.getReceivedMessagesForDomain("bar@example.com")).hasSize(1);
         msgReceived = greenMail.getReceivedMessagesForDomain("bar@example.com")[0];
         assertThat(msgReceived.getSubject()).isEqualTo(msg.getSubject());
 

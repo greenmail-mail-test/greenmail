@@ -2,28 +2,28 @@
  * Copyright (c) 2014 Wael Chatila / Icegreen Technologies. All Rights Reserved.
  * This software is released under the Apache license 2.0
  */
-package com.icegreen.greenmail.test;
-
-import java.io.ByteArrayOutputStream;
-
-import com.icegreen.greenmail.util.ServerSetup;
-import jakarta.mail.AuthenticationFailedException;
-import jakarta.mail.BodyPart;
-import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMultipart;
+package com.icegreen.greenmail.pop3;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
+import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import com.sun.mail.pop3.POP3Folder;
-import com.sun.mail.pop3.POP3Store;
+import org.eclipse.angus.mail.pop3.POP3Folder;
+import org.eclipse.angus.mail.pop3.POP3Store;
+import jakarta.mail.AuthenticationFailedException;
+import jakarta.mail.BodyPart;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMultipart;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import java.io.ByteArrayOutputStream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * @author Wael Chatila
@@ -41,7 +41,7 @@ public class Pop3ServerTest {
                 "testPop3Capabillities@localhost", "pwd");
         store.connect("testPop3Capabillities@localhost", "pwd");
         try {
-            assertThat(store.capabilities().containsKey("UIDL")).isTrue();
+            assertThat(store.capabilities()).containsKey("UIDL");
         } finally {
             store.close();
         }
@@ -59,7 +59,7 @@ public class Pop3ServerTest {
 
         try (Retriever retriever = new Retriever(greenMail.getPop3())) {
             Message[] messages = retriever.getMessages(to);
-            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages).hasSize(1);
             final Message message = messages[0];
             assertThat(message.getSubject()).isEqualTo(subject);
             assertThat(message.getContent().toString().trim()).isEqualTo(body);
@@ -81,7 +81,7 @@ public class Pop3ServerTest {
 
         try (Retriever retriever = new Retriever(greenMail.getPop3s())) {
             Message[] messages = retriever.getMessages(to);
-            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages).hasSize(1);
             assertThat(messages[0].getSubject()).isEqualTo(subject);
             assertThat(messages[0].getContent().toString().trim()).isEqualTo(body);
         }
@@ -104,7 +104,7 @@ public class Pop3ServerTest {
                 .hasCauseInstanceOf(AuthenticationFailedException.class);
 
             Message[] messages = retriever.getMessages(to, password);
-            assertThat(messages.length).isEqualTo(1);
+            assertThat(messages).hasSize(1);
             assertThat(messages[0].getSubject()).isEqualTo(subject);
             assertThat(messages[0].getContent().toString().trim()).isEqualTo(body);
         }
@@ -126,7 +126,7 @@ public class Pop3ServerTest {
             Message[] messages = retriever.getMessages(to);
 
             Object o = messages[0].getContent();
-            assertThat(o instanceof MimeMultipart).isTrue();
+            assertThat(o).isInstanceOf(MimeMultipart.class);
             MimeMultipart mp = (MimeMultipart) o;
             assertThat(mp.getCount()).isEqualTo(2);
             BodyPart bp;

@@ -1,6 +1,8 @@
-package com.icegreen.greenmail.util;
+package com.icegreen.greenmail.server;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -16,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class GreenMailTest {
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
 
     @Test
     public void testWaitForIncomingEmailWithTimeout() {
@@ -37,7 +39,7 @@ public class GreenMailTest {
         GreenMailUtil.sendTextEmailTest(to, "from@localhost", "subject", "body");
 
         final MimeMessage[] receivedMessagesForDomain = greenMail.getReceivedMessagesForDomain(to);
-        assertThat(receivedMessagesForDomain.length).isEqualTo(1);
+        assertThat(receivedMessagesForDomain).hasSize(1);
     }
 
     @Test
@@ -46,7 +48,16 @@ public class GreenMailTest {
         GreenMailUtil.sendTextEmailTest(to, "from@localhost", "subject", "body");
 
         final MimeMessage[] receivedMessagesForDomain = greenMail.getReceivedMessagesForDomain(to);
-        assertThat(receivedMessagesForDomain.length).isEqualTo(1);
+        assertThat(receivedMessagesForDomain).hasSize(1);
+    }
+
+    @Test
+    public void testIsRunning() {
+        assertThat(greenMail.isRunning()).isTrue();
+        greenMail.stop();
+        assertThat(greenMail.isRunning()).isFalse();
+        greenMail.start();
+        assertThat(greenMail.isRunning()).isTrue();
     }
 }
 

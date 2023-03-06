@@ -18,7 +18,7 @@ public class GreenMailRuleTest {
         // Send email and test in #testGreenMailStartedAgain() for "relicts"
         GreenMailUtil.sendTextEmail("to@localhost", "from@localhost", "subject", "content", greenMail.getSmtp().getServerSetup());
         greenMail.waitForIncomingEmail(1);
-        assertThat(greenMail.getReceivedMessages().length).isEqualTo(1);
+        assertThat(greenMail.getReceivedMessages()).hasSize(1);
     }
 
     @Test
@@ -26,7 +26,7 @@ public class GreenMailRuleTest {
         validateServicesRunning();
 
         // Expect no relict from previous test.
-        assertThat(greenMail.getReceivedMessages().length).isEqualTo(0);
+        assertThat(greenMail.getReceivedMessages()).isEmpty();
     }
 
     private void validateServicesRunning() {

@@ -1,7 +1,7 @@
 GreenMail
 =========
 
-[GreenMail][greenmail_project_site] is an open source, intuitive and easy-to-use test suite of email servers for testing purposes. 
+[GreenMail][greenmail_project_site] is an open source, intuitive and easy-to-use test suite of mocking email servers for testing purposes. 
 Supports SMTP, POP3, IMAP with SSL socket support, and can be run either embedded in a junit test, as a standalone Java application or as a docker container.
 GreenMail is the first and only library that offers a test framework for both receiving and retrieving emails from Java.
 
@@ -25,7 +25,7 @@ Development [![Build status](https://circleci.com/gh/greenmail-mail-test/greenma
 
   `mvn clean install -Pdocker`
 
-  Make sure you got [Maven 3.8][maven_download] or higher, and run a JDK 8 or newer.
+  Make sure you got [Maven 3.8][maven_download] or higher, and run a JDK 11 or newer.
   If you want to skip building the docker image, leave out the `-Pdocker` profile option.
 
   If you want to skip the long-running tests, use the Maven option `-DskipITs` .
@@ -75,13 +75,18 @@ Roadmap
 -------
 
 * [2.1](https://github.com/greenmail-mail-test/greenmail/milestone/39)
-  * JakartaMail 2.1 / Angus Mail
-  * Java 11
+  * Baseline: Jakarta EE 10
+    * JakartaMail 2.1 / Angus Mail
+    * Java 11
+    * Jersey 3.1.x
+  * Only junit 5?
 * [2.0](https://github.com/greenmail-mail-test/greenmail/milestone/3) ([branch master](https://github.com/greenmail-mail-test/greenmail/tree/master))
-  * JakartaMail 2.0
+  * Baseline: Jakarta EE 9
+    * JakartaMail 2.0
+    * Jersey 3.0.x for servlet 5 / restfulWS-3.0
+    * Java 11 for building / running integration tests
   * Java 8
   * Deprecations (no GreenMailRule in greenmail-core, ...)
-  * Jersey 3.x (jakarta)
 * [1.6](https://github.com/greenmail-mail-test/greenmail/issues?q=is%3Aopen+is%3Aissue+milestone%3A1.6) ([branch releases/1.6.x](https://github.com/greenmail-mail-test/greenmail/tree/releases/1.6.x))
   * Bugfix and maintenance
 

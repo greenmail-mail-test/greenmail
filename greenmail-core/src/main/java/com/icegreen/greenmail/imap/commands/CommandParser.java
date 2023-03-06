@@ -10,7 +10,7 @@ import com.icegreen.greenmail.imap.ImapConstants;
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.store.MessageFlags;
-import com.sun.mail.imap.protocol.BASE64MailboxDecoder;
+import org.eclipse.angus.mail.imap.protocol.BASE64MailboxDecoder;
 
 import jakarta.mail.Flags;
 

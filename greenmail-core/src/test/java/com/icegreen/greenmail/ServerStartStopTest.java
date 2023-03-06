@@ -1,4 +1,4 @@
-package com.icegreen.greenmail.test;
+package com.icegreen.greenmail;
 
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
@@ -47,7 +47,7 @@ public class ServerStartStopTest {
             service.start();
             fail("Expected timeout");
         } catch (IllegalStateException ex) {
-            assertThat(ex.getMessage().contains("try to set server startup timeout > ")).isTrue();
+            assertThat(ex.getMessage()).contains("try to set server startup timeout > ");
         } finally {
             service.stop();
         }

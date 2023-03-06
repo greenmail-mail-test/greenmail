@@ -1,11 +1,11 @@
-package com.icegreen.greenmail.test.commands;
+package com.icegreen.greenmail.imap;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import com.sun.mail.imap.IMAPFolder;
-import com.sun.mail.imap.SortTerm;
+import org.eclipse.angus.mail.imap.IMAPFolder;
+import org.eclipse.angus.mail.imap.SortTerm;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -51,17 +51,17 @@ public class ImapSortTest {
             assertThat(m0.getFlags().contains(Flags.Flag.ANSWERED)).isTrue();
 
             imapMessages = imapFolder.getSortedMessages(new SortTerm[]{SortTerm.TO});
-            assertThat(imapMessages.length).isEqualTo(2);
+            assertThat(imapMessages).hasSize(2);
             assertThat(m0).isSameAs(imapMessages[0]);
             assertThat(m1).isSameAs(imapMessages[1]);
 
             imapMessages = imapFolder.getSortedMessages(new SortTerm[]{SortTerm.REVERSE, SortTerm.TO});
-            assertThat(imapMessages.length).isEqualTo(2);
+            assertThat(imapMessages).hasSize(2);
             assertThat(m1).isSameAs(imapMessages[0]);
             assertThat(m0).isSameAs(imapMessages[1]);
 
             imapMessages = imapFolder.getSortedMessages(new SortTerm[]{SortTerm.TO}, new FlagTerm(new Flags(Flags.Flag.ANSWERED), true));
-            assertThat(imapMessages.length).isEqualTo(1);
+            assertThat(imapMessages).hasSize(1);
             assertThat(m0).isSameAs(imapMessages[0]);
 
         } finally {

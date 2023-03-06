@@ -1,4 +1,4 @@
-package com.icegreen.greenmail.test;
+package com.icegreen.greenmail;
 
 import com.icegreen.greenmail.util.DummySSLServerSocketFactory;
 import org.junit.Test;
