@@ -201,6 +201,8 @@ public class EncodingTest {
 
     @Test
     public void testAttachmentWithUTF8NameAndGreenMailApi() throws MessagingException, IOException {
+        System.setProperty("mail.mime.decodefilename", "true");
+
         greenMail.setUser("to@localhost", "pwd");
         final IMAPStore store = greenMail.getImap().createStore();
         store.connect("to@localhost", "pwd");
