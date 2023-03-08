@@ -1,11 +1,9 @@
-GreenMail
-=========
+# GreenMail
+[![Build status](https://circleci.com/gh/greenmail-mail-test/greenmail/tree/master.svg?style=shield)](https://app.circleci.com/pipelines/github/greenmail-mail-test) [![Maven Central](https://img.shields.io/maven-central/v/com.icegreen/greenmail.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.icegreen%22%20AND%20a%3A%22greenmail%22) [![StackOverflow](http://img.shields.io/badge/stackoverflow-greenmail-green.svg)](http://stackoverflow.com/questions/tagged/greenmail) [![Docker Pulls](https://img.shields.io/docker/pulls/greenmail/standalone.svg?maxAge=604800)][docker-hub] [![javadoc](https://javadoc.io/badge2/com.icegreen/greenmail/javadoc.svg)](https://javadoc.io/doc/com.icegreen/greenmail)
 
-[GreenMail][greenmail_project_site] is an open source, intuitive and easy-to-use test suite of mocking email servers for testing purposes. 
-Supports SMTP, POP3, IMAP with SSL socket support, and can be run either embedded in a junit test, as a standalone Java application or as a docker container.
-GreenMail is the first and only library that offers a test framework for both receiving and retrieving emails from Java.
-
-Go to the [project site][greenmail_project_site] for details:
+[GreenMail][greenmail_project_site] allows developers to test email-based applications, services or systems without access to a live mail server.
+Developers can send, receive, and verify emails by embedding GreenMail in a unit test or running it as a standalone container.
+GreenMail acts as a virtual (mocking/sandbox) mail server and supports common mail protocols SMTP, IMAP and POP3.
 
 * [Examples][greenmail_examples]
 * [Javadoc][greenmail_javadoc]
@@ -13,13 +11,20 @@ Go to the [project site][greenmail_project_site] for details:
 * [Download][greenmail_download]
 * [Maven coordinates][maven_repository_com]: com.icegreen:greenmail:\<[VERSION](https://github.com/greenmail-mail-test/greenmail/releases/)\>
 
-Containerized integration of GreenMail with various web mail clients can be found in the
-separate [GreenMail Client Integrations project](https://github.com/greenmail-mail-test/greenmail-client-integrations).
+The separate [GreenMail Client Integrations project](https://github.com/greenmail-mail-test/greenmail-client-integrations) provides
+containerized example integration of GreenMail with various web mail clients. 
 
 The GreenMail project welcomes any contribution, so go ahead and fork/open a pull request! See the guidelines below.
 
-Development [![Build status](https://circleci.com/gh/greenmail-mail-test/greenmail/tree/master.svg?style=shield)](https://app.circleci.com/pipelines/github/greenmail-mail-test) [![Maven Central](https://img.shields.io/maven-central/v/com.icegreen/greenmail.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.icegreen%22%20AND%20a%3A%22greenmail%22) [![StackOverflow](http://img.shields.io/badge/stackoverflow-greenmail-green.svg)](http://stackoverflow.com/questions/tagged/greenmail) [![Docker Pulls](https://img.shields.io/docker/pulls/greenmail/standalone.svg?maxAge=604800)][docker-hub] [![javadoc](https://javadoc.io/badge2/com.icegreen/greenmail/javadoc.svg)](https://javadoc.io/doc/com.icegreen/greenmail)
------------
+## Version compatibility
+
+| GreenMail | JavaMail          | Example frameworks                     |
+|-----------|-------------------|----------------------------------------|
+| 2.1.x     | JakartaMail 2.1.x |                                        |
+| 2.0.x     | JakartaMail 2.0.x | Spring 6                               |
+| 1.6.x     | JavaMail 1.6.x    | Spring 5, Apache commons-mail 1.5, ... |
+
+## Development
 
 * Build GreenMail from source 
 
@@ -71,8 +76,7 @@ Development [![Build status](https://circleci.com/gh/greenmail-mail-test/greenma
 [sonar]: http://nemo.sonarqube.org/dashboard/index?id=com.icegreen%3Agreenmail-parent
 [docker-hub]: https://hub.docker.com/r/greenmail/standalone/
 
-Roadmap
--------
+## Roadmap
 
 * [2.1](https://github.com/greenmail-mail-test/greenmail/milestone/39)
   * Baseline: Jakarta EE 10
@@ -90,8 +94,7 @@ Roadmap
 * [1.6](https://github.com/greenmail-mail-test/greenmail/issues?q=is%3Aopen+is%3Aissue+milestone%3A1.6) ([branch releases/1.6.x](https://github.com/greenmail-mail-test/greenmail/tree/releases/1.6.x))
   * Bugfix and maintenance
 
-Contribution guidelines
------------------------
+## Contribution guidelines
 
 We really appreciate your contribution!
 To make it easier for integrating your contribution, have a look at the following guidelines.
