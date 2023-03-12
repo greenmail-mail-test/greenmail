@@ -51,10 +51,10 @@
     <div class="container">
         <h1>GreenMail</h1>
 
-        <p class="lead">Open Source suite of lightweight and sand boxed email servers supporting SMTP, POP3 and
+        <p class="lead">Open Source suite of lightweight and sand-boxed email servers supporting SMTP, POP3 and
             IMAP.</p>
 
-        <p class="version">Currently <a href="https://github.com/greenmail-mail-test/greenmail/releases">v2.0.0 / v1.6.14</a></p>
+        <p class="version">Currently <a href="https://github.com/greenmail-mail-test/greenmail/releases">v2.1.0-alpha-1 / v2.0.0 (stable) / v1.6.14 (maintenance)</a></p>
     </div>
 </div>
 
@@ -142,33 +142,28 @@
                 <h3 id="intro" class="anchor">Introduction</h3>
 
                 <p>
-                    GreenMail is an open source, intuitive and easy-to-use test suite of email servers for testing
-                    purposes.
+                    GreenMail is an open source, intuitive and easy-to-use test suite of email servers for testing purposes.
                 </p>
 
                 <p>
-                    Typical use cases include mail integration testing or a lightweight sand boxed mail server for
+                    Typical use cases include mail integration testing or lightweight sand boxed mail server for
                     development.
                 </p>
                 <ul>
-                    <li>Supports SMTP, POP3 and IMAP including SSL</li>
-                    <li>Prevents accidental email leaking to real mail servers</li>
-                    <li>Provides different deployment models, such as a simple
-                        <a href="#deploy_standalone">standalone JVM process</a>,
-                        as a <a href="#deploy_webapp">WAR module</a> or as a <a href="#deploy_docker_standalone">docker
-                            image</a>
+                    <li>Supports SMTP, POP3 and IMAP including TLS/SSL</li>
+                    <li>Prevents accidental email leaking to real mail servers (non-forwarding / sand-boxed)</li>
+                    <li>Embeds in <a href="#examples">JUnit test</a> for integration testing</li>
+                    <li>Provides flexible standalone run options such as<ul>
+                        <li><a href="#deploy_standalone">standalone JVM process</a></li>
+                        <li><a href="#deploy_webapp">WAR module</a></li>
+                        <li><a href="#deploy_docker_standalone">docker image</a></li>
+                       </ul>
                     </li>
-                    <li>Easily embeddable in JUnit tests for integration testing</li>
-                    <li>Lightweight with few dependencies</li>
                 </ul>
-                <p>
-                    GreenMail is the first and only library that offers a test framework for both receiving and
-                    retrieving emails from Java.
-                </p>
                 <div class="alert alert-info" role="alert">
-                    Current releases and roadmap:
+                    Releases and compatibility:
                     <ul>
-                        <li>2.1.x <b>(planned, not yet released)</b>
+                        <li>2.1.x <b>alpha / preview</b>
                             <ul>
                                 <li><a href="https://jakarta.ee/specifications/mail/2.1/">Jakarta Mail 2.1.x</a></li>
                                 <li><a href="https://eclipse-ee4j.github.io/angus-mail/">Angus Mail</a></li>
@@ -183,7 +178,7 @@
                             </ul>
                         <li>1.6.x <b>maintenance</b>
                             <ul>
-                                <li><a href="https://jakarta.ee/specifications/mail/1.6/">Jakarta Mail 1.6.x</a></li>
+                                <li><a href="https://jakarta.ee/specifications/mail/1.6/">Jakarta Mail 1.6.x</a>(javax.mail package)</li>
                                 <li>Java 8</li>
                             </ul>
                         </li>
@@ -256,17 +251,15 @@ public void testReceive() throws MessagingException {
                 <h4>Sending and Retrieving</h4>
 
                 <p>GreenMail can easily be configured to use all or a combination of ports, protocols, and bind
-                    addresses. For
-                    example it's possible to run GreenMail on SMTP, POP3, POP3S and IMAPS ports as easily as only
-                    SMTP.
-                    Many
-                    systems might already be running these servers or don't allow non root users to open the default
-                    ports which
+                    addresses. For example, it's possible to run GreenMail on SMTP, POP3, POP3S and IMAPS
+                    ports as easily as only SMTP.
+                    Many systems might already be running these servers or don't allow non-root users
+                    to open the default ports which
                     is why GreenMail ships with a special configuration for testing.</p>
 
                 <h4>Mocking a mail server for your development environment</h4>
 
-                <p>GreenMail provides a JBoss GreenMail service for mocking a mail server for development. It safes
+                <p>GreenMail provides a JBoss GreenMail service for mocking a mail server for development. It saves
                     you the overhead of either installing a full productive server (like <a
                             href="https://james.apache.org/">Apache James</a>).
                 </p>
@@ -291,7 +284,7 @@ public void testReceive() throws MessagingException {
                 <p>GreenMail contains several modules:</p>
                 <ul>
                     <li><a href="#examples">com.icegreen:greenmail-core</a> - Core library for unit tests</li>
-                    <li><a href="#deploy_standalone">com.icegreen:greenmail-standalone</a> - Standalone runner (eg when not using GreenMail embedded into unit test)</li>
+                    <li><a href="#deploy_standalone">com.icegreen:greenmail-standalone</a> - Standalone runner (e.g. when not using GreenMail embedded into unit test)</li>
                     <li><a href="#deploy_docker_standalone">com.icegreen:greenmail-docker-standalone</a> - Dockerized standalone runner</li>
                     <li><a href="#ex_junit_rule">com.icegreen:greenmail-junit4</a> - JUnit4 support via GreenMailRule</li>
                     <li><a href="#ex_junit_extension">com.icegreen:greenmail-junit5</a> - JUnit5 support via GreenMailExtension</li>
@@ -404,7 +397,7 @@ public void testReceive() throws MessagingException {
                 <ul>
                     <li><a href="https://github.com/voodoodyne/subethasmtp">Wiser</a> alias Subethasmtp,
                     </li>
-                    <li><a href="https://james.apache.org/">Apache James</a>, a full blown enterprise mail server
+                    <li><a href="https://james.apache.org/">Apache James</a>, a full-blown enterprise mail server
                     </li>
                     <li><a href="https://www.aboutmyip.com/AboutMyXApp/DevNullSmtp.jsp">DevNullSmtp</a></li>
                     <li><a href="https://github.com/salyh/javamail-mock2">JavaMail Mock2</a></li>
@@ -781,7 +774,7 @@ java [OPTIONS] -jar greenmail-standalone.jar
                         <td class="text-nowrap">-Dgreenmail.auth.disabled</td>
                         <td>Disables user authentication check, so that any password works.
                             Useful if you do not want to preconfigure user/passwords.
-                            GreenMail automatically creates non existent users.
+                            GreenMail automatically creates non-existent users.
                             <div class="bs-example">
                                 Example: <code>-Dgreenmail.auth.disabled</code>
                             </div>
@@ -987,7 +980,7 @@ docker run -t -i \
 
                 <p>You can configure the active mail services and available users by editing WEB-INF/web.xml in the WAR
                     file and modifying the context params. A ServletContextListener starts and stops the GreenMail
-                    service when deploying/undeploying.</p>
+                    service when deploying/un-deploying.</p>
                 <table class="table">
                     <caption>Context Parameters</caption>
                     <thead>
@@ -1111,7 +1104,7 @@ docker run -t -i \
                 </div>
 
                 <h4>How can I use IMAP quotas?</h4>
-                <p>GreenMail supports IMAP quota. Quota capbility can be toggled on and off. For details see <a
+                <p>GreenMail supports IMAP quota. Quota capability can be toggled on and off. For details see <a
                         href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-core/src/test/java/com/icegreen/greenmail/test/ImapServerTest.java">
                     ImapServerTest.java</a> quota test</p>
 
@@ -1204,13 +1197,65 @@ Session session = greenMail.getImap().createSession(); // Will have configured p
                 <p>Docker images are available on <a href="https://hub.docker.com/u/greenmail/">Docker Hub GreenMail
                     Repository</a>, such as for the GreenMail standalone runner.</p>
 
-                <h5>Quicklinks</h5>
+                <h5>Quick-links</h5>
                 <ul>
-                    <li>GreenMail <a href="#download_2_0_x">2.0.x</a> downloads (for Jakrata Mail 2.0.x)</li>
-                    <li>GreenMail <a href="#download_1_6_x">1.6.x</a> downloads (for Jakarta Mail 1.6.x)</li>
+                    <li>GreenMail <a href="#download_2_1_x">2.1.x</a> downloads (for Jakarta Mail 2.1)</li>
+                    <li>GreenMail <a href="#download_2_0_x">2.0.x</a> downloads (for Jakarta Mail 2.0)</li>
+                    <li>GreenMail <a href="#download_1_6_x">1.6.x</a> downloads (for Jakarta Mail 1.6)</li>
                 </ul>
                 <p>Please note that the downloads are sorted by version and not by release date.
                    <a href="https://github.com/greenmail-mail-test/greenmail/releases">GitHub releases page</a> shows the releases cronological sorted.</p>
+
+                <p id="download_2_1_x" class="anchor"></p>
+                <h4 id="download_2_1_0" class="anchor"><a
+                    href="https://github.com/greenmail-mail-test/greenmail/releases" title="2.1.0-alpha-1 Release Notes">2.1.0-alpha-1</a>
+                    - March 12th, 2023</h4>
+
+                <div class="alert alert-info" role="alert">
+                    <p>This version requires JDK 1.8 (JDK 11) and Jakarta Mail 2.1 .</p>
+                    Please note that
+                    <ul>
+                       <li>Jakarta Mail 2.x brings breaking changes due to renamed package prefix of jakarta.mail!</li>
+                       <li>Jakarta Mail 2.1 / Angus Mail is the new reference implementation</li>
+                       <li>GreenMail standalone/webapp require Java 11 for running</li>
+                    </ul>
+                </div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>GAV</td>
+                    </tr>
+                    </thead>
+                    <tr>
+                        <td>GreenMail Core</td>
+                        <td>
+                            <a href="https://repo1.maven.org/maven2/com/icegreen/greenmail/2.1.0-alpha-1/greenmail-2.1.0-alpha-1.jar">com.icegreen:greenmail:2.1.0-alpha-1</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>GreenMail Standalone</td>
+                        <td>
+                            <a href="https://repo1.maven.org/maven2/com/icegreen/greenmail-standalone/2.1.0-alpha-1/greenmail-standalone-2.1.0-alpha-1.jar">com.icegreen:greenmail-standalone:2.1.0-alpha-1</a>
+                            (<a href="https://hub.docker.com/r/greenmail/standalone/">Docker Hub</a>)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>GreenMail Webapp</td>
+                        <td>
+                            <a href="https://repo1.maven.org/maven2/com/icegreen/greenmail-webapp/2.1.0-alpha-1/greenmail-webapp-2.1.0-alpha-1.war">com.icegreen:greenmail-webapp:2.1.0-alpha-1:war</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>GreenMail Spring</td>
+                        <td>
+                            <a href="https://repo1.maven.org/maven2/com/icegreen/greenmail-spring/2.1.0-alpha-1/greenmail-spring-2.1.0-alpha-1.jar">com.icegreen:greenmail-spring:2.1.0-alpha-1</a>
+                        </td>
+                    </tr>
+                </table>
+                <p>Available via Maven repository or as a <a
+                    href="https://github.com/greenmail-mail-test/greenmail/archive/release-2.1.0-alpha-1.zip">ZIP from
+                    GitHub</a>.
 
                 <p id="download_2_0_x" class="anchor"></p>
 

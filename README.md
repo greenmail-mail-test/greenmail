@@ -18,11 +18,11 @@ The GreenMail project welcomes any contribution, so go ahead and fork/open a pul
 
 ## Version compatibility
 
-| GreenMail | JavaMail          | Example frameworks                     |
-|-----------|-------------------|----------------------------------------|
-| 2.1.x     | JakartaMail 2.1.x |                                        |
-| 2.0.x     | JakartaMail 2.0.x | Spring 6                               |
-| 1.6.x     | JavaMail 1.6.x    | Spring 5, Apache commons-mail 1.5, ... |
+| GreenMail | JavaMail                   | Example frameworks                     |
+|-----------|----------------------------|----------------------------------------|
+| 2.1.x     | [JakartaMail 2.1.x][jm_21] |                                        |
+| 2.0.x     | [JakartaMail 2.0.x][jm_20] | Spring 6                               |
+| 1.6.x     | [JavaMail 1.6.x][jm_16]    | Spring 5, Apache commons-mail 1.5, ... |
 
 ## Development
 
@@ -75,6 +75,9 @@ The GreenMail project welcomes any contribution, so go ahead and fork/open a pul
 [github_pull_request]: https://help.github.com/articles/creating-a-pull-request/
 [sonar]: http://nemo.sonarqube.org/dashboard/index?id=com.icegreen%3Agreenmail-parent
 [docker-hub]: https://hub.docker.com/r/greenmail/standalone/
+[jm_21]: https://projects.eclipse.org/projects/ee4j.mail
+[jm_20]: https://projects.eclipse.org/projects/ee4j.mail
+[jm_16]: https://projects.eclipse.org/projects/ee4j.mail
 
 ## Roadmap
 
