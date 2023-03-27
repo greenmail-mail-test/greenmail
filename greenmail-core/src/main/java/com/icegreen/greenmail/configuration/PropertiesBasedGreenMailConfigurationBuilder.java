@@ -38,6 +38,8 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
      */
     public static final String GREENMAIL_AUTH_DISABLED = "greenmail.auth.disabled";
 
+    public static final String GREENMAIL_SIEVE_IGNORE_DETAIL = "greenmail.sieve.ignore.detail";
+
     /**
      * Configures how user login should be extracted from user of pattern local-part:password@domain .
      */
@@ -72,6 +74,12 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
         if (null != disabledAuthentication) {
             configuration.withDisabledAuthentication();
         }
+
+        String sieveIgnoreDetail = properties.getProperty(GREENMAIL_SIEVE_IGNORE_DETAIL, "false");
+        if (null != sieveIgnoreDetail) {
+            configuration.withSieveIgnoreDetail();
+        }
+
         return configuration;
     }
 

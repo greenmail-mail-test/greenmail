@@ -9,6 +9,7 @@ import java.util.List;
 public class GreenMailConfiguration {
     private final List<UserBean> usersToCreate = new ArrayList<>();
     private boolean disableAuthenticationCheck = false;
+    private boolean sieveIgnoreDetail = false;
 
     /**
      * The given {@link com.icegreen.greenmail.user.GreenMailUser} will be created when servers will start.
@@ -67,5 +68,24 @@ public class GreenMailConfiguration {
      */
     public boolean isAuthenticationDisabled() {
         return disableAuthenticationCheck;
+    }
+
+    /**
+     * Enables Sieve detail handling, also known as RFC 5233 subaddress extension.
+     *
+     * @return Modified configuration.
+     */
+    public GreenMailConfiguration withSieveIgnoreDetail() {
+        sieveIgnoreDetail = true;
+        return this;
+    }
+
+    /**
+     * @return true, if Sieve detail handling is enabled.
+     *
+     * @see GreenMailConfiguration#withSieveIgnoreDetail() ()
+     */
+    public boolean isSieveIgnoreDetailEnabled() {
+        return sieveIgnoreDetail;
     }
 }
