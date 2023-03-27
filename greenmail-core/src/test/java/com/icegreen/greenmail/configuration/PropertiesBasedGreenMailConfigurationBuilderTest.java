@@ -54,6 +54,15 @@ public class PropertiesBasedGreenMailConfigurationBuilderTest {
         assertThat(config.isAuthenticationDisabled()).isTrue();
     }
 
+    @Test
+    public void testBuildWithSieveIgnoreDetailEnabledSetting() {
+        Properties props = createPropertiesFor(PropertiesBasedGreenMailConfigurationBuilder.GREENMAIL_SIEVE_IGNORE_DETAIL, "");
+        GreenMailConfiguration config = new PropertiesBasedGreenMailConfigurationBuilder().build(props);
+
+        assertThat(config).isNotNull();
+        assertThat(config.isSieveIgnoreDetailEnabled()).isTrue();
+    }
+
     private Properties createPropertiesFor(String key, String value) {
         Properties props = new Properties();
         props.setProperty(key, value);

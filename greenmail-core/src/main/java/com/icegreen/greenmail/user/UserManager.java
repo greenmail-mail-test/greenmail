@@ -28,13 +28,19 @@ public class UserManager {
     private final Map<String, GreenMailUser> emailToUser = new ConcurrentHashMap<>();
     private final ImapHostManager imapHostManager;
     private boolean authRequired = true;
+    private boolean sieveIgnoreDetailEnabled = false;
 
     private MessageDeliveryHandler messageDeliveryHandler = (msg, mailAddress) -> {
-        GreenMailUser user = getUserByEmail(mailAddress.getEmail());
+        String email;
+        if (sieveIgnoreDetailEnabled) {
+            email = buildEmailIgnoringDetail(mailAddress);
+        } else {
+            email = mailAddress.getEmail();
+        }
+        GreenMailUser user = getUserByEmail(email);
         if(null==user) {
-            String login = mailAddress.getEmail();
-            String email = mailAddress.getEmail();
-            String password = mailAddress.getEmail();
+            String login = email;
+            String password = email;
             user = createUser(email, login, password);
             log.info(
                 "Created user login {} for address {} with password {} because it didn't exist before.",
@@ -109,6 +115,10 @@ public class UserManager {
         return authRequired;
     }
 
+    public void setSieveIgnoreDetail(boolean sieveIgnoreDetail) {
+        sieveIgnoreDetailEnabled = sieveIgnoreDetail;
+    }
+
     public ImapHostManager getImapHostManager() {
         return imapHostManager;
     }
@@ -144,5 +154,31 @@ public class UserManager {
 
     public void deliver(MovingMessage msg, MailAddress mailAddress) throws MessagingException, UserException {
         messageDeliveryHandler.handle(msg, mailAddress).deliver(msg);
+    }
+
+    /**
+     * Builds an email address where the 'detail' (as specified in RFC 5233) is
+     * stripped from the local-part.
+     *
+     * @param mailAddress mailAddress to process
+     * @return An email address where the detail is stripped
+     */
+    private String buildEmailIgnoringDetail(MailAddress mailAddress) {
+        String localPart;
+        String domainPart;
+        int startOfDomainPart = mailAddress.getEmail().indexOf("@");
+        if (startOfDomainPart > 0) {
+            localPart = mailAddress.getEmail().substring(0, startOfDomainPart);
+            domainPart = mailAddress.getEmail().substring(startOfDomainPart);
+        } else {
+            localPart = mailAddress.getEmail();
+            domainPart = "";
+        }
+        if (localPart.contains("+")) {
+            localPart = localPart.split("\\+", 2)[0];
+        } else if (localPart.contains("--")) {
+            localPart = localPart.split("--", 2)[1];
+        }
+        return localPart + domainPart;
     }
 }
