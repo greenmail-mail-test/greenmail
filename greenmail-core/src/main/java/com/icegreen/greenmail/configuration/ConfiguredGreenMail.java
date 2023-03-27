@@ -23,6 +23,7 @@ public abstract class ConfiguredGreenMail implements GreenMailOperations {
                 setUser(user.getEmail(), user.getLogin(), user.getPassword());
             }
             getUserManager().setAuthRequired(!config.isAuthenticationDisabled());
+            getUserManager().setSieveIgnoreDetail(config.isSieveIgnoreDetailEnabled());
         }
     }
 }
