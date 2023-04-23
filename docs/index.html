@@ -789,6 +789,16 @@ java [OPTIONS] -jar greenmail-standalone.jar
                         </td>
                     </tr>
                     <tr>
+                        <td class="text-nowrap">-Dgreenmail.sieve.ignore.detail<br><mark><b>Requires 2.1.0-alpha-2</b></mark></td>
+                        <td>Disables <a href="https://tools.ietf.org/html/rfc5233">RFC5233 sub adressing</a> handling.
+                            <p>
+                            Use this flag if you want to avoid removing sub adress detail from email.
+                            <div class="bs-example">
+                                Example: <code>-Dgreenmail.sieve.ignore.detail</code> (would not strip sub address detail part '+bar' from email 'foo+bar@localhost')
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
                         <td class="text-nowrap">-Dgreenmail.startup.timeout</td>
                         <td>Overrides the default server startup timeout of 1000ms.
                             Useful if you have a slow or overloaded environment.
