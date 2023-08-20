@@ -6,11 +6,13 @@ on:
       - "**/*.md"
       - "docs/**"
       - ".circleci/**"
+      - ".github/dependabot.yml"
   pull_request:
     paths-ignore:
       - "**/*.md"
       - "docs/**"
       - ".circleci/**"
+      - ".github/dependabot.yml"
   workflow_dispatch: # Manual trigger
 jobs:
   build:
