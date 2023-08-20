@@ -14,4 +14,6 @@ updates:
     open-pull-requests-limit: 20
     ignore:
       - dependency-name: "org.springframework"
-        update-types: ["version-update:semver-minor"]
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "org.slf4j"
+        update-types: ["version-update:semver-major"]
