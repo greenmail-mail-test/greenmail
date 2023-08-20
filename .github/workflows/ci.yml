@@ -11,6 +11,7 @@ on:
       - "**/*.md"
       - "docs/**"
       - ".circleci/**"
+  workflow_dispatch: # Manual trigger
 jobs:
   build:
     runs-on: ubuntu-latest
