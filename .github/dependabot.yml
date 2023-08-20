@@ -17,3 +17,11 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "org.slf4j"
         update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: "docker"
+    directory: "/greenmail-docker/standalone"
+    schedule:
+      interval: "daily"
+    ignore:
+      - dependency-name: "azul/zulu-openjdk"
+        update-types: ["version-update:semver-major"]
