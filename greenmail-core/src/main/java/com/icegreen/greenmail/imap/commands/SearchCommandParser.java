@@ -50,6 +50,7 @@ class SearchCommandParser extends CommandParser {
         STRING
         // Complete further types on demand
     }
+
     /**
      * Parses the request argument into a valid search term. Not yet fully implemented - see SearchKey enum.
      * <p>
@@ -57,7 +58,7 @@ class SearchCommandParser extends CommandParser {
      * Throws an UnsupportedCharsetException if provided CHARSET is not supported.
      */
     public SearchTerm searchTerm(ImapRequestLineReader request)
-            throws ProtocolException {
+        throws ProtocolException {
         Charset charset = StandardCharsets.US_ASCII; // Default
         // Stack contains mix of SearchOperator and SearchTerm instances
         // and will be processed in two steps
@@ -80,16 +81,8 @@ class SearchCommandParser extends CommandParser {
                     request.consume();
                     request.consumeAll(CHR_SPACE);
 
-                    LinkedList<SearchTerm> groupItems = new LinkedList<>();
-                    Object item;
-                    while ((item = stack.pop()) != SearchOperator.GROUP) {
-                        groupItems.addFirst((SearchTerm) item);
-                    }
-                    if (groupItems.size() == 1) {
-                        stack.push(groupItems.get(0)); // Single item
-                    } else {
-                        stack.push(new AndTerm(groupItems.toArray(new SearchTerm[0])));
-                    }
+                    // Resolve group to single term
+                    handleGroup(stack);
                 } else {
                     throw new IllegalStateException("Unsupported atom special char <" + next + ">");
                 }
@@ -110,7 +103,7 @@ class SearchCommandParser extends CommandParser {
                     try {
                         charset = Charset.forName(charsetName);
                     } catch (UnsupportedCharsetException ex) {
-                        log.error("Unsupported charset '{}", charsetName);
+                        log.error("Unsupported charset '{}'", charsetName);
                         throw ex;
                     }
                 } else {
@@ -140,21 +133,37 @@ class SearchCommandParser extends CommandParser {
         return handleOperators(stack);
     }
 
+    private void handleGroup(Deque<Object> stack) {
+        Deque<Object> groupItems = new LinkedList<>();
+        Object item;
+        while ((item = stack.pop()) != SearchOperator.GROUP) {
+            groupItems.addLast(item);
+        }
+        final SearchTerm groupTerm = handleOperators(groupItems);
+        stack.push(groupTerm);
+    }
+
     private void handleSearchArg(ImapRequestLineReader request, SearchKey key, SearchTermBuilder searchTermBuilder, Charset charset) throws ProtocolException {
         String paramValue;
-        switch(key.getArgDataFormat()) {
+        switch (key.getArgDataFormat()) {
             case STRING:
                 paramValue = string(request, charset);
                 break;
             case ATOM:
                 paramValue = atomOnly(request);
                 break;
-            default: throw new IllegalStateException("Argument type "+key.getArgDataFormat()+" not implemented for key "+key);
+            default:
+                throw new IllegalStateException("Argument type " + key.getArgDataFormat() + " not implemented for key " + key);
         }
         searchTermBuilder.addParameter(paramValue);
     }
 
     private SearchTerm handleOperators(Deque<Object> stack) {
+        // Must be single term
+        if (stack.size() == 1) {
+            return (SearchTerm) stack.pop();
+        }
+
         LinkedList<SearchTerm> params = new LinkedList<>();
         while (!stack.isEmpty()) {
             final Object o = stack.pop();
@@ -184,10 +193,12 @@ class SearchCommandParser extends CommandParser {
             }
         }
 
-        if (params.size() != 1) {
-            throw new IllegalStateException("Expected exactly one root search term but got " + params);
+        if (params.size() > 1) {
+            SearchTerm[] items = params.toArray(new SearchTerm[0]);
+            return new AndTerm(items);
+        } else {
+            return params.pop();
         }
-        return params.pop();
     }
 
 }
