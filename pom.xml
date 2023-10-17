@@ -201,7 +201,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
-          <version>4.0.0-M10</version>
+          <version>4.0.0-M11</version>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-report-plugin</artifactId>
