@@ -97,6 +97,8 @@
                 <a class="nav-item nav-link nav-pills" href="#features">Features</a>
                 <nav id="nav_features" class="nav nav-pills flex-column collapse" data-parent="#sidebar">
                      <a class="nav-item nav-link ml-3" href="#features-api">API</a>
+                     <a class="nav-item nav-link ml-3" href="#features-preload">Preloading emails</a>
+                     <a class="nav-item nav-link ml-3" href="#features-dsn">Delivery status notifcation</a>
                 </nav>
                 <a class="nav-item nav-link nav-pills" href="#faq">FAQ</a>
                 <a class="nav-item nav-link nav-pills" href="#download" data-toggle="collapse"
@@ -228,7 +230,7 @@ public void testSend() throws MessagingException {
                         IMAP by responding like a standard compliant POP3 or IMAP server. Support for POP3S and
                         IMAPS (SSL) is also enabled.
                     </li>
-                    <li>Messages can be placed directly in users mailboxes or by using SMTP.</li>
+                    <li>Messages can be placed directly in users mailboxes, by using SMTP or <a href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-core/src/test/java/com/icegreen/greenmail/util/PreLoadEmailsTest.java">preloaded from file system</a>.</li>
                     <li>GreenMail ships with helper classes for sending and retrieving. See the <a href="https://www.javadoc.io/doc/com.icegreen/greenmail/latest/com/icegreen/greenmail/util/Retriever.html">javadocs</a> for the <a
                             href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-core/src/main/java/com/icegreen/greenmail/util/Retriever.java">Retriever.java</a>
                         class
@@ -1067,8 +1069,10 @@ docker run -t -i \
                          alt="GreenMail OpenAPI UI invoking new user request"/>
                     <figcaption class="figure-caption text-end">GreenMail OpenAPI UI invoking new user request.</figcaption>
                 </figure>
+                <h2 id="features-preload">Preloading emails from filesysem</h2>
+                <p>You can <a href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-core/src/test/java/com/icegreen/greenmail/util/PreLoadEmailsTest.java">preload</a> user/folder/emails from filesystem</p>
 
-                <h2>Delivery Status Notification (DSN)</h2>
+                <h2 id="features-dsn">Delivery Status Notification (DSN)</h2>
                 <p>You can provide custom DSN behavior by implementing
                     <a href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-core/src/main/java/com/icegreen/greenmail/user/MessageDeliveryHandler.java">MessageDeliveryHandler.java</a>.
                     See <a href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-core/src/test/java/com/icegreen/greenmail/examples/ExampleUndeliverableTest.java">ExampleUndeliverableTest.java</a>

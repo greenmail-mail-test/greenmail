@@ -1,6 +1,7 @@
 package com.icegreen.greenmail.util;
 
 import com.icegreen.greenmail.Managers;
+import com.icegreen.greenmail.base.GreenMailOperations;
 import com.icegreen.greenmail.configuration.ConfiguredGreenMail;
 import com.icegreen.greenmail.imap.ImapServer;
 import com.icegreen.greenmail.pop3.Pop3Server;
@@ -10,6 +11,9 @@ import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserManager;
 
 import jakarta.mail.internet.MimeMessage;
+
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Properties;
 
 /**
@@ -116,6 +120,11 @@ public abstract class GreenMailProxy extends ConfiguredGreenMail {
     @Override
     public void purgeEmailFromAllMailboxes() throws FolderException {
         getGreenMail().purgeEmailFromAllMailboxes();
+    }
+
+    @Override
+    public GreenMailOperations loadEmails(Path path) throws FolderException, IOException {
+        return getGreenMail().loadEmails(path);
     }
 
     /**
