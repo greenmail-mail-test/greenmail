@@ -178,8 +178,8 @@ public interface GreenMailOperations {
      *    │   └── INBOX (directory)
      *    │       └── test-5.eml (file)
      *    └── foo@localhost (directory)
-     *        ├── Drafts (directory)
-     *        │   └── draft.eml (file)
+     *        └── Drafts (directory)
+     *            └── draft.eml (file)
      *     </pre>
      *   </li>
      *   <li>Creates user of given email if missing (by convention, with email as login and password)</li>
