@@ -98,7 +98,7 @@
                 <nav id="nav_features" class="nav nav-pills flex-column collapse" data-parent="#sidebar">
                      <a class="nav-item nav-link ml-3" href="#features-api">API</a>
                      <a class="nav-item nav-link ml-3" href="#features-preload">Preloading emails</a>
-                     <a class="nav-item nav-link ml-3" href="#features-dsn">Delivery status notifcation</a>
+                     <a class="nav-item nav-link ml-3" href="#features-dsn">Delivery status notification</a>
                 </nav>
                 <a class="nav-item nav-link nav-pills" href="#faq">FAQ</a>
                 <a class="nav-item nav-link nav-pills" href="#download" data-toggle="collapse"
@@ -280,7 +280,7 @@ public void testReceive() throws MessagingException {
                     <li><a href="https://eclipse-ee4j.github.io/jaf/">Java Activation Framework</a>
                     </li>
                     <li><a href="https://www.slf4j.org/">SLF4J Simple Logging Facade
-                        for Java</a></li> for logging</li>
+                        for Java</a> for logging</li>
                     <li><a href="https://junit.org">Junit</a> - required for easy test setup using Rules</li>
                 </ul>
                 <p>GreenMail contains several modules:</p>
@@ -618,7 +618,7 @@ public void testCreate() {
                     contains all dependencies and a default logging.</p>
                 <p>You can configure GreenMail by setting system
                     properties, and activate a minimal <a href="#features-api">RESTful API</a> (requires GreenMail 1.6.2+)
-                    for eg adding users, purging mails or resetting GreenMail instance.</p>
+                    for e.g. adding users, purging mails or resetting GreenMail instance.</p>
 
                 <h4>Starting GreenMail standalone</h4>
                 <pre><code class="language-bash"><!-- @formatter:off -->
@@ -707,6 +707,7 @@ java [OPTIONS] -jar greenmail-standalone.jar
                                 <li>pop3s</li>
                                 <li>api</li>
                             </ul>
+                            <p>
                             <div class="bs-example">
                                 <code>-Dgreenmail.smtp.port=3025 -Dgreenmail.smtp.hostname=127.0.0.1</code>
                             </div>
@@ -724,6 +725,7 @@ java [OPTIONS] -jar greenmail-standalone.jar
                             <div class="alert alert-info" role="alert">
                                 Note: Default hostname is 127.0.0.1
                             </div>
+                            <p>
                             <div class="bs-example"><!-- @formatter:off -->
                                 <code>-Dgreenmail.smtp.port=3025 -Dgreenmail.imap.port=3143 -Dgreenmail.hostname=0.0.0.0</code>
                             </div><!-- @formatter:on -->
@@ -735,6 +737,7 @@ java [OPTIONS] -jar greenmail-standalone.jar
                             <p>The list of users is comma separated.</p>
                             <p>A single user is of format <i>local-part</i>:<i>password</i>[@<i>domain</i>] , where the <i>domain</i>
                                 part is optional.</p>
+                            <p>
                             <div class="bs-example">
                                 <code>-Dgreenmail.users=foo:pwd@bar.com,jabber:wocky@monster.local,foo1:bar</code>
                             </div>
@@ -743,6 +746,7 @@ java [OPTIONS] -jar greenmail-standalone.jar
                     <tr>
                         <td class="text-nowrap">-Dgreenmail.users.login=(local_part|email)<br><mark><b>Requires 1.6.1</b></mark></td>
                         <td>Configures if local_part (default) or full email should be used for login when configuring users via <i>-Dgreenmail.users=foo@bar.com,...</i>.
+                            <p>
                             <div class="alert alert-warning" role="alert">
                                 Note: Only has effect if configured user is of type email (i.e. contains '@')
                             </div>
@@ -754,6 +758,7 @@ java [OPTIONS] -jar greenmail-standalone.jar
                     <tr>
                         <td class="text-nowrap">-Dgreenmail.tls.keystore.file<br><mark><b>Requires 1.6.8/2.0.0</b></mark></td>
                         <td>Configures a PKCS12 keystore for secure IMAP/SMTP/POP3 TLS certificates (see also <i>-Dgreenmail.tls.keystore.password</i>)
+                            <p>
                             <div class="bd-example">
                                 Example and default used in GreenMail container image:
                                 <code>-Dgreenmail.tls.keystore.file=/home/greenmail/greenmail.p12</code>
@@ -763,6 +768,7 @@ java [OPTIONS] -jar greenmail-standalone.jar
                     <tr>
                         <td class="text-nowrap">-Dgreenmail.tls.keystore.password<br><mark><b>Requires 1.6.8/2.0.0</b></mark></td>
                         <td>Configures a PKCS12 keystore password (see also <i>-Dgreenmail.tls.keystore.file</i>)
+                            <p>
                             <div class="bs-example">
                                 Example and default used in GreenMail container image:
                                 <code>-Dgreenmail.tls.keystore.password=changeit</code>
@@ -774,6 +780,7 @@ java [OPTIONS] -jar greenmail-standalone.jar
                         <td>Disables user authentication check, so that any password works.
                             Useful if you do not want to preconfigure user/passwords.
                             GreenMail automatically creates non-existent users.
+                            <p>
                             <div class="bs-example">
                                 Example: <code>-Dgreenmail.auth.disabled</code>
                             </div>
@@ -783,6 +790,7 @@ java [OPTIONS] -jar greenmail-standalone.jar
                         <td class="text-nowrap">-Dgreenmail.verbose</td>
                         <td>Enables verbose mode.
                             Useful if you want to see debug and protocol level output.
+                            <p>
                             <div class="bs-example">
                                 Example: <code>-Dgreenmail.verbose</code>
                             </div>
@@ -790,7 +798,7 @@ java [OPTIONS] -jar greenmail-standalone.jar
                     </tr>
                     <tr>
                         <td class="text-nowrap">-Dgreenmail.sieve.ignore.detail<br><mark><b>Requires 2.1.0-alpha-2</b></mark></td>
-                        <td>Disables <a href="https://tools.ietf.org/html/rfc5233">RFC5233 sub adressing</a> handling.
+                        <td>Disables <a href="https://tools.ietf.org/html/rfc5233">RFC5233 sub addressing</a> handling.
                             <p>
                             Use this flag if you want to avoid removing sub adress detail from email.
                             <div class="bs-example">
@@ -802,8 +810,38 @@ java [OPTIONS] -jar greenmail-standalone.jar
                         <td class="text-nowrap">-Dgreenmail.startup.timeout</td>
                         <td>Overrides the default server startup timeout of 1000ms.
                             Useful if you have a slow or overloaded environment.
+                            <p>
                             <div class="bs-example">
                                 Example with 2s startup timeout: <code>-Dgreenmail.startup.timeout=2000</code>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-nowrap">-Dgreenmail.preload.dir<br><mark><b>Requires 1.6.15/2.0.1/2.1.0-alpha-3</b></mark></td>
+                        <td>Preloads mails (including users) from filesystem
+                            <p>
+                            <div class="bs-example">
+                                Example: <code>-Dgreenmail.preload.dir=/tmp/preload-example</code>
+                                <pre>
+tmp
+  └──preload-example
+       ├── bar@localhost       # Creates user (login and credentials default to email)
+       │   └── INBOX
+       │       └── test-5.eml  # Loads email
+       ├── drafts@localhost
+       │   └── Drafts          # Creates folder
+       ├── foo-bar@localhost
+       └── foo@localhost
+           ├── Drafts
+           │   └── draft.eml
+           └── INBOX
+               ├── f1
+               │   ├── f2
+               │   │   ├── test-3.eml
+               │   │   └── test-4.eml
+               │   └── test-2.eml
+               └── test-1.eml
+                                </pre>
                             </div>
                         </td>
                     </tr>
@@ -864,7 +902,7 @@ java -Dgreenmail.smtp.hostname=127.0.0.1 -Dgreenmail.smtp.port=4025 \
                     but you can also build it yourself using our
                     <a href="https://github.com/greenmail-mail-test/greenmail/tree/master/greenmail-docker/standalone/Dockerfile">Dockerfile</a>.
                 </p>
-                <p>By default GreenMail standalone runs as user <i>greenmail</i> using the GreenMail test setup with the following default settings and exposed ports.</p>
+                <p>By default, GreenMail standalone runs as user <i>greenmail</i> using the GreenMail test setup with the following default settings and exposed ports.</p>
                 <table class="table table-striped table-sm caption-top">
                     <caption>Dockerfile configuration options</caption>
                     <thead>
@@ -1083,7 +1121,7 @@ docker run -t -i \
                 <h1 class="page-header">FAQ</h1>
                 <h4>How come I don't have to create any accounts to send/retrieve?</h4>
 
-                <p>By default GreenMail accepts all incoming emails. If there is no corresponding existing email
+                <p>By default, GreenMail accepts all incoming emails. If there is no corresponding existing email
                     account, one is automatically created with login and password being the same as the to-address.</p>
 
                 <h4>What other library dependencies are there?</h4>

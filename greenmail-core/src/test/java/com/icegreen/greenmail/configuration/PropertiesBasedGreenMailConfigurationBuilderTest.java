@@ -63,6 +63,15 @@ public class PropertiesBasedGreenMailConfigurationBuilderTest {
         assertThat(config.isSieveIgnoreDetailEnabled()).isTrue();
     }
 
+    @Test
+    public void testBuildWithPreloadDir() {
+        final String preloadDir = "/preload";
+        Properties props = createPropertiesFor(PropertiesBasedGreenMailConfigurationBuilder.GREENMAIL_PRELOAD_DIR, preloadDir);
+        GreenMailConfiguration config = new PropertiesBasedGreenMailConfigurationBuilder().build(props);
+        assertThat(config).isNotNull();
+        assertThat(config.getPreloadDir()).isEqualTo(preloadDir);
+    }
+
     private Properties createPropertiesFor(String key, String value) {
         Properties props = new Properties();
         props.setProperty(key, value);

@@ -1,5 +1,6 @@
 package com.icegreen.greenmail.configuration;
 
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.function.BinaryOperator;
@@ -18,6 +19,8 @@ import java.util.function.BinaryOperator;
  *  greenmail.users.login : Overrides the login for authentication
  *  <p>By default use the local-part of an email. Can be changed to full email.</p>
  * </li>
+ * <li>greenmail.preload.dir : Preloads emails from filesystem
+ *     (see {@link com.icegreen.greenmail.base.GreenMailOperations#loadEmails(Path)} for expected structure)</li>
  * </ul>
  */
 public class PropertiesBasedGreenMailConfigurationBuilder {
@@ -39,6 +42,7 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
     public static final String GREENMAIL_AUTH_DISABLED = "greenmail.auth.disabled";
 
     public static final String GREENMAIL_SIEVE_IGNORE_DETAIL = "greenmail.sieve.ignore.detail";
+    public static final String GREENMAIL_PRELOAD_DIR = "greenmail.preload.dir";
 
     /**
      * Configures how user login should be extracted from user of pattern local-part:password@domain .
@@ -78,6 +82,11 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
         String sieveIgnoreDetail = properties.getProperty(GREENMAIL_SIEVE_IGNORE_DETAIL, "false");
         if (null != sieveIgnoreDetail) {
             configuration.withSieveIgnoreDetail();
+        }
+
+        String preloadDir = properties.getProperty(GREENMAIL_PRELOAD_DIR);
+        if (null != preloadDir) {
+            configuration.withPreloadDir(preloadDir);
         }
 
         return configuration;
