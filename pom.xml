@@ -141,7 +141,7 @@
           <version>3.2.1</version>
           <configuration>
             <workingDirectory>${project.build.directory}</workingDirectory>
-            <argLine>@{argLine} -Djava.net.preferIPv4Stack=true</argLine>
+            <argLine>@{argLine} -Djava.net.preferIPv4Stack=true --add-opens=java.base/sun.security.x509=ALL-UNNAMED</argLine>
           </configuration>
         </plugin>
         <plugin>
