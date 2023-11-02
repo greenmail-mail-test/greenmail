@@ -143,11 +143,8 @@
             <forkCount>1</forkCount>
             <reuseForks>true</reuseForks>
             <!-- cli -->
-            <workingDirectory>target</workingDirectory>
-            <!-- Fix https://talk.openmrs.org/t/error-could-not-find-or-load-main-class-org-apache-maven-surefire-booter-forkedbooter/20509 -->
-            <argLine>@{argLine} -Djdk.net.URLClassPath.disableClassPathURLCheck=true
-              -Djava.net.preferIPv4Stack=true
-            </argLine>
+            <workingDirectory>${project.build.directory}</workingDirectory>
+            <argLine>@{argLine} -Djava.net.preferIPv4Stack=true --add-opens=java.base/sun.security.x509=ALL-UNNAMED</argLine>
           </configuration>
         </plugin>
         <plugin>
