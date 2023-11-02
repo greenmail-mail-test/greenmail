@@ -773,6 +773,16 @@ java [OPTIONS] -jar greenmail-standalone.jar
                         </td>
                     </tr>
                     <tr>
+                        <td class="text-nowrap">-Dgreenmail.tls.key.password<br><mark><b>Requires 1.6.15/2.0.1/2.1.0-alpha-3</b></mark></td>
+                        <td>Configures a PKCS12 key password. Defaults to keystore password.
+                            <p>
+                            <div class="bs-example">
+                                Example and default used in GreenMail container image:
+                                <code>-Dgreenmail.tls.key.password=changeit4key</code>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
                         <td class="text-nowrap">-Dgreenmail.auth.disabled</td>
                         <td>Disables user authentication check, so that any password works.
                             Useful if you do not want to preconfigure user/passwords.

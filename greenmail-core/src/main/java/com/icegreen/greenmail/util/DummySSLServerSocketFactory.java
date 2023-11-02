@@ -8,12 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ServerSocketFactory;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLServerSocketFactory;
-import javax.net.ssl.TrustManager;
+import javax.net.ssl.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +18,6 @@ import java.nio.file.Files;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-
 
 /**
  * DummySSLServerSocketFactory - NOT SECURE
@@ -38,7 +32,11 @@ import java.security.cert.CertificateException;
  * <p/>
  * The system property {@value #GREENMAIL_KEYSTORE_PASSWORD_PROPERTY} can override the default keystore password.
  * <p/>
- * GreenMail provides the keystore resource. For customization, place your greenmail.p12 before greenmail JAR in the classpath.
+ * The system property {@value #GREENMAIL_KEY_PASSWORD_PROPERTY} can override the default key password
+ * (defaults to keystore password).
+ * <p/>
+ * GreenMail provides the keystore resource. For customization, place your greenmail.p12 before
+ * greenmail JAR in the classpath.
  *
  * @author Wael Chatila
  * @since Feb 2006
@@ -47,6 +45,7 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
     protected final Logger log = LoggerFactory.getLogger(DummySSLServerSocketFactory.class);
     public static final String GREENMAIL_KEYSTORE_FILE_PROPERTY = "greenmail.tls.keystore.file";
     public static final String GREENMAIL_KEYSTORE_PASSWORD_PROPERTY = "greenmail.tls.keystore.password";
+    public static final String GREENMAIL_KEY_PASSWORD_PROPERTY = "greenmail.tls.key.password";
     public static final String GREENMAIL_KEYSTORE_P12 = "greenmail.p12";
     public static final String GREENMAIL_KEYSTORE_JKS = "greenmail.jks";
     private final SSLServerSocketFactory factory;
@@ -54,21 +53,20 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
 
     // From https://docs.oracle.com/javase/8/docs/technotes/guides/security/SunProviders.html#SupportedCipherSuites
     static final String[] ANONYMOUS_CIPHERS = {
-            "SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA"
-            , "SSL_DH_anon_EXPORT_WITH_RC4_40_MD5"
-            , "SSL_DH_anon_WITH_3DES_EDE_CBC_SHA"
-            , "SSL_DH_anon_WITH_DES_CBC_SHA"
-            , "SSL_DH_anon_WITH_RC4_128_MD5"
-            , "TLS_DH_anon_WITH_AES_128_CBC_SHA"
-            , "TLS_DH_anon_WITH_AES_128_CBC_SHA256"
-            , "TLS_DH_anon_WITH_AES_256_CBC_SHA"
-            , "TLS_DH_anon_WITH_AES_256_CBC_SHA256"
-            , "TLS_ECDH_anon_WITH_3DES_EDE_CBC_SHA"
-            , "TLS_ECDH_anon_WITH_AES_128_CBC_SHA"
-            , "TLS_ECDH_anon_WITH_AES_256_CBC_SHA"
-            , "TLS_ECDH_anon_WITH_NULL_SHA"
-            , "TLS_ECDH_anon_WITH_RC4_128_SHA"
-    };
+        "SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA",
+        "SSL_DH_anon_EXPORT_WITH_RC4_40_MD5",
+        "SSL_DH_anon_WITH_3DES_EDE_CBC_SHA",
+        "SSL_DH_anon_WITH_DES_CBC_SHA",
+        "SSL_DH_anon_WITH_RC4_128_MD5",
+        "TLS_DH_anon_WITH_AES_128_CBC_SHA",
+        "TLS_DH_anon_WITH_AES_128_CBC_SHA256",
+        "TLS_DH_anon_WITH_AES_256_CBC_SHA",
+        "TLS_DH_anon_WITH_AES_256_CBC_SHA256",
+        "TLS_ECDH_anon_WITH_3DES_EDE_CBC_SHA",
+        "TLS_ECDH_anon_WITH_AES_128_CBC_SHA",
+        "TLS_ECDH_anon_WITH_AES_256_CBC_SHA",
+        "TLS_ECDH_anon_WITH_NULL_SHA",
+        "TLS_ECDH_anon_WITH_RC4_128_SHA"};
 
     public DummySSLServerSocketFactory() {
         try {
@@ -76,13 +74,16 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
             String defaultAlg = KeyManagerFactory.getDefaultAlgorithm();
             KeyManagerFactory km = KeyManagerFactory.getInstance(defaultAlg);
             ks = KeyStore.getInstance(KeyStore.getDefaultType());
-            char[] pass = System.getProperty(GREENMAIL_KEYSTORE_PASSWORD_PROPERTY,"changeit").toCharArray();
+
+            char[] pass = System.getProperty(GREENMAIL_KEYSTORE_PASSWORD_PROPERTY, "changeit").toCharArray();
             loadKeyStore(pass);
-            km.init(ks, pass);
+
+            String keyPassStr = System.getProperty(GREENMAIL_KEY_PASSWORD_PROPERTY);
+            char[] keyPass = keyPassStr != null ? keyPassStr.toCharArray() : pass;
+            km.init(ks, keyPass);
+
             KeyManager[] kma = km.getKeyManagers();
-            sslcontext.init(kma,
-                    new TrustManager[]{new DummyTrustManager()},
-                    null);
+            sslcontext.init(kma, new TrustManager[]{new DummyTrustManager()}, null);
             factory = sslcontext.getServerSocketFactory();
         } catch (Exception e) {
             throw new IllegalStateException("Can not create and initialize SSL", e);
@@ -110,8 +111,8 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
             keyStore.load(is, pass);
         } catch (IOException ex) {
             // Try hard coded default keystore
-            throw new IllegalStateException("Can not load greenmail keystore from '" + keystoreResource +
-                "' in classpath", ex);
+            throw new IllegalStateException(
+                "Can not load greenmail keystore from '" + keystoreResource + "' in classpath", ex);
         }
     }
 
@@ -122,8 +123,7 @@ public class DummySSLServerSocketFactory extends SSLServerSocketFactory {
             keyStore.load(is, pass);
         } catch (IOException ex) {
             // Try hard coded default keystore
-            throw new IllegalStateException(
-                "Can not load greenmail keystore from file '" + keystoreResource + "'", ex);
+            throw new IllegalStateException("Can not load greenmail keystore from file '" + keystoreResource + "'", ex);
         }
     }
 
