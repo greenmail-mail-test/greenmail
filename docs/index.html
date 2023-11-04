@@ -54,7 +54,7 @@
         <p class="lead">Open Source suite of lightweight and sand-boxed email servers supporting SMTP, POP3 and
             IMAP.</p>
 
-        <p class="version">Currently <a href="https://github.com/greenmail-mail-test/greenmail/releases">v2.1.0-alpha-2 / v2.0.0 (stable) / v1.6.14 (maintenance)</a></p>
+        <p class="version">Currently <a href="https://github.com/greenmail-mail-test/greenmail/releases">v2.1.0-alpha-3 / v2.0.0 (stable) / v1.6.14 (maintenance)</a></p>
     </div>
 </div>
 
@@ -104,7 +104,7 @@
                 <a class="nav-item nav-link nav-pills" href="#download" data-toggle="collapse"
                    data-target="#nav_download">Download</a>
                 <nav id="nav_download" class="nav nav-pills flex-column collapse" data-parent="#sidebar">
-                    <a class="nav-item nav-link ml-3" href="#download_2_1_0_alpha_2">2.1.0-alpha-2 (alpha, JavaMail 2.1, JDK 11)</a>
+                    <a class="nav-item nav-link ml-3" href="#download_2_1_0_alpha_3">2.1.0-alpha-3 (alpha, JavaMail 2.1, JDK 11)</a>
                     <a class="nav-item nav-link ml-3" href="#download_2_0_0">2.0.0 (latest stable, JavaMail 2.0, JDK 8)</a>
                     <a class="nav-item nav-link ml-3" href="#download_1_6_14">1.6.14 (maintenance, JDK 8)</a>
                     <a class="nav-item nav-link ml-3" href="#download_1_5_14">1.5.14 (JDK 8)</a>
@@ -1266,6 +1266,56 @@ Session session = greenMail.getImap().createSession(); // Will have configured p
                    <a href="https://github.com/greenmail-mail-test/greenmail/releases">GitHub releases page</a> shows the releases cronological sorted.</p>
 
                 <p id="download_2_1_x" class="anchor"></p>
+
+                <h4 id="download_2_1_0_alpha_3" class="anchor"><a
+                    href="https://github.com/greenmail-mail-test/greenmail/releases" title="2.1.0-alpha-3 Release Notes">2.1.0-alpha-3</a>
+                    - November 4th, 2023</h4>
+
+                <div class="alert alert-info" role="alert">
+                    <p>This version requires JDK 1.8 (JDK 11) and Jakarta Mail 2.1 .</p>
+                    Please note that
+                    <ul>
+                       <li>Jakarta Mail 2.x brings breaking changes due to renamed package prefix of jakarta.mail!</li>
+                       <li>Jakarta Mail 2.1 / Angus Mail is the new reference implementation</li>
+                       <li>GreenMail standalone/webapp require Java 11 for running</li>
+                    </ul>
+                </div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>GAV</td>
+                    </tr>
+                    </thead>
+                    <tr>
+                        <td>GreenMail Core</td>
+                        <td>
+                            <a href="https://repo1.maven.org/maven2/com/icegreen/greenmail/2.1.0-alpha-3/greenmail-2.1.0-alpha-3.jar">com.icegreen:greenmail:2.1.0-alpha-3</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>GreenMail Standalone</td>
+                        <td>
+                            <a href="https://repo1.maven.org/maven2/com/icegreen/greenmail-standalone/2.1.0-alpha-3/greenmail-standalone-2.1.0-alpha-3.jar">com.icegreen:greenmail-standalone:2.1.0-alpha-3</a>
+                            (<a href="https://hub.docker.com/r/greenmail/standalone/">Docker Hub</a>)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>GreenMail Webapp</td>
+                        <td>
+                            <a href="https://repo1.maven.org/maven2/com/icegreen/greenmail-webapp/2.1.0-alpha-3/greenmail-webapp-2.1.0-alpha-3.war">com.icegreen:greenmail-webapp:2.1.0-alpha-3:war</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>GreenMail Spring</td>
+                        <td>
+                            <a href="https://repo1.maven.org/maven2/com/icegreen/greenmail-spring/2.1.0-alpha-3/greenmail-spring-2.1.0-alpha-3.jar">com.icegreen:greenmail-spring:2.1.0-alpha-3</a>
+                        </td>
+                    </tr>
+                </table>
+                <p>Available via Maven repository or as a <a
+                    href="https://github.com/greenmail-mail-test/greenmail/archive/release-2.1.0-alpha-3.zip">ZIP from
+                    GitHub</a>.
 
                 <h4 id="download_2_1_0_alpha_2" class="anchor"><a
                     href="https://github.com/greenmail-mail-test/greenmail/releases" title="2.1.0-alpha-2 Release Notes">2.1.0-alpha-2</a>
