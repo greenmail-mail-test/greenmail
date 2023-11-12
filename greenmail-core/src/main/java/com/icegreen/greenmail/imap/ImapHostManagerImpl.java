@@ -298,7 +298,7 @@ public class ImapHostManagerImpl
     private String getQualifiedMailboxName(GreenMailUser user, String mailboxName) {
         String userNamespace = user.getQualifiedMailboxName();
 
-        if ("INBOX".equalsIgnoreCase(mailboxName)) {
+        if(ImapConstants.INBOX_NAME.equalsIgnoreCase(mailboxName)) {
             return USER_NAMESPACE + HIERARCHY_DELIMITER + userNamespace +
                 HIERARCHY_DELIMITER + INBOX_NAME;
         }

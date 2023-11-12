@@ -5,29 +5,35 @@
 package com.icegreen.greenmail.util;
 
 import com.icegreen.greenmail.Managers;
+import com.icegreen.greenmail.base.GreenMailOperations;
 import com.icegreen.greenmail.configuration.ConfiguredGreenMail;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
+import com.icegreen.greenmail.imap.ImapConstants;
 import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.imap.ImapServer;
 import com.icegreen.greenmail.pop3.Pop3Server;
 import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.server.BuildInfo;
 import com.icegreen.greenmail.smtp.SmtpServer;
-import com.icegreen.greenmail.store.FolderException;
-import com.icegreen.greenmail.store.InMemoryStore;
-import com.icegreen.greenmail.store.MailFolder;
-import com.icegreen.greenmail.store.StoredMessage;
+import com.icegreen.greenmail.store.*;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.user.UserManager;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Utility class that manages a greenmail server with support for multiple protocols
@@ -86,7 +92,7 @@ public class GreenMail extends ConfiguredGreenMail {
         }
 
         services.clear();
-        services.putAll( createServices(config, managers) );
+        services.putAll(createServices(config, managers));
     }
 
     @Override
@@ -114,9 +120,9 @@ public class GreenMail extends ConfiguredGreenMail {
         for (AbstractServer service : servers) {
             if (!service.isRunning()) {
                 throw new IllegalStateException("Could not start mail server " + service
-                        + ", try to set server startup timeout > " + service.getServerSetup().getServerStartupTimeout()
-                        + " via " + ServerSetup.class.getSimpleName() + ".setServerStartupTimeout(timeoutInMs) or " +
-                        "-Dgreenmail.startup.timeout");
+                    + ", try to set server startup timeout > " + service.getServerSetup().getServerStartupTimeout()
+                    + " via " + ServerSetup.class.getSimpleName() + ".setServerStartupTimeout(timeoutInMs) or " +
+                    "-Dgreenmail.startup.timeout");
             }
         }
 
@@ -213,17 +219,17 @@ public class GreenMail extends ConfiguredGreenMail {
     public boolean waitForIncomingEmail(long timeout, int emailCount) {
         final CountDownLatch waitObject = getManagers().getSmtpManager().createAndAddNewWaitObject(emailCount);
         final long endTime = System.currentTimeMillis() + timeout;
-            while (waitObject.getCount() > 0) {
-                final long waitTime = endTime - System.currentTimeMillis();
-                if (waitTime < 0L) {
-                    return waitObject.getCount() == 0;
-                }
-                try {
-                    waitObject.await(waitTime, TimeUnit.MILLISECONDS);
-                } catch (InterruptedException e) {
-                    // Continue loop, in case of premature interruption
-                }
+        while (waitObject.getCount() > 0) {
+            final long waitTime = endTime - System.currentTimeMillis();
+            if (waitTime < 0L) {
+                return waitObject.getCount() == 0;
             }
+            try {
+                waitObject.await(waitTime, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                // Continue loop, in case of premature interruption
+            }
+        }
         return waitObject.getCount() == 0;
     }
 
@@ -321,5 +327,87 @@ public class GreenMail extends ConfiguredGreenMail {
             }
         }
         return !services.isEmpty();
+    }
+
+    @Override
+    public GreenMailOperations loadEmails(Path sourceDirectory) throws IOException, FolderException {
+        // <SOURCE DIR> / <EMAIL> / <FOLDER*> / <*.eml>
+        if (!Files.isDirectory(sourceDirectory)) {
+            throw new IllegalArgumentException("Expected directory: " + sourceDirectory.toAbsolutePath());
+        }
+        int sourceNameCount = sourceDirectory.toAbsolutePath().getNameCount();
+
+        SmtpServer smtpServer = (null != getSmtp() ? getSmtp() : getSmtps());
+        if (null == smtpServer) {
+            throw new IllegalStateException("Requires enabled SMTP(S)");
+        }
+        final Session session = smtpServer.createSession();
+        final UserManager userManager = getUserManager();
+        final ImapHostManager imapHostManager = getManagers().getImapHostManager();
+        final Store store = imapHostManager.getStore();
+
+        try (final Stream<Path> pathStream = Files.walk(sourceDirectory)) {
+            for (Path emailPath : pathStream
+                .filter(path -> !path.equals(sourceDirectory)) // Skip base dir
+                .map(Path::toAbsolutePath)
+                .collect(Collectors.toList())) {
+                loadEmail(sourceDirectory, emailPath, sourceNameCount, userManager, store, imapHostManager, session);
+            }
+        }
+
+        return this;
+    }
+
+    private void loadEmail(Path sourceDirectory, Path emailPath, int sourceNameCount, UserManager userManager,
+                           Store store, ImapHostManager imapHostManager, Session session)
+        throws FolderException {
+        int emailPathNameCount = emailPath.getNameCount();
+        if (emailPathNameCount - sourceNameCount < 1) {
+            throw new IllegalArgumentException(
+                "Expected <USER*> / <FOLDER*> (e.g. INBOX, Drafts, ...) / <*.eml> below " + sourceDirectory + " for " + emailPath);
+        }
+
+        // Extract email as first folder
+        String email = emailPath.getName(sourceNameCount).toString();
+        GreenMailUser user = userManager.getUserByEmail(email);
+        if (null == user) {
+            try {
+                user = userManager.createUser(email, email, email);
+            } catch (UserException e) {
+                throw new IllegalStateException("Can not create user for email " + email, e);
+            }
+        }
+
+        // Extract and optionally create intermediate folders
+        MailFolder folder = null;
+        folder = store.getMailbox(getUserBaseMailboxName(imapHostManager, user));
+        for (int i = sourceNameCount + 1; i < emailPathNameCount - 1; i++) {
+            String namePart = emailPath.getName(i).toString();
+            MailFolder child = store.getMailbox(folder, namePart);
+            if (null == child) {
+                child = store.createMailbox(folder, namePart, true);
+            }
+            folder = child;
+        }
+
+        if (Files.isRegularFile(emailPath) && emailPath.toString().endsWith(".eml")) {
+            try (InputStream source = Files.newInputStream(emailPath)) {
+                final MimeMessage loadedMsg = new MimeMessage(session, source);
+                if (log.isDebugEnabled()) {
+                    log.debug("Loading email for {} from {} ...", user.getEmail(), emailPath);
+                }
+                folder.store(loadedMsg);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Can not load email " + emailPath, e);
+            }
+        }
+    }
+
+    private String getUserBaseMailboxName(ImapHostManager imapHostManager, GreenMailUser user) throws FolderException {
+        String inbox = imapHostManager.getInbox(user).getFullName();
+        if (!inbox.toUpperCase().endsWith(ImapConstants.INBOX_NAME)) {
+            throw new IllegalStateException("Mail folder '" + inbox + "' is not expected " + ImapConstants.INBOX_NAME + " folder");
+        }
+        return inbox.substring(0, inbox.length() - ImapConstants.INBOX_NAME.length());
     }
 }

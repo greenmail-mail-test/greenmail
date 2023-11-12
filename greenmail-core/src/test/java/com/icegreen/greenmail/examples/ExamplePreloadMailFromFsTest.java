@@ -1,5 +1,6 @@
 package com.icegreen.greenmail.examples;
 
+import com.icegreen.greenmail.imap.ImapConstants;
 import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.user.GreenMailUser;
@@ -15,14 +16,19 @@ import org.junit.Test;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Example for loading Emails from EML file.
+ * <p>
+ * For preloading an existing directory structure, check out {@link  com.icegreen.greenmail.util.PreLoadEmailsTest}
+ */
 public class ExamplePreloadMailFromFsTest {
     @Rule
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
-    public static final String EML_FILE_NAME = ExamplePreloadMailFromFsTest.class.getName() + ".eml";
+    public static final String EML_FILE_NAME = ExamplePreloadMailFromFsTest.class.getSimpleName() + ".eml";
 
     @Test
     public void testPreloadMailFromFs() throws Exception {
@@ -34,7 +40,9 @@ public class ExamplePreloadMailFromFsTest {
         msg.setFrom("bar@localhost");
         msg.setSubject("Hello");
         msg.setText("Test message saved as eml (electronic mail format, aka internet message format)");
-        try (FileOutputStream os = new FileOutputStream(EML_FILE_NAME)) {
+
+        final Path emlFile = Files.createTempDirectory("tmp").resolve(EML_FILE_NAME);
+        try (FileOutputStream os = new FileOutputStream(emlFile.toString())) {
             msg.writeTo(os);
         }
 
@@ -42,9 +50,9 @@ public class ExamplePreloadMailFromFsTest {
         final ImapHostManager imapHostManager = greenMail.getManagers().getImapHostManager();
         final UserManager userManager = greenMail.getManagers().getUserManager();
         final GreenMailUser user = userManager.createUser("foo@localhost", "foo-login", "secret");
-        try (InputStream source = Files.newInputStream(Paths.get(EML_FILE_NAME))) {
+        try (InputStream source = Files.newInputStream(emlFile)) {
             final MimeMessage loadedMsg = new MimeMessage(session, source);
-            imapHostManager.getFolder(user, "INBOX").store(loadedMsg);
+            imapHostManager.getFolder(user, ImapConstants.INBOX_NAME).store(loadedMsg);
         }
 
         // Verify

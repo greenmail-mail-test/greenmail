@@ -1,6 +1,10 @@
 package com.icegreen.greenmail.configuration;
 
 import com.icegreen.greenmail.base.GreenMailOperations;
+import com.icegreen.greenmail.store.FolderException;
+
+import java.io.IOException;
+import java.nio.file.Paths;
 
 /**
  * A version of GreenMailOperations that implements the configure() method.
@@ -24,6 +28,13 @@ public abstract class ConfiguredGreenMail implements GreenMailOperations {
             }
             getUserManager().setAuthRequired(!config.isAuthenticationDisabled());
             getUserManager().setSieveIgnoreDetail(config.isSieveIgnoreDetailEnabled());
+            if(config.hasPreloadDir()) {
+                try {
+                    loadEmails(Paths.get(config.getPreloadDir()));
+                } catch (IOException | FolderException e) {
+                    throw new IllegalArgumentException("Can not preload emails", e);
+                }
+            }
         }
     }
 }
