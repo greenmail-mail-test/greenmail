@@ -29,14 +29,17 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author Raimund Klein <raimund.klein@gmx.de>
  */
 class HierarchicalFolder implements MailFolder, UIDFolder {
-    private static final Flags PERMANENT_FLAGS = new Flags();
-
+    private static final Flags DEFAULT_FLAGS = new Flags();
     static {
-        PERMANENT_FLAGS.add(Flags.Flag.ANSWERED);
-        PERMANENT_FLAGS.add(Flags.Flag.DELETED);
-        PERMANENT_FLAGS.add(Flags.Flag.DRAFT);
-        PERMANENT_FLAGS.add(Flags.Flag.FLAGGED);
-        PERMANENT_FLAGS.add(Flags.Flag.SEEN);
+        DEFAULT_FLAGS.add(Flags.Flag.ANSWERED);
+        DEFAULT_FLAGS.add(Flags.Flag.DELETED);
+        DEFAULT_FLAGS.add(Flags.Flag.DRAFT);
+        DEFAULT_FLAGS.add(Flags.Flag.FLAGGED);
+        DEFAULT_FLAGS.add(Flags.Flag.SEEN);
+    }
+    private static final Flags PERMANENT_FLAGS = new Flags();
+    static {
+        PERMANENT_FLAGS.add(DEFAULT_FLAGS);
         PERMANENT_FLAGS.add(Flags.Flag.USER);
     }
 
@@ -123,6 +126,11 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     @Override
     public String getFullName() {
         return parent.getFullName() + ImapConstants.HIERARCHY_DELIMITER_CHAR + name;
+    }
+
+    @Override
+    public Flags getAvailableFlags() {
+        return DEFAULT_FLAGS;
     }
 
     @Override

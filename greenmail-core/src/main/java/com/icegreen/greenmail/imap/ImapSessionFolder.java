@@ -6,14 +6,6 @@
  */
 package com.icegreen.greenmail.imap;
 
-import java.util.*;
-import jakarta.mail.Flags;
-import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
-import jakarta.mail.UIDFolder;
-import jakarta.mail.internet.MimeMessage;
-import jakarta.mail.search.SearchTerm;
-
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import com.icegreen.greenmail.imap.commands.IdRange;
 import com.icegreen.greenmail.mail.MovingMessage;
@@ -21,6 +13,14 @@ import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.FolderListener;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.StoredMessage;
+import jakarta.mail.Flags;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.UIDFolder;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.search.SearchTerm;
+
+import java.util.*;
 
 public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder {
     private MailFolder folder;
@@ -137,6 +137,11 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
     @Override
     public String getFullName() {
         return folder.getFullName();
+    }
+
+    @Override
+    public Flags getAvailableFlags() {
+        return folder.getAvailableFlags();
     }
 
     @Override

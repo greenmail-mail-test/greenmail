@@ -47,7 +47,7 @@ class SelectCommand extends AuthenticatedStateCommand {
         }
 
         ImapSessionFolder mailbox = session.getSelected();
-        response.flagsResponse(mailbox.getPermanentFlags());
+        response.flagsResponse(mailbox.getAvailableFlags());
         response.existsResponse(mailbox.getMessageCount());
         final boolean resetRecent = !isExamine;
         response.recentResponse(mailbox.getRecentCount(resetRecent));

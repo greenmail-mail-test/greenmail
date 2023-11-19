@@ -31,6 +31,24 @@ public interface MailFolder {
 
     String getFullName();
 
+    /**
+     * The flags (at a minimum, the system-defined flags) that are applicable for this mailbox.
+     *
+     * @see <a href="https://datatracker.ietf.org/doc/html/rfc3501#section-7.2.6">rfc3501#section-7.2.6</a>
+     *
+     * @return the applicable mailbox flags
+     */
+    Flags getAvailableFlags();
+
+    /**
+     * Permanent flags are those which the client can add or remove from the
+     * message flags permanently; that is, concurrent and subsequent
+     * sessions will see any change in permanent flags
+     *
+     * @see <a href="https://datatracker.ietf.org/doc/html/rfc3501#page-12">rfc3501#page-12</a>
+     *
+     * @return the permanent (persisting across sessions) flags
+     */
     Flags getPermanentFlags();
 
     int getMessageCount();

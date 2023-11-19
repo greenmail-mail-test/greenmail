@@ -5,6 +5,8 @@ import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.*;
+import jakarta.mail.internet.MimeMessage;
 import org.eclipse.angus.mail.iap.Argument;
 import org.eclipse.angus.mail.iap.ByteArray;
 import org.eclipse.angus.mail.iap.Response;
@@ -15,8 +17,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import jakarta.mail.*;
-import jakarta.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -448,6 +448,29 @@ public class ImapProtocolTest {
             IMAPResponse response = (IMAPResponse) ret[0];
             assertThat(response.isBAD()).isFalse();
             assertThat(response).hasToString("* SEARCH");
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
+    public void testSelectMailFolder() throws MessagingException {
+        greenMail.setUser("foo2@localhost", "pwd");
+        store.connect("foo2@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+
+            final IMAPFolder.ProtocolCommand selectInbox = protocol -> protocol.command("EXAMINE INBOX", null);
+
+            // Search empty
+            Response[] ret = (Response[]) folder.doCommand(selectInbox);
+            IMAPResponse response = (IMAPResponse) ret[0];
+            assertThat(response.isBAD()).isFalse();
+            assertThat(response).hasToString("* FLAGS (\\Answered \\Deleted \\Draft \\Flagged \\Seen)");
+            assertThat(ret).satisfiesOnlyOnce(r -> assertThat(r).
+                hasToString("* OK [PERMANENTFLAGS (\\Answered \\Deleted \\Draft \\Flagged \\Seen \\*)]")
+            );
         } finally {
             store.close();
         }
