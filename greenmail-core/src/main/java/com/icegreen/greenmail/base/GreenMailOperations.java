@@ -10,6 +10,8 @@ import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserManager;
 
 import javax.mail.internet.MimeMessage;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Properties;
 
 /**
@@ -161,4 +163,32 @@ public interface GreenMailOperations {
      * @throws FolderException on error
      */
     void purgeEmailFromAllMailboxes() throws FolderException;
+
+    /**
+     * Loads emails from given path.
+     *
+     * <ul>
+     *   <li>
+     *     Expected structure in provided path, containing EML (rfc0822) mail files
+     *     <p>Pattern: <pre>&lt;EMAIL&gt; / &lt;FOLDER*&gt; / &lt;*.eml&gt;</pre></p>
+     *     <p>Example:</p>
+     *     <pre>
+     *    ├── bar@localhost (directory)
+     *    │   └── INBOX (directory)
+     *    │       └── test-5.eml (file)
+     *    └── foo@localhost (directory)
+     *        └── Drafts (directory)
+     *            └── draft.eml (file)
+     *     </pre>
+     *   </li>
+     *   <li>Creates user of given email if missing (by convention, with email as login and password)</li>
+     *   <li>Creates intermediate mail folder if missing</li>
+     * </ul>
+     *
+     * @param path base path with email structure
+     * @throws IOException on IO error
+     * @throws FolderException if e.g. fails to create intermediate folder
+     * @since 2.1-alpha-3 / 2.0.1 / 1.6.15
+     */
+    GreenMailOperations loadEmails(Path path) throws IOException, FolderException;
 }

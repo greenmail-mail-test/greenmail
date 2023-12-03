@@ -89,6 +89,8 @@ public class GreenMailApiResource {
     static class Configuration {
         public ServerSetup[] serverSetups;
         public boolean authenticationDisabled;
+        public boolean sieveIgnoreDetail;
+        public String preloadDirectory;
     }
 
     @GET
@@ -98,6 +100,8 @@ public class GreenMailApiResource {
         final Configuration config = new Configuration();
         config.serverSetups = serverSetups;
         config.authenticationDisabled = configuration.isAuthenticationDisabled();
+        config.sieveIgnoreDetail = configuration.isSieveIgnoreDetailEnabled();
+        config.preloadDirectory = configuration.getPreloadDir();
         return Response.status(Response.Status.OK)
             .entity(config)
             .build();
