@@ -144,7 +144,7 @@
             <reuseForks>true</reuseForks>
             <!-- cli -->
             <workingDirectory>${project.build.directory}</workingDirectory>
-            <argLine>@{argLine} -Djava.net.preferIPv4Stack=true --add-opens=java.base/sun.security.x509=ALL-UNNAMED</argLine>
+            <argLine>@{argLine} -Djava.net.preferIPv4Stack=true</argLine>
           </configuration>
         </plugin>
         <plugin>
@@ -601,6 +601,15 @@
       <modules>
         <module>greenmail-docker/standalone</module>
       </modules>
+    </profile>
+    <profile>
+      <id>surefire-fix-for-jdk-modules</id>
+      <activation>
+        <jdk>[1.9</jdk>
+      </activation>
+      <properties>
+        <argLine>-Xmx512m -enableassertions --add-opens=java.base/sun.security.x509=ALL-UNNAMED</argLine>
+      </properties>
     </profile>
   </profiles>
 </project>
