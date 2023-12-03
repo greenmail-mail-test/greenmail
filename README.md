@@ -18,11 +18,11 @@ The GreenMail project welcomes any contribution, so go ahead and fork/open a pul
 
 ## Version compatibility
 
-| GreenMail | JavaMail                   | Example frameworks                     |
+| GreenMail | Mail API                   | Example frameworks                     |
 |-----------|----------------------------|----------------------------------------|
 | 2.1.x     | [JakartaMail 2.1.x][jm_21] |                                        |
 | 2.0.x     | [JakartaMail 2.0.x][jm_20] | Spring 6                               |
-| 1.6.x     | [JavaMail 1.6.x][jm_16]    | Spring 5, Apache commons-mail 1.5, ... |
+| 1.6.x     | [JakartaMail 1.6.x][jm_16] | Spring 5, Apache commons-mail 1.5, ... |
 
 ## Development
 
