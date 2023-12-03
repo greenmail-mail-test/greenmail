@@ -6,7 +6,7 @@ commands:
       - run: >
           (apt-get update || true ) && apt-get install -y curl
           && mkdir -p /usr/share/maven
-          && curl -fsSL -o /tmp/apache-maven.tar.gz https://archive.apache.org/dist/maven/maven-3/3.8.7/binaries/apache-maven-3.8.7-bin.tar.gz
+          && curl -fsSL -o /tmp/apache-maven.tar.gz https://archive.apache.org/dist/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
           && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
           && rm -f /tmp/apache-maven.tar.gz
           && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
@@ -16,7 +16,7 @@ jobs:
     working_directory: ~/circleci-greenmail
 
     docker:
-        - image: azul/zulu-openjdk:8u362
+        - image: azul/zulu-openjdk:8u392-jre-headless
           auth:
             username: $DOCKERHUB_IDENTITY
             password: $DOCKERHUB_PASSWORD
@@ -59,7 +59,7 @@ jobs:
     working_directory: ~/circleci-greenmail
 
     docker:
-        - image: azul/zulu-openjdk:11.0.18
+        - image: azul/zulu-openjdk:11.0.21-jre-headless
           auth:
             username: $DOCKERHUB_IDENTITY
             password: $DOCKERHUB_PASSWORD
@@ -102,7 +102,7 @@ jobs:
     working_directory: ~/circleci-greenmail
 
     docker:
-        - image: azul/zulu-openjdk:17.0.6
+        - image: azul/zulu-openjdk:17.0.9-jre-headless
           auth:
             username: $DOCKERHUB_IDENTITY
             password: $DOCKERHUB_PASSWORD
