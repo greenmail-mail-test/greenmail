@@ -138,7 +138,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.2.2</version>
+          <version>3.2.3</version>
           <configuration>
             <workingDirectory>${project.build.directory}</workingDirectory>
             <argLine>@{argLine} -Djava.net.preferIPv4Stack=true --add-opens=java.base/sun.security.x509=ALL-UNNAMED</argLine>
