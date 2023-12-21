@@ -1,9 +1,22 @@
 package com.icegreen.greenmail;
 
 import com.icegreen.greenmail.util.DummySSLServerSocketFactory;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.BasicConstraints;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.cert.bc.BcX509ExtensionUtils;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import sun.security.x509.*;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,23 +31,14 @@ import java.util.Date;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DummySSLServerSocketFactoryTest {
-    @Test
-    public void testLoadDefaultKeyStore() throws KeyStoreException {
-        DummySSLServerSocketFactory factory = new DummySSLServerSocketFactory();
-        KeyStore ks = factory.getKeyStore();
-        assertThat(ks.containsAlias("greenmail")).isTrue();
+    @BeforeClass
+    public static void setUp() {
+        Security.addProvider(new BouncyCastleProvider());
     }
 
-    @Test
-    public void testLoadKeyStoreViaSystemPropertyWithDefaultKeyPwd()
-        throws GeneralSecurityException, IOException {
-        testLoadKeyStoreViaSystemProperty("store password", null);
-    }
-
-    @Test
-    public void testLoadKeyStoreViaSystemPropertyWithProvidedKeyPwd()
-        throws GeneralSecurityException, IOException {
-        testLoadKeyStoreViaSystemProperty("store password", "key password");
+    @AfterClass
+    public static void tearDown() {
+        Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
     }
 
     @After
@@ -44,8 +48,27 @@ public class DummySSLServerSocketFactoryTest {
         System.clearProperty(DummySSLServerSocketFactory.GREENMAIL_KEY_PASSWORD_PROPERTY);
     }
 
+    @Test
+    public void testLoadDefaultKeyStore() throws KeyStoreException {
+        DummySSLServerSocketFactory factory = new DummySSLServerSocketFactory();
+        KeyStore ks = factory.getKeyStore();
+        assertThat(ks.containsAlias("greenmail")).isTrue();
+    }
+
+    @Test
+    public void testLoadKeyStoreViaSystemPropertyWithDefaultKeyPwd()
+        throws GeneralSecurityException, IOException, OperatorCreationException {
+        testLoadKeyStoreViaSystemProperty("store password", null);
+    }
+
+    @Test
+    public void testLoadKeyStoreViaSystemPropertyWithProvidedKeyPwd()
+        throws GeneralSecurityException, IOException, OperatorCreationException {
+        testLoadKeyStoreViaSystemProperty("store password", "key password");
+    }
+
     public void testLoadKeyStoreViaSystemProperty(String storePassword, String keyPassword)
-        throws GeneralSecurityException, IOException {
+        throws GeneralSecurityException, IOException, OperatorCreationException {
         // Prepare new keystore
         KeyStore testKs = KeyStore.getInstance(KeyStore.getDefaultType());
         testKs.load(null, null); // Initialize
@@ -56,7 +79,7 @@ public class DummySSLServerSocketFactoryTest {
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
 
         String dn = "CN=greenmail.test";
-        final X509Certificate cert = generateCertificate(dn, keyPair, 1, AlgorithmId.get("SHA256WithRSA"));
+        final X509Certificate cert = generateCertificate(dn, keyPair, 1, "SHA256WithRSA");
         final String alias = "test-key";
         testKs.setKeyEntry(alias, keyPair.getPrivate(),
             (null != keyPassword ? keyPassword : storePassword).toCharArray(),
@@ -88,44 +111,36 @@ public class DummySSLServerSocketFactoryTest {
     /**
      * Create a self-signed X.509 certificate
      * <p>
-     * Based on <a href="https://stackoverflow.com/questions/1615871">https://stackoverflow.com/questions/1615871</a>
+     * Based on <a href="https://stackoverflow.com/questions/29852290/self-signed-x509-certificate-with-bouncy-castle-in-java">https://stackoverflow.com/questions/29852290/self-signed-x509-certificate-with-bouncy-castle-in-java</a>
      *
-     * @param dn   the X.509 Distinguished Name
-     * @param pair the KeyPair
-     * @param days how many days till expiration
-     * @param algo the signing algorithm, eg "SHA256WithRSA"
+     * @param dn               the X.509 Distinguished Name
+     * @param pair             the KeyPair
+     * @param days             how many days till expiration
+     * @param signingAlgorithm the signing algorithm, e.g. "SHA256WithRSA"
      */
-    public X509Certificate generateCertificate(String dn, KeyPair pair, int days, AlgorithmId algo)
-        throws GeneralSecurityException, IOException {
-        PrivateKey privateKey = pair.getPrivate();
-        X509CertInfo info = new X509CertInfo();
-
+    public X509Certificate generateCertificate(String dn, KeyPair pair, int days, String signingAlgorithm)
+        throws GeneralSecurityException, IOException, OperatorCreationException {
         Instant now = Instant.now();
-        CertificateValidity interval = new CertificateValidity(
+        X500Name issuer = new X500Name(dn);
+
+        final BcX509ExtensionUtils bcX509ExtensionUtils = new BcX509ExtensionUtils();
+        final SubjectPublicKeyInfo subjectPublicKeyInfo = SubjectPublicKeyInfo.getInstance(pair.getPublic().getEncoded());
+        final X509v3CertificateBuilder x509v3CertificateBuilder = new JcaX509v3CertificateBuilder(issuer,
+            new BigInteger(64, new SecureRandom()),
             Date.from(now),
-            Date.from(now.plus(Duration.ofDays(days)))
-        );
+            Date.from(now.plus(Duration.ofDays(days))),
+            issuer,
+            pair.getPublic())
+            .addExtension(Extension.basicConstraints, true, new BasicConstraints(true))
+            .addExtension(Extension.subjectKeyIdentifier, false,
+                bcX509ExtensionUtils.createSubjectKeyIdentifier(subjectPublicKeyInfo))
+            .addExtension(Extension.authorityKeyIdentifier, false,
+                bcX509ExtensionUtils.createAuthorityKeyIdentifier(subjectPublicKeyInfo));
 
-        X500Name owner = new X500Name(dn);
-
-        info.set(X509CertInfo.VALIDITY, interval);
-        info.set(X509CertInfo.SERIAL_NUMBER,
-            new CertificateSerialNumber(new BigInteger(64, new SecureRandom())));
-        info.set(X509CertInfo.SUBJECT, owner);
-        info.set(X509CertInfo.ISSUER, owner);
-        info.set(X509CertInfo.KEY, new CertificateX509Key(pair.getPublic()));
-        info.set(X509CertInfo.VERSION, new CertificateVersion(CertificateVersion.V3));
-        info.set(X509CertInfo.ALGORITHM_ID, new CertificateAlgorithmId(algo));
-
-        // Sign the cert to identify the algorithm that's used.
-        X509CertImpl cert = new X509CertImpl(info);
-        cert.sign(privateKey, algo.getName());
-
-        // Update the algorithm, and resign.
-        algo = (AlgorithmId) cert.get(X509CertImpl.SIG_ALG);
-        info.set(CertificateAlgorithmId.NAME + "." + CertificateAlgorithmId.ALGORITHM, algo);
-        cert = new X509CertImpl(info);
-        cert.sign(privateKey, algo.getName());
-        return cert;
+        final X509CertificateHolder certificateHolder = x509v3CertificateBuilder.build(
+            new JcaContentSignerBuilder(signingAlgorithm).build(pair.getPrivate()));
+        return new JcaX509CertificateConverter()
+            .setProvider(BouncyCastleProvider.PROVIDER_NAME)
+            .getCertificate(certificateHolder);
     }
 }
