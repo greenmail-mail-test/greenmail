@@ -1,7 +1,7 @@
 name: ci
 on:
   push:
-    branches: [master,releases/1.6.x]
+    branches: [master,releases/2.0.x,releases/1.6.x]
     paths-ignore:
       - "**/*.md"
       - "docs/**"
@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ '11', '17' ]
+        java: [ '11', '17', '21' ]
     name: Java ${{ matrix.Java }}
     steps:
       - uses: actions/checkout@v4
