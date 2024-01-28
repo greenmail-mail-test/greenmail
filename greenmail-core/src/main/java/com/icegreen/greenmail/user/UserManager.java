@@ -63,6 +63,15 @@ public class UserManager {
 
     public GreenMailUser createUser(String email, String login, String password) throws UserException {
         log.debug("Creating user {}", email);
+        // Check that user does not exist
+        if(getUserByEmail(email)!=null) {
+            throw new UserException("Can not create new user as another user of same email '" + email +
+            "' already exists");
+        }
+        if(getUser(login)!=null) {
+            throw new UserException("Can not create new user as another user of same login '" + login +
+                "' already exists");
+        }
         GreenMailUser user = new UserImpl(email, login, password, imapHostManager);
         user.create();
         loginToUser.put(normalizerUserName(user.getLogin()), user);
