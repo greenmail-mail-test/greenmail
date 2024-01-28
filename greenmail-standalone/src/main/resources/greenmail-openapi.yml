@@ -42,6 +42,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: "#/components/schemas/ErrorResponse"
+
         post:
             description: Creates a new GreenMail users
             operationId: create_user
@@ -75,10 +76,10 @@ paths:
                         application/json:
                             schema:
                                 $ref: "#/components/schemas/ErrorResponse"
-    /api/user/{id}:
+    /api/user/{emailOrId}:
         parameters:
             -   in: path
-                name: id
+                name: emailOrId
                 description: Either user login or user email as identifier
                 required: true
                 schema:
@@ -95,6 +96,36 @@ paths:
                                 $ref: "#/components/schemas/SuccessResponse"
                 '400':
                     description: User not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+    /api/user/{emailOrId}/messages/{folderName}:
+        parameters:
+            -   in: path
+                name: emailOrId
+                description: Either user login or user email as identifier
+                required: true
+                schema:
+                    type: string
+            -   in: path
+                name: folderName
+                description: Mail folder (defaults to INBOX)
+                required: false
+                schema:
+                    type: string
+        get:
+            description: Gets the messages for given user and folder
+            operationId: get_user_messages
+            responses:
+                '200':
+                    description: List of messages
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Messages"
+                default:
+                    description: Unexpected error
                     content:
                         application/json:
                             schema:
@@ -187,6 +218,28 @@ components:
                 login:
                     type: string
                 email:
+                    type: string
+        Messages:
+            type: "array"
+            description: List of messages
+            items:
+                $ref: "#/components/schemas/Message"
+        Message:
+            type: object
+            required:
+                - uid
+                - contentType
+                - mimeMessage
+            properties:
+                uid:
+                    type: number
+                messageId:
+                    type: string
+                subject:
+                    type: string
+                contentType:
+                    type: string
+                mimeMessage:
                     type: string
         ServerSetup:
             type: object

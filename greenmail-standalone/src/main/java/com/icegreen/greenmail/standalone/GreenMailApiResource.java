@@ -2,17 +2,18 @@ package com.icegreen.greenmail.standalone;
 
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.store.FolderException;
+import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.user.UserManager;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -145,22 +146,79 @@ public class GreenMailApiResource {
     @DELETE
     @Path("/api/user/{emailOrLogin}")
     @Produces("application/json")
-    public Response deleteUserById(@PathParam("emailOrLogin") String id) {
+    public Response deleteUserById(@PathParam("emailOrLogin") String emailOrLogin) {
         final UserManager userManager = greenMail.getUserManager();
-        LOG.debug("Searching user using '{}'", id);
-        GreenMailUser user = userManager.getUser(id);
-        if (null == user) {
-            user = userManager.getUserByEmail(id);
-        }
+        final GreenMailUser user = getUserByLoginOrEmail(emailOrLogin, userManager);
         if (null == user) {
             return Response.status(Response.Status.BAD_REQUEST)
-                .entity(new ErrorMessage("User '" + id + "' not found")).build();
+                .entity(new ErrorMessage("User '" + emailOrLogin + "' not found")).build();
         }
         LOG.debug("Deleting user {}", user);
         userManager.deleteUser(user);
         return Response.status(Response.Status.OK)
-            .entity(new SuccessMessage("User '" + id + "' deleted")).build();
+            .entity(new SuccessMessage("User '" + emailOrLogin + "' deleted")).build();
+    }
 
+    /**
+     * Gets emails for existing user and INBOX folder.
+     *
+     * @param emailOrLogin the user email or login.
+     *                     Custom mapped, see {@link JacksonObjectMapperProvider.StoredMessageSerializer}
+     */
+    @GET
+    @Path("/api/user/{emailOrLogin}/messages/")
+    @Produces("application/json")
+    public Response listMessages(@PathParam("emailOrLogin") String emailOrLogin) {
+        return listMessages(emailOrLogin, null);
+    }
+
+    /**
+     * Gets emails for existing user and given folder.
+     *
+     * @param emailOrLogin the user email or login.
+     * @param folderName   the name of the folder. Defaults to INBOX.
+     *                     Custom mapped, see {@link JacksonObjectMapperProvider.StoredMessageSerializer}
+     */
+    @GET
+    @Path("/api/user/{emailOrLogin}/messages/{folderName}/")
+    @Produces("application/json")
+    public Response listMessages(@PathParam("emailOrLogin") String emailOrLogin, @PathParam("folderName") String folderName) {
+        final UserManager userManager = greenMail.getUserManager();
+        final GreenMailUser user = getUserByLoginOrEmail(emailOrLogin, userManager);
+        if (null == user) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                .entity(new ErrorMessage("User '" + emailOrLogin + "' not found")).build();
+        }
+        MailFolder folder = getFolderOrDefault(user, folderName);
+        if (null == folder) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                .entity(new ErrorMessage("User '" + emailOrLogin + "' does not have mailbox folder '" + folderName + "'")).build();
+        }
+
+        return Response.status(Response.Status.OK)
+            .entity(folder.getMessages()).build();
+    }
+
+    private static GreenMailUser getUserByLoginOrEmail(String emailOrLogin, UserManager userManager) {
+        LOG.debug("Searching user using '{}'", emailOrLogin);
+        GreenMailUser user = userManager.getUser(emailOrLogin);
+        if (null == user) {
+            user = userManager.getUserByEmail(emailOrLogin);
+        }
+        return user;
+    }
+
+    private MailFolder getFolderOrDefault(GreenMailUser user, String folderName) {
+        LOG.debug("Getting for user '{}' folder '{}'", user.getEmail(), folderName);
+        if (null == folderName || folderName.isEmpty()) {
+            try {
+                return greenMail.getManagers().getImapHostManager().getInbox(user);
+            } catch (FolderException e) {
+                return null;
+            }
+        } else {
+            return greenMail.getManagers().getImapHostManager().getFolder(user, folderName);
+        }
     }
 
     // Operations

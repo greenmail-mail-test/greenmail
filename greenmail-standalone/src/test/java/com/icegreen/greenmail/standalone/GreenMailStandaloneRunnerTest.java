@@ -4,22 +4,17 @@ import com.icegreen.greenmail.configuration.PropertiesBasedGreenMailConfiguratio
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.PropertiesBasedServerSetupBuilder;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import jakarta.mail.Folder;
-import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
-import jakarta.mail.Session;
-import jakarta.mail.Store;
+import jakarta.mail.*;
 import jakarta.ws.rs.ProcessingException;
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.client.Invocation;
-import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.client.*;
+import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.junit.After;
 import org.junit.Test;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -107,6 +102,31 @@ public class GreenMailStandaloneRunnerTest {
         assertThat(userCreateResponse.getStatus()).isEqualTo(200);
         assertThat(userCreateResponse.readEntity(String.class))
             .isEqualTo("{\"login\":\"" + userId + "\",\"email\":\"foo.bar@localhost\"}");
+
+        // Getting messages
+        final Response userMessagesEmptyResponse = api.path("/api/user/"+userId+"/messages")
+            .request(MediaType.APPLICATION_JSON)
+            .get(Response.class);
+        assertThat(userMessagesEmptyResponse.getStatus()).isEqualTo(200);
+        assertThat(userMessagesEmptyResponse.readEntity(String.class))
+            .isEqualTo("[]"); // EMPTY
+
+        GreenMailUtil.sendTextEmail(userId+"@localhost", "test1@localhost",
+            "testApi", "A test text message", ServerSetupTest.SMTP);
+        final Response userMessagesResponse = api.path("/api/user/"+userId+"/messages")
+            .request(MediaType.APPLICATION_JSON)
+            .get(Response.class);
+        assertThat(userMessagesResponse.getStatus()).isEqualTo(200);
+        GenericType<List<Map<String,String>>> userMessagesResponseType = new GenericType<List<Map<String,String>>>(){};
+        Map<String,String> value = userMessagesResponse.readEntity(userMessagesResponseType).get(0);
+        assertThat(value)
+            .containsEntry("uid", "1")
+            .containsEntry("subject", "testApi")
+            .containsEntry("contentType", "text/plain; charset=us-ascii");
+        assertThat(value.get("Message-ID")).matches("^<.*>$");
+        assertThat(value.get("mimeMessage"))
+            .contains("testApi")
+            .contains("A test text message");
 
         final Invocation.Builder deleteRequest = api.path("/api/user/" + userId).request();
         final Response userDeleteResponse = deleteRequest.delete();

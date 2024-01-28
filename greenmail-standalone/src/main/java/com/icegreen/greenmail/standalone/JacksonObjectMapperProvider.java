@@ -5,8 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.icegreen.greenmail.store.StoredMessage;
 import com.icegreen.greenmail.user.GreenMailUser;
+import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
+import jakarta.mail.MessagingException;
 import jakarta.ws.rs.ext.ContextResolver;
 import jakarta.ws.rs.ext.Provider;
 
@@ -27,6 +30,38 @@ public class JacksonObjectMapperProvider implements ContextResolver<ObjectMapper
         return defaultObjectMapper;
     }
 
+    /**
+     * Serializes GreenMail internal StoredMessage using minimal-/essential attributes only.
+     * Note: Ignores errors when serializing (best effort)
+     */
+    static class StoredMessageSerializer extends StdSerializer<StoredMessage> {
+        public StoredMessageSerializer() {
+            super(StoredMessage.class);
+        }
+
+        @Override
+        public void serialize(StoredMessage value, JsonGenerator generator, SerializerProvider provider) throws IOException {
+            generator.writeStartObject();
+            generator.writeStringField("uid", Long.toString(value.getUid()));
+            try {
+                generator.writeStringField("Message-ID", value.getMimeMessage().getMessageID());
+            } catch (MessagingException e) {
+                // Ignore
+            }
+            try {
+                generator.writeStringField("subject", value.getMimeMessage().getSubject());
+            } catch (MessagingException e) {
+                // Ignore
+            }
+            try {
+                generator.writeStringField("contentType", value.getMimeMessage().getContentType());
+            } catch (MessagingException e) {
+                // Ignore
+            }
+            generator.writeStringField("mimeMessage", GreenMailUtil.toString(value.getMimeMessage()));
+            generator.writeEndObject();
+        }
+    }
 
     static class GreenMailUserSerializer extends StdSerializer<GreenMailUser> {
         private static final long serialVersionUID = 1L;
@@ -72,6 +107,7 @@ public class JacksonObjectMapperProvider implements ContextResolver<ObjectMapper
         mapper.configure(FAIL_ON_EMPTY_BEANS, false);
 
         SimpleModule module = new SimpleModule();
+        module.addSerializer(StoredMessage.class, new StoredMessageSerializer());
         module.addSerializer(GreenMailUser.class, new GreenMailUserSerializer());
         module.addSerializer(ServerSetup.class, new GreenMailServerSetupSerializer());
         mapper.registerModule(module);
