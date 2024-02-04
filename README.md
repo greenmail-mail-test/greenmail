@@ -30,7 +30,7 @@ The GreenMail project welcomes any contribution, so go ahead and fork/open a pul
 
   `mvn clean install -Pdocker`
 
-  Make sure you got [Maven 3.8][maven_download] or higher, and run a JDK 11 or newer.
+  Make sure you got [Maven 3.9][maven_download] or higher, and run a JDK 11 or newer.
   If you want to skip building the docker image, leave out the `-Pdocker` profile option.
 
   If you want to skip the long-running tests, use the Maven option `-DskipITs` .
