@@ -16,7 +16,7 @@ jobs:
     working_directory: ~/circleci-greenmail
 
     docker:
-        - image: azul/zulu-openjdk:11.0.21
+        - image: azul/zulu-openjdk:11.0.22
           auth:
             username: $DOCKERHUB_IDENTITY
             password: $DOCKERHUB_PASSWORD
@@ -59,7 +59,7 @@ jobs:
     working_directory: ~/circleci-greenmail
 
     docker:
-        - image: azul/zulu-openjdk:17.0.9
+        - image: azul/zulu-openjdk:17.0.10
           auth:
             username: $DOCKERHUB_IDENTITY
             password: $DOCKERHUB_PASSWORD
@@ -102,7 +102,7 @@ jobs:
     working_directory: ~/circleci-greenmail
 
     docker:
-        - image: azul/zulu-openjdk:21.0.1
+        - image: azul/zulu-openjdk:21.0.2
           auth:
             username: $DOCKERHUB_IDENTITY
             password: $DOCKERHUB_PASSWORD
