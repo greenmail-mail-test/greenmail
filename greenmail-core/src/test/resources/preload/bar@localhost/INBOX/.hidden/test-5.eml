@@ -1,0 +1,11 @@
+Date: Sat, 16 Sep 2023 17:10:44 +0200 (CEST)
+From: bar@localhost
+To: foo@localhost
+Message-ID: <1882145060.266.1694877044545@127.0.0.1>
+Subject: test-5
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+Test message saved as eml (electronic mail format, aka internet message format)
+File is in hidden folder, so it should not be preloaded
