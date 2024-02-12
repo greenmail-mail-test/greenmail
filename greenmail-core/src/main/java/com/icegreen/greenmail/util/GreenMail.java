@@ -348,7 +348,7 @@ public class GreenMail extends ConfiguredGreenMail {
 
         try (final Stream<Path> pathStream = Files.walk(sourceDirectory)) {
             for (Path emailPath : pathStream
-                .filter(path -> !path.equals(sourceDirectory)) // Skip base dir
+                .filter(path -> !path.equals(sourceDirectory) && !isHiddenOrInHiddenDir(path)) // Skip base dir and files which are hidden or in hidden dirs
                 .map(Path::toAbsolutePath)
                 .collect(Collectors.toList())) {
                 loadEmail(sourceDirectory, emailPath, sourceNameCount, userManager, store, imapHostManager, session);
@@ -379,15 +379,16 @@ public class GreenMail extends ConfiguredGreenMail {
         }
 
         // Extract and optionally create intermediate folders
-        MailFolder folder = null;
-        folder = store.getMailbox(getUserBaseMailboxName(imapHostManager, user));
-        for (int i = sourceNameCount + 1; i < emailPathNameCount - 1; i++) {
-            String namePart = emailPath.getName(i).toString();
-            MailFolder child = store.getMailbox(folder, namePart);
-            if (null == child) {
-                child = store.createMailbox(folder, namePart, true);
+        MailFolder folder = store.getMailbox(getUserBaseMailboxName(imapHostManager, user));;
+        for (int i = sourceNameCount + 1; i < emailPathNameCount; i++) {
+            if (i < emailPathNameCount - 1 || Files.isDirectory(emailPath)) {
+                String namePart = emailPath.getName(i).toString();
+                MailFolder child = store.getMailbox(folder, namePart);
+                if (null == child) {
+                    child = store.createMailbox(folder, namePart, true);
+                }
+                folder = child;
             }
-            folder = child;
         }
 
         if (Files.isRegularFile(emailPath) && emailPath.toString().endsWith(".eml")) {
@@ -409,5 +410,13 @@ public class GreenMail extends ConfiguredGreenMail {
             throw new IllegalStateException("Mail folder '" + inbox + "' is not expected " + ImapConstants.INBOX_NAME + " folder");
         }
         return inbox.substring(0, inbox.length() - ImapConstants.INBOX_NAME.length());
+    }
+
+    private boolean isHiddenOrInHiddenDir(Path path) {
+        try {
+            return Files.isHidden(path) || (path.getParent() != null && isHiddenOrInHiddenDir(path.getParent()));
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed during preloading '" + path + "'");
+        }
     }
 }
