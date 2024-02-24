@@ -18,11 +18,11 @@ The GreenMail project welcomes any contribution, so go ahead and fork/open a pul
 
 ## Version compatibility
 
-| GreenMail | Mail API                   | Example frameworks                     |
-|-----------|----------------------------|----------------------------------------|
-| 2.1.x     | [JakartaMail 2.1.x][jm_21] |                                        |
-| 2.0.x     | [JakartaMail 2.0.x][jm_20] | Spring 6                               |
-| 1.6.x     | [JakartaMail 1.6.x][jm_16] | Spring 5, Apache commons-mail 1.5, ... |
+| GreenMail | Mail API                   | Example frameworks                                                   |
+|-----------|----------------------------|----------------------------------------------------------------------|
+| 2.1.x     | [JakartaMail 2.1.x][jm_21] | [Jakarta EE 10][jakarta_ee_10]                                       |
+| 2.0.x     | [JakartaMail 2.0.x][jm_20] | [Jakarta EE 9][jakarta_ee_9], Spring 6,                              |
+| 1.6.x     | [JakartaMail 1.6.x][jm_16] | [Jakarta EE 8][jakarta_ee_8], Spring 5, Apache commons-mail 1.5, ... |
 
 ## Development
 
@@ -78,6 +78,9 @@ The GreenMail project welcomes any contribution, so go ahead and fork/open a pul
 [jm_21]: https://projects.eclipse.org/projects/ee4j.mail
 [jm_20]: https://projects.eclipse.org/projects/ee4j.mail
 [jm_16]: https://projects.eclipse.org/projects/ee4j.mail
+[jakarta_ee_10]: https://jakarta.ee/release/10/
+[jakarta_ee_9]: https://jakarta.ee/release/9/
+[jakarta_ee_8]: https://jakarta.ee/release/8/
 
 ## Roadmap
 
