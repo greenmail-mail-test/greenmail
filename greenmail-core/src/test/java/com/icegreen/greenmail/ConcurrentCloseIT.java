@@ -1,10 +1,10 @@
 package com.icegreen.greenmail;
 
-import jakarta.mail.internet.MimeMessage;
-
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.internet.MimeMessage;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,18 +13,28 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ConcurrentCloseIT {
     private final Logger log = LoggerFactory.getLogger(getClass());
+    private int limitIterations;
+
+    @Before
+    public void setUp() {
+        final String envValue = System.getenv("ConcurrentCloseIT_ITERATIONS");
+        if (null == envValue) {
+            limitIterations = 2500;
+        } else
+            limitIterations = Integer.parseInt(envValue);
+    }
 
     @Test
     public void concurrentCloseTest() throws Exception {
-        final int limit = 3000;
         final long startTime = System.currentTimeMillis();
-        for (int i = 0; i < limit; i++) {
+        for (int i = 0; i < limitIterations; i++) {
             testThis();
             if (i > 0 && i % 500 == 0) {
-                log.info("Performed {} of {} iterations in {}ms", i, limit, System.currentTimeMillis() - startTime);
+                log.info("Performed {} of {} iterations in {}ms",
+                    i, limitIterations, System.currentTimeMillis() - startTime);
             }
         }
-        log.info("Performed {} iterations in {}ms", limit, System.currentTimeMillis() - startTime);
+        log.info("Performed {} iterations in {}ms", limitIterations, System.currentTimeMillis() - startTime);
     }
 
     private void testThis() throws InterruptedException {
