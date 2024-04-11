@@ -263,7 +263,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-gpg-plugin</artifactId>
-          <version>3.2.2</version>
+          <version>3.2.3</version>
         </plugin>
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
