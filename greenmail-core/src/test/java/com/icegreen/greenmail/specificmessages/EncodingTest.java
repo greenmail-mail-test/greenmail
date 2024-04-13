@@ -103,20 +103,20 @@ public class EncodingTest {
 
             // QP-encoded
             final BodyPart bodyPart0 = multipartReceived.getBodyPart(0);
-            assertThat(bodyPart0.getContentType()).isEqualTo("TEXT/JAVASCRIPT; charset=utf-8");
+            assertThat(bodyPart0.getContentType()).isEqualTo("text/javascript; charset=utf-8");
             assertThat(textQP.getContent()).isEqualTo(EncodingUtil.toString((InputStream) bodyPart0.getContent(), StandardCharsets.UTF_8));
 
             // 8-BIT-encoded
             final BodyPart bodyPart1 = multipartReceived.getBodyPart(1);
-            assertThat(bodyPart1.getContentType()).isEqualTo("TEXT/HTML; charset=utf-8");
+            assertThat(bodyPart1.getContentType()).isEqualTo("text/html; charset=utf-8");
             assertThat(bodyPart1.getContent()).isEqualTo(html.getContent()); // Fails
 
             final BodyPart bodyPart2 = multipartReceived.getBodyPart(2);
-            assertThat(bodyPart2.getContentType()).isEqualTo("TEXT/PLAIN; charset=utf-8");
+            assertThat(bodyPart2.getContentType()).isEqualTo("text/plain; charset=utf-8");
             assertThat(bodyPart2.getContent()).isEqualTo(text.getContent());
 
             final BodyPart bodyPart3 = multipartReceived.getBodyPart(3);
-            assertThat(bodyPart3.getContentType()).isEqualTo("TEXT/PLAIN; charset=utf-8");
+            assertThat(bodyPart3.getContentType()).isEqualTo("text/plain; charset=utf-8");
             assertThat(bodyPart3.getContent()).isEqualTo(text2QP.getContent());
         } finally {
             store.close();

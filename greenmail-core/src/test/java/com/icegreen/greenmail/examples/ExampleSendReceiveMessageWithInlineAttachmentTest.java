@@ -50,7 +50,7 @@ public class ExampleSendReceiveMessageWithInlineAttachmentTest {
         assertThat(part.getCount()).isEqualTo(1);
 
         final BodyPart bodyPart = part.getBodyPart(0);
-        assertThat(bodyPart.getContentType()).isEqualTo("TEXT/PLAIN; charset=us-ascii");
+        assertThat(bodyPart.getContentType()).isEqualTo("text/plain; charset=us-ascii");
         assertThat(bodyPart.getDisposition()).isEqualTo("inline");
         assertThat(bodyPart.getContent()).isEqualTo("This is some text to be displayed inline");
     }

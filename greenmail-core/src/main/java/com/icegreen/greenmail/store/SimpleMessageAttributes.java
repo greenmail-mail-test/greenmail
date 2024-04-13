@@ -479,22 +479,19 @@ public class SimpleMessageAttributes
             String fields = parseBodyFields();
             StringBuilder buf = new StringBuilder();
             buf.append(LB);
-            if (primaryType.equalsIgnoreCase("Text")) {
-                buf.append("\"TEXT\" \"");
-                buf.append(secondaryType.toUpperCase());
-                buf.append("\" ");
-                buf.append(fields);
-                buf.append(' ');
-                buf.append(lineCount);
+            if (primaryType.equalsIgnoreCase("TEXT")) {
+                buf.append('"').append(primaryType).append("\" \"")
+                    .append(secondaryType).append("\" ")
+                    .append(fields)
+                    .append(' ')
+                    .append(lineCount);
 
                 // is:    * 1 FETCH (BODYSTRUCTURE ("Text" "plain" NIL NIL NIL NIL    4  -1))
                 // wants: * 1 FETCH (BODYSTRUCTURE ("text" "plain" NIL NIL NIL "8bit" 6  1  NIL NIL NIL))
                 // or:    * 1 FETCH (BODYSTRUCTURE ("text" "plain" NIL NIL NIL "7bit" 28 1 NIL NIL NIL))
-
             } else if (primaryType.equalsIgnoreCase(MESSAGE) && secondaryType.equalsIgnoreCase("rfc822")) {
                 buf.append("\"MESSAGE\" \"RFC822\" ");
                 buf.append(fields).append(SP);
-//                setupLogger(parts[0]); // reset transient logger
                 buf.append(parts[0].getEnvelope()).append(SP);
                 buf.append(parts[0].getBodyStructure(false)).append(SP);
                 buf.append(lineCount);
