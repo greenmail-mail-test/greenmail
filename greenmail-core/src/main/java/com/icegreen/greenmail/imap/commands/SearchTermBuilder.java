@@ -1,38 +1,18 @@
 package com.icegreen.greenmail.imap.commands;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
+import com.icegreen.greenmail.store.StoredMessage;
 import jakarta.mail.Flags;
 import jakarta.mail.Message;
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.search.AndTerm;
-import jakarta.mail.search.BodyTerm;
-import jakarta.mail.search.ComparisonTerm;
-import jakarta.mail.search.FlagTerm;
-import jakarta.mail.search.FromStringTerm;
-import jakarta.mail.search.FromTerm;
-import jakarta.mail.search.HeaderTerm;
-import jakarta.mail.search.OrTerm;
-import jakarta.mail.search.ReceivedDateTerm;
-import jakarta.mail.search.RecipientStringTerm;
-import jakarta.mail.search.RecipientTerm;
-import jakarta.mail.search.SearchTerm;
-import jakarta.mail.search.SentDateTerm;
-import jakarta.mail.search.SizeTerm;
-import jakarta.mail.search.SubjectTerm;
-
+import jakarta.mail.search.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.icegreen.greenmail.store.StoredMessage;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Builder for search terms.
@@ -210,7 +190,7 @@ public abstract class SearchTermBuilder {
         String integer = parameters.get(0);
         try {
             int i = Integer.parseInt(integer);
-            LOGGER.debug("Using date '{}'.", i);
+            LOGGER.debug("Using integer '{}'.", i);
             return i;
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Unable to parse integer '" + integer + "'",e);

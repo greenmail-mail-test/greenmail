@@ -148,9 +148,10 @@ public abstract class AbstractServer extends Thread implements Service {
                 if (!serverSocket.isClosed()) {
                     serverSocket.close();
                     if (log.isTraceEnabled()) {
-                        log.trace("Closed server socket " + serverSocket + "/ref="
-                                + Integer.toHexString(System.identityHashCode(serverSocket))
-                                + " for " + getName());
+                        log.trace("Closed server socket {}/ref={} for {}",
+                            serverSocket,
+                            Integer.toHexString(System.identityHashCode(serverSocket)),
+                            getName());
                     }
                 }
             } catch (IOException e) {

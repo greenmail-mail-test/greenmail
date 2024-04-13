@@ -1,17 +1,11 @@
 package com.icegreen.greenmail.imap.commands;
 
-import java.net.SocketTimeoutException;
-
-import jakarta.mail.Flags;
-
-import com.icegreen.greenmail.imap.AuthorizationException;
-import com.icegreen.greenmail.imap.ImapRequestLineReader;
-import com.icegreen.greenmail.imap.ImapResponse;
-import com.icegreen.greenmail.imap.ImapSession;
-import com.icegreen.greenmail.imap.ImapSessionFolder;
-import com.icegreen.greenmail.imap.ProtocolException;
+import com.icegreen.greenmail.imap.*;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.FolderListener;
+import jakarta.mail.Flags;
+
+import java.net.SocketTimeoutException;
 
 class IdleCommand extends SelectedStateCommand {
     public static final String NAME = "IDLE";
@@ -47,9 +41,7 @@ class IdleCommand extends SelectedStateCommand {
                 request.nextChar();
                 break;
             } catch (ProtocolException e) {
-                if (e.getCause() instanceof SocketTimeoutException) {
-                    // ignore
-                } else {
+                if (!(e.getCause() instanceof SocketTimeoutException /* Ignore */)) {
                     throw e;
                 }
             }

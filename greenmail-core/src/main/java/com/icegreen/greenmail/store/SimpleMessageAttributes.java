@@ -219,7 +219,7 @@ public class SimpleMessageAttributes
             contentDisposition = Header.create(part.getHeader("Content-Disposition"));
         } catch (MessagingException me) {
             if (log.isDebugEnabled()) {
-                log.debug("Can not create content disposition for part " + part, me);
+                log.debug("Can not create content disposition for part {}", part, me);
             }
         }
 
@@ -228,7 +228,7 @@ public class SimpleMessageAttributes
             lineCount = GreenMailUtil.getLineCount(body);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
-                log.debug("Can not get line count for part " + part, e);
+                log.debug("Can not get line count for part {}", part, e);
             }
         }
 
@@ -260,7 +260,7 @@ public class SimpleMessageAttributes
                 try {
                     MimeMessage wrappedMessage = (MimeMessage) part.getContent();
                     if(log.isDebugEnabled()) {
-                        log.debug("message type : " + wrappedMessage.getContentType());
+                        log.debug("message type : {}", wrappedMessage.getContentType());
                     }
                     parts[0] = new SimpleMessageAttributes(wrappedMessage, null);
                 } catch (Exception e) {
@@ -377,7 +377,7 @@ public class SimpleMessageAttributes
                         String encodedPersonal = MimeUtility.encodeWord(personal, StandardCharsets.UTF_8.name(),null);
                         buf.append(Q).append(encodedPersonal).append(Q);
                     } catch (UnsupportedEncodingException e) {
-                        log.warn("Failed to encode personal address part "+personal+" for "+netAddr+", using personal 'as is'");
+                        log.warn("Failed to encode personal address part {} for {}, using personal 'as is'", personal, netAddr);
                         buf.append(Q).append(personal).append(Q);
                     }
                 } else {

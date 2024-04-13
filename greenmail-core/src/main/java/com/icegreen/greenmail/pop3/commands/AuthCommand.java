@@ -6,9 +6,6 @@
  */
 package com.icegreen.greenmail.pop3.commands;
 
-import java.io.IOException;
-import java.util.Arrays;
-
 import com.icegreen.greenmail.pop3.Pop3Connection;
 import com.icegreen.greenmail.pop3.Pop3State;
 import com.icegreen.greenmail.store.FolderException;
@@ -16,6 +13,9 @@ import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.util.EncodingUtil;
 import com.icegreen.greenmail.util.SaslMessage;
+
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * SASL : PLAIN
@@ -101,7 +101,7 @@ public class AuthCommand
         try {
             saslMessage = SaslMessage.parse(EncodingUtil.decodeBase64(initialResponse));
         } catch(IllegalArgumentException ex) { // Invalid Base64
-            log.error("Expected base64 encoding but got <"+initialResponse+">", ex); /* GreenMail is just a test server */
+            log.error("Expected base64 encoding but got <{}>", initialResponse, ex); /* GreenMail is just a test server */
             conn.println("-ERR Authentication failed, expected base64 encoding : " + ex.getMessage() );
             return;
         }
@@ -111,7 +111,7 @@ public class AuthCommand
             user = state.getUser(saslMessage.getAuthcid());
             state.setUser(user);
         } catch (UserException e) {
-            log.error("Can not get user <" + saslMessage.getAuthcid() + ">", e);
+            log.error("Can not get user <{}>", saslMessage.getAuthcid(), e);
             conn.println("-ERR Authentication failed: " + e.getMessage() /* GreenMail is just a test server */);
             return;
         }
@@ -120,10 +120,10 @@ public class AuthCommand
             state.authenticate(saslMessage.getPasswd());
             conn.println("+OK");
         } catch (UserException e) {
-            log.error("Can not authenticate using user <" + user.getLogin() + ">", e);
+            log.error("Can not authenticate using user <{}>", user.getLogin(), e);
             conn.println("-ERR Authentication failed: " + e.getMessage());
         } catch (FolderException e) {
-            log.error("Can not authenticate using user " + user + ", internal error", e);
+            log.error("Can not authenticate using user {}, internal error", user, e);
             conn.println("-ERR Authentication failed, internal error: " + e.getMessage());
         }
     }

@@ -2,18 +2,17 @@ package com.icegreen.greenmail.examples;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Rule;
-import org.junit.Test;
-
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
+import org.junit.Rule;
+import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import java.io.IOException;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
@@ -31,7 +30,7 @@ public class ExampleSendReceiveMessageWithInlineAttachmentTest {
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
 
     @Test
-    public void sendAndFetchMailMessageWithInlineAttachment() throws IOException, MessagingException, GeneralSecurityException {
+    public void sendAndFetchMailMessageWithInlineAttachment() throws IOException, MessagingException {
         greenMail.setUser(emailAddress, imapUserName, imapPassword);
 
         sendMailMessageWithInlineAttachment();

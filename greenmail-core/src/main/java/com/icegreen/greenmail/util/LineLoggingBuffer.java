@@ -68,8 +68,10 @@ public class LineLoggingBuffer {
                 if (isLineLengthExceeded()) { // Signal wrapping
                     buf.write(WRAP);
                 }
-                String line = buf.toString(StandardCharsets.UTF_8.name());
-                log.debug(linePrefix + line);
+                if(log.isDebugEnabled()) {
+                    String line = buf.toString(StandardCharsets.UTF_8.name());
+                    log.debug("{}{}", linePrefix, line);
+                }
                 buf.reset();
             } catch (IOException e) {
                 throw new IllegalStateException("Can not log output stream", e);
