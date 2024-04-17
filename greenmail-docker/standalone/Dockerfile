@@ -1,4 +1,4 @@
-FROM azul/zulu-openjdk:11.0.22-jre
+FROM azul/zulu-openjdk:11.0.23-jre
 
 LABEL org.opencontainers.image.url=https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-docker/standalone
 LABEL org.opencontainers.image.source=https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-docker/standalone/Dockerfile
