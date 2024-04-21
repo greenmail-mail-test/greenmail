@@ -9,7 +9,6 @@ package com.icegreen.greenmail.smtp.commands;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class SmtpCommandRegistry {
     private static final Map<String, SmtpCommand> commands = new HashMap<>();
 

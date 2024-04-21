@@ -19,10 +19,9 @@ import java.util.function.UnaryOperator;
  * <tr><td>imaps</td><td>993</td></tr>
  * </table>
  * Use {@link ServerSetupTest} for non-default ports
- * <p/>
+ * <p>
  *
  * @author Wael Chatila
- * @version $Id: $
  * @since Jan 28, 2006
  * Use {@link ServerSetupTest} for non-default ports
  */
@@ -93,12 +92,12 @@ public class ServerSetup {
      * Creates a configuration.
      *
      * @param port        the port for this service. Set to 0 if an available port should be autodetected.
-     * @param bindAddress the bind address, eg 'localhost'
+     * @param bindAddress the bind address, e.g. 'localhost'
      * @param protocol    the protocol, see {@link ServerSetup#PROTOCOLS}
      */
     public ServerSetup(int port, String bindAddress, String protocol) {
         this.port = port;
-        if (null == bindAddress || bindAddress.length() == 0) {
+        if (null == bindAddress || bindAddress.isEmpty()) {
             this.bindAddress = getLocalHostAddress();
         } else {
             this.bindAddress = bindAddress;
@@ -115,7 +114,7 @@ public class ServerSetup {
     }
 
     /**
-     * Gets the public default host address "0.0.0.0" .
+     * Gets the public default host address "0.0.0.0".
      *
      * @return the public IP host address.
      */
@@ -212,7 +211,7 @@ public class ServerSetup {
     }
 
     /**
-     * @param verbose if true enables JavaMail debug output by setting JavaMail property  'mail.debug'
+     * @param verbose if true enables JavaMail debug output by setting JavaMail property 'mail.debug'
      */
     public ServerSetup setVerbose(boolean verbose) {
         this.verbose = verbose;
@@ -222,7 +221,7 @@ public class ServerSetup {
     /**
      * Creates a deep copy with verbose configured.
      *
-     * @param verbose if true enables JavaMail debug output by setting JavaMail property  'mail.debug'
+     * @param verbose if true enables JavaMail debug output by setting JavaMail property 'mail.debug'
      * @return a deep copy with verbose configured
      */
     public ServerSetup verbose(boolean verbose) {
@@ -240,9 +239,9 @@ public class ServerSetup {
 
     /**
      * Creates default properties for a JavaMail session.
-     * <p/>
-     * Concrete server implementations can add protocol specific settings.
-     * <p/>
+     * <p>
+     * Concrete server implementations can add protocol-specific settings.
+     * <p>
      * Order of application:
      * <ol>
      *     <li>Default GreenMail properties - e.g. common properties such as
@@ -252,14 +251,14 @@ public class ServerSetup {
      *     <li>Parameter provided properties</li>
      * </ol>
      * Note: Be careful to not override essential GreenMail provided properties, e.g. <code>mail.PROTOCOL.port</code>
-     * <p/>
+     * <p>
      * For details see
      * <ul>
      * <li>https://jakarta.ee/specifications/mail/2.0/apidocs/jakarta.mail/module-summary.html for some general settings</li>
      * <li>https://jakarta.ee/specifications/mail/1.6/apidocs/index.html?com/sun/mail/smtp/package-summary.html for valid SMTP properties.</li>
      * <li>https://jakarta.ee/specifications/mail/1.6/apidocs/index.html?com/sun/mail/imap/package-summary.html for valid IMAP properties</li>
      * <li>https://jakarta.ee/specifications/mail/1.6/apidocs/index.html?com/sun/mail/pop3/package-summary.html for valid POP3 properties.</li>
-     * </ul
+     * </ul>
      *
      * @param properties additional and optional properties which overwrite automatically added properties. Can be null.
      * @param debug      sets JavaMail debug properties
@@ -402,13 +401,13 @@ public class ServerSetup {
     /**
      * Create a new server setup copy, configured with given JavaMail session property.
      * <p>
-     * For protocol specific properties see
+     * For protocol-specific properties see
      * <ul>
      * <li>https://jakarta.ee/specifications/mail/2.0/apidocs/jakarta.mail/jakarta/mail/package-summary.html for general settings</li>
      * <li>https://jakarta.ee/specifications/mail/1.6/apidocs/index.html?com/sun/mail/smtp/package-summary.html for SMTP properties.</li>
      * <li>https://jakarta.ee/specifications/mail/1.6/apidocs/index.html?com/sun/mail/imap/package-summary.html for IMAP properties</li>
      * <li>https://jakarta.ee/specifications/mail/1.6/apidocs/index.html?com/sun/mail/pop3/package-summary.html for POP3 properties.</li>
-     * </ul
+     * </ul>
      *
      * @param key the key
      * @param value the value

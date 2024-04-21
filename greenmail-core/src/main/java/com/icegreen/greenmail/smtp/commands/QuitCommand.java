@@ -10,16 +10,12 @@ import com.icegreen.greenmail.smtp.SmtpConnection;
 import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpState;
 
-
 /**
  * QUIT command.
- * <p/>
- * <p/>
- * The spec is at <a
- * https://tools.ietf.org/html/rfc2821.html#section-4.1.1.10">
- * https://tools.ietf.org/html/rfc2821.html#section-4.1.1.10</a>.
- * </p>
- * <p>"QUIT" CRLF</p>
+ * <p>
+ * <a href="https://tools.ietf.org/html/rfc2821.html#section-4.1.1.10">
+ * https://tools.ietf.org/html/rfc2821.html#section-4.1.1.10</a>
+ * <pre>"QUIT" CRLF</pre>
  */
 public class QuitCommand
         extends SmtpCommand {

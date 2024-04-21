@@ -10,15 +10,11 @@ import com.icegreen.greenmail.smtp.SmtpConnection;
 import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpState;
 
-
 /**
  * RSET command.
- * <p/>
- * <p/>
- * The spec is at <a
- * href="https://tools.ietf.org/html/rfc2821.html#section-4.1.1.5">
- * https://tools.ietf.org/html/rfc2821.html#section-4.1.1.5</a>.
- * </p>
+ * <p>
+ * <a href="https://tools.ietf.org/html/rfc2821.html#section-4.1.1.5">
+ * https://tools.ietf.org/html/rfc2821.html#section-4.1.1.5</a>
  */
 public class RsetCommand
         extends SmtpCommand {

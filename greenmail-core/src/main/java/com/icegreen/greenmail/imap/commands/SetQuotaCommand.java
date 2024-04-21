@@ -9,7 +9,7 @@ import com.icegreen.greenmail.imap.ProtocolException;
 
 /**
  * Implements IMAP Quota Extension.
- * <p/>
+ * <p>
  * See <a href="https://datatracker.ietf.org/doc/html/rfc2087#section-4-1">rfc2087</a>
  *
  * @author mm

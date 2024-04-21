@@ -18,11 +18,9 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * DATA command.
- * <p/>
- * The spec is at <a
- * href="https://tools.ietf.org/html/rfc2821.html#section-4.1.1.4">
+ * <p>
+ * <a href="https://tools.ietf.org/html/rfc2821.html#section-4.1.1.4">
  * https://tools.ietf.org/html/rfc2821.html#section-4.1.1.4</a>.
- * </p>
  */
 public class DataCommand extends SmtpCommand {
     @Override

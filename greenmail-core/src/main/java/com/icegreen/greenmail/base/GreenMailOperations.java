@@ -171,8 +171,8 @@ public interface GreenMailOperations {
      * <ul>
      *   <li>
      *     Expected structure in provided path, containing EML (rfc0822) mail files
-     *     <p>Pattern: <pre>&lt;EMAIL&gt; / &lt;FOLDER*&gt; / &lt;*.eml&gt;</pre></p>
-     *     <p>Example:</p>
+     *     <p>Pattern: <pre>&lt;EMAIL&gt; / &lt;FOLDER*&gt; / &lt;*.eml&gt;</pre>
+     *     <p>Example:
      *     <pre>
      *    ├── bar@localhost (directory)
      *    │   └── INBOX (directory)

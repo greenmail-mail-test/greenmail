@@ -117,7 +117,7 @@ public class CommandParser {
      * Reads a "mailbox" argument from the request. Not implemented *exactly* as per spec,
      * since a quoted or literal "inbox" still yeilds "INBOX"
      * (ie still case-insensitive if quoted or literal). I think this makes sense.
-     * <p/>
+     * <p>
      * mailbox         ::= "INBOX" / astring
      * ;; INBOX is case-insensitive.  All case variants of
      * ;; INBOX (e.g. "iNbOx") MUST be interpreted as INBOX

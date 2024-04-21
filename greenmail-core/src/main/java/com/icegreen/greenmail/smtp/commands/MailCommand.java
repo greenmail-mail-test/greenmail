@@ -6,23 +6,20 @@
  */
 package com.icegreen.greenmail.smtp.commands;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.icegreen.greenmail.mail.MailAddress;
 import com.icegreen.greenmail.smtp.SmtpConnection;
 import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpState;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 /**
  * MAIL command.
- * <p/>
- * <p/>
- * The spec is at <a
- * href="https://tools.ietf.org/html/rfc2821.html#section-4.1.1.2">
+ * <p>
+ * <a href="https://tools.ietf.org/html/rfc2821.html#section-4.1.1.2">
  * https://tools.ietf.org/html/rfc2821.html#section-4.1.1.2</a>
- * </p>
  */
 public class MailCommand
         extends SmtpCommand {

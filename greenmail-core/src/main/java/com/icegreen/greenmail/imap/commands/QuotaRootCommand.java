@@ -11,11 +11,10 @@ import com.icegreen.greenmail.store.FolderException;
 
 /**
  * Implements IMAP Quota Extension.
- * <p/>
- * See <a href="https://datatracker.ietf.org/doc/html/rfc2087#section-4-1">rfc2087</a>
- *
+ * <p>
  * Supports MESSAGES and STORAGE.
- * @author mm
+ * <p>
+ * See <a href="https://datatracker.ietf.org/doc/html/rfc2087#section-4-1">rfc2087</a>
  */
 public class QuotaRootCommand extends QuotaCommand {
     public static final String NAME = "GETQUOTAROOT";

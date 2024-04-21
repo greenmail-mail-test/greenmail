@@ -32,7 +32,7 @@ abstract class CommandTemplate
     }
 
     /**
-     * By default, valid in any state (unless overridden by subclass.
+     * By default, valid in any state (unless overridden by subclass).
      *
      * @see com.icegreen.greenmail.imap.commands.ImapCommand#validForState
      */
@@ -95,7 +95,7 @@ abstract class CommandTemplate
         syntax.append(getName());
 
         String args = getArgSyntax();
-        if (args != null && args.length() > 0) {
+        if (args != null && !args.isEmpty()) {
             syntax.append(' ');
             syntax.append(args);
         }
@@ -106,7 +106,7 @@ abstract class CommandTemplate
     /**
      * Provides the syntax for the command arguments if any. This value is used
      * to provide user feedback in the case of a malformed request.
-     * <p/>
+     * <p>
      * For commands which do not allow any arguments, <code>null</code> should
      * be returned.
      *

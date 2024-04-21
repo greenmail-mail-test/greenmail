@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 /**
  * Represents a range of UID values.
  * <p>
- * From https://tools.ietf.org/html/rfc3501 :
+ * From <a href="https://tools.ietf.org/html/rfc3501">rfc3501</a> :
  * <p>
  * seq-number      = nz-number / "*"
  * ; message sequence number (COPY, FETCH, STORE
@@ -92,7 +92,7 @@ public class IdRange {
     /**
      * Parses an uid sequence, a comma separated list of uid ranges.
      * Note that the wildcard '*' denotes the largest number in use.
-     * <p/>
+     * <p>
      * Example: 1,2:5,8:*
      *
      * @param idRangeSequence the sequence

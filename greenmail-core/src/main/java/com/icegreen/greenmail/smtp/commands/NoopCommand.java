@@ -10,16 +10,12 @@ import com.icegreen.greenmail.smtp.SmtpConnection;
 import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpState;
 
-
 /**
  * NOOP command.
- * <p/>
- * <p/>
- * The spec is at <a
- * href="https://tools.ietf.org/html/rfc2821.html#section-4.1.1.9">
- * https://tools.ietf.org/html/rfc2821.html#section-4.1.1.9</a>.
- * </p>
- * <p>"NOOP" [ SP String ] CRLF</p>
+ * <p>
+ * <a href="https://tools.ietf.org/html/rfc2821.html#section-4.1.1.9">
+ * https://tools.ietf.org/html/rfc2821.html#section-4.1.1.9</a>
+ * <pre>"NOOP" [ SP String ] CRLF</pre>
  */
 public class NoopCommand
         extends SmtpCommand {

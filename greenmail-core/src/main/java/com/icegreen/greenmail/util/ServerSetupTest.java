@@ -9,7 +9,7 @@ package com.icegreen.greenmail.util;
 /**
  * Defines a series of non-default ports for test purposes.
  * The ports for the various protocols are the default ones plus an offset which is 3000.
- * i.e.
+ * I.e.
  * <table>
  * <tr><td>smtp</td><td>3025</td></tr>
  * <tr><td>smtps</td><td>3465</td></tr>
@@ -20,7 +20,6 @@ package com.icegreen.greenmail.util;
  * </table>
  * Use {@link ServerSetup} for default ports
  * @author Wael Chatila
- * @version $Id: $
  * @since Jan 28, 2006
  * {@link ServerSetup}
  */

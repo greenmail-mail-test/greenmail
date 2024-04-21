@@ -10,15 +10,11 @@ import com.icegreen.greenmail.smtp.SmtpConnection;
 import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpState;
 
-
 /**
  * VRFY command.
- * <p/>
- * <p/>
- * The spec is at <a
- * href="http://asg.web.cmu.edu/rfc/rfc2821.html#sec-4.1.1.6">
+ * <p>
+ * <a href="http://asg.web.cmu.edu/rfc/rfc2821.html#sec-4.1.1.6">
  * http://asg.web.cmu.edu/rfc/rfc2821.html#sec-4.1.1.6</a>.
- * </p>
  */
 public class VrfyCommand
         extends SmtpCommand {

@@ -105,7 +105,7 @@ public class UserManager {
                 }
             }
 
-            return true; // always authenticate successfully, if no auth required
+            return true; // Always authenticate successfully if no auth required
         }
 
         return null != u && checkPassword(u.getPassword(), password);

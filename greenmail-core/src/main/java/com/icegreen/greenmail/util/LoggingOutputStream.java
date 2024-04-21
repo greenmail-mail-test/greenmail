@@ -15,7 +15,7 @@ public class LoggingOutputStream extends FilterOutputStream {
      * underlying output stream.
      *
      * @param out    the underlying output stream to be assigned to
-     *               the field <tt>this.out</tt> for later use, or
+     *               the field {@link #out} for later use, or
      *               <code>null</code> if this instance is to be
      *               created without an underlying stream.
      * @param prefix a log message prefix, eg 's: ' for server side protocol trace output.

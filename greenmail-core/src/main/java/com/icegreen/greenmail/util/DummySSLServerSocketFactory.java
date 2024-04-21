@@ -21,20 +21,20 @@ import java.security.cert.CertificateException;
 
 /**
  * DummySSLServerSocketFactory - NOT SECURE
- * <p/>
+ * <p>
  * Contains a preconfigured key store for convenience in testing by avoiding
  * having to manually set up, install, and generate keystore / keys.
- * <p/>
+ * <p>
  * By default, the factory loads the resource <code>{@value #GREENMAIL_KEYSTORE_P12}</code> from classpath.
  * A fallback to old <code>>{@value #GREENMAIL_KEYSTORE_JKS}</code> exists.
- * <p/>
+ * <p>
  * The system property {@value #GREENMAIL_KEYSTORE_FILE_PROPERTY} can override the default keystore location.
- * <p/>
+ * <p>
  * The system property {@value #GREENMAIL_KEYSTORE_PASSWORD_PROPERTY} can override the default keystore password.
- * <p/>
+ * <p>
  * The system property {@value #GREENMAIL_KEY_PASSWORD_PROPERTY} can override the default key password
  * (defaults to keystore password).
- * <p/>
+ * <p>
  * GreenMail provides the keystore resource. For customization, place your greenmail.p12 before
  * greenmail JAR in the classpath.
  *

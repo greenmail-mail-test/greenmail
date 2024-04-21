@@ -19,17 +19,18 @@ import com.icegreen.greenmail.util.SaslMessage;
 import java.io.IOException;
 import java.util.Arrays;
 
-
 /**
  * AUTH command.
- * <p/>
+ * <p>
+ * <pre>
  * Supported: PLAIN, LOGIN
  * AUTH mechanism [initial-response]
  * or
  * AUTH LOGIN [initial-response]
+ * </pre>
  * <a href="https://tools.ietf.org/html/rfc4954">RFC4954</a>
  * <a href="https://tools.ietf.org/html/rfc2554">RFC2554</a>
- * <a href="http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml">SASL mechanisms</a></a>
+ * <a href="http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml">SASL mechanisms</a>
  * <a href="https://datatracker.ietf.org/doc/draft-murchison-sasl-login/">SASL LOGIN</a>
  */
 public class AuthCommand extends SmtpCommand {
@@ -83,7 +84,7 @@ public class AuthCommand extends SmtpCommand {
         } else {
             initialResponse = commandParts[2];
         }
-        
+
         SaslMessage saslMessage = parseInitialResponse(initialResponse);
         AuthenticationState authenticationContext = new PlainAuthenticationState(saslMessage);
         state.getMessage().setAuthenticationState(authenticationContext);
@@ -124,7 +125,7 @@ public class AuthCommand extends SmtpCommand {
     private boolean authenticate(UserManager userManager, SaslMessage saslMessage) {
         return userManager.test(saslMessage.getAuthcid(), saslMessage.getPasswd());
     }
-    
+
     private SaslMessage parseInitialResponse(String initialReponse) {
         String value = EncodingUtil.decodeBase64(initialReponse);
         // authorization-id\0authentication-id\0passwd

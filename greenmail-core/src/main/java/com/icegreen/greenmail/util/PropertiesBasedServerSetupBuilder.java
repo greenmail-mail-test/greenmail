@@ -6,8 +6,8 @@ import java.util.Properties;
 
 /**
  * Creates a GreenMail server setup configuration based on System properties.
- * <p/>
- * Default setups using well known ports:
+ * <p>
+ * Default setups using well-known ports:
  * <ul>
  * <li>greenmail.setup.all : {@link com.icegreen.greenmail.util.ServerSetup#ALL}</li>
  * <li>greenmail.setup.smtp : {@link com.icegreen.greenmail.util.ServerSetup#SMTP}</li>
@@ -17,8 +17,8 @@ import java.util.Properties;
  * <li>greenmail.setup.pop3 : {@link com.icegreen.greenmail.util.ServerSetup#POP3}</li>
  * <li>greenmail.setup.pop3s : {@link com.icegreen.greenmail.util.ServerSetup#POP3S}</li>
  * </ul>
- * <p/>
- * Default test setups with added offsets to well known ports:
+ * <p>
+ * Default test setups with added offsets to well-known ports:
  * <ul>
  * <li>greenmail.setup.test.all : {@link com.icegreen.greenmail.util.ServerSetupTest#ALL}</li>
  * <li>greenmail.setup.test.smtp : {@link com.icegreen.greenmail.util.ServerSetupTest#SMTP}</li>
@@ -28,7 +28,7 @@ import java.util.Properties;
  * <li>greenmail.setup.test.pop3 : {@link com.icegreen.greenmail.util.ServerSetupTest#POP3}</li>
  * <li>greenmail.setup.test.pop3s : {@link com.icegreen.greenmail.util.ServerSetupTest#POP3S}</li>
  * </ul>
- * <p/>
+ * <p>
  * <h2>Protocol specific setups</h2>
  * Replace PROTOCOL with a value from {@link com.icegreen.greenmail.util.ServerSetup#PROTOCOLS}:
  * <ul>

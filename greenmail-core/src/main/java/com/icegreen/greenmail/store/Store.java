@@ -89,10 +89,12 @@ public interface Store {
     /**
      * Lists all the mailboxes in the store which have a name
      * matching the supplied search pattern.
-     * <pre>
+     * <p>
      * Valid wildcards are:
-     *          '*' - matches any number of characters, including the hierarchy delimiter
-     *          '%' - matches any number of characters, but not the hierarchy delimiter
+     * <ul>
+     *   <li>'*' - matches any number of characters, including the hierarchy delimiter</li>
+     *   <li>'%' - matches any number of characters, but not the hierarchy delimiter</li>
+     * </ul>
      *
      * @param searchPattern The pattern to match mailboxes
      * @return A read-only collection of mailboxes which match this pattern
@@ -102,8 +104,8 @@ public interface Store {
 
     /**
      * Gets the quotas.
+     * See <a href="https://www.ietf.org/rfc/rfc2087.txt">rfc2087</a>
      *
-     * @link http://www.ietf.org/rfc/rfc2087.txt
      * @see org.eclipse.angus.mail.imap.IMAPStore#getQuota(String)
      * @param root the quota root
      * @param qualifiedRootPrefix the user specific prefix
@@ -113,8 +115,8 @@ public interface Store {
 
     /**
      * Sets the quota.
+     * See <a href="https://www.ietf.org/rfc/rfc2087.txt">rfc2087</a>
      *
-     * @link http://www.ietf.org/rfc/rfc2087.txt
      * @see org.eclipse.angus.mail.imap.IMAPStore#setQuota(jakarta.mail.Quota)
      * @param quota the quota.
      * @param qualifiedRootPrefix the user specific prefix

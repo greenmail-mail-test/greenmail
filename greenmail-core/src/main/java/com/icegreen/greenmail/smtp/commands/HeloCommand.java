@@ -13,10 +13,10 @@ import com.icegreen.greenmail.smtp.SmtpState;
 
 /**
  * EHLO/HELO command.
- * <p/>
+ * <p>
  * TODO: What does HELO do if it's already been called before?
- * <p/>
- * <a https://tools.ietf.org/html/rfc2821#section-4.1.1.1">RFC2821</a>
+ * <p>
+ * <a href="https://tools.ietf.org/html/rfc2821#section-4.1.1.1">RFC2821</a>
  * <a href="https://tools.ietf.org/html/rfc4954">RFC4954</a>
  * <a href="https://tools.ietf.org/html/rfc2554">RFC2554</a>
  */

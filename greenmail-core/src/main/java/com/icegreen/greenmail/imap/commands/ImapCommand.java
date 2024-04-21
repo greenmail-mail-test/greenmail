@@ -13,7 +13,7 @@ import com.icegreen.greenmail.imap.ImapSessionState;
 
 /**
  * Represents a processor for a particular Imap command. Implementations of this
- * interface should encpasulate all command specific processing.
+ * interface should encapsulate all commands specific processing.
  *
  * @author Darrell DeBoer <darrell@apache.org>
  * @version $Revision: 109034 $

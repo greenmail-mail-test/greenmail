@@ -15,7 +15,7 @@ public class LoggingInputStream extends FilterInputStream {
      * underlying input stream.
      *
      * @param is     the underlying input stream to be assigned to
-     *               the field <tt>this.is</tt> for later use, or
+     *               the field {@link #in} for later use, or
      *               <code>null</code> if this instance is to be
      *               created without an underlying stream.
      * @param prefix a log message prefix, eg 'c: ' for server side protocol trace input.
