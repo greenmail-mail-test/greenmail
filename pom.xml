@@ -356,7 +356,7 @@
   <properties>
     <slf4j.version>1.7.36</slf4j.version>
     <log4j2.version>2.23.1</log4j2.version>
-    <spring.version>5.3.34</spring.version>
+    <spring.version>5.3.35</spring.version>
     <junit5.version>5.10.2</junit5.version>
     <jetty.version>11.0.20</jetty.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
