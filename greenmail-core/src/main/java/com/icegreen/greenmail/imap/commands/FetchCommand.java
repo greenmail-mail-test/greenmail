@@ -20,6 +20,7 @@ import jakarta.mail.internet.MimeMultipart;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -184,6 +185,16 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         }
     }
 
+    private static byte[] readAllBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[4096];
+        int bytesRead;
+
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            byteArrayOutputStream.write(buffer, 0, bytesRead);
+        }
+        return Base64.getEncoder().encode(byteArrayOutputStream.toByteArray());
+    }
 
     private void handleBodyFetch(MimeMessage mimeMessage,
                                  String sectionSpecifier,
@@ -225,6 +236,10 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             Object content = mimeMessage.getContent();
             if (content instanceof String) {
                 handleBodyFetchForText(mimeMessage, partial, response);
+            } else if (content instanceof InputStream) {
+                byte[] bytes = readAllBytes((InputStream) content);
+                bytes = doPartial(partial, bytes, response);
+                addLiteralStream(bytes, response);
             } else {
                 MimeMultipart mp = (MimeMultipart) content;
                 BodyPart part = null;
@@ -302,6 +317,17 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             // See https://github.com/greenmail-mail-test/greenmail/issues/257
             final char c = (char) (b & 0xFF);
             response.append(c);
+        }
+    }
+
+    private void addLiteralStream(byte[] bytes, StringBuilder response) {
+        response.append('{');
+        response.append(bytes.length);
+        response.append('}');
+        response.append("\r\n");
+
+        for (byte b : bytes) {
+            response.append((char) (b));
         }
     }
 
