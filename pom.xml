@@ -186,15 +186,6 @@
           <artifactId>docker-maven-plugin</artifactId>
           <version>0.44.0</version>
         </plugin>
-        <!-- IDE plugins -->
-        <plugin>
-          <artifactId>maven-eclipse-plugin</artifactId>
-          <version>2.10</version>
-          <configuration>
-            <downloadSources>true</downloadSources>
-            <downloadJavadocs>true</downloadJavadocs>
-          </configuration>
-        </plugin>
         <plugin>
           <artifactId>maven-source-plugin</artifactId>
           <version>3.3.1</version>
