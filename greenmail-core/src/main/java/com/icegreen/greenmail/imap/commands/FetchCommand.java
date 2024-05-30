@@ -239,7 +239,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             } else if (content instanceof InputStream) {
                 byte[] bytes = readAllBytes((InputStream) content);
                 bytes = doPartial(partial, bytes, response);
-                addLiteralStream(bytes, response);
+                addLiteral(bytes, response);
             } else {
                 MimeMultipart mp = (MimeMultipart) content;
                 BodyPart part = null;
@@ -317,17 +317,6 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             // See https://github.com/greenmail-mail-test/greenmail/issues/257
             final char c = (char) (b & 0xFF);
             response.append(c);
-        }
-    }
-
-    private void addLiteralStream(byte[] bytes, StringBuilder response) {
-        response.append('{');
-        response.append(bytes.length);
-        response.append('}');
-        response.append("\r\n");
-
-        for (byte b : bytes) {
-            response.append((char) (b));
         }
     }
 
