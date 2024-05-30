@@ -1,16 +1,5 @@
 version: 2.1
 
-commands:
-  prepare-maven:
-    steps:
-      - run: >
-          (apt-get update || true ) && apt-get install -y curl
-          && mkdir -p /usr/share/maven
-          && curl -fsSL -o /tmp/apache-maven.tar.gz https://archive.apache.org/dist/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
-          && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1
-          && rm -f /tmp/apache-maven.tar.gz
-          && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
-
 jobs:
   "openjdk-11":
     working_directory: ~/circleci-greenmail
@@ -23,17 +12,13 @@ jobs:
           environment:
             TZ: UTC
 
-    environment:
-      MAVEN_HOME: /usr/share/maven
     steps:
       - checkout
-
-      - prepare-maven
 
       - restore_cache:
           key: greenmail-{{ checksum "pom.xml" }}
 
-      - run: mvn -V clean package -DskipTests dependency:resolve-plugins dependency:go-offline
+      - run: ./mvwn -V clean package -DskipTests dependency:resolve-plugins dependency:go-offline
 
       - save_cache:
           paths:
@@ -41,7 +26,7 @@ jobs:
           key: greenmail-{{ checksum "pom.xml" }}
 
       - run:
-          command: mvn -V clean install
+          command: ./mvwn -V clean install
           no_output_timeout: 15m
 
       - run:
@@ -71,12 +56,10 @@ jobs:
     steps:
       - checkout
 
-      - prepare-maven
-
       - restore_cache:
           key: greenmail-{{ checksum "pom.xml" }}
 
-      - run: mvn -V clean package -DskipTests dependency:resolve-plugins dependency:go-offline
+      - run: ./mvwn -V clean package -DskipTests dependency:resolve-plugins dependency:go-offline
 
       - save_cache:
           paths:
@@ -84,7 +67,7 @@ jobs:
           key: greenmail-{{ checksum "pom.xml" }}
 
       - run:
-          command: mvn -V clean install
+          command: ./mvwn -V clean install
           no_output_timeout: 15m
 
       - run:
@@ -114,12 +97,10 @@ jobs:
     steps:
       - checkout
 
-      - prepare-maven
-
       - restore_cache:
           key: greenmail-{{ checksum "pom.xml" }}
 
-      - run: mvn -V clean package -DskipTests dependency:resolve-plugins dependency:go-offline
+      - run: ./mvnw -V clean package -DskipTests dependency:resolve-plugins dependency:go-offline
 
       - save_cache:
           paths:
@@ -127,7 +108,7 @@ jobs:
           key: greenmail-{{ checksum "pom.xml" }}
 
       - run:
-          command: mvn -V clean install
+          command: ./mvnw -V clean install
           no_output_timeout: 15m
 
       - run:

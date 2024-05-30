@@ -32,10 +32,6 @@ jobs:
           distribution: 'zulu'
           java-version: ${{ matrix.java }}
           cache: 'maven'
-      - name: Set-up Maven
-        uses: stCarolas/setup-maven@v5
-        with:
-          maven-version: 3.9.6
       - name: Build with Maven
-        # See https://maven.apache.org/ref/3.8.6/maven-embedder/cli.html
-        run: mvn --batch-mode -V --fail-at-end --errors install
+        # See https://maven.apache.org/ref/current/maven-embedder/cli.html
+        run: ./mvnw --batch-mode -V --fail-at-end --errors install
