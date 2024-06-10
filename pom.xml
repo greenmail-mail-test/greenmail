@@ -502,7 +502,7 @@
       <dependency>
         <groupId>org.easymock</groupId>
         <artifactId>easymock</artifactId>
-        <version>5.2.0</version>
+        <version>5.3.0</version>
       </dependency>
       <!-- Transitively by junit:junit -->
       <dependency>
