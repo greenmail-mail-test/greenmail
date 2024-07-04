@@ -349,7 +349,7 @@
     <log4j2.version>2.23.1</log4j2.version>
     <spring.version>5.3.37</spring.version>
     <junit5.version>5.10.3</junit5.version>
-    <jetty.version>11.0.21</jetty.version>
+    <jetty.version>11.0.22</jetty.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <!-- Allow JaCoCo agent modifications for Surefire -->
