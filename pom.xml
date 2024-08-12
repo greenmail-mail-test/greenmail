@@ -254,7 +254,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-gpg-plugin</artifactId>
-          <version>3.2.4</version>
+          <version>3.2.5</version>
         </plugin>
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
