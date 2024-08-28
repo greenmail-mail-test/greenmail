@@ -146,7 +146,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.4.0</version>
+          <version>3.5.0</version>
           <configuration>
             <workingDirectory>${project.build.directory}</workingDirectory>
             <argLine>@{argLine} -Djava.net.preferIPv4Stack=true</argLine>
