@@ -15,6 +15,9 @@ import org.eclipse.angus.mail.imap.AppendUID;
 import org.eclipse.angus.mail.imap.IMAPFolder;
 import org.eclipse.angus.mail.imap.IMAPStore;
 import jakarta.mail.*;
+import jakarta.mail.Flags;
+import jakarta.mail.event.MessageChangedEvent;
+import jakarta.mail.event.MessageChangedListener;
 import jakarta.mail.event.MessageCountEvent;
 import jakarta.mail.event.MessageCountListener;
 import jakarta.mail.internet.MimeMessage;
@@ -23,7 +26,11 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static jakarta.mail.Flags.Flag.DELETED;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -787,4 +794,77 @@ public class ImapServerTest {
         }
     }
 
+    @Test
+    public void testMessageChangedListener() throws MessagingException {
+        CountDownLatch latch = new CountDownLatch(2);
+
+        greenMail.setUser("foo@localhost", "pwd");
+
+        final IMAPStore store = greenMail.getImap().createStore();
+        store.connect("foo@localhost", "pwd");
+
+        GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject", "Test message",
+                ServerSetupTest.SMTP);
+        GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost", "Test subject 2", "Test message 2",
+                ServerSetupTest.SMTP);
+
+        Thread thread = null;
+        try (Folder inboxFolder = store.getFolder("INBOX")) {
+            inboxFolder.open(Folder.READ_ONLY);
+            thread = new Thread(() -> {
+                try {
+                    while (!Thread.currentThread().isInterrupted()) {
+                        ((IMAPFolder) inboxFolder).idle(true);
+                    }
+                } catch (MessagingException ex) {
+                    assertThat(false).isTrue();
+                }
+            });
+            thread.start();
+
+            List<Integer> messages = new ArrayList<>(2);
+            MessageChangedListener listener = new MessageChangedListener() {
+                @Override
+                public void messageChanged(MessageChangedEvent e) {
+                    assert e.getMessageChangeType() == MessageChangedEvent.FLAGS_CHANGED;
+                    messages.add(e.getMessage().getMessageNumber());
+                    latch.countDown();
+                }
+            };
+            inboxFolder.addMessageChangedListener(listener);
+
+            new Thread(() -> {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e1) {
+                    // Ignore
+                }
+
+                try (Folder anotherInboxFolder = store.getFolder("INBOX")) {
+                    // test changing a flag from the same folder that we're listening on
+                    inboxFolder.getMessages()[0].setFlag(Flags.Flag.DELETED, true);
+
+                    // test changing a flag from the "outside"
+                    anotherInboxFolder.open(Folder.READ_ONLY);
+                    anotherInboxFolder.getMessages()[1].setFlag(Flags.Flag.DELETED, true);
+                } catch (MessagingException ex) {
+                    assertThat(false).isTrue();
+                }
+            }).start();
+
+            try {
+                assert latch.await(5, TimeUnit.SECONDS);
+            } catch (InterruptedException e1) {
+                // Ignore
+            }
+            assertThat(messages).hasSize(2);
+            assertThat(messages.get(0)).isPositive();
+            assertThat(messages.get(1)).isPositive();
+        } finally {
+            if (thread != null) {
+                thread.interrupt();
+            }
+            store.close();
+        }
+    }
 }
