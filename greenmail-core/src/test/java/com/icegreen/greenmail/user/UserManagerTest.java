@@ -53,6 +53,17 @@ public class UserManagerTest {
         assertThat(userManager.getUserByEmail(u2.getEmail())).isEqualTo(u2);
         assertThat(userManager.getUser(u1.getLogin())).isEqualTo(u1);
         assertThat(userManager.getUser(u2.getLogin())).isEqualTo(u2);
+
+        assertThat(userManager.findUsers(u -> u.getEmail().equalsIgnoreCase(u1.getEmail())))
+            .hasSize(1).contains(u1);
+        assertThat(userManager.findUsers(u -> u.getEmail().equalsIgnoreCase(u2.getEmail())))
+            .hasSize(1).contains(u2);
+        assertThat(userManager.findUsers(
+            u -> u.getEmail().equalsIgnoreCase(u1.getEmail()) || u.getEmail().equalsIgnoreCase(u2.getEmail()))
+        )
+            .hasSize(2)
+            .contains(u1)
+            .contains(u2);
     }
 
     @Test

@@ -8,12 +8,13 @@ import com.icegreen.greenmail.smtp.SmtpServer;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserManager;
-
 import jakarta.mail.internet.MimeMessage;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Properties;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * Interface that contains all operations provided by the Greenmail main class
@@ -88,13 +89,24 @@ public interface GreenMailOperations {
      * Gets all messages containing given domain.
      * <p>
      * Note:
-     * This operates on the raw messages ignoring the post box user.
+     * This operates on the raw messages ignoring the post-box user.
      * A CC-ed email would therefore show up multiple times for each receiving user.
      *
      * @param domain the domain, such as 'icegreen.com' or 'some.example.com'
      * @return Returns all received messages for given domain.
      */
     MimeMessage[] getReceivedMessagesForDomain(String domain);
+
+    /**
+     * Finds all messages matching the user account and message predicate.
+     *
+     * @param userPredicate  matches user accounts
+     * @param messagePredicate  matches message
+     * @return a stream of matching messages, matching both predicates (logical AND)
+     * @since 2.1.0
+     */
+    Stream<MimeMessage> findReceivedMessages(Predicate<GreenMailUser> userPredicate,
+                                             Predicate<MimeMessage> messagePredicate);
 
     /**
      * Sets the password for the account linked to email. If no account exits, one is automatically created when an email is received

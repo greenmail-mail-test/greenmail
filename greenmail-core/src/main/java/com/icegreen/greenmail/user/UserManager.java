@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class UserManager {
     private static final Logger log = LoggerFactory.getLogger(UserManager.class);
@@ -59,6 +61,16 @@ public class UserManager {
 
     public GreenMailUser getUserByEmail(String email) {
         return emailToUser.get(normalizerUserName(email));
+    }
+
+    /**
+     * Finds users matching predicate.
+     *
+     * @param predicate the predicate for selecting users.
+     * @return a stream of matching users.
+     */
+    public Stream<GreenMailUser> findUsers(Predicate<GreenMailUser> predicate) {
+        return loginToUser.values().stream().filter(predicate);
     }
 
     public GreenMailUser createUser(String email, String login, String password) throws UserException {

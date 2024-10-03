@@ -9,12 +9,13 @@ import com.icegreen.greenmail.smtp.SmtpServer;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserManager;
-
 import jakarta.mail.internet.MimeMessage;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Properties;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * Proxy that routes all operations to an internal greenmail instance
@@ -73,6 +74,12 @@ public abstract class GreenMailProxy extends ConfiguredGreenMail {
     @Override
     public MimeMessage[] getReceivedMessages() {
         return getGreenMail().getReceivedMessages();
+    }
+
+    @Override
+    public Stream<MimeMessage> findReceivedMessages(Predicate<GreenMailUser> userPredicate,
+                                                    Predicate<MimeMessage> messagePredicate) {
+        return getGreenMail().findReceivedMessages(userPredicate, messagePredicate);
     }
 
     @Override

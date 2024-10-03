@@ -2,11 +2,14 @@ package com.icegreen.greenmail.server;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.MimeMessageHelper;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.internet.MimeMessage;
 import org.junit.Rule;
 import org.junit.Test;
 
-import jakarta.mail.internet.MimeMessage;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,6 +52,31 @@ public class GreenMailTest {
 
         final MimeMessage[] receivedMessagesForDomain = greenMail.getReceivedMessagesForDomain(to);
         assertThat(receivedMessagesForDomain).hasSize(1);
+    }
+
+    @Test
+    public void testFindReceivedMessages() {
+        GreenMailUtil.sendTextEmailTest("foo@localhost", "from@localhost", "#1", "body");
+        GreenMailUtil.sendTextEmailTest("foo@localhost", "from@localhost", "#2 match", "body"); // Should match
+        GreenMailUtil.sendTextEmailTest("bar@localhost", "from@localhost", "#3 match", "body"); // Should match
+        GreenMailUtil.sendTextEmailTest("bar@other-domain", "from@localhost", "#4 match", "body");
+
+        // All messages received for emails ending with "localhost" and subject containing "match"
+        final List<MimeMessage> messages1 = greenMail.findReceivedMessages(
+            u -> u.getEmail().toLowerCase().endsWith("localhost"),
+            m -> MimeMessageHelper.getSubject(m, "").contains("match")).collect(Collectors.toList());
+        assertThat(messages1).hasSize(2);
+        assertThat(messages1.stream().filter(m -> MimeMessageHelper.getSubject(m, "").startsWith("#2"))).hasSize(1);
+        assertThat(messages1.stream().filter(m -> MimeMessageHelper.getSubject(m, "").startsWith("#3"))).hasSize(1);
+
+        // All messages received for any email and subject containing "match"
+        final List<MimeMessage> messages2 = greenMail.findReceivedMessages(
+            u -> true, // any user
+            m -> MimeMessageHelper.getSubject(m, "").contains("match")).collect(Collectors.toList());
+        assertThat(messages2).hasSize(3);
+        assertThat(messages2.stream().filter(m -> MimeMessageHelper.getSubject(m, "").startsWith("#2"))).hasSize(1);
+        assertThat(messages2.stream().filter(m -> MimeMessageHelper.getSubject(m, "").startsWith("#3"))).hasSize(1);
+        assertThat(messages2.stream().filter(m -> MimeMessageHelper.getSubject(m, "").startsWith("#4"))).hasSize(1);
     }
 
     @Test

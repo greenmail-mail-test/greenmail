@@ -32,6 +32,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -227,7 +228,7 @@ public class GreenMail extends ConfiguredGreenMail {
             try {
                 waitObject.await(waitTime, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
-                // Continue loop, in case of premature interruption
+                // Continue loop, in case of pre-mature interruption
             }
         }
         return waitObject.getCount() == 0;
@@ -264,6 +265,22 @@ public class GreenMail extends ConfiguredGreenMail {
             throw new RuntimeException(e);
         }
         return ret.toArray(new MimeMessage[0]);
+    }
+
+    private List<StoredMessage> getMessagesForUser(ImapHostManager imapHostManager, GreenMailUser user) {
+        try {
+            return imapHostManager.getInbox(user).getMessages();
+        } catch (FolderException e) {
+            log.warn("Ignoring error fetching messages for user {}", user.getEmail(), e);
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public Stream<MimeMessage> findReceivedMessages(Predicate<GreenMailUser> userPredicate, Predicate<MimeMessage> messagePredicate) {
+        final ImapHostManager imapHostManager = getManagers().getImapHostManager();
+        return getUserManager().findUsers(userPredicate)
+                    .flatMap(u -> getMessagesForUser(imapHostManager, u).stream().map(StoredMessage::getMimeMessage).filter(messagePredicate));
     }
 
     @Override

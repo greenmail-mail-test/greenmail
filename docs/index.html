@@ -1249,6 +1249,16 @@ GreenMail greenMail = new GreenMail(new ServerSetup[]{
 });
 Session session = greenMail.getImap().createSession(); // Will have configured property set
 </code></pre><!-- @formatter:on -->
+                <h4>How can I direcly (avoiding IMAP/POP3) search received messages in my tests?</h4>
+                <p>GreenMail provides direct access to internal user mailboxes and received messages:</p>
+                <pre><code class="language-java"><!-- @formatter:off -->
+// All messages received for emails ending with "localhost" and subject containing "match"
+final List<MimeMessage> messages = greenMail.findReceivedMessages(
+        u -> u.getEmail().toLowerCase().endsWith("localhost")      /* Predicate for user account, selecting users by email ending with 'localhost' */,
+        m -> MimeMessageHelper.getSubject(m, "").contains("match") /* Predicate for messages, selecting messages with subject attribute containing "match"*/
+    ).collect(Collectors.toList());
+</code></pre><!-- @formatter:on -->
+                <p><mark><b>Requires 2.1.0+</b></mark>
             </section>
 
             <section id="download" class="anchor">
