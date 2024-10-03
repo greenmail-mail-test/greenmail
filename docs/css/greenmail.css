@@ -30,7 +30,7 @@ section {
     margin-top: -60px;
 }
 
-.bs-docs-masthead, .bs-docs-header {
+.bs-docs-header {
     background-color: #009688;
     color: white;
     background-image: -webkit-gradient(linear, left top, left bottom, from(#009688), to(#7AC293));
@@ -49,18 +49,13 @@ section {
     padding: 0.1rem 0.5rem;
 }
 
-.bs-docs-sidebar.affix {
-    margin-top: 40px;
-}
-
 .nav-pills.nav-link.active, .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
     background-color: inherit;
     font-weight: bold;
     color: #00796B;
 }
 
-.back-to-top:hover,
-.bs-docs-theme-toggle:hover {
+.back-to-top:hover {
     color: #009688;
 }
 
