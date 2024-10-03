@@ -29,7 +29,7 @@ public class MovingMessage {
      * {@link PlainAuthenticationState PLAIN} and {@link LoginAuthenticationState LOGIN}
      * authentication is supported. You can use this, for example, to retrieve the username
      * or password that was sent by the client.
-     *
+     * <p>
      * Note that this will return {@code null} when no authentication was performed or needed.
      *
      * @return The state used by the AUTH command, if any.
@@ -43,7 +43,7 @@ public class MovingMessage {
      * {@link PlainAuthenticationState PLAIN} and {@link LoginAuthenticationState LOGIN}
      * authentication is supported. You can use this, for example, to retrieve the username
      * or password that was sent by the client.
-     *
+     * <p>
      * Note that this will return {@code null} when no authentication was performed or needed.
      */
     public void setAuthenticationState(AuthenticationState authenticationState) {

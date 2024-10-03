@@ -119,7 +119,7 @@ public class GreenMailUtil {
 
     /**
      * @return The content part of an email (or a Part)
-     *
+     * <p>
      * Note: You might have to use  MimeUtility.decodeText(contentPart)
      * on the result to decode the (possibly) quoted-printable encoded special characters.
      */

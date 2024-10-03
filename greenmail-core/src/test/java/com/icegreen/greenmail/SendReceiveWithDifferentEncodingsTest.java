@@ -68,7 +68,7 @@ public class SendReceiveWithDifferentEncodingsTest {
         return bos.toByteArray();
     }
 
-    private static final String RAW_MAIL_STRING = "" +
+    private static final String RAW_MAIL_STRING =
         "From - Fri Feb 18 10:28:22 2022\r\n" +
         "Return-Path: <foo@example.com>\r\n" +
         "Received: from 127.0.0.1 (HELO [127.0.0.1]); Fri Feb 18 10:28:21 CET 2022\r\n" +

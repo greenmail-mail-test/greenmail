@@ -79,7 +79,7 @@ public class ServiceFactory {
     private static String getHost(final Configuration pConf,
                                   final Configuration.ServiceConfiguration pServiceConfiguration) {
         String host = pServiceConfiguration.hostname;
-        if (null == host || host.length() == 0) {
+        if (null == host || host.isEmpty()) {
             host = pConf.getDefaultHostname();
         }
         return host;

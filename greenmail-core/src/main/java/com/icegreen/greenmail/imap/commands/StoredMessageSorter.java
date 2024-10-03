@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Sorts messages by given sort term.
- *
+ * <p>
  * Created on 10/03/2016.
  *
  * @author Reda.Housni-Alaoui

@@ -365,7 +365,7 @@ public abstract class SearchTermBuilder {
     }
 
     private static jakarta.mail.Flags.Flag toFlag(String flagValue) {
-        if (flagValue == null || flagValue.trim().length() < 1) {
+        if (flagValue == null || flagValue.trim().isEmpty()) {
             throw new IllegalArgumentException("Can not convert empty string to mail flag");
         }
         String flag = flagValue.trim().toUpperCase();
@@ -412,7 +412,7 @@ public abstract class SearchTermBuilder {
 
     /**
      * Supports general searching by id sequences such as MSN or UID.
-     *
+     * <p>
      * Note:
      * Not very efficient due to underlying JavaMail based impl.
      * The term compares each mail if matching.

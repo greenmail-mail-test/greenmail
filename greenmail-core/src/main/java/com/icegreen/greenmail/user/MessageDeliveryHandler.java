@@ -7,7 +7,7 @@ import jakarta.mail.MessagingException;
 
 /**
  * Handles delivery when receiving messages.
- *
+ * <p>
  * Can be used for alternative implementation (e.g. Delivery Status Notification DSN).
  */
 public interface MessageDeliveryHandler {

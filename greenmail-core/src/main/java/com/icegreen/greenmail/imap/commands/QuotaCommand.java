@@ -11,7 +11,7 @@ import com.icegreen.greenmail.store.FolderException;
 
 /**
  * Implements IMAP Quota Extension.
- *
+ * <p>
  * See <a href="https://datatracker.ietf.org/doc/html/rfc2087#section-4-1">rfc2087</a>
  *
  * @author mm
@@ -68,7 +68,7 @@ public class QuotaCommand extends AuthenticatedStateCommand {
 
     protected void appendQuotaRootName(Quota quota, StringBuilder buf) {
         String rootName = quota.quotaRoot;
-        if(null == rootName || rootName.length()==0) {
+        if(null == rootName || rootName.isEmpty()) {
             rootName = "\"\"";
         }
         buf.append('\"').append(rootName).append('\"');

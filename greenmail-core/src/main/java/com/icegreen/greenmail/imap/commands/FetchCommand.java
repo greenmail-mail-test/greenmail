@@ -205,7 +205,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
                 sectionSpecifier, mimeMessage.getContentType());
         }
 
-        if (sectionSpecifier.length() == 0) {
+        if (sectionSpecifier.isEmpty()) {
             // TODO - need to use an InputStream from the response here.
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             mimeMessage.writeTo(bout);

@@ -379,7 +379,7 @@ public class GreenMail extends ConfiguredGreenMail {
         }
 
         // Extract and optionally create intermediate folders
-        MailFolder folder = store.getMailbox(getUserBaseMailboxName(imapHostManager, user));;
+        MailFolder folder = store.getMailbox(getUserBaseMailboxName(imapHostManager, user));
         for (int i = sourceNameCount + 1; i < emailPathNameCount; i++) {
             if (i < emailPathNameCount - 1 || Files.isDirectory(emailPath)) {
                 String namePart = emailPath.getName(i).toString();

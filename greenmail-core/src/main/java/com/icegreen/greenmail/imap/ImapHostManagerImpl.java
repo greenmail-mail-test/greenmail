@@ -306,7 +306,7 @@ public class ImapHostManagerImpl
         if (mailboxName.startsWith(NAMESPACE_PREFIX)) {
             return mailboxName;
         } else {
-            if (mailboxName.length() == 0) {
+            if (mailboxName.isEmpty()) {
                 return USER_NAMESPACE + HIERARCHY_DELIMITER + userNamespace;
             } else {
                 return USER_NAMESPACE + HIERARCHY_DELIMITER + userNamespace +

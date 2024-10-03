@@ -5,21 +5,21 @@ import com.icegreen.greenmail.pop3.Pop3State;
 
 /**
  * Handles the CAPA command.
- *
- * See https://www.ietf.org/rfc/rfc2449.txt
- *
+ * <p>
+ * See <a href="https://www.ietf.org/rfc/rfc2449.txt">"https://www.ietf.org/rfc/rfc2449.txt</a>
+ * <p>
  * Arguments: none
- *
+ * <p>
  * Restrictions:
  *   None
- *
+ * <p>
  * Discussion:
- *
+ * <p>
  *
  * Possible Responses:
  *   +OK
  *   List of capabilities
- *
+ * <p>
  * Examples:
  *   C: CAPA
  *   S: +OK

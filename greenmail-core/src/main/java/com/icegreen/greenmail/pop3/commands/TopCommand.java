@@ -66,8 +66,7 @@ public class TopCommand
         String line;
         while ((line = in.readLine()) != null) {
             conn.println(line);
-            if ("".equals(line))
-
+            if (line.isEmpty())
                 break;
         }
     }

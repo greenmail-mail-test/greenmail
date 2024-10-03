@@ -10,22 +10,22 @@ import java.util.List;
 
 /**
  * Handles the RSET command.
- *
+ * <p>
  * See http://www.ietf.org/rfc/rfc1939.txt:
- *
+ * <p>
  * Arguments: none
- *
+ * <p>
  * Restrictions:
  *   May only be given in the TRANSACTION state.
- *
+ * <p>
  * Discussion:
  *   If any messages have been marked as deleted by the POP3
  *   server, they are unmarked.  The POP3 server then replies
  *   with a positive response.
- *
+ * <p>
  * Possible Responses:
  *   +OK
- *
+ * <p>
  * Examples:
  *   C: RSET
  *   S: +OK maildrop has 2 messages (320 octets)

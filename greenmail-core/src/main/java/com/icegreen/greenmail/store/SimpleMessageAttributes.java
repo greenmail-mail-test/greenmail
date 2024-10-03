@@ -26,7 +26,7 @@ import java.util.*;
  * <p> Note that the message in a mailbox have the same order using either
  * Message Sequence Numbers or UIDs.
  * <p> reinitialize() must be called on deserialization to reset Logger
- *
+ * <p>
  * Reference: <a href="https://www.ietf.org/rfc/rfc2060.txt">RFC 2060 - para 2.3</a>
  *
  * @author <a href="mailto:sascha@kulawik.de">Sascha Kulawik</a>
@@ -280,7 +280,7 @@ public class SimpleMessageAttributes
         //1. Date ---------------
         response.add(LB + Q + sentDateEnvelopeString + Q + SP);
         //2. Subject ---------------
-        if (subject != null && (subject.length() != 0)) {
+        if (subject != null && (!subject.isEmpty())) {
             response.add(Q + escapeHeader(subject) + Q + SP);
         } else {
             response.add(NIL + SP);
@@ -372,7 +372,7 @@ public class SimpleMessageAttributes
                 buf.append(LB);
 
                 String personal = netAddr.getPersonal();
-                if (personal != null && (personal.length() != 0)) {
+                if (personal != null && (!personal.isEmpty())) {
                     try {
                         String encodedPersonal = MimeUtility.encodeWord(personal, StandardCharsets.UTF_8.name(),null);
                         buf.append(Q).append(encodedPersonal).append(Q);

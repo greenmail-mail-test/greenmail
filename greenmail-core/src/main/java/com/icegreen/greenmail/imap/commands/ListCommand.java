@@ -54,7 +54,7 @@ class ListCommand extends AuthenticatedStateCommand {
         boolean removeUserPrefix;
 
         Collection<MailFolder> mailboxes;
-        if (mailboxPattern.length() == 0) {
+        if (mailboxPattern.isEmpty()) {
             // An empty mailboxPattern signifies a request for the hierarchy delimiter
             // and root name of the referenceName argument
 
@@ -125,7 +125,7 @@ class ListCommand extends AuthenticatedStateCommand {
                 }
             }
 
-            if (mailboxName.length() == 0) {
+            if (mailboxName.isEmpty()) {
                 message.append("\"\"");
             } else {
                 message.append('\"').append(BASE64MailboxEncoder.encode(mailboxName)).append('\"');
@@ -153,7 +153,7 @@ class ListCommand extends AuthenticatedStateCommand {
                 buffer.deleteCharAt(0);
             }
         } else {
-            if ((buffer.charAt(0) != HIERARCHY_DELIMITER_CHAR) && (referenceName.length() != 0)) {
+            if ((buffer.charAt(0) != HIERARCHY_DELIMITER_CHAR) && (!referenceName.isEmpty())) {
                 buffer.insert(0, HIERARCHY_DELIMITER_CHAR);
             }
         }
