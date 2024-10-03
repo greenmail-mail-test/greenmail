@@ -86,6 +86,10 @@ public interface GreenMailOperations {
 
     /**
      * Gets all messages containing given domain.
+     * <p>
+     * Note:
+     * This operates on the raw messages ignoring the post box user.
+     * A CC-ed email would therefore show up multiple times for each receiving user.
      *
      * @param domain the domain, such as 'icegreen.com' or 'some.example.com'
      * @return Returns all received messages for given domain.
