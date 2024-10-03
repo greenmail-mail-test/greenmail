@@ -12,17 +12,17 @@ GreenMail acts as a virtual (mocking/sandbox) mail server and supports common ma
 * [Maven coordinates][maven_repository_com]: com.icegreen:greenmail:\<[VERSION](https://github.com/greenmail-mail-test/greenmail/releases/)\>
 
 The separate [GreenMail Client Integrations project](https://github.com/greenmail-mail-test/greenmail-client-integrations) provides
-containerized example integration of GreenMail with various web mail clients. 
+a containerized example integration of GreenMail with various web mail clients. 
 
 The GreenMail project welcomes any contribution, so go ahead and fork/open a pull request! See the guidelines below.
 
 ## Version compatibility
 
-| GreenMail | Mail API                   | Example frameworks                                                   |
-|-----------|----------------------------|----------------------------------------------------------------------|
-| 2.1.x     | [JakartaMail 2.1.x][jm_21] | [Jakarta EE 10][jakarta_ee_10]                                       |
-| 2.0.x     | [JakartaMail 2.0.x][jm_20] | [Jakarta EE 9][jakarta_ee_9], Spring 6,                              |
-| 1.6.x     | [JakartaMail 1.6.x][jm_16] | [Jakarta EE 8][jakarta_ee_8], Spring 5, Apache commons-mail 1.5, ... |
+| GreenMail | Mail API                   | Example frameworks                                                            |
+|-----------|----------------------------|-------------------------------------------------------------------------------|
+| 2.1.x     | [JakartaMail 2.1.x][jm_21] | [Jakarta EE 10][jakarta_ee_10]                                                |
+| 2.0.x     | [JakartaMail 2.0.x][jm_20] | [Jakarta EE 9][jakarta_ee_9], Spring 6,                                       |
+| 1.6.x     | [JakartaMail 1.6.x][jm_16] | [Jakarta EE 8][jakarta_ee_8], Spring 5, [Apache commons-mail 1.6][a_c_m], ... |
 
 ## Development
 
@@ -30,10 +30,10 @@ The GreenMail project welcomes any contribution, so go ahead and fork/open a pul
 
   `mvn clean install -Pdocker`
 
-  Make sure you got [Maven 3.9][maven_download] or higher, and run a JDK 11 or newer.
-  If you want to skip building the docker image, leave out the `-Pdocker` profile option.
+  This project uses [Maven Wrapper][maven_wrapper] for consistent build using [Maven 3.9.x][maven_download] or higher, and requires JDK 11 or newer for building.
 
-  If you want to skip the long-running tests, use the Maven option `-DskipITs` .
+  * Skip building the docker image by leaving out the `-Pdocker` profile option
+  * Skip long-running integration tests using the Maven option `-DskipITs`
 
 * Build the Maven site (and the optional example report)
 
@@ -58,8 +58,7 @@ The GreenMail project welcomes any contribution, so go ahead and fork/open a pul
 
   `mvn clean deploy -Prelease-ossrh,docker`
 
-* Check [Sonar][sonar] report
-
+[a_c_m]: https://commons.apache.org/proper/commons-email/index.html 
 [greenmail_project_site]: https://greenmail-mail-test.github.io/greenmail/
 [greenmail_examples]: https://greenmail-mail-test.github.io/greenmail#examples
 [greenmail_faq]: https://greenmail-mail-test.github.io/greenmail#faq
@@ -71,9 +70,9 @@ The GreenMail project welcomes any contribution, so go ahead and fork/open a pul
 [ossrh_maven]: http://central.sonatype.org/pages/apache-maven.html
 [maven_repository_snapshot]: https://oss.sonatype.org/content/repositories/snapshots/com/icegreen/
 [maven_repository_release]: http://central.maven.org/maven2/com/icegreen/
+[maven_wrapper]: https://maven.apache.org/wrapper/
 [github_fork]: https://help.github.com/articles/fork-a-repo/
 [github_pull_request]: https://help.github.com/articles/creating-a-pull-request/
-[sonar]: http://nemo.sonarqube.org/dashboard/index?id=com.icegreen%3Agreenmail-parent
 [docker-hub]: https://hub.docker.com/r/greenmail/standalone/
 [jm_21]: https://projects.eclipse.org/projects/ee4j.mail
 [jm_20]: https://projects.eclipse.org/projects/ee4j.mail
@@ -100,45 +99,11 @@ The GreenMail project welcomes any contribution, so go ahead and fork/open a pul
 * [1.6](https://github.com/greenmail-mail-test/greenmail/issues?q=is%3Aopen+is%3Aissue+milestone%3A1.6) ([branch releases/1.6.x](https://github.com/greenmail-mail-test/greenmail/tree/releases/1.6.x))
   * Bugfix and maintenance
 
-## Contribution guidelines
+## Contributing
 
 We really appreciate your contribution!
-To make it easier for integrating your contribution, have a look at the following guidelines.
 
-### Be concise
-
-Try to keep your changes focused. Please avoid (major) refactorings and avoid re-formatting existing code.
-A good check is looking at the diff of your pull request.
-Also, please refer to the open issue you're fixing by including a reference in your commit message.
-
-### Code formatter ###
-Please set your code formatter to use 4 spaces for indentation of Java files (not tabs) and
-to two spaces for xml files (like the pom.xml). As a general best practise,
-your contribution should adhere to existing code style.
-
-### Bill of Materials ###
-We have the pom.xml in the root where we set the versions of all dependencies to keep them consistent
-among subprojects. Please do not add any version tags into the child pom.xml files.
-
-Please also do not introduce new dependencies as we try to keep these to a minimum.
-If you think you require a new dependencies or dependency update,
-discuss this up front with committers.
-
-### Starting your pull request ###
-The best strategy for opening a [pull request][github_pull_request] after a [fork][github_fork] is to add this [repository](https://github.com/greenmail-mail-test/greenmail)
-as the "upstream" to your .git/config such as:
-
-    [remote "upstream"]
-    url = https://github.com/greenmail-mail-test/greenmail.git
-    fetch = +refs/heads/*:refs/remotes/upstream/*
-
-Then you fetch "upstream" and create a new branch at upstream/master (name it issue-XXX or something like that).
-Now you can add commits on that branch and then create a pull request for that branch (after pushing it to your
-GitHub). That way commits are isolated for one feature.
-
-### Tests for your pull request ###
-Please also create a test for every feature you add. We know that currently there aren't many tests but in
-the medium term we want to increase test coverage.
+Please check out the [contributing guide](CONTRIBUTING.md).
 
 Misc
 ----
