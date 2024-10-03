@@ -393,7 +393,7 @@ public class GreenMailUtil {
      * @return the JavaMail session.
      */
     public static Session getSession(final ServerSetup setup, Properties mailProps) {
-        return getSession(setup, mailProps, false);
+        return getSession(setup, mailProps, setup.isVerbose());
     }
 
     /**
