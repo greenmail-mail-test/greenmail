@@ -43,7 +43,6 @@ public class RcptCommand
                 String err = manager.checkRecipient(state, toAddr);
                 if (err != null) {
                     conn.send(err);
-
                     return;
                 }
 

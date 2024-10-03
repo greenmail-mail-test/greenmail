@@ -11,20 +11,21 @@ import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.eclipse.angus.mail.imap.AppendUID;
-import org.eclipse.angus.mail.imap.IMAPFolder;
-import org.eclipse.angus.mail.imap.IMAPStore;
 import jakarta.mail.*;
 import jakarta.mail.event.MessageCountEvent;
 import jakarta.mail.event.MessageCountListener;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
+import org.eclipse.angus.mail.imap.AppendUID;
+import org.eclipse.angus.mail.imap.IMAPFolder;
+import org.eclipse.angus.mail.imap.IMAPStore;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
 
+import static com.icegreen.greenmail.util.GreenMailUtil.createTextEmail;
 import static jakarta.mail.Flags.Flag.DELETED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -787,4 +788,40 @@ public class ImapServerTest {
         }
     }
 
+    @Test
+    public void testSendWithCC() throws MessagingException {
+        GreenMailUser userTo = greenMail.setUser("to-user@localhost", "pwd");
+        GreenMailUser userCC = greenMail.setUser("cc-userTo@locahost", "other-pwd");
+
+        // Create and send test mail
+        final MimeMessage email = createTextEmail(userTo.getEmail(), userTo.getEmail(), "testSendWithCC",
+            "Test message", greenMail.getSmtp().getServerSetup());
+        email.addRecipients(Message.RecipientType.CC, userCC.getEmail());
+        GreenMailUtil.sendMimeMessage(email);
+
+        final MimeMessage[] receivedMessages = greenMail.getReceivedMessages();
+        assertThat(receivedMessages).hasSize(2); // Expect two received messages, for TO and CC
+
+        // Check via IMAP if TO-user received msg
+        try (final IMAPStore store = greenMail.getImap().createStore()) {
+            store.connect(userTo.getEmail(), userTo.getPassword());
+            Folder inboxFolder = store.getFolder("INBOX");
+            inboxFolder.open(Folder.READ_ONLY);
+            final Message[] messages = inboxFolder.getMessages();
+            assertThat(messages).hasSize(1);
+            Message msg = messages[0];
+            assertThat(msg.getSubject()).isEqualTo(email.getSubject());
+        }
+
+        // Check via IMAP if CC-user received msg
+        try (final IMAPStore store = greenMail.getImap().createStore()) {
+            store.connect(userCC.getEmail(), userCC.getPassword());
+            Folder inboxFolder = store.getFolder("INBOX");
+            inboxFolder.open(Folder.READ_ONLY);
+            final Message[] messages = inboxFolder.getMessages();
+            assertThat(messages).hasSize(1);
+            Message msg = messages[0];
+            assertThat(msg.getSubject()).isEqualTo(email.getSubject());
+        }
+    }
 }
