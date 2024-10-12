@@ -15,6 +15,7 @@ import org.eclipse.angus.mail.imap.AppendUID;
 import org.eclipse.angus.mail.imap.IMAPFolder;
 import org.eclipse.angus.mail.imap.IMAPStore;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.icegreen.greenmail.junit5.GreenMailExtension;
@@ -757,7 +758,8 @@ class ImapServerTest {
         }
     }
 
-    @Test(timeout = 10000)
+    @Test
+    @Timeout(10000)
     void testIdle() throws MessagingException {
         greenMail.setUser("foo@localhost", "pwd");
 

@@ -12,19 +12,19 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DockerServiceIT {
+class DockerServiceIT {
 
     private final String bindAddress = System.getProperty("greenmail.host.address", "127.0.0.1");
 
     @Test
-    public void testAllServices() throws MessagingException, InterruptedException {
+    void testAllServices() throws MessagingException, InterruptedException {
         // Ugly workaround : GreenMail in docker starts with open TCP connections,
         //                   but TLS sockets might not be ready yet.
         TimeUnit.SECONDS.sleep(1);
