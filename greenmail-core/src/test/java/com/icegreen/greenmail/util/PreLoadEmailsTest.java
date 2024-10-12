@@ -1,28 +1,29 @@
 package com.icegreen.greenmail.util;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.IOException;
+import java.nio.file.FileSystems;
+
+import org.eclipse.angus.mail.imap.IMAPStore;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
 import com.icegreen.greenmail.imap.ImapConstants;
 import com.icegreen.greenmail.imap.ImapServer;
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.user.GreenMailUser;
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
-import org.eclipse.angus.mail.imap.IMAPStore;
-import org.junit.Rule;
-import org.junit.Test;
 
-import java.io.IOException;
-import java.nio.file.FileSystems;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-public class PreLoadEmailsTest {
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
+class PreLoadEmailsTest {
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
 
     @Test
-    public void testPreloadFromDirectory() throws IOException, MessagingException, FolderException {
+    void testPreloadFromDirectory() throws IOException, MessagingException, FolderException {
         /* Expected structure:
             preload
             ├── bar@localhost

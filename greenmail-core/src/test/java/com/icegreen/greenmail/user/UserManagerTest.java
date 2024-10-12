@@ -10,7 +10,7 @@ import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import jakarta.mail.internet.MimeMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,9 +20,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 
-public class UserManagerTest {
+class UserManagerTest {
     @Test
-    public void testListUsers() throws UserException {
+    void testListUsers() throws UserException {
         ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
         UserManager userManager = new UserManager(imapHostManager);
 
@@ -40,7 +40,7 @@ public class UserManagerTest {
     }
 
     @Test
-    public void testFindByEmailAndLogin() throws UserException {
+    void testFindByEmailAndLogin() throws UserException {
         ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
         UserManager userManager = new UserManager(imapHostManager);
         GreenMailUser u1 = userManager.createUser("foo@bar.com", "foo", "pwd");
@@ -67,7 +67,7 @@ public class UserManagerTest {
     }
 
     @Test
-    public void testCreateAndDeleteUser() throws UserException {
+    void testCreateAndDeleteUser() throws UserException {
         ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
         UserManager userManager = new UserManager(imapHostManager);
 
@@ -81,7 +81,7 @@ public class UserManagerTest {
     }
 
     @Test
-    public void testDeleteUserShouldDeleteMail() throws Exception {
+    void testDeleteUserShouldDeleteMail() throws Exception {
         ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
         UserManager userManager = new UserManager(imapHostManager);
 
@@ -105,7 +105,7 @@ public class UserManagerTest {
     }
 
     @Test
-    public void testNoAuthRequired() {
+    void testNoAuthRequired() {
         ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
         UserManager userManager = new UserManager(imapHostManager);
         userManager.setAuthRequired(false);
@@ -115,7 +115,7 @@ public class UserManagerTest {
     }
 
     @Test
-    public void testNoAuthRequiredWithExistingUser() throws UserException {
+    void testNoAuthRequiredWithExistingUser() throws UserException {
         ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
         UserManager userManager = new UserManager(imapHostManager);
         userManager.setAuthRequired(false);
@@ -126,7 +126,7 @@ public class UserManagerTest {
     }
 
     @Test
-    public void testAuthRequired() {
+    void testAuthRequired() {
         ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
         UserManager userManager = new UserManager(imapHostManager);
         userManager.setAuthRequired(true);
@@ -136,7 +136,7 @@ public class UserManagerTest {
     }
 
     @Test
-    public void testAuthRequiredWithExistingUser() throws UserException {
+    void testAuthRequiredWithExistingUser() throws UserException {
         ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
         UserManager userManager = new UserManager(imapHostManager);
         userManager.setAuthRequired(true);
@@ -147,13 +147,13 @@ public class UserManagerTest {
     }
 
     @Test
-    public void testMultithreadedUserCreationAndDeletionWithSync() {
+    void testMultithreadedUserCreationAndDeletionWithSync() {
         ConcurrencyTest concurrencyTest = new ConcurrencyTest(true);
         concurrencyTest.performTest();
     }
 
     @Test
-    public void testMultithreadedUserCreationAndDeletion() {
+    void testMultithreadedUserCreationAndDeletion() {
         ConcurrencyTest concurrencyTest = new ConcurrencyTest(false);
         concurrencyTest.performTest();
     }

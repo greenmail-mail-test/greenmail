@@ -1,7 +1,14 @@
 package com.icegreen.greenmail;
 
+import static org.assertj.core.api.Assertions.*;
+
+import java.io.IOException;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.pop3.Pop3State;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.user.UserException;
@@ -14,21 +21,15 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.junit.Rule;
-import org.junit.Test;
-
-import java.io.IOException;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class AuthenticationDisabledTest {
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(
+    @RegisterExtension
+    public static final GreenMailExtension greenMail = new GreenMailExtension(
             new ServerSetup[] { ServerSetupTest.SMTP, ServerSetupTest.IMAP })
                     .withConfiguration(GreenMailConfiguration.aConfig().withDisabledAuthentication());
 
     @Test
-    public void testSendMailAndReceiveWithAuthDisabled() throws MessagingException, IOException {
+    void testSendMailAndReceiveWithAuthDisabled() throws MessagingException, IOException {
         final String to = "to@localhost";
         final String subject = "subject";
         final String body = "body";
@@ -49,7 +50,7 @@ public class AuthenticationDisabledTest {
     }
 
     @Test
-    public void testReceiveWithAuthDisabled() {
+    void testReceiveWithAuthDisabled() {
         final String to = "to@localhost";
 
         greenMail.waitForIncomingEmail(500, 1);
@@ -61,7 +62,7 @@ public class AuthenticationDisabledTest {
     }
 
     @Test
-    public void testReceiveWithAuthDisabledAndProvisionedUser() {
+    void testReceiveWithAuthDisabledAndProvisionedUser() {
         final String to = "to@localhost";
         greenMail.setUser(to, to, "secret");
 
@@ -74,7 +75,7 @@ public class AuthenticationDisabledTest {
     }
 
     @Test
-    public void testPop3ConnectNoAuth() throws UserException, FolderException {
+    void testPop3ConnectNoAuth() throws UserException, FolderException {
         UserManager userManager = greenMail.getUserManager();
         Pop3State status = new Pop3State(userManager);
         userManager.setAuthRequired(false);
@@ -84,15 +85,15 @@ public class AuthenticationDisabledTest {
         status.authenticate("pass");
     }
 
-    @Test(expected = UserException.class)
-    public void testPop3ConnectAuth() throws UserException, FolderException {
+    @Test
+    void testPop3ConnectAuth() {
         UserManager userManager = greenMail.getUserManager();
         Pop3State status = new Pop3State(userManager);
         userManager.setAuthRequired(true);
 
         UserImpl user = new UserImpl("email@example.com", "user", "pwd", null);
         status.setUser(user);
-        status.authenticate("pass");
+        assertThatThrownBy(() -> status.authenticate("pass")).isInstanceOf(UserException.class);
     }
 
 }

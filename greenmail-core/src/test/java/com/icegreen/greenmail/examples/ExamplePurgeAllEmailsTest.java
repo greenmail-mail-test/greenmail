@@ -1,28 +1,28 @@
 package com.icegreen.greenmail.examples;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Rule;
-import org.junit.Test;
-
 import jakarta.mail.Message;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by Youssuf ElKalay.
  * Example using GreenMail.purgeEmailFromAllMailboxes() to test removing emails from all configured mailboxes - either
  * POP3 or IMAP.
  */
-public class ExamplePurgeAllEmailsTest {
-    @Rule
-    public final GreenMailRule greenMailRule = new GreenMailRule(ServerSetupTest.SMTP_POP3_IMAP);
+class ExamplePurgeAllEmailsTest {
+    @RegisterExtension
+    static final GreenMailExtension greenMailRule = new GreenMailExtension(ServerSetupTest.SMTP_POP3_IMAP);
 
     @Test
-    public void testRemoveAllMessagesInImapMailbox() throws FolderException {
+    void testRemoveAllMessagesInImapMailbox() throws FolderException {
         try (Retriever retriever = new Retriever(greenMailRule.getImap())) {
             greenMailRule.setUser("foo@localhost", "pwd");
             GreenMailUtil.sendTextEmail("foo@localhost", "bar@localhost",

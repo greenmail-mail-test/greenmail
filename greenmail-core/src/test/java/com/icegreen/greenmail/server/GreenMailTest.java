@@ -1,17 +1,18 @@
 package com.icegreen.greenmail.server;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.MimeMessageHelper;
-import com.icegreen.greenmail.util.ServerSetupTest;
-import jakarta.mail.internet.MimeMessage;
-import org.junit.Rule;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.MimeMessageHelper;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.internet.MimeMessage;
 
 
 /**
@@ -19,12 +20,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author smm
  */
-public class GreenMailTest {
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
+class GreenMailTest {
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
 
     @Test
-    public void testWaitForIncomingEmailWithTimeout() {
+    void testWaitForIncomingEmailWithTimeout() {
         long start = System.currentTimeMillis();
         final long timeout = 2000L;
         boolean mailReceived = greenMail.waitForIncomingEmail(timeout, 1);
@@ -37,7 +38,7 @@ public class GreenMailTest {
     }
 
     @Test
-    public void getReceivedMessagesForDomainLowerCaseRecipientAddress() {
+    void getReceivedMessagesForDomainLowerCaseRecipientAddress() {
         final String to = "to@localhost";
         GreenMailUtil.sendTextEmailTest(to, "from@localhost", "subject", "body");
 
@@ -46,7 +47,7 @@ public class GreenMailTest {
     }
 
     @Test
-    public void getReceivedMessagesForDomainWithUpperCaseRecipientAddress() {
+    void getReceivedMessagesForDomainWithUpperCaseRecipientAddress() {
         final String to = "someReceiver@localhost";
         GreenMailUtil.sendTextEmailTest(to, "from@localhost", "subject", "body");
 
@@ -55,7 +56,7 @@ public class GreenMailTest {
     }
 
     @Test
-    public void testFindReceivedMessages() {
+    void testFindReceivedMessages() {
         GreenMailUtil.sendTextEmailTest("foo@localhost", "from@localhost", "#1", "body");
         GreenMailUtil.sendTextEmailTest("foo@localhost", "from@localhost", "#2 match", "body"); // Should match
         GreenMailUtil.sendTextEmailTest("bar@localhost", "from@localhost", "#3 match", "body"); // Should match
@@ -80,7 +81,7 @@ public class GreenMailTest {
     }
 
     @Test
-    public void testIsRunning() {
+    void testIsRunning() {
         assertThat(greenMail.isRunning()).isTrue();
         greenMail.stop();
         assertThat(greenMail.isRunning()).isFalse();

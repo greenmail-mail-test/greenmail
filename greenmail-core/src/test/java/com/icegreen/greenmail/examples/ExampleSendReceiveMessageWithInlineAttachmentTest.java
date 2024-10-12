@@ -1,18 +1,27 @@
 package com.icegreen.greenmail.examples;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.IOException;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import jakarta.mail.*;
+import jakarta.mail.BodyPart;
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
+import jakarta.mail.Part;
+import jakarta.mail.Session;
+import jakarta.mail.Store;
+import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
-import org.junit.Rule;
-import org.junit.Test;
-
-import java.io.IOException;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
@@ -20,17 +29,17 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author https://github.com/DavidWhitlock
  */
-public class ExampleSendReceiveMessageWithInlineAttachmentTest {
+class ExampleSendReceiveMessageWithInlineAttachmentTest {
 
     private final String emailAddress = "test@email.com";
     private final String imapUserName = "emailUser";
     private final String imapPassword = "emailPassword";
 
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
 
     @Test
-    public void sendAndFetchMailMessageWithInlineAttachment() throws IOException, MessagingException {
+    void sendAndFetchMailMessageWithInlineAttachment() throws IOException, MessagingException {
         greenMail.setUser(emailAddress, imapUserName, imapPassword);
 
         sendMailMessageWithInlineAttachment();

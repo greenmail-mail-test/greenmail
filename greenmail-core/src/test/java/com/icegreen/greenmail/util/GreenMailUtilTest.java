@@ -16,7 +16,7 @@ import jakarta.mail.Quota;
 import jakarta.mail.Store;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 
@@ -27,22 +27,22 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @version $Id: $
  * @since Jan 29, 2006
  */
-public class GreenMailUtilTest {
+class GreenMailUtilTest {
     @Test
-    public void testMimeMessageLoading() throws MessagingException {
+    void testMimeMessageLoading() throws MessagingException {
         MimeMessage message = GreenMailUtil.newMimeMessage(SAMPLE_EMAIL);
         assertThat(message.getSubject()).isEqualTo("wassup");
     }
 
     @Test
-    public void testGetBody() {
+    void testGetBody() {
         MimeMessage message = GreenMailUtil.newMimeMessage(SAMPLE_EMAIL);
         String body = GreenMailUtil.getBody(message);
         assertThat(body.trim()).isEqualTo("Yo wassup Bertil");
     }
 
     @Test
-    public void testGetEmptyBodyAndHeader() throws Exception {
+    void testGetEmptyBodyAndHeader() throws Exception {
         GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
         try {
             greenMail.start();
@@ -84,7 +84,7 @@ public class GreenMailUtilTest {
     }
 
     @Test
-    public void testSendTextEmailTest() throws Exception {
+    void testSendTextEmailTest() throws Exception {
         GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
         try {
             greenMail.setUser("foo@localhost", "pwd");
@@ -119,7 +119,7 @@ public class GreenMailUtilTest {
     }
 
     @Test
-    public void testSetAndGetQuota() throws MessagingException {
+    void testSetAndGetQuota() throws MessagingException {
         GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
         try {
             greenMail.start();

@@ -1,29 +1,29 @@
 package com.icegreen.greenmail.specificmessages;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import jakarta.mail.internet.MimeMessage;
-import org.junit.Rule;
-import org.junit.Test;
-
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import jakarta.mail.internet.MimeMessage;
 
 /**
  * Tests escaping of message parts
  */
-public class EscapingTest {
-    @Rule
-    public GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_POP3_IMAP);
+class EscapingTest {
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_POP3_IMAP);
 
     @Test
-    public void testEscapeSubject() throws MessagingException {
+    void testEscapeSubject() throws MessagingException {
         String to = "to@localhost";
         String subject = "Subject?<>/|\\\\.%\\\"*?:{[]}!";
         greenMail.setUser(to, to);
@@ -36,7 +36,7 @@ public class EscapingTest {
     }
 
     @Test
-    public void testEscapeMessageID() throws MessagingException {
+    void testEscapeMessageID() throws MessagingException {
         String to = "foo@localhost";
         String from = "bar`bar <bar@localhost>";
         String subject = "Bad IMAP Envelope";

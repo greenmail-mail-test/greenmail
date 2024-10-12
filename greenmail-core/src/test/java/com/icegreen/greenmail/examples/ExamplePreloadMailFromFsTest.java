@@ -1,8 +1,18 @@
 package com.icegreen.greenmail.examples;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
 import com.icegreen.greenmail.imap.ImapConstants;
 import com.icegreen.greenmail.imap.ImapHostManager;
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserManager;
 import com.icegreen.greenmail.util.ServerSetupTest;
@@ -10,28 +20,19 @@ import jakarta.mail.Message;
 import jakarta.mail.Session;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
-import org.junit.Rule;
-import org.junit.Test;
-
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Example for loading Emails from EML file.
  * <p>
  * For preloading an existing directory structure, check out {@link  com.icegreen.greenmail.util.PreLoadEmailsTest}
  */
-public class ExamplePreloadMailFromFsTest {
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+class ExamplePreloadMailFromFsTest {
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP);
     public static final String EML_FILE_NAME = ExamplePreloadMailFromFsTest.class.getSimpleName() + ".eml";
 
     @Test
-    public void testPreloadMailFromFs() throws Exception {
+    void testPreloadMailFromFs() throws Exception {
         final Session session = greenMail.getSmtp().createSession();
 
         // Create test data

@@ -4,19 +4,19 @@ import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import jakarta.mail.internet.MimeMessage;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ConcurrentCloseIT {
+class ConcurrentCloseIT {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private int limitIterations;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         final String envValue = System.getenv("ConcurrentCloseIT_ITERATIONS");
         if (null == envValue) {
             limitIterations = 2500;
@@ -25,7 +25,7 @@ public class ConcurrentCloseIT {
     }
 
     @Test
-    public void concurrentCloseTest() throws Exception {
+    void concurrentCloseTest() throws Exception {
         final long startTime = System.currentTimeMillis();
         for (int i = 0; i < limitIterations; i++) {
             testThis();
@@ -60,6 +60,7 @@ public class ConcurrentCloseIT {
     private static class SenderThread extends Thread {
         RuntimeException exc;
 
+        @Override
         public void run() {
             try {
                 GreenMailUtil.sendTextEmail("test@localhost", "from@localhost", "abc", "def",

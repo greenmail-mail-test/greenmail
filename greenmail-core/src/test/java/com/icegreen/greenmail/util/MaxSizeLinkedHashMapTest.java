@@ -1,27 +1,28 @@
 package com.icegreen.greenmail.util;
 
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-public class MaxSizeLinkedHashMapTest {
+class MaxSizeLinkedHashMapTest {
     private static final int TEST_MAX_SIZE = 8;
     private final MaxSizeLinkedHashMap<Integer, Integer> map = new MaxSizeLinkedHashMap<>(TEST_MAX_SIZE);
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldRejectNegativeMaxSize() {
-        new MaxSizeLinkedHashMap<>(-1 * Math.abs(new Random().nextInt(Integer.MAX_VALUE - 1) + 1));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldRejectZeroMaxSize() {
-        new MaxSizeLinkedHashMap<>(0);
+    @Test
+    void shouldRejectNegativeMaxSize() {
+        int maxSize =  -1 * Math.abs(new Random().nextInt(Integer.MAX_VALUE - 1) + 1);
+        assertThatThrownBy(() -> new MaxSizeLinkedHashMap<>(maxSize)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void shouldRejectLessThanZeroMaxSize() {
+    void shouldRejectZeroMaxSize() {
+        assertThatThrownBy(() -> new MaxSizeLinkedHashMap<>(0)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void shouldRejectLessThanZeroMaxSize() {
         try {
             new MaxSizeLinkedHashMap<>(-1);
         } catch (IllegalArgumentException ex) {
@@ -30,7 +31,7 @@ public class MaxSizeLinkedHashMapTest {
     }
 
     @Test
-    public void shouldNotExceedMaxSize() {
+    void shouldNotExceedMaxSize() {
         // When
         for (int i = 0; i < TEST_MAX_SIZE * 2; i++) {
             map.put(i, i);

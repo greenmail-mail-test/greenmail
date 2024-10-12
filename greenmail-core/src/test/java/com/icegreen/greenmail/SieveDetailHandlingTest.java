@@ -7,15 +7,15 @@
 
 package com.icegreen.greenmail;
 
-import org.junit.Rule;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
-
-import static org.assertj.core.api.Assertions.*;
 
 /**
  * Test that, when Sieve detail handling is enabled, mail gets delivered to the
@@ -23,12 +23,12 @@ import static org.assertj.core.api.Assertions.*;
  */
 public class SieveDetailHandlingTest {
 
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP)
+    @RegisterExtension
+    public static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP)
         .withConfiguration(new GreenMailConfiguration().withSieveIgnoreDetail());
 
     @Test
-    public void testPlusSubaddressHandling() {
+    void testPlusSubaddressHandling() {
         GreenMailUtil.sendTextEmailTest("foo+baz@bar.com", "here@localhost", "sub1", "msg1");
 
         assertThat(greenMail.getUserManager().listUser()).hasSize(1);
@@ -37,7 +37,7 @@ public class SieveDetailHandlingTest {
     }
 
     @Test
-    public void testMinusSubaddressHandling() {
+    void testMinusSubaddressHandling() {
         GreenMailUtil.sendTextEmailTest("foo--baz@bar.com", "here@localhost", "sub1", "msg1");
 
         assertThat(greenMail.getUserManager().listUser()).hasSize(1);
@@ -46,7 +46,7 @@ public class SieveDetailHandlingTest {
     }
 
     @Test
-    public void testSubaddressHandlingDisabled() {
+    void testSubaddressHandlingDisabled() {
         greenMail.getUserManager().setSieveIgnoreDetail(false);
         GreenMailUtil.sendTextEmailTest("foo+baz@bar.com", "here@localhost", "sub2", "msg2");
 

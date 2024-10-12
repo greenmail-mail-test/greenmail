@@ -1,12 +1,6 @@
 package com.icegreen.greenmail.pop3;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.pop3.commands.AuthCommand;
-import com.icegreen.greenmail.user.UserException;
-import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,18 +8,25 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class POP3CommandTest {
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.pop3.commands.AuthCommand;
+import com.icegreen.greenmail.user.UserException;
+import com.icegreen.greenmail.util.ServerSetupTest;
+
+class POP3CommandTest {
     private static final String CRLF = "\r\n";
 
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.POP3);
+    @RegisterExtension
+    public static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.POP3);
 
     private int port;
     private String hostAddress;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         hostAddress = greenMail.getPop3().getBindTo();
         port = greenMail.getPop3().getPort();
@@ -49,7 +50,7 @@ public class POP3CommandTest {
     }
 
     @Test
-    public void authPlain() throws IOException {
+    void authPlain() throws IOException {
         withConnection((printStream, reader) -> {
             // No such user
             assertThat(reader.readLine()).startsWith("+OK POP3 GreenMail Server v");
@@ -74,7 +75,7 @@ public class POP3CommandTest {
     }
 
     @Test
-    public void authPlainWithContinuation() throws IOException, UserException {
+    void authPlainWithContinuation() throws IOException, UserException {
         greenMail.getUserManager()
                 .createUser("test@localhost", "test", "testpass");
         withConnection((printStream, reader) -> {
@@ -87,7 +88,7 @@ public class POP3CommandTest {
     }
 
     @Test
-    public void authDisabled() throws IOException {
+    void authDisabled() throws IOException {
         greenMail.getUserManager().setAuthRequired(false);
         withConnection((printStream, reader) -> {
             assertThat(reader.readLine()).startsWith("+OK POP3 GreenMail Server v");
@@ -97,7 +98,7 @@ public class POP3CommandTest {
     }
 
     @Test
-    public void authEnabled() throws IOException {
+    void authEnabled() throws IOException {
         greenMail.getUserManager().setAuthRequired(true);
         withConnection((printStream, reader) -> {
             assertThat(reader.readLine()).startsWith("+OK POP3 GreenMail Server v");

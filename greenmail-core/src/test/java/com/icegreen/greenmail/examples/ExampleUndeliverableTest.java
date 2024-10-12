@@ -1,6 +1,11 @@
 package com.icegreen.greenmail.examples;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.MessageDeliveryHandler;
 import com.icegreen.greenmail.user.UserException;
@@ -10,17 +15,13 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import jakarta.mail.Message.RecipientType;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.junit.Rule;
-import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-public class ExampleUndeliverableTest {
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+class ExampleUndeliverableTest {
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP);
 
     @Test
-    public void testSend() throws MessagingException, UserException {
+    void testSend() throws MessagingException, UserException {
         final UserManager userManager = greenMail.getUserManager();
         userManager.createUser("from@localhost", "from@localhost", "from@localhost");
         MessageDeliveryHandler defaultMessageDeliveryHandler = userManager.getMessageDeliveryHandler();

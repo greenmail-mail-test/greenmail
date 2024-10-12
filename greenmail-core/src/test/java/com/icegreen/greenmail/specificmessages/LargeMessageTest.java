@@ -1,33 +1,34 @@
 package com.icegreen.greenmail.specificmessages;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.server.AbstractServer;
-import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.Retriever;
-import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Rule;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import jakarta.mail.BodyPart;
-import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.server.AbstractServer;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.Retriever;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.BodyPart;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMultipart;
 
 /**
  * Tests sending and receiving large messages
  */
-public class LargeMessageTest {
-    @Rule
-    public GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_POP3_IMAP);
+class LargeMessageTest {
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_POP3_IMAP);
 
     @Test
-    public void testLargeMessageTextAndAttachment() throws MessagingException, IOException {
+    void testLargeMessageTextAndAttachment() throws MessagingException, IOException {
         String to = "to@localhost";
         GreenMailUtil.sendAttachmentEmail(to, "from@localhost", "Subject", createLargeString(),
             createLargeByteArray(), "application/blubb", "file", "descr",
@@ -39,7 +40,7 @@ public class LargeMessageTest {
     }
 
     @Test
-    public void testLargeMessageBody() throws MessagingException, IOException {
+    void testLargeMessageBody() throws MessagingException, IOException {
         String to = "to@localhost";
         GreenMailUtil.sendMessageBody(to, "from@localhost", "Subject", createLargeByteArray(), "application/blubb",
             greenMail.getSmtp().getServerSetup());

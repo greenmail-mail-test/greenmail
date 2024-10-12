@@ -1,11 +1,22 @@
 package com.icegreen.greenmail.specificmessages;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+
+import org.eclipse.angus.mail.imap.IMAPFolder;
+import org.eclipse.angus.mail.imap.IMAPStore;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.EncodingUtil;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.eclipse.angus.mail.imap.IMAPFolder;
-import org.eclipse.angus.mail.imap.IMAPStore;
 import jakarta.mail.BodyPart;
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
@@ -19,22 +30,13 @@ import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import jakarta.mail.internet.MimeUtility;
-import org.junit.Rule;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for encoding scenarios.
  */
-public class EncodingTest {
-    @Rule
-    public GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
+class EncodingTest {
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
 
     /**
      * Structure of test message and content type:
@@ -43,7 +45,7 @@ public class EncodingTest {
      * \--> Message (text/plain)
      */
     @Test
-    public void testTextPlainWithUTF8() throws MessagingException, IOException {
+    void testTextPlainWithUTF8() throws MessagingException, IOException {
         greenMail.setUser("foo@localhost", "pwd");
         final Session session = greenMail.getSmtp().createSession();
 
@@ -124,7 +126,7 @@ public class EncodingTest {
     }
 
     @Test
-    public void testTextPlainWithUTF8AndGreenMailApi() throws MessagingException, IOException {
+    void testTextPlainWithUTF8AndGreenMailApi() throws MessagingException, IOException {
         String content = "This is a test with ünicöde: \uD83C\uDF36";
         String subject = "Some sübject";
 
@@ -139,8 +141,9 @@ public class EncodingTest {
         assertThat(msg.getContent()).isEqualTo(content);
     }
 
-    @Test(timeout = 10000)
-    public void testTextPlainWithUTF8SenderAndReceiverAndGreenMailApi() throws MessagingException, IOException {
+    @Test
+    @Timeout(10000)
+    void testTextPlainWithUTF8SenderAndReceiverAndGreenMailApi() throws MessagingException, IOException {
         // this intermediate `InternetAddress` is needed because of:
         // https://stackoverflow.com/questions/31859901/java-mail-sender-address-gets-non-ascii-chars-removed/31865820#31865820
         InternetAddress address = new InternetAddress("\"кирилица\" <to@localhost>");
@@ -211,7 +214,7 @@ public class EncodingTest {
     }
 
     @Test
-    public void testAttachmentWithLongEncodedUTF8Name() throws MessagingException, IOException {
+    void testAttachmentWithLongEncodedUTF8Name() throws MessagingException, IOException {
         // Prepare mail
         greenMail.setUser("to@localhost", "pwd");
         String fileName = "кирилица testimage_ünicöde_\uD83C\uDF36";

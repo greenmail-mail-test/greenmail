@@ -1,24 +1,25 @@
 package com.icegreen.greenmail;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Rule;
-import org.junit.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Wael Chatila
  * @version $Id: $
  * @since May 27th, 2009
  */
-public class CatchAllTest {
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+class CatchAllTest {
+    @RegisterExtension
+    public static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP);
 
     @Test
-    public void testSmtpServerBasic() {
+    void testSmtpServerBasic() {
         GreenMailUtil.sendTextEmailTest("to11@domain1.com", "from@localhost", "subject", "body");
         GreenMailUtil.sendTextEmailTest("to12@domain1.com", "from@localhost", "subject", "body");
         GreenMailUtil.sendTextEmailTest("to21@domain2.com", "from@localhost", "subject", "body");

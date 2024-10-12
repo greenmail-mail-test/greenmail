@@ -1,14 +1,14 @@
 package com.icegreen.greenmail;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -17,18 +17,18 @@ import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SendReceiveWithDifferentEncodingsTest {
+class SendReceiveWithDifferentEncodingsTest {
 
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_POP3);
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_POP3);
 
     @Test
-    public void testSendUtf8EncodedMessage() throws MessagingException, IOException {
+    void testSendUtf8EncodedMessage() throws MessagingException, IOException {
         testSendingAndRetrievingMaintainsEncoding(StandardCharsets.UTF_8);
     }
 
     @Test
-    public void testSendIso8859EncodedMessage() throws MessagingException, IOException {
+    void testSendIso8859EncodedMessage() throws MessagingException, IOException {
         testSendingAndRetrievingMaintainsEncoding(StandardCharsets.ISO_8859_1);
     }
 

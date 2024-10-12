@@ -1,13 +1,13 @@
 package com.icegreen.greenmail.imap.commands;
 
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 
-public class SearchTermBuilderTest {
+class SearchTermBuilderTest {
     static class Data {
         String uidSeq;
         long[] uidMatching;
@@ -21,7 +21,7 @@ public class SearchTermBuilderTest {
     }
 
     @Test
-    public void testUidSearchTerm() {
+    void testUidSearchTerm() {
         Data[] data = new Data[]{
                 new Data("1", new long[]{1L}, new long[]{0L, 2L}),
                 new Data("1:*", new long[]{1L, 2L}, new long[]{0L}),

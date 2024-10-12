@@ -1,34 +1,35 @@
 package com.icegreen.greenmail.specificmessages;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+import org.eclipse.angus.mail.imap.IMAPFolder;
+import org.eclipse.angus.mail.imap.IMAPStore;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.icegreen.greenmail.util.UserUtil;
-import org.eclipse.angus.mail.imap.IMAPFolder;
-import org.eclipse.angus.mail.imap.IMAPStore;
 import jakarta.mail.Address;
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
-import org.junit.Rule;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests if senders and recipients of received messages are set correctly and if messages are received by the correct
  * receivers.
  */
-public class SenderRecipientTest {
-    @Rule
-    public GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_POP3_IMAP);
+class SenderRecipientTest {
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_POP3_IMAP);
 
     private static final InternetAddress[] TO_ADDRESSES;
     private static final InternetAddress[] CC_ADDRESSES;
@@ -57,7 +58,7 @@ public class SenderRecipientTest {
     }
 
     @Test
-    public void testSendersAndRecipients() throws MessagingException {
+    void testSendersAndRecipients() throws MessagingException {
         UserUtil.createUsers(greenMail, TO_ADDRESSES);
         UserUtil.createUsers(greenMail, CC_ADDRESSES);
         UserUtil.createUsers(greenMail, BCC_ADDRESSES);
@@ -75,25 +76,25 @@ public class SenderRecipientTest {
                 TO_ADDRESSES.length + CC_ADDRESSES.length + BCC_ADDRESSES.length)).isTrue();
 
         for (InternetAddress address : TO_ADDRESSES) {
-            retrieveAndCheck(greenMail, address);
+            retrieveAndCheck(address);
         }
         for (InternetAddress address : CC_ADDRESSES) {
-            retrieveAndCheck(greenMail, address);
+            retrieveAndCheck(address);
         }
         for (InternetAddress address : BCC_ADDRESSES) {
-            retrieveAndCheck(greenMail, address);
+            retrieveAndCheck(address);
         }
     }
 
     @Test
-    public void testSendWithoutSubject() throws MessagingException, IOException {
+    void testSendWithoutSubject() throws MessagingException, IOException {
         GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost",
                 null, "some subject less body");
         assertThat(greenMail.getReceivedMessages()[0].getContent()).isEqualTo("some subject less body");
     }
 
     @Test
-    public void testSendAndReceiveWithQuotedAddress() throws MessagingException, IOException {
+    void testSendAndReceiveWithQuotedAddress() throws MessagingException, IOException {
         // See https://en.wikipedia.org/wiki/Email_address#Local-part
         String[] toList = {"\"John..Doe\"@localhost",
                 "abc.\"defghi\".xyz@localhost",
@@ -134,10 +135,9 @@ public class SenderRecipientTest {
     /**
      * Retrieve mail through IMAP and POP3 and check sender and receivers
      *
-     * @param greenMail Greenmail instance to read from
-     * @param addr      Address of account to retrieve
+     * @param addr Address of account to retrieve
      */
-    private void retrieveAndCheck(GreenMailRule greenMail, InternetAddress addr) throws MessagingException {
+    private void retrieveAndCheck(InternetAddress addr) throws MessagingException {
         String address = addr.getAddress();
         retrieveAndCheck(greenMail.getPop3(), address);
         retrieveAndCheck(greenMail.getImap(), address);

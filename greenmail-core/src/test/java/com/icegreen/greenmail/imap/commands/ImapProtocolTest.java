@@ -1,39 +1,48 @@
 package com.icegreen.greenmail.imap.commands;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.store.FolderException;
-import com.icegreen.greenmail.user.GreenMailUser;
-import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.ServerSetupTest;
-import jakarta.mail.*;
-import jakarta.mail.internet.MimeMessage;
-import org.eclipse.angus.mail.iap.Argument;
-import org.eclipse.angus.mail.iap.ByteArray;
-import org.eclipse.angus.mail.iap.Response;
-import org.eclipse.angus.mail.imap.IMAPFolder;
-import org.eclipse.angus.mail.imap.IMAPStore;
-import org.eclipse.angus.mail.imap.protocol.*;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.eclipse.angus.mail.iap.Argument;
+import org.eclipse.angus.mail.iap.ByteArray;
+import org.eclipse.angus.mail.iap.Response;
+import org.eclipse.angus.mail.imap.IMAPFolder;
+import org.eclipse.angus.mail.imap.IMAPStore;
+import org.eclipse.angus.mail.imap.protocol.BODY;
+import org.eclipse.angus.mail.imap.protocol.FetchResponse;
+import org.eclipse.angus.mail.imap.protocol.IMAPResponse;
+import org.eclipse.angus.mail.imap.protocol.RFC822SIZE;
+import org.eclipse.angus.mail.imap.protocol.UID;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.store.FolderException;
+import com.icegreen.greenmail.user.GreenMailUser;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.Flags;
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.NoSuchProviderException;
+import jakarta.mail.internet.MimeMessage;
 
 /**
  * Low level IMAP protocol test cases.
  */
-public class ImapProtocolTest {
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
+class ImapProtocolTest {
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
     private GreenMailUser user;
     private IMAPStore store;
 
-    @Before
-    public void beforeEachTest() throws NoSuchProviderException {
+    @BeforeEach
+    void beforeEachTest() throws NoSuchProviderException {
         user = greenMail.setUser("foo@localhost", "pwd");
 
         int numberOfMails = 10;
@@ -48,7 +57,7 @@ public class ImapProtocolTest {
     }
 
     @Test
-    public void testListAndStatusWithNonExistingFolder() throws MessagingException {
+    void testListAndStatusWithNonExistingFolder() throws MessagingException {
         store.connect("foo@localhost", "pwd");
         try {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
@@ -69,7 +78,7 @@ public class ImapProtocolTest {
     }
 
     @Test
-    public void testFetchUidsAndSize() throws MessagingException {
+    void testFetchUidsAndSize() throws MessagingException {
         store.connect("foo@localhost", "pwd");
         try {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
@@ -82,7 +91,7 @@ public class ImapProtocolTest {
 
             RFC822SIZE size = fetchResponse.getItem(RFC822SIZE.class);
             assertThat(size).isNotNull();
-            assertThat(size.size > 0).isTrue();
+            assertThat(size.size).isPositive();
 
             UID uid = fetchResponse.getItem(UID.class);
             assertThat(uid.uid).isEqualTo(folder.getUID(folder.getMessage(1)));
@@ -92,7 +101,7 @@ public class ImapProtocolTest {
     }
 
     @Test
-    public void testFetchSpaceBeforeSize() throws MessagingException {
+    void testFetchSpaceBeforeSize() throws MessagingException {
         store.connect("foo@localhost", "pwd");
         try {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
@@ -158,7 +167,7 @@ public class ImapProtocolTest {
     }
 
     @Test
-    public void testSearchSequenceSet() throws MessagingException {
+    void testSearchSequenceSet() throws MessagingException {
         store.connect("foo@localhost", "pwd");
         try {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
@@ -198,7 +207,7 @@ public class ImapProtocolTest {
     }
 
     @Test
-    public void testUidSearchSequenceSet() throws MessagingException {
+    void testUidSearchSequenceSet() throws MessagingException {
         store.connect("foo@localhost", "pwd");
         try {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
@@ -243,7 +252,7 @@ public class ImapProtocolTest {
     }
 
     @Test
-    public void testSearchNotFlags() throws MessagingException {
+    void testSearchNotFlags() throws MessagingException {
         store.connect("foo@localhost", "pwd");
         try {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
@@ -261,7 +270,7 @@ public class ImapProtocolTest {
 
 
     @Test
-    public void testGetMessageByUnknownUidInEmptyINBOX() throws MessagingException, FolderException {
+    void testGetMessageByUnknownUidInEmptyINBOX() throws MessagingException, FolderException {
         greenMail.getManagers()
             .getImapHostManager()
             .getInbox(user)
@@ -278,7 +287,7 @@ public class ImapProtocolTest {
     }
 
     @Test
-    public void testUidSearchText() throws MessagingException {
+    void testUidSearchText() throws MessagingException {
         store.connect("foo@localhost", "pwd");
         try {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
@@ -312,7 +321,7 @@ public class ImapProtocolTest {
     }
 
     @Test
-    public void testRenameFolder() throws MessagingException {
+    void testRenameFolder() throws MessagingException {
         store.connect("foo@localhost", "pwd");
         try {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
@@ -336,7 +345,7 @@ public class ImapProtocolTest {
     }
 
     @Test
-    public void testDeleteInbox() throws MessagingException {
+    void testDeleteInbox() throws MessagingException {
         store.connect("foo@localhost", "pwd");
         try {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
@@ -357,7 +366,7 @@ public class ImapProtocolTest {
     }
 
     @Test
-    public void testRenameToExistedFolder() throws MessagingException {
+    void testRenameToExistedFolder() throws MessagingException {
         store.connect("foo@localhost", "pwd");
         try {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
@@ -382,7 +391,7 @@ public class ImapProtocolTest {
     }
 
     @Test
-    public void testUidSearchTextWithCharset() throws MessagingException, IOException {
+    void testUidSearchTextWithCharset() throws MessagingException, IOException {
         greenMail.setUser("foo2@localhost", "pwd");
         store.connect("foo2@localhost", "pwd");
         try {
@@ -430,7 +439,7 @@ public class ImapProtocolTest {
     }
 
     @Test
-    public void testUidSearchAll() throws MessagingException {
+    void testUidSearchAll() throws MessagingException {
         greenMail.setUser("foo2@localhost", "pwd");
         store.connect("foo2@localhost", "pwd");
         try {
@@ -454,7 +463,7 @@ public class ImapProtocolTest {
     }
 
     @Test
-    public void testSelectMailFolder() throws MessagingException {
+    void testSelectMailFolder() throws MessagingException {
         greenMail.setUser("foo2@localhost", "pwd");
         store.connect("foo2@localhost", "pwd");
         try {

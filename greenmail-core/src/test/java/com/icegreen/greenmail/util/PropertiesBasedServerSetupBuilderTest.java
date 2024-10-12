@@ -1,15 +1,15 @@
 package com.icegreen.greenmail.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-public class PropertiesBasedServerSetupBuilderTest {
+class PropertiesBasedServerSetupBuilderTest {
     @Test
-    public void testCreate() {
+    void testCreate() {
         Properties properties = new Properties();
 
         properties.setProperty("greenmail.setup.all", "");

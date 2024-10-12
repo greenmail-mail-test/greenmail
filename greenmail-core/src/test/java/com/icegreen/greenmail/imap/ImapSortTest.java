@@ -1,33 +1,39 @@
 package com.icegreen.greenmail.imap;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.eclipse.angus.mail.imap.IMAPFolder;
+import org.eclipse.angus.mail.imap.SortTerm;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.eclipse.angus.mail.imap.IMAPFolder;
-import org.eclipse.angus.mail.imap.SortTerm;
-import org.junit.Rule;
-import org.junit.Test;
-
-import jakarta.mail.*;
+import jakarta.mail.Address;
+import jakarta.mail.Flags;
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.Store;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
-import jakarta.mail.search.*;
-
-import static org.assertj.core.api.Assertions.*;
+import jakarta.mail.search.FlagTerm;
 
 /**
  * Created on 10/03/2016.
  *
  * @author Reda.Housni-Alaoui
  */
-public class ImapSortTest {
+class ImapSortTest {
 
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.ALL);
 
     @Test
-    public void testSort() throws Exception {
+    void testSort() throws Exception {
         GreenMailUser user = greenMail.setUser("to1@localhost", "pwd");
         assertThat(greenMail.getImap()).isNotNull();
 

@@ -4,7 +4,19 @@
  */
 package com.icegreen.greenmail.smtp;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static com.icegreen.greenmail.util.GreenMailUtil.createTextEmail;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.SocketException;
+import java.util.Properties;
+
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.smtp.commands.AuthCommand;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMailUtil;
@@ -20,29 +32,18 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMessage.RecipientType;
 import jakarta.mail.internet.MimeMultipart;
-import org.assertj.core.api.Assertions;
-import org.junit.Rule;
-import org.junit.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.SocketException;
-import java.util.Properties;
-
-import static com.icegreen.greenmail.util.GreenMailUtil.createTextEmail;
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Wael Chatila
  * @version $Id: $
  * @since Jan 28, 2006
  */
-public class SmtpServerTest {
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(new ServerSetup[]{ServerSetupTest.SMTP});
+class SmtpServerTest {
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(new ServerSetup[]{ServerSetupTest.SMTP});
 
     @Test
-    public void testSmtpServerBasic() throws MessagingException, IOException {
+    void testSmtpServerBasic() throws MessagingException, IOException {
         GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "subject", "body");
         MimeMessage[] emails = greenMail.getReceivedMessages();
         assertThat(emails).hasSize(1);
@@ -51,7 +52,7 @@ public class SmtpServerTest {
     }
 
     @Test
-    public void testSmtpServerTimeout() {
+    void testSmtpServerTimeout() {
         assertThat(greenMail.getReceivedMessages()).isEmpty();
         long t0 = System.currentTimeMillis();
         greenMail.waitForIncomingEmail(500, 1);
@@ -61,7 +62,7 @@ public class SmtpServerTest {
     }
 
     @Test
-    public void testSmtpServerReceiveWithSetup() throws Throwable {
+    void testSmtpServerReceiveWithSetup() throws Throwable {
         assertThat(greenMail.getReceivedMessages()).isEmpty();
 
         String subject = GreenMailUtil.random();
@@ -76,7 +77,7 @@ public class SmtpServerTest {
 
 
     @Test
-    public void testSmtpServerReceiveInThread() throws Throwable {
+    void testSmtpServerReceiveInThread() throws Throwable {
         assertThat(greenMail.getReceivedMessages()).isEmpty();
 
         Thread sendThread = new Thread(() -> {
@@ -95,7 +96,7 @@ public class SmtpServerTest {
     }
 
     @Test
-    public void testSmtpServerReceiveMultipart() throws Exception {
+    void testSmtpServerReceiveMultipart() throws Exception {
         assertThat(greenMail.getReceivedMessages()).isEmpty();
 
         String subject = GreenMailUtil.random();
@@ -127,7 +128,7 @@ public class SmtpServerTest {
     }
 
     @Test
-    public void testSmtpServerLeadingPeriods() throws MessagingException, IOException {
+    void testSmtpServerLeadingPeriods() throws MessagingException, IOException {
         String body = ". body with leading period";
         GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost", "subject", body);
         MimeMessage[] emails = greenMail.getReceivedMessages();
@@ -137,7 +138,7 @@ public class SmtpServerTest {
     }
 
     @Test
-    public void testSendAndWaitForIncomingMailsInBcc() throws Throwable {
+    void testSendAndWaitForIncomingMailsInBcc() throws Throwable {
         String subject = GreenMailUtil.random();
         String body = GreenMailUtil.random();
         final MimeMessage message = createTextEmail("test@localhost", "from@localhost", subject, body,
@@ -155,7 +156,7 @@ public class SmtpServerTest {
     }
 
     @Test
-    public void testSendWithReusedConnection() throws Throwable {
+    void testSendWithReusedConnection() throws Throwable {
         String subject = GreenMailUtil.random();
         String body = GreenMailUtil.random();
         final MimeMessage message = createTextEmail("test@localhost", "from@localhost", subject, body,
@@ -190,7 +191,7 @@ public class SmtpServerTest {
     }
 
     @Test
-    public void testAuth() throws Throwable {
+    void testAuth() throws Throwable {
         assertThat(greenMail.getReceivedMessages()).isEmpty();
 
         String subject = GreenMailUtil.random();
@@ -216,7 +217,7 @@ public class SmtpServerTest {
     }
 
     @Test
-    public void testSmtpServerReceiveWithAUTHSuffix() throws Throwable {
+    void testSmtpServerReceiveWithAUTHSuffix() throws Throwable {
         assertThat(greenMail.getReceivedMessages()).isEmpty();
 
         String subject = GreenMailUtil.random();
@@ -242,7 +243,7 @@ public class SmtpServerTest {
     }
 
     @Test
-    public void testSendAndReCreateUser() throws MessagingException {
+    void testSendAndReCreateUser() throws MessagingException {
         GreenMailUser user = greenMail.setUser("foo@localhost", "pwd");
         GreenMailUtil.sendTextEmail(user.getEmail(), user.getEmail(), "Test subject",
             "Test message", greenMail.getSmtp().getServerSetup());

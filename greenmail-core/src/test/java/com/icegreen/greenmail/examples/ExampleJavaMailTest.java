@@ -1,26 +1,31 @@
 package com.icegreen.greenmail.examples;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
-import org.eclipse.angus.mail.imap.IMAPStore;
-import org.junit.Rule;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import jakarta.mail.*;
+import org.eclipse.angus.mail.imap.IMAPStore;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.Store;
+import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Example using plain JavaMail for sending / receiving mails via GreenMail server.
  */
-public class ExampleJavaMailTest {
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
+class ExampleJavaMailTest {
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
 
     @Test
-    public void testSendAndReceive() throws MessagingException {
+    void testSendAndReceive() throws MessagingException {
         Session smtpSession = greenMail.getSmtp().createSession();
 
         Message msg = new MimeMessage(smtpSession);

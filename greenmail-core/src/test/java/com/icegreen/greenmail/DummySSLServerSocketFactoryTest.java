@@ -13,10 +13,10 @@ import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,39 +30,39 @@ import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DummySSLServerSocketFactoryTest {
-    @BeforeClass
-    public static void setUp() {
+class DummySSLServerSocketFactoryTest {
+    @BeforeAll
+    static void setUp() {
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    @AfterClass
-    public static void tearDown() {
+    @AfterAll
+    static void tearDown() {
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
     }
 
-    @After
-    public void cleanup() {
+    @AfterEach
+    void cleanup() {
         System.clearProperty(DummySSLServerSocketFactory.GREENMAIL_KEYSTORE_FILE_PROPERTY);
         System.clearProperty(DummySSLServerSocketFactory.GREENMAIL_KEYSTORE_PASSWORD_PROPERTY);
         System.clearProperty(DummySSLServerSocketFactory.GREENMAIL_KEY_PASSWORD_PROPERTY);
     }
 
     @Test
-    public void testLoadDefaultKeyStore() throws KeyStoreException {
+    void testLoadDefaultKeyStore() throws KeyStoreException {
         DummySSLServerSocketFactory factory = new DummySSLServerSocketFactory();
         KeyStore ks = factory.getKeyStore();
         assertThat(ks.containsAlias("greenmail")).isTrue();
     }
 
     @Test
-    public void testLoadKeyStoreViaSystemPropertyWithDefaultKeyPwd()
+    void testLoadKeyStoreViaSystemPropertyWithDefaultKeyPwd()
         throws GeneralSecurityException, IOException, OperatorCreationException {
         testLoadKeyStoreViaSystemProperty("store password", null);
     }
 
     @Test
-    public void testLoadKeyStoreViaSystemPropertyWithProvidedKeyPwd()
+    void testLoadKeyStoreViaSystemPropertyWithProvidedKeyPwd()
         throws GeneralSecurityException, IOException, OperatorCreationException {
         testLoadKeyStoreViaSystemProperty("store password", "key password");
     }

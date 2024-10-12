@@ -4,13 +4,15 @@
  */
 package com.icegreen.greenmail.imap;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Rule;
-import org.junit.Test;
-
 import jakarta.mail.Address;
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
@@ -20,15 +22,13 @@ import jakarta.mail.Store;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 
-import static org.assertj.core.api.Assertions.assertThat;
+class ImapSubjectLineTest {
 
-public class ImapSubjectLineTest {
-
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.IMAP);
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.IMAP);
 
     @Test
-    public void testLongSubjectLine() throws Exception {
+    void testLongSubjectLine() throws Exception {
         String longSubjectLine = "test subject line jumped over the lazy lorem ipsum looking dog, after which the subject line became long enough to trigger some folding.               it was a dark and stormy night, after all.  pretty sure the initial trigger " +
                 "for this test case did not have a subject line longer than 1000 chars, but there you go.  not sure what exactly what wouldve caused the folding, but maybe it happened on a somewhat shorter subject line.  whatever.";
 
@@ -36,7 +36,7 @@ public class ImapSubjectLineTest {
     }
 
     @Test
-    public void testSubjectWithEmbeddedSpaces() throws Exception {
+    void testSubjectWithEmbeddedSpaces() throws Exception {
         String subjectWithEmbeddedSpaces = "test subject line jumped over the lazy lorem ipsum looking dog, after which the subject line became long enough to trigger some folding.               it was a dark and stormy night, after all.  pretty sure the initial trigger " +
                 "for this test case did not have a subject line longer than 1000 chars, but there you go.  not sure what exactly what would've caused the folding, but maybe it happened on a somewhat shorter subject line.  whatever.";
 
@@ -44,28 +44,28 @@ public class ImapSubjectLineTest {
     }
 
     @Test
-    public void testSubjectWithSingleQuote() throws Exception {
+    void testSubjectWithSingleQuote() throws Exception {
         String subjectWithSingleQuote = "This is'nt a bad subject";
 
         testSubject(subjectWithSingleQuote);
     }
 
     @Test
-    public void testSubjectWithDoubleQuote() throws Exception {
+    void testSubjectWithDoubleQuote() throws Exception {
         String subjectWithDoubleQuote = "This is\"nt a bad subject";
 
         testSubject(subjectWithDoubleQuote);
     }
 
     @Test
-    public void testSubjectWithTabCharacter() throws Exception {
+    void testSubjectWithTabCharacter() throws Exception {
         String subjectWithTabCharacter = "The tab\t was there.";
 
         testSubject(subjectWithTabCharacter);
     }
 
     @Test
-    public void testSubjectWithBackslashCharacter() throws Exception {
+    void testSubjectWithBackslashCharacter() throws Exception {
         String subjectWithBackslashCharacter = "With \\back slash.";
 
         testSubject(subjectWithBackslashCharacter);

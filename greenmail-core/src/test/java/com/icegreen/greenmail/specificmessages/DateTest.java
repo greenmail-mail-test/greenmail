@@ -1,31 +1,32 @@
 package com.icegreen.greenmail.specificmessages;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.server.AbstractServer;
-import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.Retriever;
-import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Rule;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.server.AbstractServer;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.Retriever;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 
 /**
  * Tests date handling for received messages
  */
-public class DateTest {
-    @Rule
-    public GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_POP3_IMAP);
+class DateTest {
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_POP3_IMAP);
 
     @Test
-    public void testDatesCorrect() throws MessagingException {
+    void testDatesCorrect() throws MessagingException {
         String to = "to@localhost";
         greenMail.setUser(to, to);
 

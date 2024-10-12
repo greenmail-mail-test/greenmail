@@ -1,43 +1,43 @@
 package com.icegreen.greenmail.smtp;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.smtp.commands.AuthCommand;
-import com.icegreen.greenmail.user.UserException;
-import com.icegreen.greenmail.util.ServerSetupTest;
-import org.eclipse.angus.mail.smtp.SMTPTransport;
-import jakarta.mail.MessagingException;
-import jakarta.mail.Session;
-import jakarta.mail.URLName;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.eclipse.angus.mail.smtp.SMTPTransport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.smtp.commands.AuthCommand;
+import com.icegreen.greenmail.user.UserException;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.URLName;
 
-public class SMTPCommandTest {
+class SMTPCommandTest {
 
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP);
 
     private int port;
     private String hostAddress;
     private URLName smtpURL;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         hostAddress = greenMail.getSmtp().getBindTo();
         port = greenMail.getSmtp().getPort();
         smtpURL = new URLName(hostAddress);
     }
 
     @Test
-    public void mailSenderEmpty() throws IOException, MessagingException {
+    void mailSenderEmpty() throws IOException, MessagingException {
         Session smtpSession = greenMail.getSmtp().createSession();
 
         try (SMTPTransport smtpTransport = new SMTPTransport(smtpSession, smtpURL)) {
@@ -50,7 +50,7 @@ public class SMTPCommandTest {
     }
 
     @Test
-    public void authPlain() throws IOException, MessagingException, UserException {
+    void authPlain() throws IOException, MessagingException, UserException {
         {
             Session smtpSession = greenMail.getSmtp().createSession();
             try (SMTPTransport smtpTransport = new SMTPTransport(smtpSession, smtpURL)) {
@@ -86,7 +86,7 @@ public class SMTPCommandTest {
     }
 
     @Test
-    public void authLogin() throws IOException, MessagingException, UserException {
+    void authLogin() throws IOException, MessagingException, UserException {
         Session smtpSession = greenMail.getSmtp().createSession();
         try (SMTPTransport smtpTransport = new SMTPTransport(smtpSession, smtpURL)) {
             Socket smtpSocket = new Socket(hostAddress, port); // Closed by transport
@@ -113,7 +113,7 @@ public class SMTPCommandTest {
     }
 
     @Test
-    public void mailSenderAUTHSuffix() throws IOException, MessagingException {
+    void mailSenderAUTHSuffix() throws IOException, MessagingException {
         Session smtpSession = greenMail.getSmtp().createSession();
 
         try (SMTPTransport smtpTransport = new SMTPTransport(smtpSession, smtpURL)) {

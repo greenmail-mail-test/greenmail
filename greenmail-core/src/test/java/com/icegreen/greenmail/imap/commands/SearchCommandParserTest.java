@@ -1,21 +1,32 @@
 package com.icegreen.greenmail.imap.commands;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.ByteArrayInputStream;
+
+import org.junit.jupiter.api.Test;
+
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ProtocolException;
 import jakarta.mail.Flags;
 import jakarta.mail.Message;
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.search.*;
-import org.junit.Test;
+import jakarta.mail.search.AndTerm;
+import jakarta.mail.search.ComparisonTerm;
+import jakarta.mail.search.FlagTerm;
+import jakarta.mail.search.FromTerm;
+import jakarta.mail.search.HeaderTerm;
+import jakarta.mail.search.NotTerm;
+import jakarta.mail.search.OrTerm;
+import jakarta.mail.search.RecipientTerm;
+import jakarta.mail.search.SearchTerm;
+import jakarta.mail.search.SizeTerm;
+import jakarta.mail.search.SubjectTerm;
 
-import java.io.ByteArrayInputStream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-public class SearchCommandParserTest {
+class SearchCommandParserTest {
     @Test
-    public void testHeader() throws ProtocolException {
+    void testHeader() throws ProtocolException {
         SearchTerm expectedTerm = new AndTerm(
             new AndTerm(new SearchTerm[]{
                 new HeaderTerm("Message-ID", "<1627010197.0.1593681191102@[192.168.242.10]>"),
@@ -30,7 +41,7 @@ public class SearchCommandParserTest {
     }
 
     @Test
-    public void testSmallerParseCommand() throws ProtocolException {
+    void testSmallerParseCommand() throws ProtocolException {
         SearchTerm expectedTerm = new SizeTerm(ComparisonTerm.LT, 5);
         SearchTerm searchTerm = parse("SMALLER 5");
 
@@ -38,7 +49,7 @@ public class SearchCommandParserTest {
     }
 
     @Test
-    public void testLargerParseCommand() throws ProtocolException {
+    void testLargerParseCommand() throws ProtocolException {
         SearchTerm expectedTerm = new SizeTerm(ComparisonTerm.GT, 5);
         SearchTerm searchTerm = parse("LARGER 5");
 
@@ -46,7 +57,7 @@ public class SearchCommandParserTest {
     }
 
     @Test
-    public void testSmallerAndLargerParseCommand() throws ProtocolException {
+    void testSmallerAndLargerParseCommand() throws ProtocolException {
         SearchTerm expectedTerm = new AndTerm(new SizeTerm(ComparisonTerm.LT, 5), new SizeTerm(ComparisonTerm.GT, 3));
         SearchTerm searchTerm = parse("SMALLER 5 LARGER 3");
 
@@ -54,7 +65,7 @@ public class SearchCommandParserTest {
     }
 
     @Test
-    public void testAndSubjectOrToFrom() throws ProtocolException, AddressException {
+    void testAndSubjectOrToFrom() throws ProtocolException, AddressException {
         SearchTerm expectedTerm = new AndTerm(new SearchTerm[]{
             new SubjectTerm("Greenmail"),
             new OrTerm(
@@ -70,7 +81,7 @@ public class SearchCommandParserTest {
     }
 
     @Test
-    public void testNotKeyword() throws ProtocolException {
+    void testNotKeyword() throws ProtocolException {
         Flags flags = new Flags();
         flags.add("ABC");
         SearchTerm expectedTerm = new NotTerm(new FlagTerm(flags, true));
@@ -80,7 +91,7 @@ public class SearchCommandParserTest {
     }
 
     @Test
-    public void testSimpleOr() throws ProtocolException {
+    void testSimpleOr() throws ProtocolException {
         SearchTerm expectedTerm = new OrTerm(
             new FlagTerm(new Flags(Flags.Flag.DRAFT), true),
             new FlagTerm(new Flags(Flags.Flag.SEEN), true)
@@ -91,7 +102,7 @@ public class SearchCommandParserTest {
     }
 
     @Test
-    public void testIssue591simple() throws ProtocolException {
+    void testIssue591simple() throws ProtocolException {
         SearchTerm expectedTerm = new OrTerm(
             new NotTerm(new FlagTerm(new Flags(Flags.Flag.SEEN), true)),
             new FlagTerm(new Flags(Flags.Flag.SEEN), true)
@@ -102,7 +113,7 @@ public class SearchCommandParserTest {
     }
 
     @Test
-    public void testIssue591complex() throws ProtocolException {
+    void testIssue591complex() throws ProtocolException {
         SearchTerm expectedTerm = new OrTerm(
             new NotTerm(new FlagTerm(new Flags(Flags.Flag.SEEN), true)),
             new OrTerm(

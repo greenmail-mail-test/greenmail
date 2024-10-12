@@ -1,27 +1,27 @@
 package com.icegreen.greenmail.server;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.ServerSetup;
-import org.junit.Rule;
-import org.junit.Test;
-
-import jakarta.mail.internet.MimeMessage;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AllocateAvailablePortTest {
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetup.SMTP.dynamicPort());
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetup;
+import jakarta.mail.internet.MimeMessage;
+
+class AllocateAvailablePortTest {
+
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetup.SMTP.dynamicPort());
 
     @Test
-    public void returnTheActuallyAllocatedPort() {
+    void returnTheActuallyAllocatedPort() {
         assertThat(greenMail.getSmtp().getPort()).isNotZero();
     }
 
     @Test
-    public void ensureThatMailCanActuallyBeSentToTheAllocatedPort() {
+    void ensureThatMailCanActuallyBeSentToTheAllocatedPort() {
         GreenMailUtil.sendTextEmail("to@localhost", "from@localhost", "subject", "body",
                 greenMail.getSmtp().getServerSetup());
 

@@ -3,7 +3,7 @@ package com.icegreen.greenmail;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -11,9 +11,9 @@ import static org.assertj.core.api.Assertions.fail;
 /**
  * Test that checks if greenmail start, stop and reset works correctly
  */
-public class ServerStartStopTest {
+class ServerStartStopTest {
     @Test
-    public void testStartStop() {
+    void testStartStop() {
         GreenMail service = new GreenMail(ServerSetupTest.ALL);
         try {
             // Try to stop before start: Nothing happens
@@ -31,7 +31,7 @@ public class ServerStartStopTest {
     }
 
     @Test
-    public void testServerStartupTimeout() {
+    void testServerStartupTimeout() {
         // Create a few setups
         ServerSetup[] setups = new ServerSetup[ServerSetupTest.ALL.length];
 

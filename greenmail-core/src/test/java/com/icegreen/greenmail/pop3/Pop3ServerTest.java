@@ -4,38 +4,38 @@
  */
 package com.icegreen.greenmail.pop3;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.assertj.core.api.Assertions.*;
+
+import java.io.ByteArrayOutputStream;
+
+import org.eclipse.angus.mail.pop3.POP3Folder;
+import org.eclipse.angus.mail.pop3.POP3Store;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.eclipse.angus.mail.pop3.POP3Folder;
-import org.eclipse.angus.mail.pop3.POP3Store;
 import jakarta.mail.AuthenticationFailedException;
 import jakarta.mail.BodyPart;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMultipart;
-import org.junit.Rule;
-import org.junit.Test;
-
-import java.io.ByteArrayOutputStream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * @author Wael Chatila
  */
-public class Pop3ServerTest {
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(new ServerSetup[]{
+class Pop3ServerTest {
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(new ServerSetup[]{
         ServerSetupTest.SMTP, ServerSetupTest.SMTPS,
         ServerSetupTest.POP3, ServerSetupTest.POP3S});
 
     @Test
-    public void testPop3Capabillities() throws MessagingException, UserException {
+    void testPop3Capabillities() throws MessagingException, UserException {
         final POP3Store store = greenMail.getPop3().createStore();
         greenMail.getUserManager().createUser("testPop3Capabillities@localhost",
                 "testPop3Capabillities@localhost", "pwd");
@@ -48,7 +48,7 @@ public class Pop3ServerTest {
     }
 
     @Test
-    public void testRetrieve() throws Exception {
+    void testRetrieve() throws Exception {
         assertThat(greenMail.getPop3()).isNotNull();
         final String subject = GreenMailUtil.random();
         final String body = GreenMailUtil.random() + "\r\n.\r\n"
@@ -71,7 +71,7 @@ public class Pop3ServerTest {
     }
 
     @Test
-    public void testPop3sReceive() throws Throwable {
+    void testPop3sReceive() throws Throwable {
         assertThat(greenMail.getPop3s()).isNotNull();
         final String subject = GreenMailUtil.random();
         final String body = GreenMailUtil.random();
@@ -88,7 +88,7 @@ public class Pop3ServerTest {
     }
 
     @Test
-    public void testRetrieveWithNonDefaultPassword() throws Exception {
+    void testRetrieveWithNonDefaultPassword() throws Exception {
         assertThat(greenMail.getPop3()).isNotNull();
         final String to = "test@localhost";
         final String password = "donotharmanddontrecipricateharm";
@@ -111,7 +111,7 @@ public class Pop3ServerTest {
     }
 
     @Test
-    public void testRetrieveMultipart() throws Exception {
+    void testRetrieveMultipart() throws Exception {
         assertThat(greenMail.getPop3()).isNotNull();
 
         String subject = GreenMailUtil.random();

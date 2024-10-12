@@ -1,22 +1,22 @@
 package com.icegreen.greenmail.smtp;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Rule;
-import org.junit.Test;
-
 import jakarta.mail.internet.MimeMessage;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-public class SmtpSecureServerTest {
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(new ServerSetup[]{ServerSetupTest.SMTPS});
+class SmtpSecureServerTest {
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(new ServerSetup[]{ServerSetupTest.SMTPS});
 
     @Test
-    public void testSmtpsServerReceive() throws Throwable {
+    void testSmtpsServerReceive() throws Throwable {
         assertThat(greenMail.getReceivedMessages()).isEmpty();
 
         String subject = GreenMailUtil.random();

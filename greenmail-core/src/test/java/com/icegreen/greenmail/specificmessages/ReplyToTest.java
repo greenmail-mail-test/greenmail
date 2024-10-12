@@ -1,6 +1,13 @@
 package com.icegreen.greenmail.specificmessages;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.UnsupportedEncodingException;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
@@ -11,19 +18,13 @@ import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
-import org.junit.Rule;
-import org.junit.Test;
-
-import java.io.UnsupportedEncodingException;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests if ReplyTo addresses of received messages are set correctly.
  */
-public class ReplyToTest {
-    @Rule
-    public GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_POP3_IMAP);
+class ReplyToTest {
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_POP3_IMAP);
 
     private static final InternetAddress[] TO_ADDRESSES;
     private static final InternetAddress[] CC_ADDRESSES;
@@ -56,7 +57,7 @@ public class ReplyToTest {
     }
 
     @Test
-    public void testReplyToFromAddress() throws MessagingException {
+    void testReplyToFromAddress() throws MessagingException {
         UserUtil.createUsers(greenMail, TO_ADDRESSES);
         UserUtil.createUsers(greenMail, CC_ADDRESSES);
         UserUtil.createUsers(greenMail, BCC_ADDRESSES);
@@ -73,18 +74,18 @@ public class ReplyToTest {
         greenMail.waitForIncomingEmail(5000, 1);
 
         for (InternetAddress address : TO_ADDRESSES) {
-            retrieveAndCheckReplyTo(greenMail, address, FROM_ADDRESS);
+            retrieveAndCheckReplyTo(address, FROM_ADDRESS);
         }
         for (InternetAddress address : CC_ADDRESSES) {
-            retrieveAndCheckReplyTo(greenMail, address, FROM_ADDRESS);
+            retrieveAndCheckReplyTo(address, FROM_ADDRESS);
         }
         for (InternetAddress address : BCC_ADDRESSES) {
-            retrieveAndCheckReplyTo(greenMail, address, FROM_ADDRESS);
+            retrieveAndCheckReplyTo(address, FROM_ADDRESS);
         }
     }
 
     @Test
-    public void testReplyToSpecificAddress() throws MessagingException {
+    void testReplyToSpecificAddress() throws MessagingException {
         UserUtil.createUsers(greenMail, TO_ADDRESSES);
         UserUtil.createUsers(greenMail, CC_ADDRESSES);
         UserUtil.createUsers(greenMail, BCC_ADDRESSES);
@@ -102,23 +103,22 @@ public class ReplyToTest {
         greenMail.waitForIncomingEmail(5000, 1);
 
         for (InternetAddress address : TO_ADDRESSES) {
-            retrieveAndCheckReplyTo(greenMail, address, REPLY_TO_ADDRESSES);
+            retrieveAndCheckReplyTo(address, REPLY_TO_ADDRESSES);
         }
         for (InternetAddress address : CC_ADDRESSES) {
-            retrieveAndCheckReplyTo(greenMail, address, REPLY_TO_ADDRESSES);
+            retrieveAndCheckReplyTo(address, REPLY_TO_ADDRESSES);
         }
         for (InternetAddress address : BCC_ADDRESSES) {
-            retrieveAndCheckReplyTo(greenMail, address, REPLY_TO_ADDRESSES);
+            retrieveAndCheckReplyTo(address, REPLY_TO_ADDRESSES);
         }
     }
 
     /**
      * Retrieve mail through IMAP and POP3 and check sender and receivers
      *
-     * @param greenMail Greenmail instance to read from
-     * @param addr      Address of account to retrieve
+     * @param addr Address of account to retrieve
      */
-    private void retrieveAndCheckReplyTo(GreenMailRule greenMail, InternetAddress addr, InternetAddress... replyToAddrs)
+    private void retrieveAndCheckReplyTo(InternetAddress addr, InternetAddress... replyToAddrs)
             throws MessagingException {
         String address = addr.getAddress();
         retrieveAndCheckReplyTo(greenMail.getPop3(), address, replyToAddrs);

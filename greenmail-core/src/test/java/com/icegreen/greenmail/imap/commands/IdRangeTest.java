@@ -2,7 +2,7 @@ package com.icegreen.greenmail.imap.commands;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.icegreen.greenmail.imap.commands.IdRange.VALUE_WILDCARD;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -10,9 +10,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * See https://tools.ietf.org/html/rfc3501#page-53 regarding sequence-set
  */
-public class IdRangeTest {
+class IdRangeTest {
     @Test
-    public void testParseRangeSequence() {
+    void testParseRangeSequence() {
         String sequenceSetText = "1";
         assertThat(IdRange.SEQUENCE.matcher(sequenceSetText).matches()).isTrue();
         List<IdRange> sequenceSet = IdRange.parseRangeSequence(sequenceSetText);

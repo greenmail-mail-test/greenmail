@@ -1,14 +1,14 @@
 package com.icegreen.greenmail.configuration;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class PropertiesBasedGreenMailConfigurationBuilderTest {
+class PropertiesBasedGreenMailConfigurationBuilderTest {
     @Test
-    public void testBuildForSingleUser() {
+    void testBuildForSingleUser() {
         Properties props = createPropertiesFor(PropertiesBasedGreenMailConfigurationBuilder.GREENMAIL_USERS,
                 "foo1:pwd1@bar.com");
         GreenMailConfiguration config = new PropertiesBasedGreenMailConfigurationBuilder().build(props);
@@ -19,7 +19,7 @@ public class PropertiesBasedGreenMailConfigurationBuilderTest {
     }
 
     @Test
-    public void testBuildForListOfUsers() {
+    void testBuildForListOfUsers() {
         Properties props = createPropertiesFor(PropertiesBasedGreenMailConfigurationBuilder.GREENMAIL_USERS,
                 "foo1:pwd1@bar.com,foo2:pwd2,foo3:pwd3@bar3.com");
         GreenMailConfiguration config = new PropertiesBasedGreenMailConfigurationBuilder().build(props);
@@ -32,7 +32,7 @@ public class PropertiesBasedGreenMailConfigurationBuilderTest {
     }
 
     @Test
-    public void testBuildForListOfUsersWithEmailAsLogin() {
+    void testBuildForListOfUsersWithEmailAsLogin() {
         Properties props = createPropertiesFor(PropertiesBasedGreenMailConfigurationBuilder.GREENMAIL_USERS,
                 "foo1:pwd1@bar.com,foo2:pwd2,foo3:pwd3@bar3.com");
         props.setProperty(PropertiesBasedGreenMailConfigurationBuilder.GREENMAIL_USERS_LOGIN,"email");
@@ -46,7 +46,7 @@ public class PropertiesBasedGreenMailConfigurationBuilderTest {
     }
 
     @Test
-    public void testBuildWithAuthenticationDisabledSetting() {
+    void testBuildWithAuthenticationDisabledSetting() {
         Properties props = createPropertiesFor(PropertiesBasedGreenMailConfigurationBuilder.GREENMAIL_AUTH_DISABLED, "");
         GreenMailConfiguration config = new PropertiesBasedGreenMailConfigurationBuilder().build(props);
 
@@ -55,7 +55,7 @@ public class PropertiesBasedGreenMailConfigurationBuilderTest {
     }
 
     @Test
-    public void testBuildWithSieveIgnoreDetailEnabledSetting() {
+    void testBuildWithSieveIgnoreDetailEnabledSetting() {
         Properties props = createPropertiesFor(PropertiesBasedGreenMailConfigurationBuilder.GREENMAIL_SIEVE_IGNORE_DETAIL, "");
         GreenMailConfiguration config = new PropertiesBasedGreenMailConfigurationBuilder().build(props);
 
@@ -64,7 +64,7 @@ public class PropertiesBasedGreenMailConfigurationBuilderTest {
     }
 
     @Test
-    public void testBuildWithPreloadDir() {
+    void testBuildWithPreloadDir() {
         final String preloadDir = "/preload";
         Properties props = createPropertiesFor(PropertiesBasedGreenMailConfigurationBuilder.GREENMAIL_PRELOAD_DIR, preloadDir);
         GreenMailConfiguration config = new PropertiesBasedGreenMailConfigurationBuilder().build(props);

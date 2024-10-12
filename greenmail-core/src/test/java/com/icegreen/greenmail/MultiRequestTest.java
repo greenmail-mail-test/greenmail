@@ -8,13 +8,13 @@ package com.icegreen.greenmail;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,10 +24,10 @@ import static org.assertj.core.api.Assertions.*;
  * Test multiple senders and receivers using all available protocols
  */
 public class MultiRequestTest {
-    protected final static Logger log = LoggerFactory.getLogger(MultiRequestTest.class);
+    protected static final Logger log = LoggerFactory.getLogger(MultiRequestTest.class);
 
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
+    @RegisterExtension
+    public static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.ALL);
 
     //~ INNER CLASSES -----------------------------------------------
     private static class SenderThread extends Thread {
@@ -41,6 +41,7 @@ public class MultiRequestTest {
             this.count = count;
         }
 
+        @Override
         public void run() {
             for (int i = 0; i < count; i++) {
                 GreenMailUtil.sendTextEmailTest(to, "from@localhost", "subject", "body");
@@ -62,6 +63,7 @@ public class MultiRequestTest {
             this.expectedCount = expectedCount;
         }
 
+        @Override
         public void run() {
             // Try several times, as message might not have been sent yet
             // If message is not sent after timeout period we abort
@@ -89,7 +91,7 @@ public class MultiRequestTest {
     //~ END INNER CLASSES -----------------------------------------------
 
     @Test
-    public void test20Senders() {
+    void test20Senders() {
         final int num = 20;
         addUsers(num);
         startSenderThreads(num);
@@ -100,7 +102,7 @@ public class MultiRequestTest {
     }
 
     @Test
-    public void test20Senders20x4Retrievers() throws InterruptedException {
+    void test20Senders20x4Retrievers() throws InterruptedException {
         final int num = 20;
         addUsers(num);
         startSenderThreads(num);
@@ -123,7 +125,7 @@ public class MultiRequestTest {
     }
 
     @Test
-    public void test20Senders20x4RetrieversAtTheSameTime() throws InterruptedException {
+    void test20Senders20x4RetrieversAtTheSameTime() throws InterruptedException {
         final int num = 20;
         addUsers(num);
         startSenderThreads(num);

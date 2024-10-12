@@ -4,8 +4,17 @@
  */
 package com.icegreen.greenmail.imap;
 
+import static org.assertj.core.api.Assertions.*;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
 import com.icegreen.greenmail.imap.commands.SearchKey;
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.ServerSetupTest;
@@ -18,28 +27,34 @@ import jakarta.mail.Session;
 import jakarta.mail.Store;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
-import jakarta.mail.search.*;
-import org.junit.Rule;
-import org.junit.Test;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import static junit.framework.TestCase.fail;
-import static org.assertj.core.api.Assertions.assertThat;
+import jakarta.mail.search.AndTerm;
+import jakarta.mail.search.BodyTerm;
+import jakarta.mail.search.ComparisonTerm;
+import jakarta.mail.search.DateTerm;
+import jakarta.mail.search.FlagTerm;
+import jakarta.mail.search.FromStringTerm;
+import jakarta.mail.search.FromTerm;
+import jakarta.mail.search.HeaderTerm;
+import jakarta.mail.search.NotTerm;
+import jakarta.mail.search.OrTerm;
+import jakarta.mail.search.ReceivedDateTerm;
+import jakarta.mail.search.RecipientStringTerm;
+import jakarta.mail.search.RecipientTerm;
+import jakarta.mail.search.SearchTerm;
+import jakarta.mail.search.SentDateTerm;
+import jakarta.mail.search.SubjectTerm;
 
 /**
  * @author Wael Chatila
  * @version $Id: $
  * @since Jan 28, 2006
  */
-public class ImapSearchTest {
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.ALL);
+class ImapSearchTest {
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.ALL);
 
     @Test
-    public void testSearch() throws Exception {
+    void testSearch() throws Exception {
         GreenMailUser user = greenMail.setUser("to1@localhost", "pwd");
         assertThat(greenMail.getImap()).isNotNull();
 
@@ -183,7 +198,7 @@ public class ImapSearchTest {
     }
 
     @Test
-    public void testSearchIssue319() throws Exception {
+    void testSearchIssue319() throws Exception {
         String from = "from@localhost";
         String to = from;
         String subject = "Greenmail";
@@ -270,7 +285,7 @@ public class ImapSearchTest {
 
     // Test an unsupported search term for exception. Should be ignored.
     @Test
-    public void testUnsupportedSearchWarnsButDoesNotThrowException() {
+    void testUnsupportedSearchWarnsButDoesNotThrowException() {
         try {
             SearchKey.valueOf("SENTDATE");
             fail("Expected IAE for unimplemented search");

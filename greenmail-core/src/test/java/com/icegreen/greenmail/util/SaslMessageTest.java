@@ -1,13 +1,13 @@
 package com.icegreen.greenmail.util;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SaslMessageTest {
+class SaslMessageTest {
     @Test
-    public void testParse() {
+    void testParse() {
         final SaslMessage saslMessage = SaslMessage.parse("authzid\u0000authcid\u0000passwd");
         assertThat(saslMessage.getAuthzid()).isEqualTo("authzid");
         assertThat(saslMessage.getAuthcid()).isEqualTo("authcid");
@@ -15,7 +15,7 @@ public class SaslMessageTest {
     }
 
     @Test
-    public void testParseWithouthAuthzid() {
+    void testParseWithouthAuthzid() {
         final SaslMessage saslMessage = SaslMessage.parse("\u0000authcid\u0000passwd");
         assertThat(saslMessage.getAuthzid()).isEmpty();
         assertThat(saslMessage.getAuthcid()).isEqualTo("authcid");

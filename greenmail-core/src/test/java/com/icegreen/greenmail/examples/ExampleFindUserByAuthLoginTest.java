@@ -1,5 +1,11 @@
 package com.icegreen.greenmail.examples;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.icegreen.greenmail.smtp.auth.AuthenticationState;
 import com.icegreen.greenmail.smtp.auth.UsernameAuthentication;
 import com.icegreen.greenmail.store.FolderException;
@@ -15,11 +21,6 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import jakarta.mail.Message.RecipientType;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * By default, GreenMail delivers messages to the user based on the email address
@@ -28,11 +29,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  * This example illustrates how you can use a custom message delivery handler to deliver
  * messages based on the login that was used to authenticate against the mail server.
  */
-public class ExampleFindUserByAuthLoginTest {
+class ExampleFindUserByAuthLoginTest {
     public GreenMail greenMail;
 
     @Test
-    public void testSend() throws MessagingException, UserException, FolderException {
+    void testSend() throws MessagingException, UserException, FolderException {
         final UserManager userManager = greenMail.getUserManager();
         // Create a new user
         userManager.createUser("from@localhost", "login", "pass");
@@ -66,14 +67,14 @@ public class ExampleFindUserByAuthLoginTest {
         assertThat(createdMessage.getMimeMessage().getFrom()[0]).hasToString("mary@example.com");
     }
 
-    @Before
-    public void setupMail() {
+    @BeforeEach
+    void setupMail() {
         greenMail = new GreenMail(ServerSetupTest.SMTP);
         greenMail.start();
     }
 
-    @After
-    public void tearDownMail() {
+    @AfterEach
+    void tearDownMail() {
         greenMail.stop();
     }
 }

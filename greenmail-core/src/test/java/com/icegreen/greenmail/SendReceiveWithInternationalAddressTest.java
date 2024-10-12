@@ -1,10 +1,10 @@
 package com.icegreen.greenmail;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
@@ -20,7 +20,7 @@ import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SendReceiveWithInternationalAddressTest {
+class SendReceiveWithInternationalAddressTest {
 
     static final Properties properties;
 
@@ -30,11 +30,11 @@ public class SendReceiveWithInternationalAddressTest {
         properties.put("mail.mime.address.strict", Boolean.FALSE.toString());
     }
 
-    @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
+    @RegisterExtension
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
 
     @Test
-    public void testSend() throws MessagingException, IOException {
+    void testSend() throws MessagingException, IOException {
         Session session = GreenMailUtil.getSession(ServerSetupTest.SMTP, properties);
         MimeMessage mimeMessage = new MockInternationalizedMimeMessage(session);
         mimeMessage.setSubject("subject");

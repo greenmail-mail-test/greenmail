@@ -1,20 +1,25 @@
 package com.icegreen.greenmail.specificmessages;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.IOException;
+
+import org.eclipse.angus.mail.imap.IMAPStore;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.eclipse.angus.mail.imap.IMAPStore;
-import org.junit.Rule;
-import org.junit.Test;
-
-import jakarta.mail.*;
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
+import jakarta.mail.Session;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
-import java.io.IOException;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests forwarding an email.
@@ -22,9 +27,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  * See https://github.com/greenmail-mail-test/greenmail/issues/142
  * See http://www.oracle.com/technetwork/java/faq-135477.html#forward
  */
-public class Rfc822MessageTest {
-    @Rule
-    public GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
+class Rfc822MessageTest {
+    @RegisterExtension
+    static GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
 
     /**
      * Structure of test message and content type:
@@ -35,7 +40,7 @@ public class Rfc822MessageTest {
      * \--> Message (text/plain)
      */
     @Test
-    public void testForwardWithRfc822() throws MessagingException, IOException {
+    void testForwardWithRfc822() throws MessagingException, IOException {
         greenMail.setUser("foo@localhost", "pwd");
         final Session session = greenMail.getSmtp().createSession();
 

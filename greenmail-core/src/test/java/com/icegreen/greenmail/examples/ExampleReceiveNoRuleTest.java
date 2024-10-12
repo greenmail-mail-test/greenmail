@@ -4,15 +4,15 @@ import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import jakarta.mail.internet.MimeMessage;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ExampleReceiveNoRuleTest {
+class ExampleReceiveNoRuleTest {
     @Test
-    public void testReceive() {
+    void testReceive() {
         //Start all email servers using non-default ports.
         GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP_IMAP);
         try {
