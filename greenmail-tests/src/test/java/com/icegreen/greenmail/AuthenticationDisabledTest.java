@@ -75,14 +75,14 @@ public class AuthenticationDisabledTest {
     }
 
     @Test
-    void testPop3ConnectNoAuth() throws UserException, FolderException {
+    void testPop3ConnectNoAuth() {
         UserManager userManager = greenMail.getUserManager();
         Pop3State status = new Pop3State(userManager);
         userManager.setAuthRequired(false);
 
         UserImpl user = new UserImpl("email@example.com", "user", "pwd", null);
         status.setUser(user);
-        status.authenticate("pass");
+        assertThatCode(() -> status.authenticate("pass")).doesNotThrowAnyException();
     }
 
     @Test
