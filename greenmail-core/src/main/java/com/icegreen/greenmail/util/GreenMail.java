@@ -365,7 +365,8 @@ public class GreenMail extends ConfiguredGreenMail {
 
         try (final Stream<Path> pathStream = Files.walk(sourceDirectory)) {
             for (Path emailPath : pathStream
-                .filter(path -> !path.equals(sourceDirectory) && !isHiddenOrInHiddenDir(path)) // Skip base dir and files which are hidden or in hidden dirs
+                .filter(path -> !path.equals(sourceDirectory) &&
+                    !isHiddenOrInHiddenDir(sourceDirectory, path)) // Skip base dir and files which are hidden or in hidden dirs
                 .map(Path::toAbsolutePath)
                 .collect(Collectors.toList())) {
                 loadEmail(sourceDirectory, emailPath, sourceNameCount, userManager, store, imapHostManager, session);
@@ -429,11 +430,26 @@ public class GreenMail extends ConfiguredGreenMail {
         return inbox.substring(0, inbox.length() - ImapConstants.INBOX_NAME.length());
     }
 
-    private boolean isHiddenOrInHiddenDir(Path path) {
+    /**
+     * Returns true if
+     * a) below the base path, AND
+     * b) path references a hidden dir below(!) base dir
+     * Example: isHiddenOrInHiddenDir("/foo","/foo/bar/.hidden/file.txt")
+     * @param baseDirectory the base dir
+     * @param path the path below base dir
+     * @return true, if hidden
+     */
+    public boolean isHiddenOrInHiddenDir(Path baseDirectory, Path path) {
+        if (baseDirectory.equals(path)) {
+            // Do not recurse above base dir
+            return false;
+        }
         try {
-            return Files.isHidden(path) || (path.getParent() != null && isHiddenOrInHiddenDir(path.getParent()));
+            return Files.isHidden(path) ||
+                (path.getParent() != null &&
+                    isHiddenOrInHiddenDir(baseDirectory, path.getParent()));
         } catch (IOException e) {
-            throw new IllegalStateException("Failed during preloading '" + path + "'");
+            throw new IllegalStateException("Failed during preloading '" + path + "'", e);
         }
     }
 }
