@@ -1,18 +1,18 @@
 package com.icegreen.greenmail.webapp;
 
-import org.junit.Test;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.Test;
+
 /**
  * Test for ConfigurationFactory.
  */
-public class ConfigurationFactoryTest {
+class ConfigurationFactoryTest {
 
     @Test
-    public void testCreate() {
+    void testCreate() {
         Map<String, String> paramValues = new HashMap<>();
         paramValues.put("greenmail.defaultHostname", "127.0.0.1");
         paramValues.put("greenmail.portOffset", "20000");
