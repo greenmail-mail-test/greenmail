@@ -176,7 +176,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.8.0</version>
+          <version>3.8.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
@@ -201,11 +201,11 @@
         </plugin>
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>3.7.0</version>
+          <version>3.8.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>3.5.0</version>
+          <version>3.6.0</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -217,7 +217,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-pmd-plugin</artifactId>
-          <version>3.25.0</version>
+          <version>3.26.0</version>
           <configuration>
             <format>html</format>
             <linkXRef>true</linkXRef>
@@ -228,7 +228,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-jxr-plugin</artifactId>
-          <version>3.5.0</version>
+          <version>3.6.0</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -349,7 +349,7 @@
     <slf4j.version>1.7.36</slf4j.version>
     <log4j2.version>2.24.1</log4j2.version>
     <spring.version>5.3.39</spring.version>
-    <junit5.version>5.11.2</junit5.version>
+    <junit5.version>5.11.3</junit5.version>
     <jetty.version>11.0.24</jetty.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -542,12 +542,12 @@
       <dependency>
         <groupId>org.bouncycastle</groupId>
         <artifactId>bcprov-jdk18on</artifactId>
-        <version>1.78.1</version>
+        <version>1.79</version>
       </dependency>
       <dependency>
         <groupId>org.bouncycastle</groupId>
         <artifactId>bcpkix-jdk18on</artifactId>
-        <version>1.78.1</version>
+        <version>1.79</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
