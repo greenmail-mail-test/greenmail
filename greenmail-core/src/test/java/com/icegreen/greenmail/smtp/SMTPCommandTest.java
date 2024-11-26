@@ -125,4 +125,18 @@ public class SMTPCommandTest {
         }
     }
 
+    
+    @Test
+    public void rcptToWithParameter() throws IOException, MessagingException {
+        Session smtpSession = greenMail.getSmtp().createSession();
+
+        try (SMTPTransport smtpTransport = new SMTPTransport(smtpSession, smtpURL)) {
+            Socket smtpSocket = new Socket(hostAddress, port); // Closed by transport
+            smtpTransport.connect(smtpSocket);
+            assertThat(smtpTransport.isConnected()).isTrue();
+            smtpTransport.issueCommand("MAIL FROM: <test.test@test.net>", -1);
+            smtpTransport.issueCommand("RCPT TO: <test@localhost> NOTIFY=SUCCESS,FAILURE", -1);
+            assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace("250 OK");
+        }
+    }
 }
