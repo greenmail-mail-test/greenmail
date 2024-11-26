@@ -80,7 +80,7 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
         }
 
         String sieveIgnoreDetail = properties.getProperty(GREENMAIL_SIEVE_IGNORE_DETAIL, "false");
-        if (null != sieveIgnoreDetail) {
+        if (Boolean.TRUE.toString().equalsIgnoreCase(sieveIgnoreDetail)) {
             configuration.withSieveIgnoreDetail();
         }
 
