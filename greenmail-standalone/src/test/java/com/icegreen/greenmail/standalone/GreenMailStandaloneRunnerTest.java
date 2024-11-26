@@ -81,7 +81,7 @@ public class GreenMailStandaloneRunnerTest {
             "{\"port\":3143,\"address\":\"127.0.0.1\",\"protocol\":\"imap\",\"isSecure\":false,\"readTimeout\":-1," +
             "\"writeTimeout\":-1,\"connectionTimeout\":-1,\"serverStartupTimeout\":2000,\"isDynamicPort\":false}]," +
             "\"authenticationDisabled\":false," +
-            "\"sieveIgnoreDetail\":true," +
+            "\"sieveIgnoreDetail\":false," +
             "\"preloadDirectory\":null" +
             "}");
 
