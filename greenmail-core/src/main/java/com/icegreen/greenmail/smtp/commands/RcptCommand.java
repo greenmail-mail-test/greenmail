@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  */
 public class RcptCommand
         extends SmtpCommand {
-    static Pattern param = Pattern.compile("RCPT TO:\\s?<([^>]+)>",
+    static Pattern param = Pattern.compile("RCPT TO:\\s?<([^>]*)>.*",
             Pattern.CASE_INSENSITIVE);
 
     @Override
