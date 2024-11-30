@@ -79,7 +79,7 @@ public class DockerServiceIT {
             "{\"port\":3993,\"address\":\"0.0.0.0\",\"protocol\":\"imaps\",\"isSecure\":true,\"readTimeout\":-1,\"writeTimeout\":-1,\"connectionTimeout\":-1,\"serverStartupTimeout\":2000,\"isDynamicPort\":false}" +
             "]," +
             "\"authenticationDisabled\":true," +
-            "\"sieveIgnoreDetail\":true,\"preloadDirectory\":null" +
+            "\"sieveIgnoreDetail\":false,\"preloadDirectory\":null" +
             "}"
         );
     }
