@@ -60,7 +60,7 @@ class PropertiesBasedGreenMailConfigurationBuilderTest {
         GreenMailConfiguration config = new PropertiesBasedGreenMailConfigurationBuilder().build(props);
 
         assertThat(config).isNotNull();
-        assertThat(config.isSieveIgnoreDetailEnabled()).isTrue();
+        assertThat(config.isSieveIgnoreDetailEnabled()).isFalse();
     }
 
     @Test

@@ -11,7 +11,7 @@
   <artifactId>greenmail-parent</artifactId>
   <packaging>pom</packaging>
   <!-- This version should get inherited to all subprojects. -->
-  <version>2.1.1-SNAPSHOT</version>
+  <version>2.1.3-SNAPSHOT</version>
 
   <licenses>
     <license>
@@ -139,7 +139,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.5.1</version>
+          <version>3.5.2</version>
           <configuration>
             <workingDirectory>${project.build.directory}</workingDirectory>
             <argLine>@{argLine} -Djava.net.preferIPv4Stack=true --add-opens=java.base/sun.security.x509=ALL-UNNAMED</argLine>
@@ -147,7 +147,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.5.1</version>
+          <version>3.5.2</version>
           <configuration>
             <workingDirectory>${project.build.directory}</workingDirectory>
             <argLine>@{argLine} -Djava.net.preferIPv4Stack=true</argLine>
@@ -197,7 +197,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-surefire-report-plugin</artifactId>
-          <version>3.5.1</version>
+          <version>3.5.2</version>
         </plugin>
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
@@ -237,7 +237,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.10.1</version>
+          <version>3.11.1</version>
           <configuration>
             <links>
               <link>https://docs.oracle.com/javase/8/docs/api/</link>
@@ -347,7 +347,7 @@
 
   <properties>
     <slf4j.version>1.7.36</slf4j.version>
-    <log4j2.version>2.24.1</log4j2.version>
+    <log4j2.version>2.24.2</log4j2.version>
     <spring.version>5.3.39</spring.version>
     <junit5.version>5.11.3</junit5.version>
     <jetty.version>11.0.24</jetty.version>
@@ -363,32 +363,32 @@
       <dependency>
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail</artifactId>
-        <version>2.1.1-SNAPSHOT</version>
+        <version>2.1.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail-standalone</artifactId>
-        <version>2.1.1-SNAPSHOT</version>
+        <version>2.1.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail-webapp</artifactId>
-        <version>2.1.1-SNAPSHOT</version>
+        <version>2.1.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail-spring</artifactId>
-        <version>2.1.1-SNAPSHOT</version>
+        <version>2.1.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail-junit4</artifactId>
-        <version>2.1.1-SNAPSHOT</version>
+        <version>2.1.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail-junit5</artifactId>
-        <version>2.1.1-SNAPSHOT</version>
+        <version>2.1.3-SNAPSHOT</version>
       </dependency>
 
       <!-- Third party -->
@@ -503,7 +503,7 @@
       <dependency>
         <groupId>org.easymock</groupId>
         <artifactId>easymock</artifactId>
-        <version>5.4.0</version>
+        <version>5.5.0</version>
       </dependency>
       <!-- Transitively by junit:junit -->
       <dependency>
