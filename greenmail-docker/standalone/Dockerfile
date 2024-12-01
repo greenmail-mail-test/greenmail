@@ -18,12 +18,12 @@ EXPOSE 3025 3465 3110 3995 3143 3993 8080
 #######################
 # Configuration options
 #######################
-ENV JAVA_OPTS      -Djava.net.preferIPv4Stack=true
-ENV GREENMAIL_OPTS -Dgreenmail.setup.test.all \
+ENV JAVA_OPTS="-Djava.net.preferIPv4Stack=true"
+ENV GREENMAIL_OPTS="-Dgreenmail.setup.test.all \
     -Dgreenmail.hostname=0.0.0.0 \
     -Dgreenmail.tls.keystore.file=/home/greenmail/greenmail.p12 \
     -Dgreenmail.tls.keystore.password=changeit \
-    -Dgreenmail.auth.disabled
+    -Dgreenmail.auth.disabled"
 
 #######################
 # Run as user greenmail
