@@ -1,37 +1,45 @@
 package com.icegreen.greenmail.standalone;
 
-import com.icegreen.greenmail.configuration.PropertiesBasedGreenMailConfigurationBuilder;
-import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.PropertiesBasedServerSetupBuilder;
-import com.icegreen.greenmail.util.ServerSetupTest;
-import jakarta.mail.*;
-import jakarta.ws.rs.ProcessingException;
-import jakarta.ws.rs.client.*;
-import jakarta.ws.rs.core.GenericType;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import org.junit.After;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
-public class GreenMailStandaloneRunnerTest {
+import com.icegreen.greenmail.configuration.PropertiesBasedGreenMailConfigurationBuilder;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.PropertiesBasedServerSetupBuilder;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.Store;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
+class GreenMailStandaloneRunnerTest {
     private GreenMailStandaloneRunner runner;
 
-    @After
-    public void tearDown() {
+    @AfterEach
+    void tearDown() {
         if (null != runner) {
             runner.stop();
         }
     }
 
     @Test
-    public void testDoRun() throws MessagingException {
+    void testDoRun() throws MessagingException {
         runner = createAndConfigureRunner(new Properties());
 
         GreenMailUtil.sendTextEmail("test2@localhost", "test1@localhost",
@@ -57,7 +65,7 @@ public class GreenMailStandaloneRunnerTest {
     }
 
     @Test
-    public void testApi() {
+    void testApi() {
         final Properties properties = new Properties();
         properties.put(GreenMailApiServerBuilder.GREENMAIL_API_HOSTNAME, "localhost");
         runner = createAndConfigureRunner(properties);
