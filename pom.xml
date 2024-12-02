@@ -31,17 +31,16 @@
     <url>
       https://github.com/greenmail-mail-test/greenmail
     </url>
-    <tag>release-2.1.0-alpha-3</tag>
   </scm>
 
   <issueManagement>
-    <system>github</system>
+    <system>GitHub</system>
     <url>https://github.com/greenmail-mail-test/greenmail/issues/</url>
   </issueManagement>
 
   <ciManagement>
-    <system>CircleCI</system>
-    <url>https://circleci.com/gh/greenmail-mail-test/greenmail</url>
+    <system>GitHub</system>
+    <url>https://github.com/greenmail-mail-test/greenmail/actions/</url>
     <notifiers />
   </ciManagement>
 
