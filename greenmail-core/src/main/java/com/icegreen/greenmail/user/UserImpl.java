@@ -11,6 +11,8 @@ import com.icegreen.greenmail.mail.MovingMessage;
 import com.icegreen.greenmail.store.FolderException;
 import jakarta.mail.internet.MimeMessage;
 
+import java.util.Objects;
+
 
 public class UserImpl implements GreenMailUser {
     final String email;
@@ -19,11 +21,13 @@ public class UserImpl implements GreenMailUser {
     final String login;
     String password;
     private final ImapHostManager imapHostManager;
+    private TokenValidator tokenValidator;
 
     public UserImpl(String email, String login, String password, ImapHostManager imapHostManager) {
         this.email = email;
         cachedHashCode = email.hashCode();
         cachedHashCodeAsString = String.valueOf(cachedHashCode);
+        this.tokenValidator = null;
         this.login = login;
         this.password = password;
         this.imapHostManager = imapHostManager;
@@ -87,7 +91,25 @@ public class UserImpl implements GreenMailUser {
 
     @Override
     public void authenticate(String pass) throws UserException {
-        if (!password.equals(pass)) {
+        if (isTokenValidationAvailable()) {
+            validateToken(pass);
+            return;
+        }
+        validatePassword(pass);
+    }
+
+    private boolean isTokenValidationAvailable() {
+        return tokenValidator != null;
+    }
+
+    private void validateToken(String pass) throws UserException {
+        if (!tokenValidator.isValid(pass)) {
+            throw new UserException("Invalid token");
+        }
+    }
+
+    private void validatePassword(String pass) throws UserException {
+        if (!Objects.equals(password, pass)) {
             throw new UserException("Invalid password");
         }
     }
@@ -95,6 +117,10 @@ public class UserImpl implements GreenMailUser {
     @Override
     public String getQualifiedMailboxName() {
         return cachedHashCodeAsString;
+    }
+
+    public void setTokenValidator(TokenValidator validator) {
+        this.tokenValidator = validator;
     }
 
     @Override

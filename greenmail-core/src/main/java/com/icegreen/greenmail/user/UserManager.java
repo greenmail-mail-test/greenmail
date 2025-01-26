@@ -120,7 +120,17 @@ public class UserManager {
             return true; // Always authenticate successfully if no auth required
         }
 
-        return null != u && checkPassword(u.getPassword(), password);
+        if(u == null) {
+            return false;
+        }
+
+        try {
+            u.authenticate(password);
+        } catch (UserException e) {
+            return false;
+        }
+
+        return true;
     }
 
     private boolean checkPassword(String expectedPassword, String password) {
@@ -202,4 +212,6 @@ public class UserManager {
         }
         return localPart + domainPart;
     }
+
+
 }

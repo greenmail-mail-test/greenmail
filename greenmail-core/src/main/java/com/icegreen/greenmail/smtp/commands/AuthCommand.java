@@ -12,6 +12,7 @@ import com.icegreen.greenmail.smtp.SmtpState;
 import com.icegreen.greenmail.smtp.auth.AuthenticationState;
 import com.icegreen.greenmail.smtp.auth.LoginAuthenticationState;
 import com.icegreen.greenmail.smtp.auth.PlainAuthenticationState;
+import com.icegreen.greenmail.smtp.auth.XOAuth2AuthenticationState;
 import com.icegreen.greenmail.user.UserManager;
 import com.icegreen.greenmail.util.EncodingUtil;
 import com.icegreen.greenmail.util.SaslMessage;
@@ -42,7 +43,8 @@ public class AuthCommand extends SmtpCommand {
 
     public enum AuthMechanism {
         PLAIN,
-        LOGIN
+        LOGIN,
+        XOAUTH2
     }
 
     public static final String SUPPORTED_AUTH_MECHANISM = getValuesWsSeparated();
@@ -69,6 +71,8 @@ public class AuthCommand extends SmtpCommand {
             authLogin(conn, state, manager, commandLine, commandParts, authMechanismValue);
         } else if (AuthMechanism.PLAIN.name().equalsIgnoreCase(authMechanismValue)) {
             authPlain(conn, state, manager, commandParts);
+        } else if (AuthMechanism.XOAUTH2.name().equalsIgnoreCase(authMechanismValue)) {
+          authXOAuth2(conn, state, manager, commandParts);
         } else {
             conn.send(SMTP_SYNTAX_ERROR + " : Unsupported auth mechanism " + authMechanismValue +
                 ". Only auth mechanism <" + Arrays.toString(AuthMechanism.values()) + "> supported.");
@@ -114,6 +118,23 @@ public class AuthCommand extends SmtpCommand {
             state.getMessage().setAuthenticationState(authenticationContext);
 
             if (manager.getUserManager().test(plainUsername, plainPwd)) {
+                conn.setAuthenticated(true);
+                conn.send(AUTH_SUCCEDED);
+            } else {
+                conn.send(AUTH_CREDENTIALS_INVALID);
+            }
+        }
+    }
+
+    private void authXOAuth2(SmtpConnection conn, SmtpState state, SmtpManager manager, String[] commandParts) {
+        if (commandParts.length != 3) {
+            conn.send(SMTP_SYNTAX_ERROR + " : Unsupported auth mechanism with unexpected values. Line is: <" + commandParts + ">");
+        } else {
+            XOAuth2AuthenticationState authenticationContext = new XOAuth2AuthenticationState(commandParts[2]);
+
+            state.getMessage().setAuthenticationState(authenticationContext);
+
+            if (manager.getUserManager().test(authenticationContext.getUsername(), authenticationContext.getAccessToken())) {
                 conn.setAuthenticated(true);
                 conn.send(AUTH_SUCCEDED);
             } else {
