@@ -16,6 +16,10 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 
 public class SmtpHandler extends AbstractSocketProtocolHandler {
+
+    //RF821/2821 limit, extended for usage of XOAUTH2
+    public static final int LINE_LENGHT_LIMIT = 4096;
+
     // protocol and configuration global stuff
     protected SmtpCommandRegistry registry;
     protected SmtpManager manager;
@@ -104,8 +108,8 @@ public class SmtpHandler extends AbstractSocketProtocolHandler {
             return false;
         }
 
-        if (currentLine.length() > 1000) {
-            conn.send("500 Command too long.  1000 character maximum.");
+        if (currentLine.length() > LINE_LENGHT_LIMIT) {
+            conn.send("500 Command too long.  " + LINE_LENGHT_LIMIT + " character maximum.");
             return false;
         }
 
