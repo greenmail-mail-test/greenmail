@@ -58,6 +58,7 @@
     <module>greenmail-spring</module>
     <module>greenmail-junit4</module>
     <module>greenmail-junit5</module>
+    <module>greenmail-tests</module>
   </modules>
 
   <!-- who the developers are for the project -->

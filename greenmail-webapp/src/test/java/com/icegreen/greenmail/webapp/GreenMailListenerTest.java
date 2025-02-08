@@ -3,7 +3,7 @@ package com.icegreen.greenmail.webapp;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Enumeration;
@@ -16,10 +16,10 @@ import static org.easymock.EasyMock.eq;
 /**
  * Test for GreenMailListener.
  */
-public class GreenMailListenerTest {
+class GreenMailListenerTest {
 
     @Test
-    public void testStart() {
+    void testStart() {
         Map<String, String> paramValues = new HashMap<>();
         paramValues.put("greenmail.defaultHostname", "127.0.0.1");
         paramValues.put("greenmail.portOffset", "20000");

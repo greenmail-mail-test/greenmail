@@ -1,0 +1,1 @@
+For compatibility with the cyclic dependency, the test for this module are in the `greenmail-tests` project.

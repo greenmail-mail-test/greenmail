@@ -1,14 +1,14 @@
 package com.icegreen.greenmail.spring;
 
-import com.icegreen.greenmail.util.GreenMail;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import static com.icegreen.greenmail.spring.GreenMailBeanDefinitionParser.DEFAULT_SERVER_STARTUP_TIMEOUT;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+
+import com.icegreen.greenmail.util.GreenMail;
 
 /**
  * Tests GreenMailBean.
@@ -16,13 +16,13 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Marcel May (mm)
  */
 @ContextConfiguration
-@RunWith(SpringJUnit4ClassRunner.class)
-public class GreenMailBeanTest {
+@SpringJUnitConfig
+class GreenMailBeanTest {
     @Autowired
     private GreenMailBean greenMailBean;
 
     @Test
-    public void testCreate() {
+    void testCreate() {
         GreenMail greenMail = greenMailBean.getGreenMail();
 
         // Test if the protocol got activated
