@@ -10,17 +10,13 @@ import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import jakarta.mail.AuthenticationFailedException;
-import jakarta.mail.BodyPart;
-import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
-import jakarta.mail.Session;
-import jakarta.mail.Transport;
+import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMessage.RecipientType;
 import jakarta.mail.internet.MimeMultipart;
 import org.assertj.core.api.Assertions;
+import org.eclipse.angus.mail.smtp.SMTPTransport;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -212,6 +208,34 @@ public class SmtpServerTest {
         for (MimeMessage receivedMsg : emails) {
             assertThat(receivedMsg.getSubject()).isEqualTo(subject);
             assertThat(receivedMsg.getContent()).isEqualTo(body);
+        }
+    }
+
+    @Test
+    public void testXauth2() throws Throwable {
+        // Example based on https://developers.google.com/gmail/imap/xoauth2-protocol#initial_client_response_4
+        Session session = greenMail.getSmtp().createSession();
+        try (final SMTPTransport smtpTransport = (SMTPTransport) session.getTransport()) {
+            smtpTransport.connect();
+            assertThat(smtpTransport.getExtensionParameter("AUTH")).contains("XOAUTH2");
+
+            // Unauthenticated response
+            smtpTransport.issueCommand(
+                "AUTH XOAUTH2 dXNlcj1zb21ldXNlckBleGFtcGxlLmNvbQFhdXRoPUJlY" +
+                    "XJlciB5YTI5LnZGOWRmdDRxbVRjMk52YjNSbGNrQmhkSFJoZG1semRHRXVZMjl0Q2cBAQ==",
+                // https://datatracker.ietf.org/doc/html/rfc4954#section-6: 535
+                535);
+            assertThat(smtpTransport.getLastServerResponse()).startsWith("535 5.7.8  Authentication credentials invalid");
+
+            // Authenticated response
+            greenMail.setUser("someuser@example.com",
+                "ya29.vF9dft4qmTc2Nvb3RlckBhdHRhdmlzdGEuY29tCg");
+            smtpTransport.issueCommand(
+                "AUTH XOAUTH2 dXNlcj1zb21ldXNlckBleGFtcGxlLmNvbQFhdXRoPUJlY" +
+                    "XJlciB5YTI5LnZGOWRmdDRxbVRjMk52YjNSbGNrQmhkSFJoZG1semRHRXVZMjl0Q2cBAQ==",
+                // https://datatracker.ietf.org/doc/html/rfc4954#section-6: 235
+                235);
+            assertThat(smtpTransport.getLastServerResponse()).startsWith("235 2.7.0  Authentication Succeeded");
         }
     }
 
