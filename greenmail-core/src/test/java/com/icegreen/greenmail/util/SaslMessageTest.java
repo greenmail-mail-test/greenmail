@@ -21,4 +21,9 @@ public class SaslMessageTest {
         assertThat(saslMessage.getAuthcid()).isEqualTo("authcid");
         assertThat(saslMessage.getPasswd()).isEqualTo("passwd");
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParseWrongFormat() {
+	SaslMessage.parse("authzid");
+    }
 }
