@@ -43,8 +43,8 @@ The GreenMail project welcomes any contribution, so go ahead and fork/open a pul
 
   For rolling a release including version increment and release upload, do
 
-  `mvn clean release:prepare -Prelease,release-ossrh,docker,docker-tag-latest`
-  `mvn release:perform -Prelease,release-ossrh,docker,docker-tag-latest`
+  `mvn clean release:prepare -Prelease,docker,docker-tag-latest`
+  `mvn release:perform -Prelease,docker,docker-tag-latest`
 
   For a tagged release and deployment to [Sonatype OpenSource Repository Hosting][ossrh_maven] and later syncing to [Maven Central][maven_repository_release], do
 
