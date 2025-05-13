@@ -7,6 +7,8 @@
 package com.icegreen.greenmail.mail;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Objects;
+
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeUtility;
 
@@ -72,5 +74,47 @@ public class MailAddress {
         } catch (UnsupportedEncodingException e) {
             return str;
         }
+    }
+
+    /**
+     * Compares this MailAddress object to another for equality.
+     * Two MailAddress objects are considered equal if their email, host, and user parts
+     * are equal, ignoring case.
+     * <p>
+     * The name field was not considered in the equality check.
+     *
+     * @param object The object to compare with.
+     * @return True if the objects are equal, false otherwise.
+     */
+    @Override
+    public boolean equals(Object object) {
+
+        if (object instanceof MailAddress) {
+            MailAddress otherMailAddress = (MailAddress) object;
+
+            boolean emailsAreEqual = email.equalsIgnoreCase(otherMailAddress.getEmail());
+            boolean hostsAreEqual = host.equalsIgnoreCase(otherMailAddress.getHost());
+            boolean usersAreEqual = user.equalsIgnoreCase(otherMailAddress.getUser());
+
+            return emailsAreEqual && hostsAreEqual && usersAreEqual;
+        }
+
+        return false;
+    }
+
+    /**
+     * Computes the hash code for this MailAddress object.
+     * The hash code is based on the name, host, user, and email fields.
+     *
+     * @return The hash code for this MailAddress object.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+            name != null ? name : "",
+            host != null ? host : "",
+            user != null ? user : "",
+            email != null ? email : ""
+        );
     }
 }
