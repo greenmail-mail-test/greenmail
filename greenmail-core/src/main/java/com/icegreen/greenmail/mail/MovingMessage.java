@@ -6,13 +6,13 @@
  */
 package com.icegreen.greenmail.mail;
 
-import jakarta.mail.internet.MimeMessage;
-import java.util.LinkedList;
-import java.util.List;
-
 import com.icegreen.greenmail.smtp.auth.AuthenticationState;
 import com.icegreen.greenmail.smtp.auth.LoginAuthenticationState;
 import com.icegreen.greenmail.smtp.auth.PlainAuthenticationState;
+import jakarta.mail.internet.MimeMessage;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -21,7 +21,7 @@ import com.icegreen.greenmail.smtp.auth.PlainAuthenticationState;
 public class MovingMessage {
     private AuthenticationState authenticationState;
     private MailAddress returnPath;
-    private final List<MailAddress> toAddresses = new LinkedList<>();
+    private final Set<MailAddress> toAddresses = new HashSet<>();
     private MimeMessage message;
 
     /**
@@ -56,7 +56,7 @@ public class MovingMessage {
      * addresses from the mail header.
      * @return The address to which the mail is directed.
      */
-    public List<MailAddress> getToAddresses() {
+    public Set<MailAddress> getToAddresses() {
         return toAddresses;
     }
 
