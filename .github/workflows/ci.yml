@@ -20,6 +20,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ConcurrentCloseIT_ITERATIONS: "1000"
     strategy:
       matrix:
         java: [ '11', '17', '21' ]
