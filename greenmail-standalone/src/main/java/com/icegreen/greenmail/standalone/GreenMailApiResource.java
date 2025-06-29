@@ -39,9 +39,13 @@ public class GreenMailApiResource {
     // UI
     private static final String INDEX_CONTENT = loadResource("index.html");
     private static final String OPENAPI_CONTENT = loadResource("greenmail-openapi.yml");
+    private static final String JS_RAPIDOC = loadResource("js/rapidoc-min.js");
 
     private static String loadResource(String name) {
         try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(name)) {
+            if(null == is) {
+                throw new IllegalArgumentException("Can not load resource " + name + " from classpath");
+            }
             return new Scanner(is, StandardCharsets.UTF_8.name()).useDelimiter("\\A").next();
         } catch (IOException | NullPointerException e) {
             throw new IllegalArgumentException("Can not load resource " + name + " from classpath", e);
@@ -59,6 +63,13 @@ public class GreenMailApiResource {
     @Produces("application/yaml")
     public String openapi() {
         return OPENAPI_CONTENT;
+    }
+
+    @Path("/js/rapidoc-min.js")
+    @GET
+    @Produces("text/javascript")
+    public String jsRapidoc() {
+        return JS_RAPIDOC;
     }
 
     // General

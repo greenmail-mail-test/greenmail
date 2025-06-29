@@ -5,6 +5,13 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://unpkg.com/rapidoc/dist/rapidoc-min.js"></script>
+    <!-- Fallback if no Internet access -->
+    <script>
+        if ( customElements.get('rapi-doc-mini') === undefined ) {
+          console.log('GreenMail: Using local rapidoc fallback')
+          document.write('<script src="js/rapidoc-min.js"><\/script>')
+        }
+    </script>
 
     <style>
         .btn {
