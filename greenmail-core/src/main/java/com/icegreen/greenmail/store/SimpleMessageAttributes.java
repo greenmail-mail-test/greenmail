@@ -365,10 +365,6 @@ public class SimpleMessageAttributes
             StringBuilder buf = new StringBuilder();
             InternetAddress[] netAddrs = InternetAddress.parseHeader(address, false);
             for (InternetAddress netAddr : netAddrs) {
-                if (buf.length() > 0) {
-                    buf.append(SP);
-                }
-
                 buf.append(LB);
 
                 String personal = netAddr.getPersonal();
