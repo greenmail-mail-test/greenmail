@@ -1,14 +1,14 @@
 package com.icegreen.greenmail.util;
 
 /**
- * SASL mechanism message.
+ * SASL PLAIN mechanism message.
  * <p>
- * See https://tools.ietf.org/html/rfc4616
+ * See <a href="https://tools.ietf.org/html/rfc4616">PLAIN</a>
  */
 public class SaslMessage {
-    private String authzid;
-    private String authcid;
-    private String passwd;
+    private final String authzid;
+    private final String authcid;
+    private final String passwd;
 
     private SaslMessage(String authzid, String authcid, String passwd) {
         this.authzid = authzid;

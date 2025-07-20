@@ -1,35 +1,17 @@
 package com.icegreen.greenmail.smtp.auth;
 
 import com.icegreen.greenmail.smtp.commands.AuthCommand;
+import com.icegreen.greenmail.util.SaslXoauth2Message;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-
-public class XOAuth2AuthenticationState implements AuthenticationState, UsernameAuthentication{
-
-    private final String username;
-    private final String accessToken;
+public class XOAuth2AuthenticationState  implements AuthenticationState, UsernameAuthentication {
+    private final SaslXoauth2Message xoauth2Message;
 
     /**
-     * @param authenticationString base64("user=" {User} "^Aauth=Bearer " {Access Token} "^A^A")
+     * @param xoauth2Message parsed XOAuth2 message
      */
-    public XOAuth2AuthenticationState(String authenticationString) {
-        try {
-            byte[] decodedBytes = Base64.getDecoder().decode(authenticationString);
-            String decodedString = new String(decodedBytes, StandardCharsets.UTF_8);
-
-            String[] parts = decodedString.split("\\u0001");
-            if (parts.length > 2 || !parts[0].startsWith("user=") || !parts[1].startsWith("auth=Bearer ")) {
-                throw new IllegalArgumentException("Invalid authentication string format");
-            }
-
-            this.username = parts[0].substring(5);
-            this.accessToken = parts[1].substring(12);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid Base64 or malformed input: " + e.getMessage());
-        }
+    public XOAuth2AuthenticationState(SaslXoauth2Message xoauth2Message) {
+        this.xoauth2Message = xoauth2Message;
     }
-
 
     @Override
     public String getType() {
@@ -38,10 +20,10 @@ public class XOAuth2AuthenticationState implements AuthenticationState, Username
 
     @Override
     public String getUsername() {
-        return this.username;
+        return xoauth2Message.getUsername();
     }
 
     public String getAccessToken() {
-        return this.accessToken;
+        return xoauth2Message.getAccessToken();
     }
 }

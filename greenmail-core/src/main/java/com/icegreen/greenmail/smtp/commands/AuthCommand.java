@@ -16,6 +16,7 @@ import com.icegreen.greenmail.smtp.auth.XOAuth2AuthenticationState;
 import com.icegreen.greenmail.user.UserManager;
 import com.icegreen.greenmail.util.EncodingUtil;
 import com.icegreen.greenmail.util.SaslMessage;
+import com.icegreen.greenmail.util.SaslXoauth2Message;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -128,13 +129,15 @@ public class AuthCommand extends SmtpCommand {
 
     private void authXOAuth2(SmtpConnection conn, SmtpState state, SmtpManager manager, String[] commandParts) {
         if (commandParts.length != 3) {
-            conn.send(SMTP_SYNTAX_ERROR + " : Unsupported auth mechanism with unexpected values. Line is: <" + commandParts + ">");
+            conn.send(SMTP_SYNTAX_ERROR +
+                " : Unsupported auth mechanism with unexpected values. Line is: <" + Arrays.toString(commandParts) + ">");
         } else {
-            XOAuth2AuthenticationState authenticationContext = new XOAuth2AuthenticationState(commandParts[2]);
-
+            XOAuth2AuthenticationState authenticationContext = new XOAuth2AuthenticationState(
+                SaslXoauth2Message.parseBase64Encoded(commandParts[2]) );
             state.getMessage().setAuthenticationState(authenticationContext);
 
-            if (manager.getUserManager().test(authenticationContext.getUsername(), authenticationContext.getAccessToken())) {
+            if (manager.getUserManager().test(authenticationContext.getUsername(),
+                authenticationContext.getAccessToken())) {
                 conn.setAuthenticated(true);
                 conn.send(AUTH_SUCCEDED);
             } else {
@@ -147,8 +150,8 @@ public class AuthCommand extends SmtpCommand {
         return userManager.test(saslMessage.getAuthcid(), saslMessage.getPasswd());
     }
 
-    private SaslMessage parseInitialResponse(String initialReponse) {
-        String value = EncodingUtil.decodeBase64(initialReponse);
+    private SaslMessage parseInitialResponse(String initialResponse) {
+        String value = EncodingUtil.decodeBase64(initialResponse);
         // authorization-id\0authentication-id\0passwd
         return SaslMessage.parse(value);
     }
