@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
+import java.util.Properties;
 
 import static com.icegreen.greenmail.util.GreenMailUtil.createTextEmail;
 import static jakarta.mail.Flags.Flag.DELETED;
@@ -822,6 +823,33 @@ public class ImapServerTest {
             assertThat(messages).hasSize(1);
             Message msg = messages[0];
             assertThat(msg.getSubject()).isEqualTo(email.getSubject());
+        }
+    }
+
+    @Test
+    public void testXoauth2() throws Throwable {
+        Properties props = new Properties();
+        props.put("mail.imap.auth.mechanisms", "XOAUTH2");
+        final GreenMailUser user = greenMail.setUser("someuser@example.com",
+            "ya29.vF9dft4qmTc2Nvb3RlckBhdHRhdmlzdGEuY29tCg");
+
+        Session session = greenMail.getImap().createSession(props);
+        try (final IMAPStore store = (IMAPStore) session.getStore()) {
+            // Check that invalid token fails
+            assertThatThrownBy(() -> // Invalid token
+                store.connect(user.getLogin(), user.getPassword() + "invalid"))
+                .isInstanceOf(AuthenticationFailedException.class);
+            assertThatThrownBy(() -> // Unknown user
+                store.connect("invalid-"+user.getLogin(), user.getPassword()))
+                .isInstanceOf(AuthenticationFailedException.class);
+
+            // Check that valid token works
+            store.connect(user.getLogin(), user.getPassword());
+            try {
+                assertThat(store.getFolder("INBOX")).isNotNull();
+            } finally {
+                store.close();
+            }
         }
     }
 }

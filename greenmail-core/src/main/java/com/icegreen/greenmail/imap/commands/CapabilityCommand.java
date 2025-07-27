@@ -13,10 +13,9 @@ import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.store.FolderException;
 
 /**
- * Handles processeing for the CAPABILITY imap command.
+ * Handles processing for the CAPABILITY imap command.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 class CapabilityCommand extends CommandTemplate {
     public static final String NAME = "CAPABILITY";
@@ -25,7 +24,8 @@ class CapabilityCommand extends CommandTemplate {
     public static final String CAPABILITIES = "LITERAL+" + SP + "UIDPLUS"
         + SP + SortCommand.CAPABILITY
         + SP + IdleCommand.CAPABILITY
-        + SP + MoveCommand.CAPABILITY;
+        + SP + MoveCommand.CAPABILITY
+        + SP + AuthenticateCommand.CAPABILITY;
 
     public static final String CAPABILITY_RESPONSE = NAME + SP + VERSION + SP + CAPABILITIES;
 
