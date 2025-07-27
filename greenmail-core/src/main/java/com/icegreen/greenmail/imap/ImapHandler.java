@@ -59,8 +59,8 @@ public class ImapHandler extends AbstractSocketProtocolHandler implements ImapCo
                     this,
                     socket.getInetAddress().getHostAddress());
 
-            while (requestHandler.handleRequest(ins, outs, session)) {
-                // Loop ...
+            while (!isQuitting()) {
+                requestHandler.handleRequest(ins, outs, session);
             }
         } catch (Exception e) {
             throw new IllegalStateException("Can not handle IMAP connection", e);
