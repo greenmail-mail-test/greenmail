@@ -13,10 +13,9 @@ import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.user.GreenMailUser;
 
 /**
- * Handles processeing for the LOGIN imap command.
+ * Handles processing for the LOGIN imap command.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 class LoginCommand extends NonAuthenticatedStateCommand {
     public static final String NAME = "LOGIN";
