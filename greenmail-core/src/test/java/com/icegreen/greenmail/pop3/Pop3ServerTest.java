@@ -31,7 +31,7 @@ public class Pop3ServerTest {
     @Rule
     public final GreenMailRule greenMail = new GreenMailRule(new ServerSetup[]{
         ServerSetupTest.SMTP, ServerSetupTest.SMTPS,
-        ServerSetupTest.POP3.verbose(true), ServerSetupTest.POP3S});
+        ServerSetupTest.POP3, ServerSetupTest.POP3S});
 
     @Test
     public void testPop3Capabilities() throws MessagingException, UserException {
