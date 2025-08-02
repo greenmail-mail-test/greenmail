@@ -261,7 +261,12 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
                     dotIdx = spec.indexOf('.');
                     if (dotIdx > 0) { // Another sub part index?
                         spec = spec.substring(dotIdx + 1);
-                        pre = spec.substring(0, dotIdx);
+                        dotIdx = spec.indexOf('.');
+                        if (dotIdx > 0) {
+                            pre = spec.substring(0, dotIdx);
+                        } else {
+                            pre = spec;
+                        }
                     } else {
                         pre = null;
                     }
