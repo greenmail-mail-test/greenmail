@@ -5,8 +5,12 @@ changelog:
         - "*"
       exclude:
         labels:
+          - bug
           - chore
           - dependencies
+    - title: Bugfixes
+      labels:
+        - bug
     - title: Chore
       labels:
         - chore
