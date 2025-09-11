@@ -6,16 +6,16 @@
  */
 package com.icegreen.greenmail.pop3;
 
-import java.io.IOException;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
-import java.util.StringTokenizer;
-
 import com.icegreen.greenmail.pop3.commands.Pop3Command;
 import com.icegreen.greenmail.pop3.commands.Pop3CommandRegistry;
 import com.icegreen.greenmail.server.AbstractSocketProtocolHandler;
 import com.icegreen.greenmail.server.BuildInfo;
 import com.icegreen.greenmail.user.UserManager;
+
+import java.io.IOException;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.util.StringTokenizer;
 
 
 public class Pop3Handler extends AbstractSocketProtocolHandler {
@@ -51,7 +51,6 @@ public class Pop3Handler extends AbstractSocketProtocolHandler {
             conn.quit();
         } catch (Exception e) {
             if (!isQuitting()) {
-                log.error("Can not handle POP3 connection", e);
                 throw new IllegalStateException("Can not handle POP3 connection", e);
             }
         } finally {

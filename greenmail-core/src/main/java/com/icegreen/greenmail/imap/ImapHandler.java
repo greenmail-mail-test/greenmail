@@ -63,7 +63,9 @@ public class ImapHandler extends AbstractSocketProtocolHandler implements ImapCo
                 requestHandler.handleRequest(ins, outs, session);
             }
         } catch (Exception e) {
-            throw new IllegalStateException("Can not handle IMAP connection", e);
+            if (!isQuitting()) {
+                throw new IllegalStateException("Can not handle IMAP connection", e);
+            }
         } finally {
             close();
         }
