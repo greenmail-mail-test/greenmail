@@ -275,6 +275,10 @@
           <artifactId>maven-enforcer-plugin</artifactId>
           <version>3.6.1</version>
         </plugin>
+        <plugin>
+          <artifactId>maven-wrapper-plugin</artifactId>
+          <version>3.3.4</version>
+        </plugin>
         <!-- Inject POM version and scm version -->
         <plugin>
           <groupId>de.m3y.maven</groupId>
