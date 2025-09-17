@@ -550,7 +550,7 @@
       <dependency>
         <groupId>org.bouncycastle</groupId>
         <artifactId>bcpkix-jdk18on</artifactId>
-        <version>1.81</version>
+        <version>1.82</version>
       </dependency>
       <!-- Fix for CVE 2025-52999 -->
       <dependency>
