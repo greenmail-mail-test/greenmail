@@ -16,10 +16,10 @@ import com.icegreen.greenmail.store.FolderException;
  * <p>
  * See <a href="https://datatracker.ietf.org/doc/html/rfc2087#section-4-1">rfc2087</a>
  */
-public class QuotaRootCommand extends QuotaCommand {
+public class GetQuotaRootCommand extends GetQuotaCommand {
     public static final String NAME = "GETQUOTAROOT";
 
-    QuotaRootCommand() {
+    GetQuotaRootCommand() {
         super(NAME);
     }
     @Override

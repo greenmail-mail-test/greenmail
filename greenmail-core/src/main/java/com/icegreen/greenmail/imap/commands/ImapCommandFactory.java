@@ -71,8 +71,8 @@ public class ImapCommandFactory {
 
         // Quota support
         imapCommands.put(SetQuotaCommand.NAME, SetQuotaCommand.class);
-        imapCommands.put(QuotaCommand.NAME, QuotaCommand.class);
-        imapCommands.put(QuotaRootCommand.NAME, QuotaRootCommand.class);
+        imapCommands.put(GetQuotaCommand.NAME, GetQuotaCommand.class);
+        imapCommands.put(GetQuotaRootCommand.NAME, GetQuotaRootCommand.class);
 
         // RFC2177: IDLE
         imapCommands.put(IdleCommand.NAME, IdleCommand.class);

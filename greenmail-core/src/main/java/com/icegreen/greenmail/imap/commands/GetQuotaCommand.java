@@ -13,17 +13,15 @@ import com.icegreen.greenmail.store.FolderException;
  * Implements IMAP Quota Extension.
  * <p>
  * See <a href="https://datatracker.ietf.org/doc/html/rfc2087#section-4-1">rfc2087</a>
- *
- * @author mm
  */
-public class QuotaCommand extends AuthenticatedStateCommand {
-    public static final String NAME = "QUOTA";
+public class GetQuotaCommand extends AuthenticatedStateCommand {
+    public static final String NAME = "GETQUOTA";
 
-    QuotaCommand() {
+    GetQuotaCommand() {
         super(NAME, null);
     }
 
-    public QuotaCommand(String name) {
+    public GetQuotaCommand(String name) {
         super(name, null);
     }
 
@@ -34,18 +32,20 @@ public class QuotaCommand extends AuthenticatedStateCommand {
             response.commandFailed(this,"Quota is not supported. Activate quota capability first");
         }
 
-        String root = parser.mailbox(request);
+        String quotaRoot = parser.astring(request);
         // NAME root (name usage limit)
-
         Quota[] quota = session.getHost().getStore().getQuota(
-                root, session.getUser().getQualifiedMailboxName());
-        for(Quota q: quota) {
-            StringBuilder buf = new StringBuilder();
-            appendQuota(q, buf);
-            response.untaggedResponse(buf.toString());
+            quotaRoot, session.getUser().getQualifiedMailboxName());
+        if(null==quota||quota.length==0) {
+            response.commandFailed(this, "No such quota root: "+quotaRoot);
+        } else {
+            for (Quota q : quota) {
+                StringBuilder buf = new StringBuilder();
+                appendQuota(q, buf);
+                response.untaggedResponse(buf.toString());
+            }
+            response.commandComplete(this);
         }
-
-        response.commandComplete(this);
     }
 
     protected void appendQuota(Quota quota, StringBuilder buf) {
@@ -100,7 +100,7 @@ The GETQUOTA command takes the name of a quota root and returns the quota root's
 
 This response occurs as a result of a GETQUOTA or GETQUOTAROOT command. The first string is the name of the quota root for which this quota applies.
 
-The name is followed by a S-expression format list of the resource usage and limits of the quota root. The list contains zero or more triplets. Each triplet conatins a resource name, the current usage of the resource, and the resource limit.
+The name is followed by a S-expression format list of the resource usage and limits of the quota root. The list contains zero or more triplets. Each triplet contains a resource name, the current usage of the resource, and the resource limit.
 
 Resources not named in the list are not limited in the quota root. Thus, an empty list means there are no administrative resource limits in the quota root.
 

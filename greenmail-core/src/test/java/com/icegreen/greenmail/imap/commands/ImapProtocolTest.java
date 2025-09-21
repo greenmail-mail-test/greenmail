@@ -476,6 +476,44 @@ public class ImapProtocolTest {
         }
     }
 
+    @Test
+    public void testQuta() throws MessagingException {
+        // JavaMail only uses GETQUOTAROOT, not GETQUOTA
+        greenMail.setUser("foo2@localhost", "pwd");
+        store.connect("foo2@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+
+            // 1. Test handling unknown quota root
+            IMAPFolder.ProtocolCommand cmd1 = protocol -> protocol.command("GETQUOTA \"unknown\"", null);
+            Response[] ret1 = (Response[]) folder.doCommand(cmd1);
+            IMAPResponse response1 = (IMAPResponse) ret1[0];
+            assertThat(response1.isNO()).isTrue(); // No quota
+            assertThat(response1.toString()).contains("NO GETQUOTA failed. No such quota root: unknown");
+
+            // 2. Test set quota
+            String quotaRoot = "#user/alice";
+            IMAPFolder.ProtocolCommand cmd2 = protocol -> protocol.command("SETQUOTA \"#user/alice\" (STORAGE 510)", null);
+            Response[] ret2 = (Response[]) folder.doCommand(cmd2);
+            IMAPResponse response2 = (IMAPResponse) ret2[0];
+            assertThat(response2.isOK()).isTrue(); // No quota
+            assertThat(response2.toString()).contains("OK SETQUOTA completed.");
+
+            // 3. Test get newly-set quota
+            IMAPFolder.ProtocolCommand cmd3 = protocol -> protocol.command("GETQUOTA \""+quotaRoot+"\"", null);
+            Response[] ret3 = (Response[]) folder.doCommand(cmd3);
+            IMAPResponse response3_0 = (IMAPResponse) ret3[0];
+            assertThat(response3_0.isUnTagged()).isTrue();
+            assertThat(response3_0).hasToString("* QUOTA \"#user/alice\" (STORAGE 0 510)");
+            IMAPResponse response3_1 = (IMAPResponse) ret3[1];
+            assertThat(response3_1.isOK()).isTrue();
+            assertThat(response3_1.toString()).contains("OK GETQUOTA completed.");
+        } finally {
+            store.close();
+        }
+    }
+
     private String msnListToUidString(Map<Integer, Long> uids, int... msnList) {
         StringBuilder buf = new StringBuilder();
         for (int msn : msnList) {
