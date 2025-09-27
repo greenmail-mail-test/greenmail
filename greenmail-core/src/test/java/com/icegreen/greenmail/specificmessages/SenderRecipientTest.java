@@ -2,57 +2,52 @@ package com.icegreen.greenmail.specificmessages;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.server.AbstractServer;
-import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.Retriever;
-import com.icegreen.greenmail.util.ServerSetupTest;
-import com.icegreen.greenmail.util.UserUtil;
-import org.eclipse.angus.mail.imap.IMAPFolder;
-import org.eclipse.angus.mail.imap.IMAPStore;
+import com.icegreen.greenmail.util.*;
 import jakarta.mail.Address;
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import org.eclipse.angus.mail.imap.IMAPFolder;
+import org.eclipse.angus.mail.imap.IMAPStore;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests if senders and recipients of received messages are set correctly and if messages are received by the correct
- * receivers.
+ * Tests if senders and recipients of received messages are set correctly
+ * and if messages are received by the correct receivers.
  */
 public class SenderRecipientTest {
     @Rule
     public GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_POP3_IMAP);
 
-    private static final InternetAddress[] TO_ADDRESSES;
-    private static final InternetAddress[] CC_ADDRESSES;
-    private static final InternetAddress[] BCC_ADDRESSES;
+    private static final InternetAddress[] TO_ADDRESSES = new InternetAddress[]{
+        internetAddress("to1@localhost", "To 1"),
+        internetAddress("to2@localhost", "To 2")
+    };
+    private static final InternetAddress[] CC_ADDRESSES = new InternetAddress[]{
+        internetAddress("cc1@localhost", "Cc 1"),
+        internetAddress("cc2@localhost", "Cc 2")
+    };
+    private static final InternetAddress[] BCC_ADDRESSES = new InternetAddress[]{
+        internetAddress("bcc1@localhost", "Bcc 1"),
+        internetAddress("bcc2@localhost", "Bcc 2")
+    };
+    private static final InternetAddress FROM_ADDRESS = internetAddress("from@localhost", "From");
 
-    private static final InternetAddress FROM_ADDRESS;
-
-    static {
+    private static InternetAddress internetAddress(String address, String personal) {
         try {
-            TO_ADDRESSES = new InternetAddress[]{
-                    new InternetAddress("to1@localhost", "To 1"),
-                    new InternetAddress("to2@localhost", "To 2")
-            };
-            CC_ADDRESSES = new InternetAddress[]{
-                    new InternetAddress("cc1@localhost", "Cc 1"),
-                    new InternetAddress("cc2@localhost", "Cc 2")
-            };
-            BCC_ADDRESSES = new InternetAddress[]{
-                    new InternetAddress("bcc1@localhost", "Bcc 1"),
-                    new InternetAddress("bcc2@localhost", "Bcc 2")
-            };
-            FROM_ADDRESS = new InternetAddress("from@localhost", "From");
+            return new InternetAddress(address, personal);
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException("Can not create internet address of address  part <"
+                + address + "> and personal part <" + personal + ">", e);
         }
     }
 
@@ -95,11 +90,16 @@ public class SenderRecipientTest {
     @Test
     public void testSendAndReceiveWithQuotedAddress() throws MessagingException, IOException {
         // See https://en.wikipedia.org/wiki/Email_address#Local-part
-        String[] toList = {"\"John..Doe\"@localhost",
-                "abc.\"defghi\".xyz@localhost",
-                "\"abcdefghixyz\"@localhost",
-                "\"Foo Bar\"admin@localhost"
+        String[] toList = {
+            "\"John..Doe\"@localhost",
+            "abc.'defghi'.xyz@localhost",
+            "abc.\"defghi\".xyz@localhost", // Requires strict=false
+             "\"abcdefghixyz\"@localhost",
+             "\"Foo Bar\"admin@localhost"   // Requires strict=false
         };
+        Properties properties = new Properties();
+        properties.setProperty("mail.mime.address.strict", "false");
+
         for(String to: toList) {
             greenMail.setUser(to, "pwd");
             InternetAddress[] toAddress = InternetAddress.parse(to);
@@ -112,7 +112,7 @@ public class SenderRecipientTest {
 
             assertThat(greenMail.waitForIncomingEmail(5000, 1)).isTrue();
 
-            final IMAPStore store = greenMail.getImap().createStore();
+            final IMAPStore store = (IMAPStore) greenMail.getImap().createSession(properties).getStore();
             store.connect(to, "pwd");
             try {
                 IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
@@ -125,7 +125,9 @@ public class SenderRecipientTest {
                 assertThat(msg.getSubject()).isEqualTo(subject);
                 assertThat(msg.getContent()).hasToString(content);
                 assertThat(msg.getRecipients(Message.RecipientType.TO)).isEqualTo(toAddress);
-            } finally {
+            } catch (MessagingException e) {
+                throw new IllegalStateException("Can not fetch message for recipient <" + to + ">", e);
+            }finally {
                 store.close();
             }
         }
