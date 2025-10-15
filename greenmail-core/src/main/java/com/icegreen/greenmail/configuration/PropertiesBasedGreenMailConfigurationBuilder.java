@@ -4,6 +4,8 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.function.BinaryOperator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Creates GreenMailConfiguration from properties.
@@ -110,20 +112,28 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
         return localPart;
     }
 
+    private static final Pattern USER_PATTERN = Pattern.compile("^([^:]+):(?:(.+)@([^@]+)|(.+))$");
+
     protected void extractAndAddUser(GreenMailConfiguration configuration, BinaryOperator<String> buildLogin, String user) {
-        // login:pwd@domain
-        String[] userParts = user.split("[:@]");
-        switch (userParts.length) {
-            case 2:
-                configuration.withUser(userParts[0], userParts[1]);
-                break;
-            case 3:
-                configuration.withUser(userParts[0] + '@' + userParts[2],
-                    buildLogin.apply(userParts[0], userParts[2]), userParts[1]);
-                break;
-            default:
-                throw new IllegalArgumentException("Expected format login:pwd[@domain] but got " + user
-                    + " parsed to " + Arrays.toString(userParts));
+        // login:pwd@domain or login:pwd
+        Matcher matcher = USER_PATTERN.matcher(user);
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("Expected format login:pwd[@domain] but got " + user);
+        }
+
+        String login = matcher.group(1);
+        String pwd;
+        String domain;
+
+        if (matcher.group(3) != null) {
+            // Format with domain: login:pwd@domain
+            pwd = matcher.group(2);
+            domain = matcher.group(3);
+            configuration.withUser(login + '@' + domain, buildLogin.apply(login, domain), pwd);
+        } else {
+            // Format without domain: login:pwd
+            pwd = matcher.group(4);
+            configuration.withUser(login, pwd);
         }
     }
 }

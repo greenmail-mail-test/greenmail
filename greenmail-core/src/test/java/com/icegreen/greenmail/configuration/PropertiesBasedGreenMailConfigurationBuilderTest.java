@@ -19,6 +19,17 @@ public class PropertiesBasedGreenMailConfigurationBuilderTest {
     }
 
     @Test
+    public void testBuildForSingleUserWithColonInPassword() {
+        Properties props = createPropertiesFor(PropertiesBasedGreenMailConfigurationBuilder.GREENMAIL_USERS,
+                "foo1:pw:rd@1@bar.com");
+        GreenMailConfiguration config = new PropertiesBasedGreenMailConfigurationBuilder().build(props);
+
+        assertThat(config).isNotNull();
+        assertThat(config.getUsersToCreate()).hasSize(1);
+        assertThat(config.getUsersToCreate().get(0)).isEqualTo(new UserBean("foo1@bar.com", "foo1", "pw:rd@1"));
+    }
+
+    @Test
     public void testBuildForListOfUsers() {
         Properties props = createPropertiesFor(PropertiesBasedGreenMailConfigurationBuilder.GREENMAIL_USERS,
                 "foo1:pwd1@bar.com,foo2:pwd2,foo3:pwd3@bar3.com");
