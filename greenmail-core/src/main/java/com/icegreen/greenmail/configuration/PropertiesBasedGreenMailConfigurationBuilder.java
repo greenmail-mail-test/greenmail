@@ -112,18 +112,21 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
 
     protected void extractAndAddUser(GreenMailConfiguration configuration, BinaryOperator<String> buildLogin, String user) {
         // login:pwd@domain
-        String[] userParts = user.split("[:@]");
-        switch (userParts.length) {
-            case 2:
-                configuration.withUser(userParts[0], userParts[1]);
-                break;
-            case 3:
-                configuration.withUser(userParts[0] + '@' + userParts[2],
-                    buildLogin.apply(userParts[0], userParts[2]), userParts[1]);
-                break;
-            default:
-                throw new IllegalArgumentException("Expected format login:pwd[@domain] but got " + user
-                    + " parsed to " + Arrays.toString(userParts));
+        try {
+            int posColon = user.indexOf(':');
+            int posAt = user.indexOf('@');
+            String login = user.substring(0, posColon);
+            String pwd = user.substring(posColon + 1, posAt);
+            String domain = user.substring(posAt + 1);
+            
+            if (domain.isEmpty()) {
+                configuration.withUser(login, pwd);
+            } else {
+                configuration.withUser(login + '@' + domain, buildLogin.apply(login, domain), pwd);
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Expected format login:pwd[@domain] but got " + user, e);
         }
+        
     }
 }
