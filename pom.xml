@@ -544,13 +544,10 @@
       <!-- Testing TLS -->
       <dependency>
         <groupId>org.bouncycastle</groupId>
-        <artifactId>bcprov-jdk18on</artifactId>
+        <artifactId>bc-jdk18on-bom</artifactId>
         <version>1.83</version>
-      </dependency>
-      <dependency>
-        <groupId>org.bouncycastle</groupId>
-        <artifactId>bcpkix-jdk18on</artifactId>
-        <version>1.83</version>
+        <scope>import</scope>
+        <type>pom</type>
       </dependency>
       <!-- Fix for CVE 2025-52999 -->
       <dependency>
