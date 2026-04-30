@@ -115,6 +115,11 @@ public class SearchCommandParserTest {
         assertThat(searchTerm).isEqualTo(expectedTerm);
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void testUnsupportedAtomSpecialChar() throws ProtocolException {
+	parse("*");
+    }
+
     private SearchTerm parse(String line) throws ProtocolException {
         final byte[] bytes = (line.endsWith("\n") ? line : (line + '\n')).getBytes();
         ByteArrayInputStream ins = new ByteArrayInputStream(bytes);
