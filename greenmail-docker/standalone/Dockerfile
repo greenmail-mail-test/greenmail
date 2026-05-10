@@ -19,11 +19,14 @@ EXPOSE 3025 3465 3110 3995 3143 3993 8080
 # Configuration options
 #######################
 ENV JAVA_OPTS="-Djava.net.preferIPv4Stack=true"
+# Default GreenMail configuration options
 ENV GREENMAIL_OPTS="-Dgreenmail.setup.test.all \
     -Dgreenmail.hostname=0.0.0.0 \
     -Dgreenmail.tls.keystore.file=/home/greenmail/greenmail.p12 \
     -Dgreenmail.tls.keystore.password=changeit \
     -Dgreenmail.auth.disabled"
+# Provides additional GreenMail options. Useful for extending default GREENMAIL_OPTS.
+ENV GREENMAIL_ADDITIONAL_OPTS=""
 
 #######################
 # Run as user greenmail

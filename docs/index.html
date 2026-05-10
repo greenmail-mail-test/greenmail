@@ -934,6 +934,13 @@ java -Dgreenmail.smtp.hostname=127.0.0.1 -Dgreenmail.smtp.port=4025 \
                             </td>
                         </tr>
                         <tr>
+                            <td>GREENMAIL_ADDITIONAL_OPTS</td>
+                            <td>Provides additional GreenMail options.
+                                Useful for extending default GREENMAIL_OPTS.<br>
+                                Requires GreenMail 2.1.9+!</td>
+                            <td></td>
+                        </tr>
+                        <tr>
                             <td>JAVA_OPTS</td>
                             <td>Generic JVM options</td>
                             <td>-Djava.net.preferIPv4Stack=true</td>
@@ -999,7 +1006,7 @@ docker run -t -i -p 3025:3025 -p 3110:3110 -p 3143:3143 \
 
                 <h5>Passing configuration options to GreenMail Standalone Docker image</h5>
                 <p>You can also configure the JVM and GreenMail configuration options via the Docker environment
-                    variables JAVA_OPTS and GREENMAIL_OPTS:
+                    variables JAVA_OPTS, GREENMAIL_OPTS and GREENMAIL_ADDITIONAL_OPTS:
                 </p>
                 <pre><code class="language-bash"><!-- @formatter:off -->
 docker run -t -i \
