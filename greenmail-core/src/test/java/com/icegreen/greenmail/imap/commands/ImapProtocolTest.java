@@ -158,6 +158,28 @@ public class ImapProtocolTest {
     }
 
     @Test
+    public void testFetchPartialOffsetBeyondContent() throws MessagingException {
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+
+            // A partial origin octet at or beyond the content length must return an
+            // empty result instead of failing, see https://tools.ietf.org/html/rfc3501#section-6.4.5
+            Response[] ret = (Response[]) folder.doCommand(
+                protocol -> protocol.command("UID FETCH 1 (BODY[HEADER]<100000.30>)", null));
+            assertThat(ret[ret.length - 1].isOK()).isTrue();
+
+            FetchResponse fetchResponse = (FetchResponse) ret[0];
+            BODY body = fetchResponse.getItem(BODY.class);
+            assertThat(body.isHeader()).isTrue();
+            assertThat(body.getByteArray().getCount()).isEqualTo(0);
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
     public void testSearchSequenceSet() throws MessagingException {
         store.connect("foo@localhost", "pwd");
         try {

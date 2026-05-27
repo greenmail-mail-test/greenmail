@@ -557,16 +557,17 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         int size;
 
         int computeLength(final int contentSize) {
+            final int effectiveStart = computeStart(contentSize);
             if (size > 0) {
-                return Math.min(size, contentSize - start); // Only up to max available bytes
+                return Math.min(size, contentSize - effectiveStart); // Only up to max available bytes
             } else {
-                // First len bytes
-                return contentSize;
+                // Remaining bytes starting at the origin octet
+                return contentSize - effectiveStart;
             }
         }
 
         int computeStart(final int contentSize) {
-            return Math.min(start, contentSize);
+            return Math.min(Math.max(start, 0), contentSize);
         }
 
         public static Partial as(int start, int size) {
