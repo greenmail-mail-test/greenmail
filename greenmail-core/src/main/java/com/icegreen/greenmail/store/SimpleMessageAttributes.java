@@ -430,19 +430,19 @@ public class SimpleMessageAttributes
         if (contentID == null) {
             buf.append(NIL);
         } else {
-            buf.append(Q).append(contentID).append(Q);
+            buf.append(Q).append(escapeHeader(contentID)).append(Q);
         }
         buf.append(SP);
         if (contentDesc == null) {
             buf.append(NIL);
         } else {
-            buf.append(Q).append(contentDesc).append(Q);
+            buf.append(Q).append(escapeHeader(contentDesc)).append(Q);
         }
         buf.append(SP);
         if (contentEncoding == null) {
             buf.append(NIL);
         } else {
-            buf.append(Q).append(contentEncoding).append(Q);
+            buf.append(Q).append(escapeHeader(contentEncoding)).append(Q);
         }
         buf.append(SP);
         buf.append(size);
@@ -512,7 +512,7 @@ public class SimpleMessageAttributes
                 //4. body id -------
                 buf.append(' ');
                 if (null != contentID ) {
-                    buf.append(Q).append(contentID).append(Q);
+                    buf.append(Q).append(escapeHeader(contentID)).append(Q);
                 } else {
                     buf.append(NIL);
                 }
@@ -520,7 +520,7 @@ public class SimpleMessageAttributes
                 buf.append(' ');
                 if (null != contentDesc) {
                     buf.append('\"');
-                    buf.append(contentDesc);
+                    buf.append(escapeHeader(contentDesc));
                     buf.append('\"');
                 } else {
                     buf.append(NIL);
@@ -529,7 +529,7 @@ public class SimpleMessageAttributes
                 buf.append(' ');
                 if (null != contentEncoding) {
                     buf.append('\"');
-                    buf.append(contentEncoding);
+                    buf.append(escapeHeader(contentEncoding));
                     buf.append('\"');
                 } else {
                     buf.append(NIL);
