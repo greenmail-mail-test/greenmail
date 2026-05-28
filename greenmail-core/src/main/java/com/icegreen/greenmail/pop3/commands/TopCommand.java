@@ -65,7 +65,7 @@ public class TopCommand
             throws IOException {
         String line;
         while ((line = in.readLine()) != null) {
-            conn.println(line);
+            writeLine(conn, line);
             if (line.isEmpty())
                 break;
         }
@@ -77,8 +77,18 @@ public class TopCommand
         int count = 0;
         String line;
         while ((line = in.readLine()) != null && count < numLines) {
-            conn.println(line);
+            writeLine(conn, line);
             count++;
+        }
+    }
+
+    // RFC 1939 §3: any line of a multi-line response that begins with the
+    // termination octet must be byte-stuffed with an extra '.'.
+    private static void writeLine(Pop3Connection conn, String line) {
+        if (line.startsWith(".")) {
+            conn.println("." + line);
+        } else {
+            conn.println(line);
         }
     }
 }
