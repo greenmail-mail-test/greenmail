@@ -673,10 +673,10 @@ public class SimpleMessageAttributes
             // https://tools.ietf.org/html/rfc3501#section-9 body-fld-dsp
             StringBuilder ret = new StringBuilder();
             if (null == params) {
-                ret.append(Q).append(value).append(Q);
+                ret.append(Q).append(escapeHeader(value)).append(Q);
             } else {
                 ret.append(LB);
-                ret.append(Q).append(value).append(Q + SP);
+                ret.append(Q).append(escapeHeader(value)).append(Q + SP);
                 if (params.isEmpty()) {
                     ret.append(NIL);
                 } else {
@@ -706,7 +706,7 @@ public class SimpleMessageAttributes
         }
     }
 
-    private String escapeHeader(final String text) {
+    private static String escapeHeader(final String text) {
         return MimeUtility.unfold(text).replace("\\", "\\\\").replace("\"", "\\\"");
     }
 
