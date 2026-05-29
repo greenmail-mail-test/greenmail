@@ -371,10 +371,10 @@ public class SimpleMessageAttributes
                 if (personal != null && (!personal.isEmpty())) {
                     try {
                         String encodedPersonal = MimeUtility.encodeWord(personal, StandardCharsets.UTF_8.name(),null);
-                        buf.append(Q).append(encodedPersonal).append(Q);
+                        buf.append(Q).append(escapeHeader(encodedPersonal)).append(Q);
                     } catch (UnsupportedEncodingException e) {
                         log.warn("Failed to encode personal address part {} for {}, using personal 'as is'", personal, netAddr);
-                        buf.append(Q).append(personal).append(Q);
+                        buf.append(Q).append(escapeHeader(personal)).append(Q);
                     }
                 } else {
                     buf.append(NIL);
