@@ -128,7 +128,7 @@ class ListCommand extends AuthenticatedStateCommand {
             if (mailboxName.isEmpty()) {
                 message.append("\"\"");
             } else {
-                message.append('\"').append(BASE64MailboxEncoder.encode(mailboxName)).append('\"');
+                message.append('\"').append(CommandParser.escapeQuotedSpecials(BASE64MailboxEncoder.encode(mailboxName))).append('\"');
             }
 
             response.commandResponse(this, message.toString());
