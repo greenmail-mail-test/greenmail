@@ -57,7 +57,7 @@ class StatusCommand extends AuthenticatedStateCommand {
         }
 
         StringBuilder buffer = new StringBuilder();
-        buffer.append('\"').append(BASE64MailboxEncoder.encode(mailboxName)).append('\"');
+        buffer.append('\"').append(CommandParser.escapeQuotedSpecials(BASE64MailboxEncoder.encode(mailboxName))).append('\"');
         buffer.append(SP);
         buffer.append('(');
 

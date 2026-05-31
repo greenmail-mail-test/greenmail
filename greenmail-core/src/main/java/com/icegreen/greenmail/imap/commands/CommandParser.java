@@ -417,6 +417,14 @@ public class CommandParser {
     }
 
     /**
+     * Escapes the quoted-specials backslash and double-quote so a value can be
+     * safely emitted inside an IMAP quoted string (RFC 3501).
+     */
+    static String escapeQuotedSpecials(String value) {
+        return value.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
+
+    /**
      * Consumes the request up to and including the eno-of-line.
      *
      * @param request The request
