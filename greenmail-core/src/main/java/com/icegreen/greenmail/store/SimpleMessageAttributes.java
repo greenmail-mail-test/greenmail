@@ -665,7 +665,13 @@ public class SimpleMessageAttributes
         }
 
         private String strip(String s) {
-            return s.trim().replaceAll("\\\"", "");
+            s = s.trim();
+            // Unwrap a single surrounding pair of double quotes from the raw parameter.
+            if (s.length() >= 2 && s.charAt(0) == '"' && s.charAt(s.length() - 1) == '"') {
+                s = s.substring(1, s.length() - 1);
+            }
+            // Escape quoted-specials so the value can't break out of the IMAP quoted string.
+            return s.replace("\\", "\\\\").replace("\"", "\\\"");
         }
 
         @Override
