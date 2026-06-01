@@ -476,8 +476,8 @@ public class SimpleMessageAttributes
             StringBuilder buf = new StringBuilder();
             buf.append(LB);
             if (primaryType.equalsIgnoreCase("TEXT")) {
-                buf.append('"').append(primaryType).append("\" \"")
-                    .append(secondaryType).append("\" ")
+                buf.append('"').append(escapeHeader(primaryType)).append("\" \"")
+                    .append(escapeHeader(secondaryType)).append("\" ")
                     .append(fields)
                     .append(' ')
                     .append(lineCount);
@@ -496,15 +496,15 @@ public class SimpleMessageAttributes
 //                    setupLogger(parts[i]); // reset transient getLogger()
                     buf.append(part.getBodyStructure(includeExtension));
                 }
-                buf.append(SP + Q).append(secondaryType).append(Q);
+                buf.append(SP + Q).append(escapeHeader(secondaryType)).append(Q);
             } else {
                 //1. primary type -------
                 buf.append('\"');
-                buf.append(primaryType.toUpperCase());
+                buf.append(escapeHeader(primaryType.toUpperCase()));
                 buf.append('\"');
                 //2. sec type -------
                 buf.append(" \"");
-                buf.append(secondaryType.toUpperCase());
+                buf.append(escapeHeader(secondaryType.toUpperCase()));
                 buf.append('\"');
                 //3. params -------
                 buf.append(' ');
