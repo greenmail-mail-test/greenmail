@@ -68,10 +68,24 @@ public class GetQuotaCommand extends AuthenticatedStateCommand {
 
     protected void appendQuotaRootName(Quota quota, StringBuilder buf) {
         String rootName = quota.quotaRoot;
-        if(null == rootName || rootName.isEmpty()) {
-            rootName = "\"\"";
+        if (null == rootName) {
+            rootName = "";
         }
-        buf.append('\"').append(rootName).append('\"');
+        buf.append(quoteName(rootName));
+    }
+
+    /**
+     * Renders a client-supplied quota root / mailbox name as an IMAP quoted string,
+     * escaping the quoted-specials and dropping CR/LF so it cannot terminate the
+     * quoted string early or inject extra response lines.
+     */
+    protected static String quoteName(String name) {
+        String escaped = name
+            .replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+            .replace("\r", "")
+            .replace("\n", "");
+        return '"' + escaped + '"';
     }
 }
 
