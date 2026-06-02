@@ -349,7 +349,7 @@ public class CommandParser {
         return flags;
     }
 
-    public void setFlag(String flagString, Flags flags) {
+    public void setFlag(String flagString, Flags flags) throws ProtocolException {
         if (flagString.equalsIgnoreCase(MessageFlags.ANSWERED)) {
             flags.add(Flags.Flag.ANSWERED);
         } else if (flagString.equalsIgnoreCase(MessageFlags.DELETED)) {
@@ -363,9 +363,24 @@ public class CommandParser {
         } else if (flagString.equalsIgnoreCase(MessageFlags.RECENT)) {
             flags.add(Flags.Flag.RECENT);
         } else {
-            // User flag
-            flags.add(flagString);
+            // User flag (flag-keyword = atom). Keywords are echoed verbatim in
+            // FLAGS/PERMANENTFLAGS/FETCH FLAGS responses, so reject anything that is
+            // not a valid atom before it can break the parenthesized flag list.
+            flags.add(validateKeyword(flagString));
         }
+    }
+
+    private String validateKeyword(String keyword) throws ProtocolException {
+        if (keyword.isEmpty()) {
+            throw new ProtocolException("Invalid flag keyword: empty");
+        }
+        for (int i = 0; i < keyword.length(); i++) {
+            char chr = keyword.charAt(i);
+            if (!isCHAR(chr) || isAtomSpecial(chr) || isQuotedSpecial(chr)) {
+                throw new ProtocolException("Invalid flag keyword: '" + keyword + '\'');
+            }
+        }
+        return keyword;
     }
 
     /**
