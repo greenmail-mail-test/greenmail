@@ -39,7 +39,7 @@ public class GetQuotaRootCommand extends GetQuotaCommand {
             buf.append(' ');
             appendQuotaRootName(q, buf);
         }
-        response.untaggedResponse("QUOTAROOT "+root);
+        response.untaggedResponse("QUOTAROOT " + quoteName(root));
         for (Quota q : quota) {
             buf = new StringBuilder();
             appendQuota(q, buf);
