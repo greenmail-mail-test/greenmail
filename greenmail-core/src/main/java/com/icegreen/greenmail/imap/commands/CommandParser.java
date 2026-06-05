@@ -311,6 +311,13 @@ public class CommandParser {
         StringBuilder quoted = new StringBuilder();
         char next = request.nextChar();
         while (next != '"') {
+            // RFC 3501: a quoted string is *QUOTED-CHAR, and QUOTED-CHAR excludes CR and LF.
+            // Clients must use a literal to carry such octets. Accepting them here lets a
+            // quoted argument smuggle line breaks into the value, which later surface as
+            // forged lines in untagged responses that echo the argument.
+            if (isCrOrLf(next)) {
+                throw new ProtocolException("Invalid character in quoted string: CR and LF are not allowed, use a literal instead");
+            }
             if (next == '\\') {
                 request.consume();
                 next = request.nextChar();
