@@ -91,10 +91,11 @@ public class CommandParser {
     }
 
     /**
-     * Reads an argument of type "nstring" from the request.
-     * https://tools.ietf.org/html/rfc3501#page-88 :
+     * Reads an argument of type <a href="https://tools.ietf.org/html/rfc3501#page-88">"nstring"</a> from the request.
+     * <pre>
      * nstring         = string / nil
      * nil             = "NIL"
+     * </pre>
      */
     public String nstring(ImapRequestLineReader request) throws ProtocolException {
         char next = request.nextWordChar();
@@ -501,16 +502,7 @@ public class CommandParser {
     protected class AtomCharValidator implements CharacterValidator {
         @Override
         public boolean isValid(char chr) {
-            return isCHAR(chr) && !isAtomSpecial(chr) &&
-                    !isListWildcard(chr) && !isQuotedSpecial(chr);
-        }
-
-        private boolean isAtomSpecial(char chr) {
-            return chr == '(' ||
-                    chr == ')' ||
-                    chr == '{' ||
-                    chr == ' ' ||
-                    chr == Character.CONTROL;
+            return isCHAR(chr) && !isAtomSpecial(chr);
         }
     }
 
@@ -523,15 +515,19 @@ public class CommandParser {
     }
 
     protected boolean isAtomSpecial(final char next) {
+        // RFC 3501:
         // atom-specials   = "(" / ")" / "{" / SP / CTL / list-wildcards /
         //                  quoted-specials / resp-specials
+        // quoted-specials = DQUOTE / "\"
+        // list-wildcards  = "%" / "*"
+        // resp-specials   = "]"
         return next == '(' || next == ')' || next == '{'
-                || next == ' ' // SP
-                || next == '%' || next == '*' // list-wildcards
-                || next <= 1F || next == 7F // CTL
-                || next == '"' // quoted-specials = DQUOTE / "\"
-                || next == ']'  // resp-specials
-                ;
+            || next == ' '                    // SP
+            || (next <= 0x1F || next == 0x7F) // CTL
+            || isListWildcard(next)
+            || isQuotedSpecial(next)
+            || next == ']'                    // resp-specials
+            ;
     }
 
     private class TagCharValidator extends AtomCharValidator {
