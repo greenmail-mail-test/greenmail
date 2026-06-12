@@ -24,6 +24,7 @@ public class SetQuotaCommand extends AuthenticatedStateCommand {
                              final ImapSession session) {
         if(!session.getHost().getStore().isQuotaSupported()) {
             response.commandFailed(this,"Quota is not supported. Activate quota capability first");
+            return;
         }
         try {
             String root = parser.mailbox(request);

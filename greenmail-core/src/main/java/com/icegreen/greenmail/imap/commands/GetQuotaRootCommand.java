@@ -27,19 +27,21 @@ public class GetQuotaRootCommand extends GetQuotaCommand {
                              final ImapSession session) throws ProtocolException, FolderException, AuthorizationException {
         if(!session.getHost().getStore().isQuotaSupported()) {
             response.commandFailed(this,"Quota is not supported. Activate quota capability first");
+            return;
         }
 
         String root = parser.mailbox(request);
+        getMailbox(root, session, true);
         // QUOTAROOT mailbox
         Quota[] quota = session.getHost().getStore().getQuota(
                 root, session.getUser().getQualifiedMailboxName());
         StringBuilder buf = new StringBuilder("QUOTAROOT ");
-        buf.append(root);
+        buf.append(quoteName(root));
         for (Quota q : quota) {
             buf.append(' ');
             appendQuotaRootName(q, buf);
         }
-        response.untaggedResponse("QUOTAROOT " + quoteName(root));
+        response.untaggedResponse(buf.toString());
         for (Quota q : quota) {
             buf = new StringBuilder();
             appendQuota(q, buf);

@@ -30,6 +30,7 @@ public class GetQuotaCommand extends AuthenticatedStateCommand {
                              final ImapSession session) throws ProtocolException, FolderException, AuthorizationException {
         if(!session.getHost().getStore().isQuotaSupported()) {
             response.commandFailed(this,"Quota is not supported. Activate quota capability first");
+            return;
         }
 
         String quotaRoot = parser.astring(request);

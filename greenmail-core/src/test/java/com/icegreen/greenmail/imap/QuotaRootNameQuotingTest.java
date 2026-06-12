@@ -43,6 +43,15 @@ public class QuotaRootNameQuotingTest {
             }
             assertThat(line).startsWith("a1 OK");
 
+            // Create mailbox with CRLF first
+            os.write(("a1.1 CREATE {8+}" + CRLF).getBytes(StandardCharsets.US_ASCII));
+            os.write(("INBOX" + CRLF + "X" + CRLF).getBytes(StandardCharsets.US_ASCII));
+            os.flush();
+            while ((line = reader.readLine()) != null && !line.startsWith("a1.1 ")) {
+                // skip
+            }
+            assertThat(line).startsWith("a1.1 OK");
+
             // Mailbox name supplied as a non-synchronizing literal carrying a CRLF
             // ("INBOX\r\nX" == 8 bytes).
             os.write(("a2 GETQUOTAROOT {8+}" + CRLF).getBytes(StandardCharsets.US_ASCII));
