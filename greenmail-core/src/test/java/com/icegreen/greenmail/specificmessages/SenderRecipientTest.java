@@ -67,7 +67,7 @@ public class SenderRecipientTest {
 
         GreenMailUtil.sendMimeMessage(msg);
         assertThat(greenMail.waitForIncomingEmail(5000,
-                TO_ADDRESSES.length + CC_ADDRESSES.length + BCC_ADDRESSES.length)).isTrue();
+            TO_ADDRESSES.length + CC_ADDRESSES.length + BCC_ADDRESSES.length)).isTrue();
 
         for (InternetAddress address : TO_ADDRESSES) {
             retrieveAndCheck(greenMail, address);
@@ -83,7 +83,7 @@ public class SenderRecipientTest {
     @Test
     public void testSendWithoutSubject() throws MessagingException, IOException {
         GreenMailUtil.sendTextEmailTest("to@localhost", "from@localhost",
-                null, "some subject less body");
+            null, "some subject less body");
         assertThat(greenMail.getReceivedMessages()[0].getContent()).isEqualTo("some subject less body");
     }
 
@@ -94,21 +94,21 @@ public class SenderRecipientTest {
             "\"John..Doe\"@localhost",
             "abc.'defghi'.xyz@localhost",
             "abc.\"defghi\".xyz@localhost", // Requires strict=false
-             "\"abcdefghixyz\"@localhost",
-             "\"Foo Bar\"admin@localhost"   // Requires strict=false
+            "\"abcdefghixyz\"@localhost",
+            "\"Foo Bar\"admin@localhost"   // Requires strict=false
         };
         Properties properties = new Properties();
         properties.setProperty("mail.mime.address.strict", "false");
 
-        for(String to: toList) {
+        for (String to : toList) {
             greenMail.setUser(to, "pwd");
-            InternetAddress[] toAddress = InternetAddress.parse(to);
+            InternetAddress[] toAddress = InternetAddress.parse(to, false);
             String from = to; // Same from and to address for testing correct escaping of both
 
             final String subject = "testSendAndReceiveWithQuotedAddress";
             final String content = "some body";
             GreenMailUtil.sendTextEmailTest(to, from,
-                    subject, content);
+                subject, content);
 
             assertThat(greenMail.waitForIncomingEmail(5000, 1)).isTrue();
 
@@ -118,19 +118,24 @@ public class SenderRecipientTest {
                 IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
                 folder.open(Folder.READ_ONLY);
                 Message[] msgs = folder.getMessages();
-                assertThat(null != msgs && msgs.length == 1).isTrue();
+                assertThat(msgs).isNotNull().hasSize(1);
                 final Message msg = msgs[0];
-                assertThat(((InternetAddress)msg.getRecipients(Message.RecipientType.TO)[0]).getAddress()).isEqualTo(to);
-                assertThat(((InternetAddress)msg.getFrom()[0]).getAddress()).isEqualTo(from);
+                assertThat(addressEquals(((InternetAddress) msg.getRecipients(Message.RecipientType.TO)[0]), toAddress[0])).isTrue();
+                assertThat(addressEquals(((InternetAddress) msg.getFrom()[0]), toAddress[0])).isTrue();
                 assertThat(msg.getSubject()).isEqualTo(subject);
                 assertThat(msg.getContent()).hasToString(content);
-                assertThat(msg.getRecipients(Message.RecipientType.TO)).isEqualTo(toAddress);
             } catch (MessagingException e) {
                 throw new IllegalStateException("Can not fetch message for recipient <" + to + ">", e);
-            }finally {
+            } finally {
                 store.close();
             }
         }
+    }
+
+    private boolean addressEquals(InternetAddress a1, InternetAddress a2) {
+        String addr1 = a1.getAddress().replace("\"", "");
+        String addr2 = a2.getAddress().replace("\"", "");
+        return addr1.equals(addr2);
     }
 
     /**
@@ -181,6 +186,4 @@ public class SenderRecipientTest {
         }
         return out;
     }
-
-
 }

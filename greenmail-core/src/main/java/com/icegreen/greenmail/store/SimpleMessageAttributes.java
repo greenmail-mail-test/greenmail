@@ -171,9 +171,9 @@ public class SimpleMessageAttributes
 //            if (DEBUG) getLogger().debug("Messaging Exception for getHeader(To): " + me);
         }
         try {
-            inReplyTo = part.getHeader("In Reply To");
+            inReplyTo = part.getHeader("In-Reply-To");
         } catch (MessagingException me) {
-//            if (DEBUG) getLogger().debug("Messaging Exception for getHeader(In Reply To): " + me);
+//            if (DEBUG) getLogger().debug("Messaging Exception for getHeader(In-Reply-To): " + me);
         }
         try {
             date = part.getHeader("Date");
@@ -278,7 +278,7 @@ public class SimpleMessageAttributes
     private String parseEnvelope() {
         List<String> response = new ArrayList<>();
         //1. Date ---------------
-        response.add(LB + Q + sentDateEnvelopeString + Q + SP);
+        response.add(LB + Q + escapeHeader(sentDateEnvelopeString) + Q + SP);
         //2. Subject ---------------
         if (subject != null && (!subject.isEmpty())) {
             response.add(Q + escapeHeader(subject) + Q + SP);
@@ -300,7 +300,7 @@ public class SimpleMessageAttributes
         addAddressToEnvelopeIfAvailable(bcc, response);
         response.add(SP);
         if (inReplyTo != null && inReplyTo.length > 0) {
-            response.add(inReplyTo[0]);
+            response.add(Q + escapeHeader(inReplyTo[0]) + Q);
         } else {
             response.add(NIL);
         }
@@ -383,11 +383,15 @@ public class SimpleMessageAttributes
                 buf.append(NIL); // should add route-addr
                 buf.append(SP);
                 try {
-                    // Remove quotes to avoid double quoting
-                    MailAddress mailAddr = new MailAddress(netAddr.getAddress().replaceAll("\"", "\\\\\""));
-                    buf.append(Q).append(mailAddr.getUser()).append(Q);
+                    MailAddress mailAddr = new MailAddress(netAddr.getAddress());
+                    String user = mailAddr.getUser();
+                    if (user.startsWith(Q) && user.endsWith(Q) && user.length() >= 2) {
+                        // Unquote and unescape
+                        user = user.substring(1, user.length() - 1).replaceAll("\\\\(.)", "$1");
+                    }
+                    buf.append(Q).append(escapeHeader(user)).append(Q);
                     buf.append(SP);
-                    buf.append(Q).append(mailAddr.getHost()).append(Q);
+                    buf.append(Q).append(escapeHeader(mailAddr.getHost())).append(Q);
                 } catch (Exception pe) {
                     buf.append(NIL + SP + NIL);
                 }

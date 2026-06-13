@@ -28,12 +28,13 @@ public class MailAddress {
         email = address.getAddress();
         name = address.getPersonal();
 
-        String[] strs = email.split("@");
-        user = strs[0];
-        if (strs.length > 1) {
-            host = strs[1];
+        int atIndex = email.lastIndexOf('@');
+        if (atIndex != -1) {
+            user = email.substring(0, atIndex);
+            host = email.substring(atIndex + 1);
         } else {
-            host = "localhost";
+            user = email;
+            host = "";
         }
     }
 
