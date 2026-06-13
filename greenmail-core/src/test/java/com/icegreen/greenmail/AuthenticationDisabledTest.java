@@ -95,4 +95,10 @@ public class AuthenticationDisabledTest {
         status.authenticate("pass");
     }
 
+    @Test(expected = UserException.class)
+    public void testPop3ConnectNoUser() throws UserException, FolderException {
+	Pop3State status = new Pop3State(greenMail.getUserManager());
+	status.authenticate("pass");
+    }
+
 }
