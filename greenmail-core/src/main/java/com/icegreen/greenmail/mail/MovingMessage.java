@@ -23,6 +23,7 @@ public class MovingMessage {
     private MailAddress returnPath;
     private final Set<MailAddress> toAddresses = new HashSet<>();
     private MimeMessage message;
+    private boolean smtpUtf8;
 
     /**
      * Retrieves the state object with the data used for authentication. Currently
@@ -114,12 +115,21 @@ public class MovingMessage {
         this.message = message;
     }
 
+    public boolean isSmtpUtf8() {
+        return smtpUtf8;
+    }
+
+    public void setSmtpUtf8(boolean smtputf8) {
+        this.smtpUtf8 = smtputf8;
+    }
+
     @Override
     public String toString() {
         return "MovingMessage{" +
             "toAddresses=" + toAddresses +
             ", returnPath=" + returnPath +
             ", message=" + message +
+            ", smtputf8=" + smtpUtf8 +
             '}';
     }
 }

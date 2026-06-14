@@ -27,8 +27,15 @@ public class HeloCommand
                         SmtpManager manager, String commandLine) {
         extractHeloName(conn, commandLine);
         state.clearMessage();
-        conn.send("250-" + conn.getServerGreetingsName());
-        conn.send("250 AUTH "+AuthCommand.SUPPORTED_AUTH_MECHANISM);
+
+        boolean isEhlo = commandLine.toUpperCase().startsWith("EHLO");
+        if (isEhlo) {
+            conn.send("250-" + conn.getServerGreetingsName());
+            conn.send("250-AUTH " + AuthCommand.SUPPORTED_AUTH_MECHANISM);
+            conn.send("250 SMTPUTF8");
+        } else {
+            conn.send("250 " + conn.getServerGreetingsName());
+        }
     }
 
     private void extractHeloName(SmtpConnection conn,

@@ -7,6 +7,7 @@
 package com.icegreen.greenmail.smtp.commands;
 
 import com.icegreen.greenmail.mail.MailAddress;
+import com.icegreen.greenmail.mail.MovingMessage;
 import com.icegreen.greenmail.smtp.SmtpConnection;
 import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpState;
@@ -25,7 +26,7 @@ public class MailCommand
         extends SmtpCommand {
     // "MAIL FROM:" ("<>" / Reverse-Path)
     //                      [SP Mail-parameters] CRLF
-    static final Pattern PARAM = Pattern.compile("MAIL FROM:\\s?<([^>]*)>.*",
+    static final Pattern PARAM = Pattern.compile("MAIL FROM:\\s?<([^>]*)>(.*)",
             Pattern.CASE_INSENSITIVE);
 
     @Override
@@ -34,23 +35,29 @@ public class MailCommand
         Matcher m = PARAM.matcher(commandLine);
         if (m.matches()) {
             String from = m.group(1);
+            String parameters = m.group(2);
 
+            MailAddress fromAddr = null;
             if (!from.isEmpty()) {
-                MailAddress fromAddr = new MailAddress(from);
+                fromAddr = new MailAddress(from);
                 String err = manager.checkSender(state, fromAddr);
                 if (err != null) {
                     conn.send(err);
                     return;
                 }
-                state.clearMessagePreservingAuthenticationState();
-                state.getMessage().setReturnPath(fromAddr);
-                conn.send("250 OK");
-            } else {
-                state.clearMessagePreservingAuthenticationState();
-                state.getMessage();
-                conn.send("250 OK");
             }
 
+            state.clearMessagePreservingAuthenticationState();
+            MovingMessage msg = state.getMessage();
+            if (fromAddr != null) {
+                msg.setReturnPath(fromAddr);
+            }
+
+            if (parameters != null && parameters.toUpperCase().contains("SMTPUTF8")) {
+                msg.setSmtpUtf8(true);
+            }
+
+            conn.send("250 OK");
         } else {
             conn.send("501 Required syntax: 'MAIL FROM:<email@host>'");
         }

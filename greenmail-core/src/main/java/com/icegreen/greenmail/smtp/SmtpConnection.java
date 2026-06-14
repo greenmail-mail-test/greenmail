@@ -66,7 +66,7 @@ public class SmtpConnection {
                 }
                 if (bos.size() > 0) {
                     // Best effort?
-                    return bos.toString(StandardCharsets.US_ASCII.name());
+                    return bos.toString(StandardCharsets.UTF_8.name());
                 } else {
                     return null; // No input received
                 }
@@ -74,7 +74,7 @@ public class SmtpConnection {
             if (b == '\r') { // CRLF ?
                 b = in.read();
                 if (b == '\n') {
-                    return bos.toString(StandardCharsets.US_ASCII.name());
+                    return bos.toString(StandardCharsets.UTF_8.name());
                 } else {
                     bos.write('\r');
                 }
