@@ -32,12 +32,11 @@ ENV GREENMAIL_ADDITIONAL_OPTS=""
 # Run as user greenmail
 RUN groupadd -r greenmail && useradd --no-log-init -r -g greenmail greenmail
 # Note: If using Dockerfile without Maven, you must manually copy the JAR
-COPY target/greenmail-standalone.jar /home/greenmail/greenmail-standalone.jar
-COPY target/greenmail.p12 /home/greenmail/greenmail.p12
-COPY run_greenmail.sh /home/greenmail/run_greenmail.sh
-RUN chown greenmail:greenmail /home/greenmail/greenmail-standalone.jar /home/greenmail/run_greenmail.sh /home/greenmail/greenmail.p12 && \
-    chmod +x /home/greenmail/run_greenmail.sh
+COPY --chown=greenmail:greenmail target/greenmail-standalone.jar /home/greenmail/greenmail-standalone.jar
+COPY --chown=greenmail:greenmail target/greenmail.p12 /home/greenmail/greenmail.p12
+COPY --chown=greenmail:greenmail run_greenmail.sh /home/greenmail/run_greenmail.sh
+RUN chmod +x /home/greenmail/run_greenmail.sh
 USER greenmail
 WORKDIR /home/greenmail
 # Run GreenMail Standalone with test setup and disabled authentication
-ENTRYPOINT ["/bin/sh", "-c", "/home/greenmail/run_greenmail.sh"]
+ENTRYPOINT ["/home/greenmail/run_greenmail.sh"]
