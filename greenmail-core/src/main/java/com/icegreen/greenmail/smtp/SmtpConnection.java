@@ -98,7 +98,7 @@ public class SmtpConnection {
         try {
             bos.write(initialContent); // Insert initial prefix content
 
-            int cbuf = 0; // Caches current last 4 bytes
+            int cbuf = '\r' << 8 | '\n'; // Caches current last 4 bytes. Initialize with CRLF as we are at the start of a line.
             while (true) {
                 int b = in.read();
                 if (b < 0) {

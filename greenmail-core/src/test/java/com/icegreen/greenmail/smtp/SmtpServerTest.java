@@ -280,4 +280,77 @@ public class SmtpServerTest {
         assertThat(greenMail.getReceivedMessages()).hasSize(1);
         assertThat(greenMail.getReceivedMessages()[0].getSubject()).isEqualTo("Test subject: 2nd msg");
     }
+
+    @Test
+    public void testFirstLineDotUnstuffing() throws IOException {
+        int port = greenMail.getSmtp().getPort();
+        try (java.net.Socket socket = new java.net.Socket("localhost", port);
+             java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(socket.getInputStream()));
+             java.io.OutputStream os = socket.getOutputStream()) {
+
+            assertThat(reader.readLine()).startsWith("220");
+            os.write("HELO localhost\r\n".getBytes());
+            os.flush();
+            assertThat(reader.readLine()).startsWith("250");
+            os.write("MAIL FROM:<from@localhost>\r\n".getBytes());
+            os.flush();
+            assertThat(reader.readLine()).startsWith("250");
+            os.write("RCPT TO:<to@localhost>\r\n".getBytes());
+            os.flush();
+            assertThat(reader.readLine()).startsWith("250");
+            os.write("DATA\r\n".getBytes());
+            os.flush();
+            assertThat(reader.readLine()).startsWith("354");
+
+            // Sending dot-stuffed line at the very beginning of DATA body
+            os.write("\r\n".getBytes()); // Blank line to separate headers from body
+            os.write("..first line with two dots\r\n".getBytes());
+            os.write(".\r\n".getBytes());
+            os.flush();
+            assertThat(reader.readLine()).startsWith("250");
+
+            assertThat(greenMail.waitForIncomingEmail(1500, 1)).isTrue();
+            MimeMessage[] emails = greenMail.getReceivedMessages();
+            assertThat(emails).hasSize(1);
+            String content = GreenMailUtil.getBody(emails[0]);
+            // The body should be unstuffed
+            assertThat(content).isEqualTo(".first line with two dots");
+        }
+    }
+
+    @Test
+    public void testBodyDotUnstuffing() throws IOException {
+        int port = greenMail.getSmtp().getPort();
+        try (java.net.Socket socket = new java.net.Socket("localhost", port);
+             java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(socket.getInputStream()));
+             java.io.OutputStream os = socket.getOutputStream()) {
+
+            assertThat(reader.readLine()).startsWith("220");
+            os.write("HELO localhost\r\n".getBytes());
+            os.flush();
+            assertThat(reader.readLine()).startsWith("250");
+            os.write("MAIL FROM:<from@localhost>\r\n".getBytes());
+            os.flush();
+            assertThat(reader.readLine()).startsWith("250");
+            os.write("RCPT TO:<to@localhost>\r\n".getBytes());
+            os.flush();
+            assertThat(reader.readLine()).startsWith("250");
+            os.write("DATA\r\n".getBytes());
+            os.flush();
+            assertThat(reader.readLine()).startsWith("354");
+
+            os.write("Subject: test\r\n".getBytes());
+            os.write("\r\n".getBytes());
+            os.write("..stuffed dot in body\r\n".getBytes());
+            os.write(".\r\n".getBytes());
+            os.flush();
+            assertThat(reader.readLine()).startsWith("250");
+
+            assertThat(greenMail.waitForIncomingEmail(1500, 1)).isTrue();
+            MimeMessage[] emails = greenMail.getReceivedMessages();
+            assertThat(emails).hasSize(1);
+            String content = GreenMailUtil.getBody(emails[0]);
+            assertThat(content).isEqualTo(".stuffed dot in body");
+        }
+    }
 }
