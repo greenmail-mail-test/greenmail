@@ -48,11 +48,19 @@ section {
 .nav-link {
     padding: 0.1rem 0.5rem;
 }
-
-.nav-pills.nav-link.active, .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-    background-color: inherit;
-    font-weight: bold;
+.nav .nav-link {
     color: #00796B;
+}
+.nav .nav-link.active {
+    font-weight: bold;
+    border-left-color: #00796B;
+}
+.nav .nav-link.active, .nav .show>.nav-link {
+    background-color: inherit;
+    color: #00796B;
+}
+.nav a {
+   border-left: .125rem solid transparent;
 }
 
 .back-to-top:hover {
@@ -91,7 +99,7 @@ a {
 
 pre[class*="language-"] > code {
     box-shadow: -1px 0px 0px 0px #B2DFDB, 0px 0px 0px 1px #dfdfdf;
-    border-left: 10px solid #B2DFDB;
+    border-inline-start: 10px solid #B2DFDB;
 }
 
 /* Prism code highlighting */

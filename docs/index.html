@@ -10,15 +10,15 @@
     <title>GreenMail</title>
 
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-          integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 
     <!-- Custom styles for this template -->
     <link href="css/prism.css" rel="stylesheet"/>
     <link href="css/greenmail.css" rel="stylesheet"/>
 </head>
 
-<body data-spy="scroll" data-offset="240" data-target="#sidebar">
+<body data-bs-spy="scroll" data-bs-target="#sidebar" data-bs-smooth-scroll="true" data-bs-offset="100">
 
 <a href="https://github.com/greenmail-mail-test/greenmail"><img
         style="z-index:9999999;position: fixed; top: 0; right: 0; border: 0;"
@@ -26,23 +26,33 @@
         alt="Fork me on GitHub">
 </a>
 
-<header class="navbar navbar-expand-lg navbar-light fixed-top bg-light">
+<header class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light">
     <div class="container">
         <a class="navbar-brand" href="#">GreenMail</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
-                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-                <a class="nav-item nav-link" href="#examples">Examples</a>
-                <a class="nav-item nav-link" href="#deployment">Deployment</a>
-                <a class="nav-item nav-link" href="#features">Features</a>
-                <a class="nav-item nav-link" href="#faq">FAQ</a>
-                <a class="nav-item nav-link" href="https://javadoc.io/doc/com.icegreen/greenmail">Javadocs</a>
-                <a class="nav-item nav-link" href="#download">Download</a>
-                <a class="nav-item nav-link" href="https://github.com/greenmail-mail-test/greenmail">Development</a>
-            </div>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#examples">Examples</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#deployment">Deployment</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#features">Features</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#faq">FAQ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://javadoc.io/doc/com.icegreen/greenmail">Javadocs</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#download">Download</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/greenmail-mail-test/greenmail">Development</a>
+                </li>
+            </ul>
         </div>
     </div>
 </header>
@@ -65,53 +75,50 @@
         <!-- Sidebar -->
         <div class="d-none d-lg-block col-lg-3 bd-toc">
             <nav class="nav flex-column" id="sidebar">
-                <a class="nav-item nav-link nav-pills" href="#about" data-toggle="collapse" data-target="#nav_about">About</a>
-                <nav id="nav_about" class="nav nav-pills flex-column collapse" data-parent="#sidebar">
-                    <a class="nav-item nav-link ml-3" href="#intro">Intro</a>
-                    <a class="nav-item nav-link ml-3" href="#scenarios">Scenarios</a>
-                    <a class="nav-item nav-link ml-3" href="#implementation">Implementation</a>
-                    <a class="nav-item nav-link ml-3" href="#sourcecode">Source code</a>
-                    <a class="nav-item nav-link ml-3" href="#links">Links and resources</a>
-                    <a class="nav-item nav-link ml-3" href="#thanks">Thanks</a>
+                <a class="nav-link" href="#about">About</a>
+                <nav class="nav flex-column collapse" aria-expanded="false">
+                    <a class="nav-link ms-3" href="#intro">Intro</a>
+                    <a class="nav-link ms-3" href="#scenarios">Scenarios</a>
+                    <a class="nav-link ms-3" href="#implementation">Implementation</a>
+                    <a class="nav-link ms-3" href="#sourcecode">Source code</a>
+                    <a class="nav-link ms-3" href="#links">Links and resources</a>
+                    <a class="nav-link ms-3" href="#thanks">Thanks</a>
                 </nav>
-                <a class="nav-item nav-link nav-pills" href="#examples" data-toggle="collapse"
-                   data-target="#nav_examples">Examples</a>
-                <nav id="nav_examples" class="nav nav-pills flex-column collapse" data-parent="#sidebar">
-                    <a class="nav-item nav-link ml-3" href="#ex_junit_rule">Using JUnit4 rule based setup</a>
-                    <a class="nav-item nav-link ml-3" href="#ex_junit_extension">Using JUnit5 extension</a>
-                    <a class="nav-item nav-link ml-3" href="#ex_send_simple">Testing your sending code (simple)</a>
-                    <a class="nav-item nav-link ml-3" href="#ex_send_dynamic_port">Testing your sending code (detecting available port)</a>
-                    <a class="nav-item nav-link ml-3" href="#ex_send_adv">Testing your sending code (advanced)</a>
-                    <a class="nav-item nav-link ml-3" href="#ex_retrieve">Testing your retrieving code</a>
-                    <a class="nav-item nav-link ml-3" href="#ex_javamail_send_retrieve">Testing using plain JavaMail for
-                        sending/retrieving code</a>
-                    <a class="nav-item nav-link ml-3" href="#ex_spring">Testing using Spring framework</a>
+                <a class="nav-link" href="#examples">Examples</a>
+                <nav class="nav flex-column collapse" aria-expanded="false">
+                    <a class="nav-link ms-3" href="#ex_junit_rule">Using JUnit4 rule based setup</a>
+                    <a class="nav-link ms-3" href="#ex_junit_extension">Using JUnit5 extension</a>
+                    <a class="nav-link ms-3" href="#ex_send_simple">Testing your sending code (simple)</a>
+                    <a class="nav-link ms-3" href="#ex_send_dynamic_port">Testing your sending code (detecting available port)</a>
+                    <a class="nav-link ms-3" href="#ex_send_adv">Testing your sending code (advanced)</a>
+                    <a class="nav-link ms-3" href="#ex_retrieve">Testing your retrieving code</a>
+                    <a class="nav-link ms-3" href="#ex_javamail_send_retrieve">Testing using plain JavaMail for
+                        sending code</a>
+                    <a class="nav-link ms-3" href="#ex_spring">Testing using Spring framework</a>
                 </nav>
-                <a class="nav-item nav-link nav-pills" href="#deployment" data-toggle="collapse"
-                   data-target="#nav_deployment">Deployments</a>
-                <nav id="nav_deployment" class="nav nav-pills flex-column collapse" data-parent="#sidebar">
-                    <a class="nav-item nav-link ml-3" href="#deploy_standalone">Run as a standalone Java process</a>
-                    <a class="nav-item nav-link ml-3" href="#deploy_docker_standalone">Run as a docker image</a>
-                    <a class="nav-item nav-link ml-3" href="#deploy_webapp">Deploy as a webapp (WAR)</a>
+                <a class="nav-link" href="#deployment">Deployment</a>
+                <nav class="nav flex-column collapse" aria-expanded="false">
+                    <a class="nav-link ms-3" href="#deploy_standalone">Run as a standalone Java process</a>
+                    <a class="nav-link ms-3" href="#deploy_docker_standalone">Run as a Docker image</a>
+                    <a class="nav-link ms-3" href="#deploy_webapp">Deploy as a webapp (WAR)</a>
                 </nav>
-                <a class="nav-item nav-link nav-pills" href="#features">Features</a>
-                <nav id="nav_features" class="nav nav-pills flex-column collapse" data-parent="#sidebar">
-                     <a class="nav-item nav-link ml-3" href="#features-api">API</a>
-                     <a class="nav-item nav-link ml-3" href="#features-preload">Preloading emails</a>
-                     <a class="nav-item nav-link ml-3" href="#features-dsn">Delivery status notification</a>
+                <a class="nav-link" href="#features">Features</a>
+                <nav class="nav flex-column collapse" aria-expanded="false">
+                     <a class="nav-link ms-3" href="#features-api">API</a>
+                     <a class="nav-link ms-3" href="#features-preload">Preloading emails</a>
+                     <a class="nav-link ms-3" href="#features-dsn">Delivery status notification</a>
                 </nav>
-                <a class="nav-item nav-link nav-pills" href="#faq">FAQ</a>
-                <a class="nav-item nav-link nav-pills" href="#download" data-toggle="collapse"
-                   data-target="#nav_download">Download</a>
-                <nav id="nav_download" class="nav nav-pills flex-column collapse" data-parent="#sidebar">
-                    <a class="nav-item nav-link ml-3" href="#download_2_1_8">2.1.8 (JakartaMail 2.1, JDK 11)</a>
-                    <a class="nav-item nav-link ml-3" href="#download_2_0_1">2.0.1 (JakartaMail 2.0, JDK 8)</a>
-                    <a class="nav-item nav-link ml-3" href="#download_1_6_15">1.6.15 (JakartaMail 1.6, JDK 8)</a>
-                    <a class="nav-item nav-link ml-3" href="#download_1_5_14">1.5.14 (JDK 8)</a>
-                    <a class="nav-item nav-link ml-3" href="#download_1_5_11">1.5.11 (JDK 7)</a>
-                    <a class="nav-item nav-link ml-3" href="#download_1_4_1">1.4.1</a>
-                    <a class="nav-item nav-link ml-3" href="#download_1_3_1b">1.3.1b</a>
-                    <a class="nav-item nav-link ml-3" href="#download_archive">Older versions</a>
+                <a class="nav-link" href="#faq">FAQ</a>
+                <a class="nav-link" href="#download">Download</a>
+                <nav class="nav flex-column collapse" aria-expanded="false">
+                    <a class="nav-link ms-3" href="#download_2_1_8">2.1.8 (JakartaMail 2.1, JDK 11)</a>
+                    <a class="nav-link ms-3" href="#download_2_0_1">2.0.1 (JakartaMail 2.0, JDK 8)</a>
+                    <a class="nav-link ms-3" href="#download_1_6_15">1.6.15 (JakartaMail 1.6, JDK 8)</a>
+                    <a class="nav-link ms-3" href="#download_1_5_14">1.5.14 (JDK 8)</a>
+                    <a class="nav-link ms-3" href="#download_1_5_11">1.5.11 (JDK 7)</a>
+                    <a class="nav-link ms-3" href="#download_1_4_1">1.4.1</a>
+                    <a class="nav-link ms-3" href="#download_1_3_1b">1.3.1b</a>
+                    <a class="nav-link ms-3" href="#download_archive">Older versions</a>
                 </nav>
             </nav>
             <a class="back-to-top" href="#" role="button">
@@ -269,7 +276,7 @@ public void testReceive() throws MessagingException {
 
                 <p>Check out the possible deployments as <a href="#deploy_webapp">webapp</a>,
                     <a href="#deploy_standalone">standalone</a>
-                    or <a href="#deploy_docker_standalone">standalone docker image</a>.</p>
+                    or <a href="#deploy_docker_standalone">standalone Docker image</a>.</p>
 
                 <h4 id="implementation" class="anchor">Implementation</h4>
 
@@ -614,7 +621,7 @@ public void testCreate() {
             <section id="deployment" class="anchor">
                 <h1 class="page-header">Deployment</h1>
 
-                <h3 id="deploy_standalone" class="anchor">Run GreenMail as standalone java application</h3>
+                <h3 id="deploy_standalone" class="anchor">Run GreenMail as standalone Java application</h3>
                 <p>Running GreenMail as a standalone process is useful if you want a simple sand boxed mail server.</p>
                 <p>All you require is a compatible JRE and the standalone JAR. The standalone JAR already
                     contains all dependencies and a default logging.</p>
@@ -627,6 +634,7 @@ public void testCreate() {
 java [OPTIONS] -jar greenmail-standalone.jar
                 </code></pre><!-- @formatter:on -->
 
+                <div class="table-responsive">
                 <table class="table table-sm table-responsive">
                     <caption>GreenMail standalone configuration options</caption>
                     <thead>
@@ -872,6 +880,7 @@ tmp
                         </td>
                     </tr>
                 </table>
+                </div>
 
                 <h4>GreenMail standalone examples</h4>
                 <h5>Test setup for SMTP/IMAP and one user</h5>
@@ -905,7 +914,7 @@ java -Dgreenmail.smtp.hostname=127.0.0.1 -Dgreenmail.smtp.port=4025 \
      -jar greenmail-standalone.jar
                 </code></pre><!-- @formatter:on -->
 
-                <h3 id="deploy_docker_standalone" class="anchor">Deploy as a standalone Docker image </h3>
+                <h3 id="deploy_docker_standalone" class="anchor">Run as a Docker image</h3>
 
                 <p>GreenMail provides a pre-configured Docker image running
                     <a href="#deploy_standalone">GreenMail
@@ -1127,7 +1136,7 @@ docker run -t -i \
                          alt="GreenMail OpenAPI UI invoking new user request"/>
                     <figcaption class="figure-caption text-end">GreenMail OpenAPI UI invoking new user request.</figcaption>
                 </figure>
-                <h2 id="features-preload">Preloading emails from filesysem</h2>
+                <h2 id="features-preload">Preloading emails from filesystem</h2>
                 <p>You can <a href="https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-core/src/test/java/com/icegreen/greenmail/util/PreLoadEmailsTest.java">preload</a> user/folder/emails from filesystem</p>
 
                 <h2 id="features-dsn">Delivery Status Notification (DSN)</h2>
@@ -1620,31 +1629,50 @@ final List<MimeMessage> messages = greenMail.findReceivedMessages(
 ================================================== -->
 <footer class="footer bg-light">
     <div class="container">
-        <p>&copy; 2006 - 2021, Wael Chatila and GreenMail project contributors</p>
+        <p>&copy; 2006 - 2026, Wael Chatila and GreenMail project contributors</p>
     </div>
 </footer>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
 
 <script src="js/prism.min.js"></script>
 <script type="application/javascript">
-    $(document).ready(function () {
-        // Show only current sidebar item as expanded
-        $('#sidebar a.nav-item').on('click', function () {
-            window.location = $(this).attr('href');
-        });
-        $(window).on('activate.bs.scrollspy', function (e, obj) {
-            var sidebar = $('#sidebar');
-            var current = sidebar.find('a[href="' + obj.relatedTarget + '"]');
-            var currentParents =  current.parents('nav');
-            sidebar.find('nav').not(current).not(currentParents).addClass('collapse').removeClass('show');
-            current.collapse('show');
-            currentParents.removeClass('collapse');
+    document.addEventListener('DOMContentLoaded', function () {
+        const sidebar = document.getElementById('sidebar');
+        if (!sidebar) return;
+
+        window.addEventListener('activate.bs.scrollspy', function (e) {
+            const activeLink = e.relatedTarget;
+            if (!activeLink || !sidebar.contains(activeLink)) return;
+
+            // Find the "branch" nav (the one that should be expanded)
+            let branchToExpand = null;
+            if (activeLink.nextElementSibling && activeLink.nextElementSibling.tagName === 'NAV') {
+                branchToExpand = activeLink.nextElementSibling;
+            } else {
+                // Find parent nav that is a direct child of #sidebar
+                let parent = activeLink.parentElement;
+                while (parent && parent !== sidebar) {
+                    if (parent.tagName === 'NAV' && parent.parentElement === sidebar) {
+                        branchToExpand = parent;
+                        break;
+                    }
+                    parent = parent.parentElement;
+                }
+            }
+
+            // Collapse all sub-navs except the active branch
+            sidebar.querySelectorAll('.nav.collapse').forEach(function (nav) {
+                if (nav === branchToExpand) {
+                    nav.classList.add('show');
+                    nav.setAttribute('aria-expanded', 'true');
+                } else {
+                    nav.classList.remove('show');
+                    nav.setAttribute('aria-expanded', 'false');
+                }
+            });
         });
     });
 </script>
