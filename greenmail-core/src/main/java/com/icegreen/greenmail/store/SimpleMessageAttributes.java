@@ -717,7 +717,14 @@ public class SimpleMessageAttributes
     }
 
     private static String escapeHeader(final String text) {
-        return MimeUtility.unfold(text).replace("\\", "\\\\").replace("\"", "\\\"");
+        // RFC 2047 encoded-words are decoded before a header value reaches here (e.g. an address
+        // personal name via InternetAddress.getPersonal()), so the value can contain CR or LF.
+        // An IMAP quoted string (RFC 3501 QUOTED-CHAR) cannot carry CR or LF and there is no
+        // escape for them, so drop them before escaping the quoted-specials. Otherwise a sender
+        // injects forged untagged response lines into the FETCH stream the client parses.
+        return MimeUtility.unfold(text)
+                .replace("\r", "").replace("\n", "")
+                .replace("\\", "\\\\").replace("\"", "\\\"");
     }
 
 }
