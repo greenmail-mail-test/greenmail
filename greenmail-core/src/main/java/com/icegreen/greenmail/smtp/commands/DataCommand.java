@@ -41,10 +41,15 @@ public class DataCommand extends SmtpCommand {
 
         conn.send("354 Start mail input; end with <CRLF>.<CRLF>");
 
-        String initialContent = "Return-Path: <" + msg.getReturnPath() +
+        // The HELO argument and the MAIL FROM return path are client-supplied and must not
+        // carry CR or LF; otherwise they split this trace header block and inject extra
+        // header lines into the stored message.
+        String returnPath = stripLineBreaks(String.valueOf(msg.getReturnPath()));
+        String heloName = stripLineBreaks(conn.getHeloName());
+        String initialContent = "Return-Path: <" + returnPath +
             ">\r\n" + "Received: from " +
             conn.getClientAddress() + " (HELO " +
-            conn.getHeloName() + "); " +
+            heloName + "); " +
             new java.util.Date() + "\r\n";
 
         try (final InputStream messageIs = conn.dotLimitedInputStream(initialContent.getBytes(StandardCharsets.UTF_8))) {
@@ -66,5 +71,12 @@ public class DataCommand extends SmtpCommand {
         }
 
         state.clearMessage();
+    }
+
+    private static String stripLineBreaks(String value) {
+        if (value == null) {
+            return null;
+        }
+        return value.replace("\r", "").replace("\n", "");
     }
 }
