@@ -43,11 +43,23 @@ public class SaslMessage {
      * @param message the SASL message
      */
     public static SaslMessage parse(String message) {
+        // The decoded authzid/authcid/passwd are echoed back verbatim in line-oriented
+        // POP3/SMTP error responses (e.g. the POP3 "-ERR Authentication failed: User <...>"
+        // line), so a field carrying CR or LF would forge additional response lines. The
+        // base64 transport lets such octets through even though the command line itself is
+        // CRLF-terminated, so reject them at the parser.
+        if (containsLineBreak(message)) {
+            throw new IllegalArgumentException("Invalid SASL message: CR and LF are not allowed");
+        }
         String[] parts = message.split("\u0000");
         if (parts.length != 3) {
             throw new IllegalArgumentException(
                     "Expected authorization-id\\0authentication-id\\0passwd but got only " + parts.length + " parts : " + message);
         }
         return new SaslMessage(parts[0], parts[1], parts[2]);
+    }
+
+    private static boolean containsLineBreak(String value) {
+        return value.indexOf((char) 13) >= 0 || value.indexOf((char) 10) >= 0;
     }
 }

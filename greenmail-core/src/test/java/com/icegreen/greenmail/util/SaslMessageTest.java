@@ -4,6 +4,7 @@ package com.icegreen.greenmail.util;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class SaslMessageTest {
     @Test
@@ -20,5 +21,13 @@ public class SaslMessageTest {
         assertThat(saslMessage.getAuthzid()).isEmpty();
         assertThat(saslMessage.getAuthcid()).isEqualTo("authcid");
         assertThat(saslMessage.getPasswd()).isEqualTo("passwd");
+    }
+
+    @Test
+    public void testParseRejectsCrlf() {
+        String nul = String.valueOf((char) 0);
+        String crlf = "" + (char) 13 + (char) 10;
+        assertThatThrownBy(() -> SaslMessage.parse(nul + "auth" + crlf + "cid" + nul + "passwd"))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 }
