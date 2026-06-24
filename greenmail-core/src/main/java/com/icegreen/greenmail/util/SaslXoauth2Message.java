@@ -63,6 +63,12 @@ public class SaslXoauth2Message {
      */
     public static SaslXoauth2Message parse(String message) {
         try {
+            // The decoded username is echoed back verbatim in line-oriented auth-failure
+            // responses (POP3 "-ERR ... User <...>", IMAP tagged NO), so a CR or LF smuggled
+            // in through the base64 transport would forge additional response lines.
+            if (containsLineBreak(message)) {
+                throw new IllegalArgumentException("CR and LF are not allowed");
+            }
             String[] parts = message.split("\\u0001");
             if (parts.length > 2 || !parts[0].startsWith("user=") || !parts[1].startsWith("auth=Bearer ")) {
                 throw new IllegalArgumentException("Invalid authentication string format");
@@ -72,6 +78,10 @@ public class SaslXoauth2Message {
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid Base64 or malformed input: " + e.getMessage());
         }
+    }
+
+    private static boolean containsLineBreak(String value) {
+        return value.indexOf((char) 13) >= 0 || value.indexOf((char) 10) >= 0;
     }
 
 }

@@ -24,4 +24,13 @@ public class SaslXoauth2MessageTest {
     public void testInvalidBase64Input() {
         assertThrows(IllegalArgumentException.class, () -> SaslXoauth2Message.parseBase64Encoded("invalid_base64_string"));
     }
+
+    @Test
+    public void testParseRejectsCrlfInUsername() {
+        String ctrlA = String.valueOf((char) 1);
+        String crlf = "" + (char) 13 + (char) 10;
+        String rawInput = "user=victim" + crlf + "+OK injected" + ctrlA + "auth=Bearer t" + ctrlA + ctrlA;
+        String encoded = Base64.getEncoder().encodeToString(rawInput.getBytes());
+        assertThrows(IllegalArgumentException.class, () -> SaslXoauth2Message.parseBase64Encoded(encoded));
+    }
 }

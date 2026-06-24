@@ -15,7 +15,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -109,6 +111,47 @@ public class POP3CommandTest {
             printStream.print("USER blar@blar.com" + CRLF);
             assertThat(reader.readLine()).isNotEqualTo("+OK");
         });
+    }
+
+    @Test
+    public void authPlainRejectsCrlfInUsername() throws IOException {
+        // The AUTH initial-response is base64 decoded, so the decoded SASL fields can carry
+        // bytes that the line-oriented POP3 reader would otherwise strip. A username (authcid)
+        // with an embedded CRLF splits the "-ERR Authentication failed: User <...>" error into
+        // several response lines and lets an attacker forge a "+OK" status line.
+        String nul = String.valueOf((char) 0);
+        String crlf = "" + (char) 13 + (char) 10;
+        String malicious = base64(nul + "nouser" + crlf + "+OK injected" + nul + "p");
+        withConnection((printStream, reader) -> {
+            assertThat(reader.readLine()).startsWith("+OK POP3 GreenMail Server v");
+
+            printStream.print("AUTH PLAIN " + malicious + CRLF);
+            assertThat(reader.readLine()).startsWith("-ERR");
+
+            // The next line read must be the reply to the following command, not an injected line.
+            printStream.print("AUTH FOO" + CRLF);
+            assertThat(reader.readLine()).startsWith("-ERR Required syntax: AUTH mechanism <FOO>");
+        });
+    }
+
+    @Test
+    public void authXoauth2RejectsCrlfInUsername() throws IOException {
+        String ctrlA = String.valueOf((char) 1);
+        String crlf = "" + (char) 13 + (char) 10;
+        String malicious = base64("user=nouser" + crlf + "+OK injected" + ctrlA + "auth=Bearer t" + ctrlA + ctrlA);
+        withConnection((printStream, reader) -> {
+            assertThat(reader.readLine()).startsWith("+OK POP3 GreenMail Server v");
+
+            printStream.print("AUTH XOAUTH2 " + malicious + CRLF);
+            assertThat(reader.readLine()).startsWith("-ERR");
+
+            printStream.print("AUTH FOO" + CRLF);
+            assertThat(reader.readLine()).startsWith("-ERR Required syntax: AUTH mechanism <FOO>");
+        });
+    }
+
+    private static String base64(String value) {
+        return Base64.getEncoder().encodeToString(value.getBytes(StandardCharsets.UTF_8));
     }
 
     @Test
