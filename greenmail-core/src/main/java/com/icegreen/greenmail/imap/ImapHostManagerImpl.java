@@ -6,6 +6,8 @@
  */
 package com.icegreen.greenmail.imap;
 
+import static com.icegreen.greenmail.imap.ImapConstants.*;
+
 import com.icegreen.greenmail.store.*;
 import com.icegreen.greenmail.user.GreenMailUser;
 
@@ -21,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version $Revision: 109034 $
  */
 public class ImapHostManagerImpl
-    implements ImapHostManager, ImapConstants {
+    implements ImapHostManager {
 
     private final Store store;
     private final MailboxSubscriptions subscriptions;

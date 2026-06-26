@@ -7,6 +7,7 @@
 package com.icegreen.greenmail.imap.commands;
 
 import com.icegreen.greenmail.imap.*;
+import static com.icegreen.greenmail.imap.ImapConstants.*;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
 import org.slf4j.Logger;
@@ -20,7 +21,7 @@ import org.slf4j.LoggerFactory;
  * @version $Revision: 109034 $
  */
 abstract class CommandTemplate
-        implements ImapCommand, ImapConstants {
+    implements ImapCommand {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected CommandParser parser = new CommandParser();
     private final String name;
@@ -64,7 +65,7 @@ abstract class CommandTemplate
             response.commandFailed(this, msg);
         } catch (ProtocolException e) {
             String msg = e.getMessage() + " Command should be '" +
-                    getExpectedMessage() + '\'';
+                getExpectedMessage() + '\'';
             log.warn("Error processing command: {}", msg, e);
             response.commandError(msg);
         }
@@ -81,7 +82,7 @@ abstract class CommandTemplate
     protected abstract void doProcess(ImapRequestLineReader request,
                                       ImapResponse response,
                                       ImapSession session)
-            throws ProtocolException, FolderException, AuthorizationException;
+        throws ProtocolException, FolderException, AuthorizationException;
 
     /**
      * Provides a message which describes the expected format and arguments
@@ -120,7 +121,7 @@ abstract class CommandTemplate
     protected MailFolder getMailbox(String mailboxName,
                                     ImapSession session,
                                     boolean mustExist)
-            throws FolderException {
+        throws FolderException {
         return session.getHost().getFolder(session.getUser(), mailboxName, mustExist);
     }
 

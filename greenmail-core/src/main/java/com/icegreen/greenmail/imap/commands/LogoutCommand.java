@@ -6,6 +6,8 @@
  */
 package com.icegreen.greenmail.imap.commands;
 
+import static com.icegreen.greenmail.imap.ImapConstants.*;
+
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ImapResponse;
 import com.icegreen.greenmail.imap.ImapSession;
@@ -39,24 +41,3 @@ class LogoutCommand extends CommandTemplate {
         session.closeConnection();
     }
 }
-
-/*
-6.1.3.  LOGOUT Command
-
-   Arguments:  none
-
-   Responses:  REQUIRED untagged response: BYE
-
-   Result:     OK - logout completed
-               BAD - command unknown or arguments invalid
-
-      The LOGOUT command informs the server that the client is done with
-      the connection.  The server MUST send a BYE untagged response
-      before the (tagged) OK response, and then close the network
-      connection.
-
-   Example:    C: A023 LOGOUT
-               S: * BYE IMAP4rev1 Server logging out
-               S: A023 OK LOGOUT completed
-               (Server and client then close the connection)
-*/

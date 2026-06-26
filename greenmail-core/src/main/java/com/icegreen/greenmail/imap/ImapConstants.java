@@ -6,24 +6,39 @@
  */
 package com.icegreen.greenmail.imap;
 
-public interface ImapConstants {
+/**
+ * Utility class containing IMAP protocol constants.
+ */
+public final class ImapConstants {
+
+    private ImapConstants() {
+        // Prevent instantiation
+    }
+
     // Basic response types
-    String OK = "OK";
-    String NO = "NO";
-    String BAD = "BAD";
-    String BYE = "BYE";
-    String UNTAGGED = "*";
+    public static final String OK = "OK";
+    public static final String NO = "NO";
+    public static final String BAD = "BAD";
+    public static final String BYE = "BYE";
+    public static final String UNTAGGED = "*";
+    public static final String SP = " ";
 
-    String SP = " ";
-    String VERSION = "IMAP4rev1";
-    String USER_NAMESPACE = "#mail";
+    public static final String VERSION = "IMAP4rev1";
 
-    char HIERARCHY_DELIMITER_CHAR = '.';
-    char NAMESPACE_PREFIX_CHAR = '#';
-    String HIERARCHY_DELIMITER = String.valueOf(HIERARCHY_DELIMITER_CHAR);
-    String NAMESPACE_PREFIX = String.valueOf(NAMESPACE_PREFIX_CHAR);
+    public static final String USER_NAMESPACE = "#mail";
 
-    String INBOX_NAME = "INBOX";
-    String STORAGE = "STORAGE";
-    String MESSAGES = "MESSAGES";
+    public static final char HIERARCHY_DELIMITER_CHAR = '.';
+    public static final char NAMESPACE_PREFIX_CHAR = '#';
+
+    public static final String HIERARCHY_DELIMITER =
+        String.valueOf(HIERARCHY_DELIMITER_CHAR);
+
+    public static final String NAMESPACE_PREFIX =
+        String.valueOf(NAMESPACE_PREFIX_CHAR);
+
+    public static final String INBOX_NAME = "INBOX";
+
+    public static final String STORAGE = "STORAGE";
+
+    public static final String MESSAGES = "MESSAGES";
 }

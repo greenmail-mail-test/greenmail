@@ -1,5 +1,7 @@
 package com.icegreen.greenmail.imap.commands;
 
+import static com.icegreen.greenmail.imap.ImapConstants.*;
+
 import com.icegreen.greenmail.imap.*;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
@@ -30,7 +32,7 @@ class SortCommand extends SelectedStateCommand implements UidEnabledCommand {
     protected void doProcess(ImapRequestLineReader request,
                              ImapResponse response,
                              ImapSession session)
-            throws ProtocolException, FolderException, AuthorizationException {
+        throws ProtocolException, FolderException, AuthorizationException {
         doProcess(request, response, session, false);
     }
 

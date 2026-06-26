@@ -11,6 +11,8 @@ import com.icegreen.greenmail.store.MessageFlags;
 import com.icegreen.greenmail.util.EncodingUtil;
 import com.icegreen.greenmail.util.InternetPrintWriter;
 
+import static com.icegreen.greenmail.imap.ImapConstants.*;
+
 import jakarta.mail.Flags;
 import java.io.OutputStream;
 
@@ -18,7 +20,7 @@ import java.io.OutputStream;
  * Class providing methods to send response messages from the server
  * to the client.
  */
-public class ImapResponse implements ImapConstants {
+public class ImapResponse {
     private final InternetPrintWriter writer;
     private String tag = UNTAGGED;
 

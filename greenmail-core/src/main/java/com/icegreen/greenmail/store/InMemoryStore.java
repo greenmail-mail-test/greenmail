@@ -12,6 +12,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.Quota;
 
 import com.icegreen.greenmail.imap.ImapConstants;
+import static com.icegreen.greenmail.imap.ImapConstants.*;
 
 /**
  * A simple in-memory implementation of {@link Store}, used for testing
@@ -21,7 +22,7 @@ import com.icegreen.greenmail.imap.ImapConstants;
  * @version $Revision: 109034 $
  */
 public class InMemoryStore
-    implements Store, ImapConstants {
+    implements Store {
     boolean quotaSupported = true;
     private final RootFolder rootMailbox = new RootFolder();
     private final Map<String, Set<Quota>> quotaMap = new HashMap<>();
@@ -222,8 +223,8 @@ public class InMemoryStore
 
     private void updateQuota(final Quota quota, final String pQualifiedRootPrefix) {
         MailFolder folder = getMailbox(
-            ImapConstants.USER_NAMESPACE + ImapConstants.HIERARCHY_DELIMITER +
-                pQualifiedRootPrefix + ImapConstants.HIERARCHY_DELIMITER +
+            USER_NAMESPACE + HIERARCHY_DELIMITER +
+                pQualifiedRootPrefix + HIERARCHY_DELIMITER +
                 quota.quotaRoot);
         try {
             for (Quota.Resource r : quota.resources) {

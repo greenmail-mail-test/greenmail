@@ -6,6 +6,8 @@
  */
 package com.icegreen.greenmail.imap.commands;
 
+import static com.icegreen.greenmail.imap.ImapConstants.*;
+
 import com.icegreen.greenmail.imap.*;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
