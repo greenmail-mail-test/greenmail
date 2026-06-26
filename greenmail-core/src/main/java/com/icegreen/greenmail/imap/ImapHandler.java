@@ -18,10 +18,10 @@ import java.net.Socket;
 /**
  * The handler class for IMAP connections.
  *
- * @author Federico Barbieri &lt;scoobie@systemy.it&gt;
- * @author Peter M. Goldstein &lt;farsight@alum.mit.edu&gt;
+ * @author Federico Barbieri <scoobie@systemy.it>
+ * @author Peter M. Goldstein <farsight@alum.mit.edu>
  */
-public class ImapHandler extends AbstractSocketProtocolHandler implements ImapConstants {
+public class ImapHandler extends AbstractSocketProtocolHandler {
     private final ImapRequestHandler requestHandler = new ImapRequestHandler();
     private ImapSession session;
 
@@ -50,16 +50,16 @@ public class ImapHandler extends AbstractSocketProtocolHandler implements ImapCo
             response = new ImapResponse(outs);
 
             // Write welcome message
-            String responseBuffer = VERSION + " Server GreenMail v" +
-                    BuildInfo.INSTANCE.getProjectVersion() + " ready";
+            String responseBuffer = ImapConstants.VERSION + " Server GreenMail v" +
+                BuildInfo.INSTANCE.getProjectVersion() + " ready";
             response.okResponse(null, responseBuffer);
 
             session = new ImapSessionImpl(imapHost,
-                    userManager,
-                    this,
-                    socket.getInetAddress().getHostAddress());
+                userManager,
+                this,
+                socket.getInetAddress().getHostAddress());
 
-            while (!isQuitting() && requestHandler.handleRequest(ins, outs, session) )  {
+            while (!isQuitting() && requestHandler.handleRequest(ins, outs, session)) {
                 // Continue to handle requests
             }
         } catch (Exception e) {
