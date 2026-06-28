@@ -31,6 +31,9 @@
 
 * Beware of backward compatibility
 
+#### ***Misc***
+* Please avoid refactoring PRs, without prior discussion. They most likely introduce breaking changes.
+
 GreenMail is a volunteer effort. We encourage you to pitch in and appreciate contributions!
 
 Thanks!
