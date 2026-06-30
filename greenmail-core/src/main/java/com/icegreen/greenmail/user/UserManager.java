@@ -133,10 +133,7 @@ public class UserManager {
         return true;
     }
 
-    private boolean checkPassword(String expectedPassword, String password) {
-        return (null != expectedPassword && expectedPassword.equals(password))
-                || (null == password && expectedPassword == null);
-    }
+
 
     public void setAuthRequired(boolean auth) {
         authRequired = auth;
