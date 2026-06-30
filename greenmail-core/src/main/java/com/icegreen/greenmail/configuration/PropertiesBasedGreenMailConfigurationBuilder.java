@@ -1,7 +1,6 @@
 package com.icegreen.greenmail.configuration;
 
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Properties;
 import java.util.function.BinaryOperator;
 import java.util.regex.Matcher;
