@@ -90,7 +90,7 @@ public class ImapResponse implements ImapConstants {
         responseCode(responseCode);
         commandName(command);
         message("failed.");
-        message(reason);
+        message(stripLineBreaks(reason));
         end();
     }
 
@@ -105,7 +105,7 @@ public class ImapResponse implements ImapConstants {
     public void commandError(String message) {
         tag();
         message(BAD);
-        message(message);
+        message(stripLineBreaks(message));
         end();
     }
 
@@ -115,7 +115,7 @@ public class ImapResponse implements ImapConstants {
     public void badResponse(String message) {
         untagged();
         message(BAD);
-        message(message);
+        message(stripLineBreaks(message));
         end();
     }
 
@@ -242,6 +242,27 @@ public class ImapResponse implements ImapConstants {
     private void end() {
         writer.println();
         writer.flush();
+    }
+
+    /**
+     * Removes CR and LF from a free-text response message. NO/BAD responses echo
+     * client-supplied values back (a mailbox name in "No such folder : &lt;name&gt;",
+     * the LOGIN user id, a SEARCH charset), and those values can carry CR/LF when sent
+     * as an IMAP literal. Dropping the line breaks keeps the reason on a single line so
+     * it cannot forge extra response lines in the stream the client parses.
+     */
+    static String stripLineBreaks(String message) {
+        if (message == null || (message.indexOf('\r') < 0 && message.indexOf('\n') < 0)) {
+            return message;
+        }
+        StringBuilder sb = new StringBuilder(message.length());
+        for (int i = 0; i < message.length(); i++) {
+            char c = message.charAt(i);
+            if (c != '\r' && c != '\n') {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
     }
 
     public void permanentFlagsResponse(Flags flags) {
