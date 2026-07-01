@@ -103,6 +103,8 @@ public class GreenMailStandaloneRunner {
             {"Note: Only has effect if configured user is of type email (i.e. contains '@')"},
             {"-Dgreenmail.auth.disabled ", "Disables authentication check so that any password works."},
             {"Also automatically provisions previously non-existent users."},
+            {"-Dgreenmail.discard.attachments=true", "Discards attachments on delivery instead of storing them."},
+            {"Useful for performance tests where large attachments would exhaust memory."},
             {"-Dgreenmail.verbose ", "Enables verbose mode, including JavaMail debug output"},
             {"-Dgreenmail.startup.timeout=<TIMEOUT_IN_MILLISECONDS>",
                 "Overrides the default server startup timeout of 1000ms."},

@@ -83,6 +83,19 @@ public class PropertiesBasedGreenMailConfigurationBuilderTest {
         assertThat(config.getPreloadDir()).isEqualTo(preloadDir);
     }
 
+    @Test
+    public void testBuildWithDiscardAttachmentsEnabled() {
+        Properties props = createPropertiesFor(PropertiesBasedGreenMailConfigurationBuilder.GREENMAIL_DISCARD_ATTACHMENTS, "true");
+        GreenMailConfiguration config = new PropertiesBasedGreenMailConfigurationBuilder().build(props);
+        assertThat(config.isDiscardAttachmentsEnabled()).isTrue();
+    }
+
+    @Test
+    public void testBuildWithDiscardAttachmentsDisabledByDefault() {
+        GreenMailConfiguration config = new PropertiesBasedGreenMailConfigurationBuilder().build(new Properties());
+        assertThat(config.isDiscardAttachmentsEnabled()).isFalse();
+    }
+
     private Properties createPropertiesFor(String key, String value) {
         Properties props = new Properties();
         props.setProperty(key, value);

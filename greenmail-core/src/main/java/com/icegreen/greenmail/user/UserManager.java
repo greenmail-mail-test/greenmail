@@ -9,10 +9,15 @@ package com.icegreen.greenmail.user;
 import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.mail.MailAddress;
 import com.icegreen.greenmail.mail.MovingMessage;
+import jakarta.mail.BodyPart;
 import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
+import jakarta.mail.Part;
+import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
@@ -31,6 +36,7 @@ public class UserManager {
     private final ImapHostManager imapHostManager;
     private boolean authRequired = true;
     private boolean sieveIgnoreDetailEnabled = false;
+    private boolean discardAttachmentsEnabled = false;
 
     private MessageDeliveryHandler messageDeliveryHandler = (msg, mailAddress) -> {
         String email;
@@ -147,6 +153,10 @@ public class UserManager {
         sieveIgnoreDetailEnabled = sieveIgnoreDetail;
     }
 
+    public void setDiscardAttachments(boolean discardAttachments) {
+        discardAttachmentsEnabled = discardAttachments;
+    }
+
     public ImapHostManager getImapHostManager() {
         return imapHostManager;
     }
@@ -181,7 +191,35 @@ public class UserManager {
     }
 
     public void deliver(MovingMessage msg, MailAddress mailAddress) throws MessagingException, UserException {
+        if (discardAttachmentsEnabled) {
+            stripAttachments(msg.getMessage());
+        }
         messageDeliveryHandler.handle(msg, mailAddress).deliver(msg);
+    }
+
+    private static void stripAttachments(MimeMessage message) throws MessagingException {
+        try {
+            Object content = message.getContent();
+            if (content instanceof Multipart) {
+                stripAttachmentParts((Multipart) content);
+                message.setContent((Multipart) content);
+                message.saveChanges();
+            }
+        } catch (IOException e) {
+            throw new MessagingException("Failed to strip attachments from message", e);
+        }
+    }
+
+    private static void stripAttachmentParts(Multipart multipart) throws MessagingException, IOException {
+        for (int i = multipart.getCount() - 1; i >= 0; i--) {
+            BodyPart part = multipart.getBodyPart(i);
+            String disposition = part.getDisposition();
+            if (Part.ATTACHMENT.equalsIgnoreCase(disposition) || part.getFileName() != null) {
+                multipart.removeBodyPart(i);
+            } else if (part.getContent() instanceof Multipart) {
+                stripAttachmentParts((Multipart) part.getContent());
+            }
+        }
     }
 
     /**

@@ -44,6 +44,12 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
 
     public static final String GREENMAIL_SIEVE_IGNORE_DETAIL = "greenmail.sieve.ignore.detail";
     public static final String GREENMAIL_PRELOAD_DIR = "greenmail.preload.dir";
+    /**
+     * Discard attachments on delivery instead of storing them.
+     *
+     * @see GreenMailConfiguration#withDiscardAttachments()
+     */
+    public static final String GREENMAIL_DISCARD_ATTACHMENTS = "greenmail.discard.attachments";
 
     /**
      * Configures how user login should be extracted from user of pattern local-part:password@domain .
@@ -88,6 +94,11 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
         String preloadDir = properties.getProperty(GREENMAIL_PRELOAD_DIR);
         if (null != preloadDir) {
             configuration.withPreloadDir(preloadDir);
+        }
+
+        String discardAttachments = properties.getProperty(GREENMAIL_DISCARD_ATTACHMENTS, "false");
+        if (Boolean.TRUE.toString().equalsIgnoreCase(discardAttachments)) {
+            configuration.withDiscardAttachments();
         }
 
         return configuration;
