@@ -28,6 +28,7 @@ public abstract class ConfiguredGreenMail implements GreenMailOperations {
             }
             getUserManager().setAuthRequired(!config.isAuthenticationDisabled());
             getUserManager().setSieveIgnoreDetail(config.isSieveIgnoreDetailEnabled());
+            getUserManager().setDiscardAttachments(config.isDiscardAttachmentsEnabled());
             if(config.hasPreloadDir()) {
                 try {
                     loadEmails(Paths.get(config.getPreloadDir()));

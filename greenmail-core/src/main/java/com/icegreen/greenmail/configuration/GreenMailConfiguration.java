@@ -11,6 +11,7 @@ public class GreenMailConfiguration {
     private final List<UserBean> usersToCreate = new ArrayList<>();
     private boolean disableAuthenticationCheck = false;
     private boolean sieveIgnoreDetail = false;
+    private boolean discardAttachments = false;
     private String preloadDir;
 
 
@@ -117,5 +118,28 @@ public class GreenMailConfiguration {
      */
     public boolean hasPreloadDir() {
         return null != preloadDir;
+    }
+
+    /**
+     * Disables storing of email attachments.
+     * <p>
+     * Useful for performance tests where large attachments would otherwise exhaust memory.
+     * GreenMail still accepts the email and validates addresses but discards any MIME parts
+     * identified as attachments before storing the message.
+     *
+     * @return Modified configuration.
+     */
+    public GreenMailConfiguration withDiscardAttachments() {
+        discardAttachments = true;
+        return this;
+    }
+
+    /**
+     * @return true if attachment discarding is enabled.
+     *
+     * @see GreenMailConfiguration#withDiscardAttachments()
+     */
+    public boolean isDiscardAttachmentsEnabled() {
+        return discardAttachments;
     }
 }
