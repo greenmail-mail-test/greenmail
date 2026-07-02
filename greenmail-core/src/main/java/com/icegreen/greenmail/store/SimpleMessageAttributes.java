@@ -646,13 +646,18 @@ public class SimpleMessageAttributes
         Set<String> params = null;
 
         public Header(String line) {
-            String[] strs = line.split(";");
-            if (0 != strs.length) {
-                value = strs[0];
+            List<String> strs = splitParameters(line);
+            if (!strs.isEmpty()) {
+                value = strs.get(0);
                 params = new HashSet<>();
-                for (int i = 1; i < strs.length; i++) {
-                    String p = strs[i].trim();
+                for (int i = 1; i < strs.size(); i++) {
+                    String p = strs.get(i).trim();
                     int e = p.indexOf('=');
+                    // A parameter without '=' (e.g. a stray token) is malformed; skip it
+                    // instead of indexing with -1, which threw StringIndexOutOfBoundsException.
+                    if (e < 0) {
+                        continue;
+                    }
                     String key = p.substring(0, e);
                     String val = p.substring(e + 1)
                         // Workaround for continuation bug?
@@ -662,6 +667,35 @@ public class SimpleMessageAttributes
                     params.add(p);
                 }
             }
+        }
+
+        /**
+         * Splits a Content-Type/Content-Disposition line on the ';' parameter
+         * separator, ignoring separators inside a quoted-string. A quoted value
+         * such as filename="Invoice; final.pdf" is legal (RFC 2045/2183) and must
+         * stay a single parameter rather than being cut at the embedded ';'.
+         */
+        private static List<String> splitParameters(String line) {
+            List<String> segments = new ArrayList<>();
+            StringBuilder current = new StringBuilder();
+            boolean inQuotes = false;
+            for (int i = 0; i < line.length(); i++) {
+                char c = line.charAt(i);
+                if (inQuotes && c == '\\' && i + 1 < line.length()) {
+                    // Keep an escaped character verbatim so \" does not end the quote.
+                    current.append(c).append(line.charAt(++i));
+                } else if (c == '"') {
+                    inQuotes = !inQuotes;
+                    current.append(c);
+                } else if (c == ';' && !inQuotes) {
+                    segments.add(current.toString());
+                    current.setLength(0);
+                } else {
+                    current.append(c);
+                }
+            }
+            segments.add(current.toString());
+            return segments;
         }
 
         public Set<String> getParams() {
