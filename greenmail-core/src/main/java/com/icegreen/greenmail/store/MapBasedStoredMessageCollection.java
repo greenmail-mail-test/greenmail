@@ -132,8 +132,11 @@ public class MapBasedStoredMessageCollection implements StoredMessageCollection 
                             expungeListener.expunged(i);
                         }
                     }
+                    // Removing this message shifts the following messages down one MSN,
+                    // so the next surviving message takes the slot just vacated. Keep i.
+                } else {
+                    i++;
                 }
-                i++;
             }
         }
     }
