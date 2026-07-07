@@ -410,7 +410,14 @@ public class SimpleMessageAttributes
     void decodeContentType(String rawLine) {
         int slash = rawLine.indexOf('/');
         if (slash == -1) {
-//            if (DEBUG) getLogger().debug("decoding ... no slash found");
+            // A Content-Type value without a '/' carries no subtype (an empty or
+            // otherwise malformed header, e.g. "Content-Type: nonsense"). Leaving
+            // primaryType/secondaryType null makes the multipart/message checks below
+            // and the BODYSTRUCTURE emission throw a NullPointerException while the
+            // message is being stored, so fall back to the same default media type
+            // used for a missing Content-Type header.
+            primaryType = "text";
+            secondaryType = "plain";
             return;
         } else {
             primaryType = rawLine.substring(0, slash).trim();
