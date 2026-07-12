@@ -17,6 +17,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 class StoredMessageSorter implements Comparator<StoredMessage> {
 
+    private static final java.util.regex.Pattern LEADER_PATTERN =
+        java.util.regex.Pattern.compile("^(?:\\[[^\\[\\]]*\\]\\s*)*(?:re|fwd|fw)\\s*(?:\\[[^\\[\\]]*\\]\\s*)?:", java.util.regex.Pattern.CASE_INSENSITIVE);
+    private static final java.util.regex.Pattern BLOB_PATTERN =
+        java.util.regex.Pattern.compile("^\\[[^\\[\\]]*\\]\\s*");
+
     private final SortTerm sortTerm;
 
     private final AtomicBoolean reverse = new AtomicBoolean();
@@ -50,7 +55,10 @@ class StoredMessageSorter implements Comparator<StoredMessage> {
                         compareResult = doCompare(m1.getMimeMessage().getSize(), m2.getMimeMessage().getSize());
                         break;
                     case SUBJECT:
-                        compareResult = doCompare(m1.getMimeMessage().getSubject(), m2.getMimeMessage().getSubject());
+                        compareResult = doCompare(
+                            getBaseSubject(m1.getMimeMessage().getSubject()).toLowerCase(java.util.Locale.ENGLISH),
+                            getBaseSubject(m2.getMimeMessage().getSubject()).toLowerCase(java.util.Locale.ENGLISH)
+                        );
                         break;
                     case TO:
                         compareResult = doCompare(getTo(m1), getTo(m2));
@@ -102,5 +110,57 @@ class StoredMessageSorter implements Comparator<StoredMessage> {
             return multiplier * -1;
         }
         return multiplier * c1.compareTo(c2);
+    }
+
+    private String getBaseSubject(String subject) {
+        if (subject == null) {
+            return "";
+        }
+        String s = subject.replaceAll("[\\t\\r\\n]+", " ");
+        s = s.replaceAll(" {2,}", " ");
+
+        while (true) {
+            // Step 2: Remove Trailers
+            while (true) {
+                if (s.endsWith(" ")) {
+                    s = s.substring(0, s.length() - 1);
+                } else if (s.toLowerCase(java.util.Locale.ENGLISH).endsWith("(fwd)")) {
+                    s = s.substring(0, s.length() - 5);
+                } else {
+                    break;
+                }
+            }
+
+            // Steps 3, 4, 5: Remove Leaders / Blobs / Repeat
+            while (true) {
+                if (s.startsWith(" ")) {
+                    s = s.substring(1);
+                    continue;
+                }
+                java.util.regex.Matcher lm = LEADER_PATTERN.matcher(s);
+                if (lm.find()) {
+                    s = s.substring(lm.end());
+                    continue;
+                }
+                java.util.regex.Matcher bm = BLOB_PATTERN.matcher(s);
+                if (bm.find()) {
+                    String remaining = s.substring(bm.end());
+                    if (!remaining.isEmpty()) {
+                        s = remaining;
+                        continue;
+                    }
+                }
+                break;
+            }
+
+            // Step 6: Handle Forwarding Headers
+            if (s.toLowerCase(java.util.Locale.ENGLISH).startsWith("[fwd:") && s.endsWith("]")) {
+                s = s.substring(5, s.length() - 1);
+                continue;
+            }
+
+            break;
+        }
+        return s;
     }
 }

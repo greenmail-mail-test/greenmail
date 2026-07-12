@@ -69,6 +69,58 @@ public class ImapSortTest {
         }
     }
 
+    @Test
+    public void testSortBySubjectBaseSubject() throws Exception {
+        GreenMailUser user = greenMail.setUser("to2@localhost", "pwd");
+        MailFolder folder = greenMail.getManagers().getImapHostManager().getFolder(user, "INBOX");
+        Session session = greenMail.getImap().createSession();
+
+        MimeMessage msgA = new MimeMessage(session);
+        msgA.setSubject("Subject A");
+        msgA.setText("content");
+        folder.store(msgA);
+
+        MimeMessage msgB = new MimeMessage(session);
+        msgB.setSubject("Re: Subject B");
+        msgB.setText("content");
+        folder.store(msgB);
+
+        MimeMessage msgC = new MimeMessage(session);
+        msgC.setSubject("[fwd: Subject C]");
+        msgC.setText("content");
+        folder.store(msgC);
+
+        MimeMessage msgD = new MimeMessage(session);
+        msgD.setSubject("Subject D (fwd)");
+        msgD.setText("content");
+        folder.store(msgD);
+
+        MimeMessage msgE = new MimeMessage(session);
+        msgE.setSubject("[list] Fwd: Subject E");
+        msgE.setText("content");
+        folder.store(msgE);
+
+        greenMail.waitForIncomingEmail(5);
+
+        final Store store = greenMail.getImap().createStore();
+        store.connect("to2@localhost", "pwd");
+        try {
+            IMAPFolder imapFolder = (IMAPFolder) store.getFolder("INBOX");
+            imapFolder.open(Folder.READ_WRITE);
+
+            Message[] imapMessages = imapFolder.getSortedMessages(new SortTerm[]{SortTerm.SUBJECT});
+            assertThat(imapMessages).hasSize(5);
+
+            assertThat(imapMessages[0].getSubject()).isEqualTo("Subject A");
+            assertThat(imapMessages[1].getSubject()).isEqualTo("Re: Subject B");
+            assertThat(imapMessages[2].getSubject()).isEqualTo("[fwd: Subject C]");
+            assertThat(imapMessages[3].getSubject()).isEqualTo("Subject D (fwd)");
+            assertThat(imapMessages[4].getSubject()).isEqualTo("[list] Fwd: Subject E");
+        } finally {
+            store.close();
+        }
+    }
+
     /**
      * Create the two messages with different recipients, etc. for testing and add them to the folder.
      *
@@ -78,7 +130,7 @@ public class ImapSortTest {
      */
     private void storeSortTestMessages(Session session, MailFolder folder, Flags flags) throws Exception {
         MimeMessage message1 = new MimeMessage(session);
-        message1.setSubject("testSearch");
+        message1.setSubject("Re: testB");
         message1.setText("content");
 
         int[] message1RecipientsSuffixes = new int[]{1, 2};
@@ -91,7 +143,7 @@ public class ImapSortTest {
         folder.store(message1);
 
         MimeMessage message2 = new MimeMessage(session);
-        message2.setSubject("testSearch");
+        message2.setSubject("testA");
         message2.setText("content");
         int[] message2RecipientsSuffixes = new int[]{2, 3};
         setRecipients(message2, Message.RecipientType.TO, "to", message2RecipientsSuffixes);
