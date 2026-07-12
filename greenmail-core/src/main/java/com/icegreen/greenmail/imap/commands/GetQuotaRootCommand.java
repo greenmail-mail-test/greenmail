@@ -32,9 +32,10 @@ public class GetQuotaRootCommand extends GetQuotaCommand {
 
         String root = parser.mailbox(request);
         getMailbox(root, session, true);
-        // QUOTAROOT mailbox
+        // QUOTAROOT lists every quota root that applies to the mailbox, including the
+        // user's default root (RFC 2087 section 4.3).
         Quota[] quota = session.getHost().getStore().getQuota(
-                root, session.getUser().getQualifiedMailboxName());
+                root, session.getUser().getQualifiedMailboxName(), true);
         StringBuilder buf = new StringBuilder("QUOTAROOT ");
         buf.append(quoteName(root));
         for (Quota q : quota) {

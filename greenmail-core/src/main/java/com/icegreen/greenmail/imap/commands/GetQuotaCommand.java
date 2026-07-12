@@ -35,8 +35,10 @@ public class GetQuotaCommand extends AuthenticatedStateCommand {
 
         String quotaRoot = parser.astring(request);
         // NAME root (name usage limit)
+        // GETQUOTA resolves a single named quota root, so do not fall back to the
+        // default root: an unknown root must be rejected (RFC 2087 section 4.2).
         Quota[] quota = session.getHost().getStore().getQuota(
-            quotaRoot, session.getUser().getQualifiedMailboxName());
+            quotaRoot, session.getUser().getQualifiedMailboxName(), false);
         if(null==quota||quota.length==0) {
             response.commandFailed(this, "No such quota root: "+quotaRoot);
         } else {

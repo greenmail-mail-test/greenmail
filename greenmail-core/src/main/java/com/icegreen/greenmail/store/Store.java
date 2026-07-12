@@ -109,9 +109,13 @@ public interface Store {
      * @see org.eclipse.angus.mail.imap.IMAPStore#getQuota(String)
      * @param root the quota root
      * @param qualifiedRootPrefix the user specific prefix
+     * @param includeDefaultRoot whether the user's default (empty) quota root is added to the lookup.
+     *                           GETQUOTAROOT lists every root that applies to a mailbox, which includes
+     *                           the default root; GETQUOTA looks up a single named root and must not
+     *                           fall back to it (RFC 2087, sections 4.2 and 4.3).
      * @return the quotas, or an empty array.
      */
-    Quota[] getQuota(String root, String qualifiedRootPrefix);
+    Quota[] getQuota(String root, String qualifiedRootPrefix, boolean includeDefaultRoot);
 
     /**
      * Sets the quota.
