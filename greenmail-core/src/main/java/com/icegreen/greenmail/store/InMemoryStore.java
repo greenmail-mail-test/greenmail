@@ -191,7 +191,7 @@ public class InMemoryStore
     }
 
     @Override
-    public Quota[] getQuota(final String root, final String qualifiedRootPrefix) {
+    public Quota[] getQuota(final String root, final String qualifiedRootPrefix, final boolean includeDefaultRoot) {
         Set<String> rootPaths = new HashSet<>();
         if (!root.contains(ImapConstants.HIERARCHY_DELIMITER)) {
             rootPaths.add(qualifiedRootPrefix + root);
@@ -200,7 +200,9 @@ public class InMemoryStore
                 rootPaths.add(qualifiedRootPrefix + r);
             }
         }
-        rootPaths.add(qualifiedRootPrefix); // Add default root
+        if (includeDefaultRoot) {
+            rootPaths.add(qualifiedRootPrefix); // Add default root
+        }
 
         Set<Quota> collectedQuotas = new HashSet<>();
         for (String p : rootPaths) {

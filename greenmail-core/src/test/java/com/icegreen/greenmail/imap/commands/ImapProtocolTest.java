@@ -536,6 +536,42 @@ public class ImapProtocolTest {
         }
     }
 
+    @Test
+    public void testGetQuotaDoesNotFallBackToDefaultRoot() throws MessagingException {
+        greenMail.setUser("foo3@localhost", "pwd");
+        store.connect("foo3@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+
+            // Set a quota on the default (empty) root.
+            IMAPFolder.ProtocolCommand set = protocol -> protocol.command("SETQUOTA \"\" (STORAGE 111)", null);
+            Response[] setRet = (Response[]) folder.doCommand(set);
+            assertThat(((IMAPResponse) setRet[0]).isOK()).isTrue();
+
+            // GETQUOTA on an unknown root must be rejected, not answered with the default root's quota.
+            IMAPFolder.ProtocolCommand unknown = protocol -> protocol.command("GETQUOTA \"whatever\"", null);
+            Response[] unknownRet = (Response[]) folder.doCommand(unknown);
+            IMAPResponse unknownResponse = (IMAPResponse) unknownRet[0];
+            assertThat(unknownResponse.isNO()).isTrue();
+            assertThat(unknownResponse.toString()).contains("No such quota root: whatever");
+
+            // GETQUOTA on the default root itself still returns it.
+            IMAPFolder.ProtocolCommand defaultRoot = protocol -> protocol.command("GETQUOTA \"\"", null);
+            Response[] defaultRet = (Response[]) folder.doCommand(defaultRoot);
+            assertThat((IMAPResponse) defaultRet[0]).hasToString("* QUOTA \"\" (STORAGE 0 111)");
+            assertThat(((IMAPResponse) defaultRet[1]).isOK()).isTrue();
+
+            // GETQUOTAROOT still reports the default root as applying to the mailbox.
+            IMAPFolder.ProtocolCommand quotaRoot = protocol -> protocol.command("GETQUOTAROOT INBOX", null);
+            Response[] quotaRootRet = (Response[]) folder.doCommand(quotaRoot);
+            assertThat(((IMAPResponse) quotaRootRet[0]).toString()).contains("QUOTAROOT \"INBOX\" \"\"");
+            assertThat((IMAPResponse) quotaRootRet[1]).hasToString("* QUOTA \"\" (STORAGE 0 111)");
+        } finally {
+            store.close();
+        }
+    }
+
     private String msnListToUidString(Map<Integer, Long> uids, int... msnList) {
         StringBuilder buf = new StringBuilder();
         for (int msn : msnList) {
