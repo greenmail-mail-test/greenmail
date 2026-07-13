@@ -278,7 +278,15 @@ public class SimpleMessageAttributes
     private String parseEnvelope() {
         List<String> response = new ArrayList<>();
         //1. Date ---------------
-        response.add(LB + Q + escapeHeader(sentDateEnvelopeString) + Q + SP);
+        // env-date is an nstring (RFC 3501), so emit NIL when absent. A part built with no
+        // received-date fallback and no Date header (an embedded message/rfc822 whose inner
+        // message omits Date) leaves sentDateEnvelopeString null; passing null to escapeHeader
+        // would throw and fail the whole FETCH ENVELOPE/BODYSTRUCTURE.
+        if (sentDateEnvelopeString != null) {
+            response.add(LB + Q + escapeHeader(sentDateEnvelopeString) + Q + SP);
+        } else {
+            response.add(LB + NIL + SP);
+        }
         //2. Subject ---------------
         if (subject != null && (!subject.isEmpty())) {
             response.add(Q + escapeHeader(subject) + Q + SP);
