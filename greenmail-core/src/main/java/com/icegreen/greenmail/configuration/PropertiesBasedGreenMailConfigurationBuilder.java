@@ -49,7 +49,7 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
      *
      * @see GreenMailConfiguration#withDiscardAttachments()
      */
-    public static final String GREENMAIL_DISCARD_ATTACHMENTS = "greenmail.discard.attachments";
+    public static final String GREENMAIL_ATTACHMENTS_DISCARD = "greenmail.attachments.discard";
 
     /**
      * Configures how user login should be extracted from user of pattern local-part:password@domain .
@@ -96,7 +96,7 @@ public class PropertiesBasedGreenMailConfigurationBuilder {
             configuration.withPreloadDir(preloadDir);
         }
 
-        String discardAttachments = properties.getProperty(GREENMAIL_DISCARD_ATTACHMENTS, "false");
+        String discardAttachments = properties.getProperty(GREENMAIL_ATTACHMENTS_DISCARD, "false");
         if (Boolean.TRUE.toString().equalsIgnoreCase(discardAttachments)) {
             configuration.withDiscardAttachments();
         }
