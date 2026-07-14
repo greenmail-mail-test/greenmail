@@ -39,10 +39,14 @@ public class GreenMailApiResource {
     // UI
     private static final String INDEX_CONTENT = loadResource("index.html");
     private static final String OPENAPI_CONTENT = loadResource("greenmail-openapi.yml");
+    private static final String SWAGGER_CSS = loadResource("css/swagger-ui.css");
+    private static final String SWAGGER_JS_STANDALONE_RESETS = loadResource("js/swagger-ui-standalone-preset.js");
+    private static final String SWAGGER_JS_BUNDLE = loadResource("js/swagger-ui-bundle.js");
+    private static final String SWAGGER_JS_OAUTH2_REDIRECT = loadResource("js/oauth2-redirect.js");
 
     private static String loadResource(String name) throws NotFoundException {
         try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(name)) {
-            if(null == is) {
+            if (null == is) {
                 throw new NotFoundException("Can not load resource " + name + " from classpath");
             }
             return new Scanner(is, StandardCharsets.UTF_8.name()).useDelimiter("\\A").next();
@@ -64,17 +68,32 @@ public class GreenMailApiResource {
         return OPENAPI_CONTENT;
     }
 
-    @Path("/css/{path:.*}")
+    @Path("css/swagger-ui.css")
     @GET
     @Produces("text/css")
-    public String css(@PathParam("path") String path) {
-        return loadResource("css/"+path);
+    public String cssSwaggerUi() {
+        return SWAGGER_CSS;
     }
-    @Path("/js/{path:.*}")
+
+    @Path("/js/swagger-ui-standalone-preset.js")
     @GET
     @Produces("text/javascript")
-    public String js(@PathParam("path") String path) {
-        return loadResource("js/"+path);
+    public String jsSwaggerUiStandalonePresets() {
+        return SWAGGER_JS_STANDALONE_RESETS;
+    }
+
+    @Path("/js/swagger-ui-bundle.js")
+    @GET
+    @Produces("text/javascript")
+    public String jsSwaggerUiBundle() {
+        return SWAGGER_JS_BUNDLE;
+    }
+
+    @Path("/js/oauth2-redirect.js")
+    @GET
+    @Produces("text/javascript")
+    public String jsSwaggerOauthRedirect() {
+        return SWAGGER_JS_OAUTH2_REDIRECT;
     }
 
     // General
