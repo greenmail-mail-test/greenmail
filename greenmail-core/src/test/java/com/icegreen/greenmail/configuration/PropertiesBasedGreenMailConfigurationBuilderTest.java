@@ -85,7 +85,7 @@ public class PropertiesBasedGreenMailConfigurationBuilderTest {
 
     @Test
     public void testBuildWithDiscardAttachmentsEnabled() {
-        Properties props = createPropertiesFor(PropertiesBasedGreenMailConfigurationBuilder.GREENMAIL_DISCARD_ATTACHMENTS, "true");
+        Properties props = createPropertiesFor(PropertiesBasedGreenMailConfigurationBuilder.GREENMAIL_ATTACHMENTS_DISCARD, "true");
         GreenMailConfiguration config = new PropertiesBasedGreenMailConfigurationBuilder().build(props);
         assertThat(config.isDiscardAttachmentsEnabled()).isTrue();
     }
