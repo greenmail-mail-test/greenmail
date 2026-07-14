@@ -39,16 +39,15 @@ public class GreenMailApiResource {
     // UI
     private static final String INDEX_CONTENT = loadResource("index.html");
     private static final String OPENAPI_CONTENT = loadResource("greenmail-openapi.yml");
-    private static final String JS_RAPIDOC = loadResource("js/rapidoc-min.js");
 
-    private static String loadResource(String name) {
+    private static String loadResource(String name) throws NotFoundException {
         try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(name)) {
             if(null == is) {
-                throw new IllegalArgumentException("Can not load resource " + name + " from classpath");
+                throw new NotFoundException("Can not load resource " + name + " from classpath");
             }
             return new Scanner(is, StandardCharsets.UTF_8.name()).useDelimiter("\\A").next();
         } catch (IOException | NullPointerException e) {
-            throw new IllegalArgumentException("Can not load resource " + name + " from classpath", e);
+            throw new NotFoundException("Can not load resource " + name + " from classpath", e);
         }
     }
 
@@ -65,11 +64,17 @@ public class GreenMailApiResource {
         return OPENAPI_CONTENT;
     }
 
-    @Path("/js/rapidoc-min.js")
+    @Path("/css/{path:.*}")
+    @GET
+    @Produces("text/css")
+    public String css(@PathParam("path") String path) {
+        return loadResource("css/"+path);
+    }
+    @Path("/js/{path:.*}")
     @GET
     @Produces("text/javascript")
-    public String jsRapidoc() {
-        return JS_RAPIDOC;
+    public String js(@PathParam("path") String path) {
+        return loadResource("js/"+path);
     }
 
     // General

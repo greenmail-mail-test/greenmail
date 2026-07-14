@@ -3,7 +3,7 @@ openapi: "3.0.0"
 info:
   version: "${project.version}"
   title: GreenMail OpenAPI
-  description: <p>RESTful API for GreenMail web application</p>
+  description: <p>RESTful API for <a href=""https://greenmail-mail-test.github.io/greenmail/">GreenMail</a> web application</p>
   license:
     name: Apache 2.0
     url: "https://www.apache.org/licenses/LICENSE-2.0.html"
