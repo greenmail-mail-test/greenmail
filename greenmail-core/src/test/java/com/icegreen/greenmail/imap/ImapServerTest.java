@@ -246,7 +246,7 @@ public class ImapServerTest {
 
             // Set some flags
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
-            folder.open(Folder.READ_ONLY);
+            folder.open(Folder.READ_WRITE);
             try {
                 Message[] msgs = folder.getMessages();
                 assertThat(null != msgs && msgs.length == 1).isTrue();
