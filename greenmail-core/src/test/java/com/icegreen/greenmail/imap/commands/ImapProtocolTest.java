@@ -137,7 +137,7 @@ public class ImapProtocolTest {
             uid = fetchResponse.getItem(UID.class);
             assertThat(uid.uid).isEqualTo(folder.getUID(folder.getMessage(1)));
 
-            // partial size and non zero offset
+            // partial size and non-zero offset
             ret = (Response[]) folder.doCommand(
                 protocol -> protocol.command("UID FETCH 1 (BODY[HEADER]<10.30>)", null));
             fetchResponse = (FetchResponse) ret[0];
@@ -499,6 +499,90 @@ public class ImapProtocolTest {
     }
 
     @Test
+    public void testStorePermanentFlags() throws MessagingException {
+        GreenMailUser user = greenMail.setUser("testStorePermanentFlags@localhost", "pwd");
+        GreenMailUtil.sendTextEmail(user.getEmail(), user.getEmail(), "testStorePermanentFlags", "content",
+            greenMail.getSmtp().getServerSetup());
+        store.connect("testStorePermanentFlags@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_WRITE);
+            Flags permanentFlags = folder.getPermanentFlags();
+            assertThat(permanentFlags.contains("MyKeyword")).isFalse();
+
+            IMAPFolder.ProtocolCommand set = protocol -> protocol.command("STORE 1 +FLAGS (MyKeyword)", null);
+            Response[] setRet = (Response[]) folder.doCommand(set);
+            assertThat(setRet[1].isOK()).isTrue();
+
+            folder.close(true);
+            folder.open(Folder.READ_ONLY);
+
+            permanentFlags = folder.getPermanentFlags();
+            assertThat(permanentFlags.contains("MyKeyword")).isTrue();
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
+    public void testAppendPermanentFlags() throws MessagingException {
+        GreenMailUser user = greenMail.setUser("testAppendPermanentFlags@localhost", "pwd");
+        store.connect("testAppendPermanentFlags@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_WRITE);
+            Flags permanentFlags = folder.getPermanentFlags();
+            assertThat(permanentFlags.contains("MyKeyword")).isFalse();
+
+            MimeMessage message = new MimeMessage((Session) null);
+            message.setSubject("testAppendPermanentFlags");
+            message.setText("content");
+            message.setFlags(new Flags("MyKeyword"), true);
+
+            folder.appendMessages(new Message[]{message});
+            folder.close(true);
+            folder.open(Folder.READ_ONLY);
+
+            permanentFlags = folder.getPermanentFlags();
+            assertThat(permanentFlags.contains("MyKeyword")).isTrue();
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
+    public void testRemoveUserFlag() throws MessagingException {
+        GreenMailUser user = greenMail.setUser("testRemoveUserFlag@localhost", "pwd");
+        GreenMailUtil.sendTextEmail(user.getEmail(), user.getEmail(), "testRemoveUserFlag", "content",
+            greenMail.getSmtp().getServerSetup());
+        store.connect("testRemoveUserFlag@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_WRITE);
+
+            // 1. Add user flag
+            folder.setFlags(new int[]{1}, new Flags("MyKeyword"), true);
+            assertThat(folder.getMessage(1).getFlags().contains("MyKeyword")).isTrue();
+            // Requires re-open to refresh folder permanent flags
+            folder.close();
+            folder.open(Folder.READ_WRITE);
+            assertThat(folder.getPermanentFlags().contains("MyKeyword")).isTrue();
+
+            // 2. Remove user flag from the message
+            folder.setFlags(new int[]{1}, new Flags("MyKeyword"), false);
+            assertThat(folder.getMessage(1).getFlags().contains("MyKeyword")).isFalse();
+            // Requires re-open to refresh folder permanent flags
+            folder.close();
+            folder.open(Folder.READ_ONLY);
+
+            // The folder's permanentFlags should still contain "MyKeyword" even after removal
+            assertThat(folder.getPermanentFlags().contains("MyKeyword")).isTrue();
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
     public void testQuta() throws MessagingException {
         // JavaMail only uses GETQUOTAROOT, not GETQUOTA
         greenMail.setUser("foo2@localhost", "pwd");
@@ -547,7 +631,7 @@ public class ImapProtocolTest {
             // Set a quota on the default (empty) root.
             IMAPFolder.ProtocolCommand set = protocol -> protocol.command("SETQUOTA \"\" (STORAGE 111)", null);
             Response[] setRet = (Response[]) folder.doCommand(set);
-            assertThat(((IMAPResponse) setRet[0]).isOK()).isTrue();
+            assertThat(setRet[0].isOK()).isTrue();
 
             // GETQUOTA on an unknown root must be rejected, not answered with the default root's quota.
             IMAPFolder.ProtocolCommand unknown = protocol -> protocol.command("GETQUOTA \"whatever\"", null);
@@ -560,12 +644,12 @@ public class ImapProtocolTest {
             IMAPFolder.ProtocolCommand defaultRoot = protocol -> protocol.command("GETQUOTA \"\"", null);
             Response[] defaultRet = (Response[]) folder.doCommand(defaultRoot);
             assertThat((IMAPResponse) defaultRet[0]).hasToString("* QUOTA \"\" (STORAGE 0 111)");
-            assertThat(((IMAPResponse) defaultRet[1]).isOK()).isTrue();
+            assertThat(defaultRet[1].isOK()).isTrue();
 
             // GETQUOTAROOT still reports the default root as applying to the mailbox.
             IMAPFolder.ProtocolCommand quotaRoot = protocol -> protocol.command("GETQUOTAROOT INBOX", null);
             Response[] quotaRootRet = (Response[]) folder.doCommand(quotaRoot);
-            assertThat(((IMAPResponse) quotaRootRet[0]).toString()).contains("QUOTAROOT \"INBOX\" \"\"");
+            assertThat(quotaRootRet[0].toString()).contains("QUOTAROOT \"INBOX\" \"\"");
             assertThat((IMAPResponse) quotaRootRet[1]).hasToString("* QUOTA \"\" (STORAGE 0 111)");
         } finally {
             store.close();

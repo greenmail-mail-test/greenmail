@@ -37,11 +37,8 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         DEFAULT_FLAGS.add(Flags.Flag.FLAGGED);
         DEFAULT_FLAGS.add(Flags.Flag.SEEN);
     }
-    private static final Flags PERMANENT_FLAGS = new Flags();
-    static {
-        PERMANENT_FLAGS.add(DEFAULT_FLAGS);
-        PERMANENT_FLAGS.add(Flags.Flag.USER);
-    }
+    private final Flags permanentFlags = new Flags();
+
 
     private final StoredMessageCollection mailMessages = new ListBasedStoredMessageCollection();
     private final List<FolderListener> _mailboxListeners = Collections.synchronizedList(new ArrayList<>());
@@ -65,6 +62,10 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
                     "UIDVALIDITY value " + uidValidity + " does not fit as unsigned 32 bit int " +
                             2L * Integer.MAX_VALUE);
         }
+
+        // Initialize permanent flags with defaults and indicate support for user flags
+        permanentFlags.add(DEFAULT_FLAGS);
+        permanentFlags.add(Flags.Flag.USER);
     }
 
     /**
@@ -135,7 +136,7 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
 
     @Override
     public Flags getPermanentFlags() {
-        return PERMANENT_FLAGS;
+        return permanentFlags;
     }
 
     @Override
@@ -263,12 +264,26 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         return uid;
     }
 
+    private void recordUserFlags(Flags flags) {
+        if (flags != null) {
+            final String[] userFlags = flags.getUserFlags();
+            if (userFlags != null) {
+                for (String userFlag : userFlags) {
+                    if (userFlag != null && !userFlag.isEmpty() && !permanentFlags.contains(userFlag)) {
+                        permanentFlags.add(userFlag);
+                    }
+                }
+            }
+        }
+    }
+
     private void storeAndNotifyListeners(StoredMessage storedMessage) {
         int newMsn;
         synchronized (mailMessages) {
             mailMessages.add(storedMessage);
             newMsn = mailMessages.size();
         }
+        recordUserFlags(storedMessage.getFlags());
 
         // Notify all the listeners of the new message
         synchronized (_mailboxListeners) {
@@ -285,6 +300,10 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
 
         message.setFlags(flags, value);
 
+        if (value) {
+            recordUserFlags(flags);
+        }
+
         Long uidNotification = null;
         if (addUid) {
             uidNotification = uid;
@@ -298,6 +317,8 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
         StoredMessage message = mailMessages.get(msn - 1);
         message.setFlags(MessageFlags.ALL_FLAGS, false);
         message.setFlags(flags, true);
+
+        recordUserFlags(flags);
 
         Long uidNotification = null;
         if (addUid) {
