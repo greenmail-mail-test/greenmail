@@ -53,6 +53,7 @@ class ExpungeCommand extends SelectedStateCommand implements UidEnabledCommand {
 
         if (session.getSelected().isReadonly()) {
             response.commandFailed(this, "Mailbox selected read only.");
+            return;
         }
 
         MailFolder folder = session.getSelected();

@@ -49,6 +49,10 @@ class StoreCommand extends SelectedStateCommand implements UidEnabledCommand {
         storeParser.endLine(request);
 
         ImapSessionFolder mailbox = session.getSelected();
+        if (mailbox.isReadonly()) {
+            response.commandFailed(this, "Mailbox selected read only.");
+            return;
+        }
 //        IdRange[] uidSet;
 //        if (useUids) {
 //           uidSet = idSet;

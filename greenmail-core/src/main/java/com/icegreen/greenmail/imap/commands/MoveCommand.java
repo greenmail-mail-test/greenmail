@@ -55,6 +55,10 @@ class MoveCommand extends SelectedStateCommand implements UidEnabledCommand {
         parser.endLine(request);
 
         ImapSessionFolder currentMailbox = session.getSelected();
+        if (currentMailbox.isReadonly()) {
+            response.commandFailed(this, "Mailbox selected read only.");
+            return;
+        }
         MailFolder toFolder;
         try {
             toFolder = getMailbox(mailboxName, session, true);

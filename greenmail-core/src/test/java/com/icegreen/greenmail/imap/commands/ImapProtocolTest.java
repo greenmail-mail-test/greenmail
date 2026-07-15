@@ -572,6 +572,44 @@ public class ImapProtocolTest {
         }
     }
 
+    @Test
+    public void testReadOnlyMailboxRejectsMutations() throws MessagingException {
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+
+            // Mark a message deleted while read-write, then close without expunging.
+            folder.open(Folder.READ_WRITE);
+            folder.setFlags(new Message[]{folder.getMessage(1)}, new Flags(Flags.Flag.DELETED), true);
+            folder.close(false);
+
+            // EXAMINE selects the mailbox read only.
+            folder.open(Folder.READ_ONLY);
+
+            Response[] storeRet = (Response[]) folder.doCommand(
+                protocol -> protocol.command("STORE 2 +FLAGS (\\Flagged)", null));
+            assertThat(storeRet[storeRet.length - 1].isNO()).isTrue();
+
+            Response[] moveRet = (Response[]) folder.doCommand(
+                protocol -> protocol.command("MOVE 3 INBOX", null));
+            assertThat(moveRet[moveRet.length - 1].isNO()).isTrue();
+
+            Response[] expungeRet = (Response[]) folder.doCommand(
+                protocol -> protocol.command("EXPUNGE", null));
+            assertThat(expungeRet[expungeRet.length - 1].isNO()).isTrue();
+
+            folder.close(false);
+
+            // Reopen read-write and confirm none of the rejected commands changed state.
+            folder.open(Folder.READ_WRITE);
+            assertThat(folder.getMessageCount()).isEqualTo(10);
+            assertThat(folder.getMessage(2).isSet(Flags.Flag.FLAGGED)).isFalse();
+            folder.close(false);
+        } finally {
+            store.close();
+        }
+    }
+
     private String msnListToUidString(Map<Integer, Long> uids, int... msnList) {
         StringBuilder buf = new StringBuilder();
         for (int msn : msnList) {
