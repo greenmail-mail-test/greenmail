@@ -583,6 +583,36 @@ public class ImapProtocolTest {
     }
 
     @Test
+    public void testStoreReplaceFlagsClearsUserKeyword() throws MessagingException {
+        GreenMailUser user = greenMail.setUser("testStoreReplaceFlags@localhost", "pwd");
+        GreenMailUtil.sendTextEmail(user.getEmail(), user.getEmail(), "testStoreReplaceFlags", "content",
+            greenMail.getSmtp().getServerSetup());
+        store.connect("testStoreReplaceFlags@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_WRITE);
+
+            // Set a user keyword on the message
+            folder.setFlags(new int[]{1}, new Flags("MyKeyword"), true);
+            assertThat(folder.getMessage(1).getFlags().contains("MyKeyword")).isTrue();
+
+            // Replace form of STORE (no +/-): the resulting flag set must be exactly the argument
+            IMAPFolder.ProtocolCommand replace = protocol -> protocol.command("STORE 1 FLAGS (\\Seen)", null);
+            Response[] ret = (Response[]) folder.doCommand(replace);
+            assertThat(ret[ret.length - 1].isOK()).isTrue();
+
+            folder.close();
+            folder.open(Folder.READ_ONLY);
+
+            Flags flags = folder.getMessage(1).getFlags();
+            assertThat(flags.contains(Flags.Flag.SEEN)).isTrue();
+            assertThat(flags.contains("MyKeyword")).isFalse();
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
     public void testQuta() throws MessagingException {
         // JavaMail only uses GETQUOTAROOT, not GETQUOTA
         greenMail.setUser("foo2@localhost", "pwd");

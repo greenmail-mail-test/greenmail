@@ -315,7 +315,10 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     public void replaceFlags(Flags flags, long uid, FolderListener silentListener, boolean addUid) throws FolderException {
         int msn = getMsn(uid);
         StoredMessage message = mailMessages.get(msn - 1);
-        message.setFlags(MessageFlags.ALL_FLAGS, false);
+        // Clear every currently set flag, not only the system flags in ALL_FLAGS, so the
+        // replace form of STORE also drops user keywords. getFlags() returns a copy, so
+        // clearing from it while mutating the message is safe.
+        message.setFlags(message.getFlags(), false);
         message.setFlags(flags, true);
 
         recordUserFlags(flags);
