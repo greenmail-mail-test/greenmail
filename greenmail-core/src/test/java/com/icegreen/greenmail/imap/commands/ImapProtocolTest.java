@@ -96,7 +96,8 @@ public class ImapProtocolTest {
         store.connect("foo@localhost", "pwd");
         try {
             IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
-            folder.open(Folder.READ_ONLY);
+            // Read-write so the first non-peek BODY[HEADER] fetch sets \Seen and returns FLAGS.
+            folder.open(Folder.READ_WRITE);
 
             // Fetch without partial as reference
             Response[] ret = (Response[]) folder.doCommand(protocol -> protocol.command("UID FETCH 1 (BODY[HEADER])", null));
@@ -718,6 +719,32 @@ public class ImapProtocolTest {
             folder.open(Folder.READ_WRITE);
             assertThat(folder.getMessageCount()).isEqualTo(10);
             assertThat(folder.getMessage(2).isSet(Flags.Flag.FLAGGED)).isFalse();
+            folder.close(false);
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
+    public void testReadOnlyFetchDoesNotSetSeen() throws MessagingException {
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+
+            // EXAMINE selects the mailbox read only.
+            folder.open(Folder.READ_ONLY);
+
+            // A non-peek BODY[] fetch normally sets \Seen implicitly. On a read-only
+            // mailbox no permanent state may change, so the flag must stay unset.
+            Response[] fetchRet = (Response[]) folder.doCommand(
+                protocol -> protocol.command("FETCH 1 BODY[]", null));
+            assertThat(fetchRet[fetchRet.length - 1].isOK()).isTrue();
+
+            folder.close(false);
+
+            // Reopen read-write and confirm the fetch did not persist \Seen.
+            folder.open(Folder.READ_WRITE);
+            assertThat(folder.getMessage(1).isSet(Flags.Flag.SEEN)).isFalse();
             folder.close(false);
         } finally {
             store.close();

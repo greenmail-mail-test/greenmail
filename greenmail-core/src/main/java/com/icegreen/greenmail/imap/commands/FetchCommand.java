@@ -103,8 +103,11 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
         throws FolderException {
         // Check if this fetch will cause the "SEEN" flag to be set on this message
         // If so, update the flags, and ensure that a flags response is included in the response.
+        // A mailbox selected with EXAMINE is read only, so the implicit \Seen must not be
+        // set (RFC 3501 section 6.3.2); otherwise a non-peek BODY[] fetch mutates the shared
+        // message state the command was not permitted to change.
         boolean ensureFlagsResponse = false;
-        if (fetch.isSetSeen() && !message.isSet(Flags.Flag.SEEN)) {
+        if (fetch.isSetSeen() && !message.isSet(Flags.Flag.SEEN) && !folder.isReadonly()) {
             folder.setFlags(FLAGS_SEEN, true, message.getUid(), folder, useUids);
             message.setFlags(FLAGS_SEEN, true);
             ensureFlagsResponse = true;
