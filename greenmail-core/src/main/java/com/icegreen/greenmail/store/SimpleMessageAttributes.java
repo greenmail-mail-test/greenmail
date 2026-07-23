@@ -511,9 +511,16 @@ public class SimpleMessageAttributes
                 buf.append(parts[0].getBodyStructure(false)).append(SP);
                 buf.append(lineCount);
             } else if (primaryType.equalsIgnoreCase(MULTIPART)) {
-                for (MailMessageAttributes part : parts) {
-//                    setupLogger(parts[i]); // reset transient getLogger()
-                    buf.append(part.getBodyStructure(includeExtension));
+                // A sender can declare a multipart type whose body cannot be decomposed into
+                // parts (e.g. a multipart/* header with no boundary). parseMimePart swallows
+                // that failure and stores the message, but leaves parts null, so iterating it
+                // here would throw a NullPointerException and fail the whole FETCH BODYSTRUCTURE.
+                // Treat it like a multipart with no sub-parts, matching the count == 0 case.
+                if (parts != null) {
+                    for (MailMessageAttributes part : parts) {
+//                        setupLogger(parts[i]); // reset transient getLogger()
+                        buf.append(part.getBodyStructure(includeExtension));
+                    }
                 }
                 buf.append(SP + Q).append(escapeHeader(secondaryType)).append(Q);
             } else {
