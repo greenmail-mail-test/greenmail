@@ -6,7 +6,6 @@
  */
 package com.icegreen.greenmail.store;
 
-
 import com.icegreen.greenmail.mail.MailAddress;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import org.eclipse.angus.mail.imap.protocol.INTERNALDATE;
@@ -31,7 +30,6 @@ import java.util.*;
  *
  * @author <a href="mailto:sascha@kulawik.de">Sascha Kulawik</a>
  * @author <a href="mailto:charles@benett1.demon.co.uk">Charles Benett</a>
- * @version 0.2 on 04 Aug 2002
  */
 public class SimpleMessageAttributes
         implements MailMessageAttributes {
@@ -278,7 +276,7 @@ public class SimpleMessageAttributes
     private String parseEnvelope() {
         List<String> response = new ArrayList<>();
         //1. Date ---------------
-        // env-date is an nstring (RFC 3501), so emit NIL when absent. A part built with no
+        // env-date is a nstring (RFC 3501), so emit NIL when absent. A part built with no
         // received-date fallback and no Date header (an embedded message/rfc822 whose inner
         // message omits Date) leaves sentDateEnvelopeString null; passing null to escapeHeader
         // would throw and fail the whole FETCH ENVELOPE/BODYSTRUCTURE.
@@ -518,7 +516,6 @@ public class SimpleMessageAttributes
                 // Treat it like a multipart with no sub-parts, matching the count == 0 case.
                 if (parts != null) {
                     for (MailMessageAttributes part : parts) {
-//                        setupLogger(parts[i]); // reset transient getLogger()
                         buf.append(part.getBodyStructure(includeExtension));
                     }
                 }
@@ -660,8 +657,7 @@ public class SimpleMessageAttributes
 
 
     /**
-     * http://tools.ietf.org/html/rfc1806
-     * http://tools.ietf.org/html/rfc2183 content disposition
+     * <a href="http://tools.ietf.org/html/rfc2183">Content-Disposition Header RFC2183</a>
      */
     private static class Header {
         String value;
