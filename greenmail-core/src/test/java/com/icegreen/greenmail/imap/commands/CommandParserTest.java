@@ -40,4 +40,83 @@ public class CommandParserTest {
         ByteArrayInputStream in = new ByteArrayInputStream(line.getBytes(StandardCharsets.ISO_8859_1));
         return new CommandParser().consumeQuoted(new ImapRequestLineReader(in, null));
     }
+
+    @Test
+    public void consumeLiteralParsesRegularContent() throws ProtocolException {
+        assertThat(consumeLiteral("{5+}\r\nhello")).isEqualTo("hello");
+        assertThat(consumeLiteral("{0+}\r\n")).isEmpty();
+    }
+
+    @Test
+    public void consumeLiteralReadsPayloadLargerThanOneChunk() throws ProtocolException {
+        StringBuilder payload = new StringBuilder();
+        for (int i = 0; i < 20000; i++) {
+            payload.append((char) ('a' + i % 26));
+        }
+        assertThat(consumeLiteral("{" + payload.length() + "+}\r\n" + payload))
+            .isEqualTo(payload.toString());
+    }
+
+    @Test
+    public void consumeLiteralRejectsMissingOctetCount() {
+        assertThatThrownBy(() -> consumeLiteral("{+}\r\n"))
+            .isInstanceOf(ProtocolException.class);
+    }
+
+    @Test
+    public void consumeLiteralRejectsNegativeOctetCount() {
+        assertThatThrownBy(() -> consumeLiteral("{-1+}\r\n"))
+            .isInstanceOf(ProtocolException.class);
+    }
+
+    @Test
+    public void consumeLiteralRejectsNonNumericOctetCount() {
+        assertThatThrownBy(() -> consumeLiteral("{1a+}\r\n"))
+            .isInstanceOf(ProtocolException.class);
+    }
+
+    @Test
+    public void consumeLiteralRejectsOutOfRangeOctetCount() {
+        assertThatThrownBy(() -> consumeLiteral("{9999999999+}\r\n"))
+            .isInstanceOf(ProtocolException.class);
+    }
+
+    /**
+     * An announced octet count must not size a buffer on its own: the reader has to fail on the
+     * truncated payload rather than reserve the announced amount of memory up front.
+     */
+    @Test
+    public void consumeLiteralDoesNotReserveMemoryForAnAnnouncedPayload() {
+        long usedBefore = usedMemory();
+        assertThatThrownBy(() -> consumeLiteral("{1000000000+}\r\n"))
+            .isInstanceOf(ProtocolException.class);
+        assertThat(usedMemory() - usedBefore).isLessThan(100L * 1024 * 1024);
+    }
+
+    private static long usedMemory() {
+        Runtime runtime = Runtime.getRuntime();
+        return runtime.totalMemory() - runtime.freeMemory();
+    }
+
+    @Test
+    public void consumeLongRejectsMissingNumber() {
+        assertThatThrownBy(() -> consumeLong(">\r\n"))
+            .isInstanceOf(ProtocolException.class);
+    }
+
+    @Test
+    public void consumeLongRejectsOutOfRangeNumber() {
+        assertThatThrownBy(() -> consumeLong("99999999999999999999\r\n"))
+            .isInstanceOf(ProtocolException.class);
+    }
+
+    private static String consumeLiteral(String line) throws ProtocolException {
+        ByteArrayInputStream in = new ByteArrayInputStream(line.getBytes(StandardCharsets.ISO_8859_1));
+        return new CommandParser().consumeLiteral(new ImapRequestLineReader(in, null));
+    }
+
+    private static long consumeLong(String line) throws ProtocolException {
+        ByteArrayInputStream in = new ByteArrayInputStream(line.getBytes(StandardCharsets.ISO_8859_1));
+        return new CommandParser().consumeLong(new ImapRequestLineReader(in, null));
+    }
 }

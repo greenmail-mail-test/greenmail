@@ -14,6 +14,7 @@ import org.eclipse.angus.mail.imap.protocol.BASE64MailboxDecoder;
 
 import jakarta.mail.Flags;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,6 +36,10 @@ public class CommandParser {
      * Carriage-Return '\r' character
      */
     static final char CHR_CR = '\r';
+    /**
+     * Chunk size used when reading a literal payload
+     */
+    private static final int LITERAL_CHUNK_SIZE = 8192;
 
     /**
      * Reads an argument of type "atom" from the request.
@@ -222,7 +227,12 @@ public class CommandParser {
             request.consume();
             next = request.nextChar();
         }
-        return Long.parseLong(atom.toString());
+        String digits = atom.toString();
+        try {
+            return Long.parseLong(digits);
+        } catch (NumberFormatException ex) {
+            throw new ProtocolException("Can not parse '" + digits + "' as number", ex);
+        }
     }
 
     /**
@@ -262,15 +272,60 @@ public class CommandParser {
         consumeChar(request, '}');
         consumeCRLF(request);
 
+        int size = literalOctetCount(digits.toString());
+
         if (synchronizedLiteral) {
             request.commandContinuationRequest();
         }
 
-        int size = Integer.parseInt(digits.toString());
-        byte[] buffer = new byte[size];
-        request.read(buffer);
+        return readLiteral(request, size);
+    }
 
-        return buffer;
+    /**
+     * Parses the octet count of a literal, which RFC 3501 defines as <code>number = 1*DIGIT</code>.
+     * A missing, signed, non numeric or out of range count is a syntax error, so it is reported
+     * as such instead of letting the conversion raise an unchecked exception that drops the
+     * connection before the command can be answered.
+     */
+    private int literalOctetCount(String digits) throws ProtocolException {
+        if (digits.isEmpty()) {
+            throw new ProtocolException("Invalid literal, octet count is missing");
+        }
+        for (int i = 0; i < digits.length(); i++) {
+            char chr = digits.charAt(i);
+            if (chr < '0' || chr > '9') {
+                throw new ProtocolException("Can not parse '" + digits + "' as literal octet count");
+            }
+        }
+        try {
+            return Integer.parseInt(digits);
+        } catch (NumberFormatException ex) {
+            throw new ProtocolException("Literal octet count '" + digits + "' is out of range", ex);
+        }
+    }
+
+    /**
+     * Reads the payload of a literal. Larger payloads are read in chunks so that the buffer
+     * grows with the octets that really arrive: the octet count is client supplied, and sizing
+     * a single buffer from it lets a client reserve arbitrary amounts of memory by announcing
+     * a literal it never sends.
+     */
+    private byte[] readLiteral(ImapRequestLineReader request, int size) throws ProtocolException {
+        if (size <= LITERAL_CHUNK_SIZE) {
+            byte[] buffer = new byte[size];
+            request.read(buffer);
+            return buffer;
+        }
+
+        ByteArrayOutputStream payload = new ByteArrayOutputStream(LITERAL_CHUNK_SIZE);
+        int remaining = size;
+        while (remaining > 0) {
+            byte[] chunk = new byte[Math.min(remaining, LITERAL_CHUNK_SIZE)];
+            request.read(chunk);
+            payload.write(chunk, 0, chunk.length);
+            remaining -= chunk.length;
+        }
+        return payload.toByteArray();
     }
 
     /**
