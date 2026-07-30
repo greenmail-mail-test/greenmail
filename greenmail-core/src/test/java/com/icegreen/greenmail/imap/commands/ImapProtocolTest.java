@@ -1,5 +1,6 @@
 package com.icegreen.greenmail.imap.commands;
 
+import com.icegreen.greenmail.imap.ImapConstants;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.user.GreenMailUser;
@@ -374,6 +375,35 @@ public class ImapProtocolTest {
             inbox.open(Folder.READ_ONLY);
             assertThat(inbox.exists()).isTrue();
 
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
+    public void testDeleteInboxByAliasedName() throws MessagingException {
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+
+            // Each of these resolves to the very same INBOX folder.
+            for (final String cmd : new String[]{
+                "DELETE \"INBOX.\"",
+                "DELETE \".INBOX\"",
+                "DELETE \"INBOX..\"",
+                "DELETE \"" + ImapConstants.USER_NAMESPACE + ImapConstants.HIERARCHY_DELIMITER
+                    + user.getQualifiedMailboxName() + ImapConstants.HIERARCHY_DELIMITER
+                    + ImapConstants.INBOX_NAME + "\""
+            }) {
+                Response[] ret = (Response[]) folder.doCommand(protocol -> protocol.command(cmd, null));
+                assertThat(ret[ret.length - 1].isNO()).as(cmd).isTrue();
+            }
+
+            final Folder inbox = store.getFolder("INBOX");
+            inbox.open(Folder.READ_ONLY);
+            assertThat(inbox.exists()).isTrue();
+            assertThat(inbox.getMessageCount()).isEqualTo(10);
         } finally {
             store.close();
         }

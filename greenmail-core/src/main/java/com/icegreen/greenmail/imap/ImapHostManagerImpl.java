@@ -100,7 +100,7 @@ public class ImapHostManagerImpl
             // Delete mail boxes
             Collection<MailFolder> mailfolders = listMailboxes(user, "*");
             for(MailFolder mf : mailfolders) {
-                deleteMailbox(user, mf.getFullName());
+                deleteFolder(user, mf);
             }
 
             // Delete account mail box
@@ -161,11 +161,33 @@ public class ImapHostManagerImpl
     public void deleteMailbox(GreenMailUser user, String mailboxName)
         throws FolderException {
 
-        if (mailboxName.equalsIgnoreCase("inbox")) {
+        MailFolder toDelete = getFolder(user, mailboxName, true);
+
+        // Check the resolved folder, not the requested name: the store ignores empty
+        // path components, so eg "INBOX." and ".INBOX" address the very same folder.
+        if (isAccountInbox(toDelete)) {
             throw new FolderException("Can not delete INBOX mailbox for user " + user.getEmail());
         }
 
-        MailFolder toDelete = getFolder(user, mailboxName, true);
+        deleteFolder(user, toDelete);
+    }
+
+    /**
+     * Checks if the folder is an account inbox, ie <i>#mail.&lt;user&gt;.INBOX</i>.
+     *
+     * @param folder the folder.
+     * @return true, if the folder is an account inbox.
+     */
+    private static boolean isAccountInbox(MailFolder folder) {
+        StringTokenizer tokens = new StringTokenizer(folder.getFullName(), HIERARCHY_DELIMITER);
+        if (tokens.countTokens() != 3 || !USER_NAMESPACE.equals(tokens.nextToken())) {
+            return false;
+        }
+        tokens.nextToken(); // The user namespace
+        return INBOX_NAME.equals(tokens.nextToken());
+    }
+
+    private void deleteFolder(GreenMailUser user, MailFolder toDelete) throws FolderException {
         if (store.getChildren(toDelete).isEmpty()) {
             toDelete.deleteAllMessages();
             toDelete.signalDeletion();
