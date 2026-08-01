@@ -435,6 +435,38 @@ public class ImapProtocolTest {
     }
 
     @Test
+    public void testRenameToUnusableParentKeepsMailbox() throws MessagingException {
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_WRITE);
+
+            Response[] ret = (Response[]) folder.doCommand(protocol -> protocol.command("CREATE foo", null));
+            assertThat(ret[ret.length - 1].isOK()).isTrue();
+
+            ret = (Response[]) folder.doCommand(protocol -> protocol.command("COPY 1 foo", null));
+            assertThat(ret[ret.length - 1].isOK()).isTrue();
+
+            // The new parent does not exist, and a mailbox can not become a child of itself.
+            for (final String cmd : new String[]{"RENAME foo missing.bar", "RENAME foo foo.bar"}) {
+                Response[] renameRet = (Response[]) folder.doCommand(protocol -> protocol.command(cmd, null));
+                assertThat(renameRet[renameRet.length - 1].isNO()).isTrue();
+            }
+
+            folder.close(false);
+
+            // The rejected renames must not have dropped foo or the message it holds.
+            Folder foo = store.getFolder("foo");
+            assertThat(foo.exists()).isTrue();
+            foo.open(Folder.READ_ONLY);
+            assertThat(foo.getMessageCount()).isEqualTo(1);
+            foo.close(false);
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
     public void testUidSearchTextWithCharset() throws MessagingException, IOException {
         greenMail.setUser("foo2@localhost", "pwd");
         store.connect("foo2@localhost", "pwd");

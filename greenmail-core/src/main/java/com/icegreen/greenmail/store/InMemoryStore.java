@@ -82,7 +82,7 @@ public class InMemoryStore
     }
 
     @Override
-    public void renameMailbox(MailFolder existingFolder, String newName) {
+    public void renameMailbox(MailFolder existingFolder, String newName) throws FolderException {
         HierarchicalFolder toRename = (HierarchicalFolder) existingFolder;
         HierarchicalFolder parent = toRename.getParent();
 
@@ -101,17 +101,41 @@ public class InMemoryStore
             // Simple rename
             toRename.setName(newFolderName);
         } else {
-            // Hierarchy change
+            // Hierarchy change. Resolve the target parent before detaching the mailbox,
+            // so a rename that can not be completed leaves the hierarchy untouched.
+            HierarchicalFolder newParent = resolveNewParent(toRename, newName);
             parent.removeChild(toRename);
-            HierarchicalFolder userFolder = getInboxOrUserRootFolder(toRename);
-            String[] path = newName.split('\\' + ImapConstants.HIERARCHY_DELIMITER);
-            HierarchicalFolder newParent = userFolder;
-            for (int i = 0; i < path.length - 1; i++) {
-                newParent = newParent.getChild(path[i]);
-            }
             toRename.moveToNewParent(newParent);
             toRename.setName(newFolderName);
         }
+    }
+
+    /**
+     * Looks up the parent a mailbox is moved to, without modifying the hierarchy.
+     *
+     * @param toRename the mailbox being renamed.
+     * @param newName  the new name, whose leading path components address the new parent.
+     * @return the new parent mailbox.
+     * @throws FolderException if the new parent does not exist or is the mailbox itself.
+     */
+    private HierarchicalFolder resolveNewParent(HierarchicalFolder toRename, String newName)
+        throws FolderException {
+        HierarchicalFolder newParent = getInboxOrUserRootFolder(toRename);
+        String[] path = newName.split('\\' + ImapConstants.HIERARCHY_DELIMITER);
+        for (int i = 0; i < path.length - 1; i++) {
+            newParent = newParent.getChild(path[i]);
+            if (null == newParent) {
+                throw new FolderException("Cannot rename mailbox " + toRename.getName() + " to " + newName
+                    + ", mailbox " + path[i] + " does not exist");
+            }
+        }
+        for (HierarchicalFolder ancestor = newParent; null != ancestor; ancestor = ancestor.getParent()) {
+            if (ancestor == toRename) {
+                throw new FolderException("Cannot rename mailbox " + toRename.getName() + " to " + newName
+                    + ", a mailbox can not become a child of itself");
+            }
+        }
+        return newParent;
     }
 
     private HierarchicalFolder getInboxOrUserRootFolder(HierarchicalFolder folder) {
