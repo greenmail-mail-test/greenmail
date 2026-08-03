@@ -1,4 +1,4 @@
-FROM azul-zulu:21.52-21.0.12-jre-headless-debian13
+FROM azul-zulu:26.32-26.0.2-jre-headless-debian13
 
 LABEL org.opencontainers.image.url=https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-docker/standalone
 LABEL org.opencontainers.image.source=https://github.com/greenmail-mail-test/greenmail/blob/master/greenmail-docker/standalone/Dockerfile
