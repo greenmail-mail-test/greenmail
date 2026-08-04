@@ -7,7 +7,6 @@
 package com.icegreen.greenmail.store;
 
 import com.icegreen.greenmail.mail.MailAddress;
-import com.icegreen.greenmail.util.GreenMailUtil;
 import org.eclipse.angus.mail.imap.protocol.INTERNALDATE;
 import jakarta.mail.BodyPart;
 import jakarta.mail.MessagingException;
@@ -127,14 +126,23 @@ public class SimpleMessageAttributes
      */
     void parseMimePart(MimePart part) {
         // RFC822.SIZE must be the full RFC-822 octet count (headers + blank line + body),
-        // so GreenMailUtil.getBody(part).lenght() can not be used for size computation.
+        // so GreenMailUtil.getBody(part).length() can not be used for size computation.
         try {
             ByteArrayOutputStream sizeOut = new ByteArrayOutputStream();
             part.writeTo(sizeOut);
             size = sizeOut.size();
+
+            // Compute linecount
+            byte[] partBytes = sizeOut.toByteArray();
+            int lines = 0;
+            for (byte b : partBytes) {
+                if (b == '\n') lines++;
+            }
+            lineCount = lines;
         } catch (IOException | MessagingException e) {
-            log.warn("Could not compute RFC822.SIZE for part, falling back to 0", e);
+            log.warn("Could not compute RFC822.SIZE//lineCount for part, falling back to 0", e);
             size = 0;
+            lineCount = 0;
         }
 
         // Section 1 - Message Headers
@@ -228,16 +236,6 @@ public class SimpleMessageAttributes
         } catch (MessagingException me) {
             if (log.isDebugEnabled()) {
                 log.debug("Can not create content disposition for part {}", part, me);
-            }
-        }
-
-        try {
-            // TODO this doesn't work
-            String body = GreenMailUtil.getBody(part);
-            lineCount = GreenMailUtil.getLineCount(body);
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Can not get line count for part {}", part, e);
             }
         }
 
