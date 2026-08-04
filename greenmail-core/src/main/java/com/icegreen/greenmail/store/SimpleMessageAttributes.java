@@ -15,6 +15,8 @@ import jakarta.mail.internet.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -124,8 +126,16 @@ public class SimpleMessageAttributes
      * TODO this is a mess, and should be completely revamped.
      */
     void parseMimePart(MimePart part) {
-        final String body = GreenMailUtil.getBody(part);
-        size = body.length();
+        // RFC822.SIZE must be the full RFC-822 octet count (headers + blank line + body),
+        // so GreenMailUtil.getBody(part).lenght() can not be used for size computation.
+        try {
+            ByteArrayOutputStream sizeOut = new ByteArrayOutputStream();
+            part.writeTo(sizeOut);
+            size = sizeOut.size();
+        } catch (IOException | MessagingException e) {
+            log.warn("Could not compute RFC822.SIZE for part, falling back to 0", e);
+            size = 0;
+        }
 
         // Section 1 - Message Headers
         if (part instanceof MimeMessage) {
@@ -223,6 +233,7 @@ public class SimpleMessageAttributes
 
         try {
             // TODO this doesn't work
+            String body = GreenMailUtil.getBody(part);
             lineCount = GreenMailUtil.getLineCount(body);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
