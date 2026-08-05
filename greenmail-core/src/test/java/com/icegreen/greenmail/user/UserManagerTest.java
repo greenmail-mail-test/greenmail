@@ -105,6 +105,31 @@ public class UserManagerTest {
     }
 
     @Test
+    public void testDeleteUserWithNestedMailboxes() throws Exception {
+        ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
+        UserManager userManager = new UserManager(imapHostManager);
+
+        GreenMailUser user = userManager.createUser("foo@bar.com", "foo", "pwd");
+        imapHostManager.createMailbox(user, "parent");
+        imapHostManager.createMailbox(user, "parent.child");
+        imapHostManager.createMailbox(user, "parent.child.grandchild");
+        MailFolder leaf = imapHostManager.getFolder(user, "parent.child.grandchild");
+        ServerSetup ss = ServerSetupTest.IMAP;
+        MimeMessage m = GreenMailUtil.createTextEmail(
+            "there@localhost", "here@localhost", "sub", "msg", ss);
+        leaf.store(m);
+
+        userManager.deleteUser(user);
+
+        assertThat(userManager.listUser()).isEmpty();
+        assertThat(imapHostManager.getFolder(user, ImapConstants.INBOX_NAME)).isNull();
+        assertThat(imapHostManager.getFolder(user, "parent")).isNull();
+        assertThat(imapHostManager.getFolder(user, "parent.child")).isNull();
+        assertThat(imapHostManager.getFolder(user, "parent.child.grandchild")).isNull();
+        assertThat(imapHostManager.getAllMessages()).isEmpty();
+    }
+
+    @Test
     public void testNoAuthRequired() {
         ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
         UserManager userManager = new UserManager(imapHostManager);

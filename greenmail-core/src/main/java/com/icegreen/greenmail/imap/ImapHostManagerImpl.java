@@ -97,21 +97,37 @@ public class ImapHostManagerImpl
     @Override
     public void deletePrivateMailAccount(GreenMailUser user) {
         try {
-            // Delete mail boxes
-            Collection<MailFolder> mailfolders = listMailboxes(user, "*");
-            for(MailFolder mf : mailfolders) {
+            // Delete deepest mailboxes first. deleteFolder only removes a folder when it has
+            // no children; a shallow-first walk leaves empty parents behind and then fails when
+            // removing the account root ("Cannot delete mailbox ... with children").
+            List<MailFolder> mailfolders = new ArrayList<>(listMailboxes(user, "*"));
+            mailfolders.sort(Comparator.comparingInt(ImapHostManagerImpl::mailboxDepth).reversed());
+            for (MailFolder mf : mailfolders) {
                 deleteFolder(user, mf);
             }
 
             // Delete account mail box
             MailFolder root = store.getMailbox(USER_NAMESPACE);
-            store.deleteMailbox(store.getMailbox(root,user.getQualifiedMailboxName()));
+            store.deleteMailbox(store.getMailbox(root, user.getQualifiedMailboxName()));
 
             // Delete Quota
             getStore().deleteQuota(user.getQualifiedMailboxName());
         } catch (FolderException e) {
             throw new IllegalStateException("Can not delete private mail account for " + user, e);
         }
+    }
+
+    /**
+     * Hierarchy depth of a mailbox full name ({@code #mail.user.INBOX} → 3).
+     */
+    private static int mailboxDepth(MailFolder folder) {
+        int depth = 0;
+        StringTokenizer tokens = new StringTokenizer(folder.getFullName(), HIERARCHY_DELIMITER);
+        while (tokens.hasMoreTokens()) {
+            tokens.nextToken();
+            depth++;
+        }
+        return depth;
     }
 
     /**
