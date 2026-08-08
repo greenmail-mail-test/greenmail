@@ -37,7 +37,12 @@ public class ImapHandler extends AbstractSocketProtocolHandler implements ImapCo
     }
 
     public void forceConnectionClose(final String message) {
-        response.byeResponse(message);
+        // response is null before run() starts and after close() clears handler state.
+        // deleteUser can still notify selected folders on a closed session (GH-902).
+        final ImapResponse currentResponse = response;
+        if (currentResponse != null) {
+            currentResponse.byeResponse(message);
+        }
         close();
     }
 
