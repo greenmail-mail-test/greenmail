@@ -42,9 +42,12 @@ public class RetrCommand
             }
 
             StoredMessage msg = msgList.get(0);
+            // RFC 1939 §3: every line of the message that begins with the termination
+            // octet must be byte-stuffed with an extra '.'. Anchoring only on CRLF misses
+            // lines that a stored message ends with a bare LF or CR, so stuff a leading
+            // '.' after any line boundary (and at the start of the message).
             String email = GreenMailUtil.getWholeMessage(msg.getMimeMessage())
-                // Byte-stuffing
-                .replaceAll("\r\n\\.","\r\n..");
+                .replaceAll("(^|\r\n|\r|\n)\\.", "$1..");
             conn.println("+OK");
             conn.println(email);
             conn.println(".");

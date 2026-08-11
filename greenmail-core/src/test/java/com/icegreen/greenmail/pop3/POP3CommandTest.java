@@ -2,6 +2,8 @@ package com.icegreen.greenmail.pop3;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.pop3.commands.AuthCommand;
+import com.icegreen.greenmail.store.MailFolder;
+import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
@@ -172,6 +174,37 @@ public class POP3CommandTest {
             printStream.print("PASS pwd" + CRLF);
             assertThat(reader.readLine()).startsWith("+OK");
             printStream.print("TOP 1 99" + CRLF);
+            assertThat(reader.readLine()).startsWith("+OK");
+
+            List<String> lines = new ArrayList<>();
+            String line;
+            while ((line = reader.readLine()) != null && !".".equals(line)) {
+                lines.add(line);
+            }
+            assertThat(line).isEqualTo(".");
+            assertThat(lines).contains("..", "..dot", "last");
+        });
+    }
+
+    @Test
+    public void retrByteStuffsLinesEndingWithBareLf() throws Exception {
+        String to = "test@localhost";
+        GreenMailUser user = greenMail.setUser(to, "pwd");
+        // A stored message can carry bare LF line endings (SMTP DATA and IMAP APPEND
+        // write the body octets verbatim). RetrCommand only stuffed a leading "." that
+        // was preceded by CRLF, so a "." line ended with a bare LF reached the client
+        // unstuffed and terminated the multi-line RETR response at "first".
+        MailFolder inbox = greenMail.getManagers().getImapHostManager().getFolder(user, "INBOX");
+        inbox.store(GreenMailUtil.newMimeMessage(
+            "Subject: s\r\nFrom: from@localhost\r\n\r\nfirst\n.\n.dot\nlast\n"));
+
+        withConnection((printStream, reader) -> {
+            assertThat(reader.readLine()).startsWith("+OK POP3 GreenMail Server v");
+            printStream.print("USER " + to + CRLF);
+            assertThat(reader.readLine()).startsWith("+OK");
+            printStream.print("PASS pwd" + CRLF);
+            assertThat(reader.readLine()).startsWith("+OK");
+            printStream.print("RETR 1" + CRLF);
             assertThat(reader.readLine()).startsWith("+OK");
 
             List<String> lines = new ArrayList<>();
