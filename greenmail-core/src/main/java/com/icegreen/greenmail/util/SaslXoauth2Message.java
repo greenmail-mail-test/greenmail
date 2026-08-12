@@ -70,7 +70,13 @@ public class SaslXoauth2Message {
                 throw new IllegalArgumentException("CR and LF are not allowed");
             }
             String[] parts = message.split("\\u0001");
-            if (parts.length > 2 || !parts[0].startsWith("user=") || !parts[1].startsWith("auth=Bearer ")) {
+            // A valid message splits into exactly the "user=" and "auth=Bearer " parts (the
+            // trailing ^A^A are dropped as empty). The length is validated before parts[1] is
+            // read: a message with fewer parts (e.g. "user=x" with no ^A separator) otherwise
+            // reached parts[1] and threw ArrayIndexOutOfBoundsException, which is not the
+            // IllegalArgumentException this method documents and which callers catch, so it
+            // escaped and tore down the connection instead of failing the auth attempt.
+            if (parts.length != 2 || !parts[0].startsWith("user=") || !parts[1].startsWith("auth=Bearer ")) {
                 throw new IllegalArgumentException("Invalid authentication string format");
             }
 

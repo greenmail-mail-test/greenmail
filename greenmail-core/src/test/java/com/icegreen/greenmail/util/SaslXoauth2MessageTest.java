@@ -26,6 +26,15 @@ public class SaslXoauth2MessageTest {
     }
 
     @Test
+    public void testParseRejectsMessageWithoutSeparator() {
+        // "user=x" with no ^A separator splits into a single part. Before validating the part
+        // count, parts[1] was read and threw ArrayIndexOutOfBoundsException, which is not the
+        // documented IllegalArgumentException and escaped the callers' catch blocks.
+        String encoded = Base64.getEncoder().encodeToString("user=x".getBytes());
+        assertThrows(IllegalArgumentException.class, () -> SaslXoauth2Message.parseBase64Encoded(encoded));
+    }
+
+    @Test
     public void testParseRejectsCrlfInUsername() {
         String ctrlA = String.valueOf((char) 1);
         String crlf = "" + (char) 13 + (char) 10;
