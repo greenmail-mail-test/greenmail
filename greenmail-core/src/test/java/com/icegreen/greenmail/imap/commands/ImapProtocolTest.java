@@ -222,6 +222,36 @@ public class ImapProtocolTest {
     }
 
     @Test
+    public void testMalformedSearchReturnsBadWithoutClosingConnection() throws MessagingException {
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+
+            for (final String cmd : new String[]{
+                "SEARCH *",
+                "SEARCH )",
+                "SEARCH (",
+                "SEARCH OR",
+                "SEARCH OR ANSWERED",
+                "SEARCH NOT"
+            }) {
+                Response[] ret = (Response[]) folder.doCommand(protocol -> protocol.command(cmd, null));
+                IMAPResponse last = (IMAPResponse) ret[ret.length - 1];
+                assertThat(last.isBAD()).as("expected BAD for '%s'", cmd).isTrue();
+
+                // The connection must still be usable after a rejected search.
+                Response[] ok = (Response[]) folder.doCommand(protocol -> protocol.command("SEARCH 1", null));
+                assertThat(((IMAPResponse) ok[0]).isBAD()).isFalse();
+                assertThat(((IMAPResponse) ok[0]).getRest()).isEqualTo("1");
+                assertThat(ok[ok.length - 1].isOK()).isTrue();
+            }
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
     public void testUidSearchSequenceSet() throws MessagingException {
         store.connect("foo@localhost", "pwd");
         try {

@@ -84,7 +84,7 @@ class SearchCommandParser extends CommandParser {
                     // Resolve group to single term
                     handleGroup(stack);
                 } else {
-                    throw new IllegalStateException("Unsupported atom special char <" + next + ">");
+                    throw new ProtocolException("Unsupported or misplaced character <" + next + "> in search criteria");
                 }
             } else {
                 String token = atomOnly(request);
@@ -133,14 +133,27 @@ class SearchCommandParser extends CommandParser {
         return handleOperators(stack);
     }
 
-    private void handleGroup(Deque<Object> stack) {
+    private void handleGroup(Deque<Object> stack) throws ProtocolException {
         Deque<Object> groupItems = new LinkedList<>();
         Object item;
-        while ((item = stack.pop()) != SearchOperator.GROUP) {
+        while (true) {
+            if (stack.isEmpty()) {
+                throw new ProtocolException("Unbalanced parenthesis in search criteria");
+            }
+            if ((item = stack.pop()) == SearchOperator.GROUP) {
+                break;
+            }
             groupItems.addLast(item);
         }
         final SearchTerm groupTerm = handleOperators(groupItems);
         stack.push(groupTerm);
+    }
+
+    private static SearchTerm requireOperand(Deque<SearchTerm> params) throws ProtocolException {
+        if (params.isEmpty()) {
+            throw new ProtocolException("Missing operand in search criteria");
+        }
+        return params.pop();
     }
 
     private void handleSearchArg(ImapRequestLineReader request, SearchKey key, SearchTermBuilder searchTermBuilder, Charset charset) throws ProtocolException {
@@ -158,7 +171,7 @@ class SearchCommandParser extends CommandParser {
         searchTermBuilder.addParameter(paramValue);
     }
 
-    private SearchTerm handleOperators(Deque<Object> stack) {
+    private SearchTerm handleOperators(Deque<Object> stack) throws ProtocolException {
         // Must be single term
         if (stack.size() == 1) {
             return (SearchTerm) stack.pop();
@@ -168,14 +181,14 @@ class SearchCommandParser extends CommandParser {
         while (!stack.isEmpty()) {
             final Object o = stack.pop();
             if (SearchOperator.OR == o) {
-                final SearchTerm term1 = params.pop();
-                final SearchTerm term2 = params.pop();
+                final SearchTerm term1 = requireOperand(params);
+                final SearchTerm term2 = requireOperand(params);
                 params.push(new OrTerm(term1, term2));
             } else if (SearchOperator.NOT == o) {
-                params.push(new NotTerm(params.pop()));
+                params.push(new NotTerm(requireOperand(params)));
             } else if (SearchOperator.AND == o) {
-                final SearchTerm term1 = params.pop();
-                final SearchTerm term2 = params.pop();
+                final SearchTerm term1 = requireOperand(params);
+                final SearchTerm term2 = requireOperand(params);
                 params.push(new AndTerm(term1, term2));
             } else if (SearchOperator.GROUP == o) {
                 // Size 0: Empty braces? Do nothing.
@@ -196,6 +209,8 @@ class SearchCommandParser extends CommandParser {
         if (params.size() > 1) {
             SearchTerm[] items = params.toArray(new SearchTerm[0]);
             return new AndTerm(items);
+        } else if (params.isEmpty()) {
+            throw new ProtocolException("Incomplete search criteria");
         } else {
             return params.pop();
         }
