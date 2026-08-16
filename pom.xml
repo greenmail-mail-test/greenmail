@@ -206,14 +206,6 @@
           <version>3.6.0</version>
         </plugin>
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>findbugs-maven-plugin</artifactId>
-          <version>3.0.5</version>
-          <configuration>
-            <threshold>Normal</threshold>
-          </configuration>
-        </plugin>
-        <plugin>
           <artifactId>maven-pmd-plugin</artifactId>
           <version>3.28.0</version>
           <configuration>
@@ -569,14 +561,14 @@
       <id>release</id>
       <build>
         <plugins>
-        <plugin>
-          <groupId>org.sonatype.central</groupId>
-          <artifactId>central-publishing-maven-plugin</artifactId>
-          <extensions>true</extensions>
-          <configuration>
-            <publishingServerId>central</publishingServerId>
-          </configuration>
-        </plugin>
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>central</publishingServerId>
+            </configuration>
+          </plugin>
           <plugin>
             <artifactId>maven-gpg-plugin</artifactId>
             <executions>
