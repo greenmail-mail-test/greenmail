@@ -104,7 +104,7 @@ Use Jakarta EE imports (not javax.*):
 
 ## Contribution Guidelines
 
-Before implementing changes, review [CONTRIBUTING.md](../../CONTRIBUTING.md):
+Before implementing changes, review [CONTRIBUTING.md](CONTRIBUTING.md):
 
 - **Keep patches focused**: Avoid mixing unrelated changes
 - **Include tests**: Every bug fix or feature should include a test case
