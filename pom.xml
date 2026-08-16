@@ -31,7 +31,6 @@
     <url>
       https://github.com/greenmail-mail-test/greenmail
     </url>
-    <tag>release-2.1.7</tag>
   </scm>
 
   <issueManagement>
@@ -240,7 +239,9 @@
           <configuration>
             <links>
               <link>https://docs.oracle.com/javase/8/docs/api/</link>
-              <link>https://javaee.github.io/javamail/docs/api/</link>
+              <link>https://jakarta.ee/specifications/mail/2.1/apidocs/</link>
+              <link>https://jakarta.ee/specifications/activation/2.1/apidocs/</link>
+              <link>https://jakarta.ee/specifications/servlet/6.0/apidocs/</link>
               <link>https://junit.org/junit4/javadoc/latest/</link>
               <link>https://junit.org/junit5/docs/current/api/</link>
             </links>
