@@ -521,24 +521,33 @@ public class CommandParser {
         CharacterValidator validator = new MessageSetCharValidator();
         String nextWord = consumeWord(request, validator);
 
-        int commaPos = nextWord.indexOf(',');
-        if (commaPos == -1) {
-            return new IdRange[]{IdRange.parseRange(nextWord)};
-        }
+        // IdRange.parseRange raises an unchecked IllegalArgumentException for a malformed
+        // (e.g. "1:") or out of range (e.g. more digits than a long holds) message set.
+        // That is not caught by CommandTemplate.process, so it would drop the connection
+        // instead of failing the command; translate it into a ProtocolException so a
+        // tagged BAD is returned, as the sibling number/literal parsers already do.
+        try {
+            int commaPos = nextWord.indexOf(',');
+            if (commaPos == -1) {
+                return new IdRange[]{IdRange.parseRange(nextWord)};
+            }
 
-        List<IdRange> rangeList = new ArrayList<>();
-        int pos = 0;
-        while (commaPos != -1) {
-            String range = nextWord.substring(pos, commaPos);
-            IdRange set = IdRange.parseRange(range);
-            rangeList.add(set);
+            List<IdRange> rangeList = new ArrayList<>();
+            int pos = 0;
+            while (commaPos != -1) {
+                String range = nextWord.substring(pos, commaPos);
+                IdRange set = IdRange.parseRange(range);
+                rangeList.add(set);
 
-            pos = commaPos + 1;
-            commaPos = nextWord.indexOf(',', pos);
+                pos = commaPos + 1;
+                commaPos = nextWord.indexOf(',', pos);
+            }
+            String range = nextWord.substring(pos);
+            rangeList.add(IdRange.parseRange(range));
+            return rangeList.toArray(new IdRange[0]);
+        } catch (IllegalArgumentException ex) {
+            throw new ProtocolException("Invalid message set '" + nextWord + '\'', ex);
         }
-        String range = nextWord.substring(pos);
-        rangeList.add(IdRange.parseRange(range));
-        return rangeList.toArray(new IdRange[0]);
     }
 
     /**

@@ -110,6 +110,38 @@ public class CommandParserTest {
             .isInstanceOf(ProtocolException.class);
     }
 
+    @Test
+    public void parseIdRangeRejectsOutOfRangeNumber() {
+        assertThatThrownBy(() -> parseIdRange("99999999999999999999\r\n"))
+            .isInstanceOf(ProtocolException.class);
+    }
+
+    @Test
+    public void parseIdRangeRejectsMalformedRange() {
+        assertThatThrownBy(() -> parseIdRange("1:\r\n"))
+            .isInstanceOf(ProtocolException.class);
+    }
+
+    @Test
+    public void parseIdRangeRejectsEmptyRangeInList() {
+        assertThatThrownBy(() -> parseIdRange("1,,2\r\n"))
+            .isInstanceOf(ProtocolException.class);
+    }
+
+    @Test
+    public void parseIdRangeParsesRegularContent() throws ProtocolException {
+        IdRange[] ranges = parseIdRange("1,3:5\r\n");
+        assertThat(ranges).hasSize(2);
+        assertThat(ranges[0].getLowVal()).isEqualTo(1L);
+        assertThat(ranges[1].getLowVal()).isEqualTo(3L);
+        assertThat(ranges[1].getHighVal()).isEqualTo(5L);
+    }
+
+    private static IdRange[] parseIdRange(String line) throws ProtocolException {
+        ByteArrayInputStream in = new ByteArrayInputStream(line.getBytes(StandardCharsets.ISO_8859_1));
+        return new CommandParser().parseIdRange(new ImapRequestLineReader(in, null));
+    }
+
     private static String consumeLiteral(String line) throws ProtocolException {
         ByteArrayInputStream in = new ByteArrayInputStream(line.getBytes(StandardCharsets.ISO_8859_1));
         return new CommandParser().consumeLiteral(new ImapRequestLineReader(in, null));
