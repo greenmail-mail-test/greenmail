@@ -50,10 +50,11 @@ public class GreenMailStandaloneRunnerTest {
         }
 
         // Test if default API is disabled
-        Client client = ClientBuilder.newClient();
-        WebTarget api = client.target("http://localhost:8080");
-        assertThatThrownBy(() -> api.path("/").request(MediaType.TEXT_HTML).get(Response.class))
-            .isInstanceOf(ProcessingException.class);
+        try (Client client = ClientBuilder.newClient()) {
+            WebTarget api = client.target("http://localhost:8080");
+            assertThatThrownBy(() -> api.path("/").request(MediaType.TEXT_HTML).get(Response.class))
+                .isInstanceOf(ProcessingException.class);
+        }
     }
 
     @Test
@@ -62,82 +63,88 @@ public class GreenMailStandaloneRunnerTest {
         properties.put(GreenMailApiServerBuilder.GREENMAIL_API_HOSTNAME, "localhost");
         runner = createAndConfigureRunner(properties);
 
-        Client client = ClientBuilder.newClient();
-        WebTarget api = client.target("http://localhost:8080");
+        try (Client client = ClientBuilder.newClient()) {
+            WebTarget api = client.target("http://localhost:8080");
 
-        // Check indexResponse page
-        final Response indexResponse = api.path("/")
-            .request(MediaType.TEXT_HTML).get(Response.class);
-        assertThat(indexResponse.getStatus()).isEqualTo(200);
-        assertThat(indexResponse.readEntity(String.class)).contains("GreenMail API");
+            // Check indexResponse page
+            final Response indexResponse = api.path("/")
+                .request(MediaType.TEXT_HTML).get(Response.class);
+            assertThat(indexResponse.getStatus()).isEqualTo(200);
+            assertThat(indexResponse.readEntity(String.class)).contains("GreenMail API");
 
-        // Check API
-        final Response configResponse = api.path("/api/configuration")
-            .request(MediaType.APPLICATION_JSON).get(Response.class);
-        assertThat(configResponse.getStatus()).isEqualTo(200);
-        assertThat(configResponse.readEntity(String.class)).isEqualTo("{\"serverSetups\":[" +
-            "{\"port\":3025,\"address\":\"127.0.0.1\",\"protocol\":\"smtp\",\"isSecure\":false,\"readTimeout\":-1," +
-            "\"writeTimeout\":-1,\"connectionTimeout\":-1,\"serverStartupTimeout\":2000,\"isDynamicPort\":false}," +
-            "{\"port\":3143,\"address\":\"127.0.0.1\",\"protocol\":\"imap\",\"isSecure\":false,\"readTimeout\":-1," +
-            "\"writeTimeout\":-1,\"connectionTimeout\":-1,\"serverStartupTimeout\":2000,\"isDynamicPort\":false}]," +
-            "\"authenticationDisabled\":false," +
-            "\"sieveIgnoreDetail\":false," +
-            "\"preloadDirectory\":null" +
-            "}");
+            // Check API
+            final Response configResponse = api.path("/api/configuration")
+                .request(MediaType.APPLICATION_JSON).get(Response.class);
+            assertThat(configResponse.getStatus()).isEqualTo(200);
+            assertThat(configResponse.readEntity(String.class)).isEqualTo("{\"serverSetups\":[" +
+                "{\"port\":3025,\"address\":\"127.0.0.1\",\"protocol\":\"smtp\",\"isSecure\":false,\"readTimeout\":-1," +
+                "\"writeTimeout\":-1,\"connectionTimeout\":-1,\"serverStartupTimeout\":2000,\"isDynamicPort\":false}," +
+                "{\"port\":3143,\"address\":\"127.0.0.1\",\"protocol\":\"imap\",\"isSecure\":false,\"readTimeout\":-1," +
+                "\"writeTimeout\":-1,\"connectionTimeout\":-1,\"serverStartupTimeout\":2000,\"isDynamicPort\":false}]," +
+                "\"authenticationDisabled\":false," +
+                "\"sieveIgnoreDetail\":false," +
+                "\"preloadDirectory\":null" +
+                "}");
 
-        final Response userListResponse = api.path("/api/user")
-            .request(MediaType.APPLICATION_JSON).get(Response.class);
-        assertThat(userListResponse.getStatus()).isEqualTo(200);
-        assertThat(userListResponse.readEntity(String.class)).isEqualTo("[" +
-            "{\"login\":\"test2\",\"email\":\"test2@localhost\"}," +
-            "{\"login\":\"test1\",\"email\":\"test1\"}" +
-            "]");
+            final Response userListResponse = api.path("/api/user")
+                .request(MediaType.APPLICATION_JSON).get(Response.class);
+            assertThat(userListResponse.getStatus()).isEqualTo(200);
+            assertThat(userListResponse.readEntity(String.class)).isEqualTo("[" +
+                "{\"login\":\"test2\",\"email\":\"test2@localhost\"}," +
+                "{\"login\":\"test1\",\"email\":\"test1\"}" +
+                "]");
 
-        String userId = "foo.bar";
-        final Response userCreateResponse = api.path("/api/user")
-            .request(MediaType.APPLICATION_JSON)
-            .post(Entity.entity(
-                "{\"email\":\"foo.bar@localhost\", \"login\":\"" + userId + "\", \"password\":\"xxx\"}",
-                MediaType.APPLICATION_JSON));
-        assertThat(userCreateResponse.getStatus()).isEqualTo(200);
-        assertThat(userCreateResponse.readEntity(String.class))
-            .isEqualTo("{\"login\":\"" + userId + "\",\"email\":\"foo.bar@localhost\"}");
+            String userId = "foo.bar";
+            try (Response userCreateResponse = api.path("/api/user")
+                .request(MediaType.APPLICATION_JSON)
+                .post(Entity.entity(
+                    "{\"email\":\"foo.bar@localhost\", \"login\":\"" + userId + "\", \"password\":\"xxx\"}",
+                    MediaType.APPLICATION_JSON))) {
+                assertThat(userCreateResponse.getStatus()).isEqualTo(200);
+                assertThat(userCreateResponse.readEntity(String.class))
+                    .isEqualTo("{\"login\":\"" + userId + "\",\"email\":\"foo.bar@localhost\"}");
+            }
 
-        // Getting messages
-        final Response userMessagesEmptyResponse = api.path("/api/user/"+userId+"/messages")
-            .request(MediaType.APPLICATION_JSON)
-            .get(Response.class);
-        assertThat(userMessagesEmptyResponse.getStatus()).isEqualTo(200);
-        assertThat(userMessagesEmptyResponse.readEntity(String.class))
-            .isEqualTo("[]"); // EMPTY
+            // Getting messages
+            final Response userMessagesEmptyResponse = api.path("/api/user/" + userId + "/messages")
+                .request(MediaType.APPLICATION_JSON)
+                .get(Response.class);
+            assertThat(userMessagesEmptyResponse.getStatus()).isEqualTo(200);
+            assertThat(userMessagesEmptyResponse.readEntity(String.class))
+                .isEqualTo("[]"); // EMPTY
 
-        GreenMailUtil.sendTextEmail(userId+"@localhost", "test1@localhost",
-            "testApi", "A test text message", ServerSetupTest.SMTP);
-        final Response userMessagesResponse = api.path("/api/user/"+userId+"/messages")
-            .request(MediaType.APPLICATION_JSON)
-            .get(Response.class);
-        assertThat(userMessagesResponse.getStatus()).isEqualTo(200);
-        GenericType<List<Map<String,String>>> userMessagesResponseType = new GenericType<List<Map<String,String>>>(){};
-        Map<String,String> value = userMessagesResponse.readEntity(userMessagesResponseType).get(0);
-        assertThat(value)
-            .containsEntry("uid", "1")
-            .containsEntry("subject", "testApi")
-            .containsEntry("contentType", "text/plain; charset=us-ascii");
-        assertThat(value.get("Message-ID")).matches("^<.*>$");
-        assertThat(value.get("mimeMessage"))
-            .contains("testApi")
-            .contains("A test text message");
+            GreenMailUtil.sendTextEmail(userId + "@localhost", "test1@localhost",
+                "testApi", "A test text message", ServerSetupTest.SMTP);
+            final Response userMessagesResponse = api.path("/api/user/" + userId + "/messages")
+                .request(MediaType.APPLICATION_JSON)
+                .get(Response.class);
+            assertThat(userMessagesResponse.getStatus()).isEqualTo(200);
+            GenericType<List<Map<String, String>>> userMessagesResponseType = new GenericType<List<Map<String, String>>>() {
+            };
+            Map<String, String> value = userMessagesResponse.readEntity(userMessagesResponseType).get(0);
+            assertThat(value)
+                .containsEntry("uid", "1")
+                .containsEntry("subject", "testApi")
+                .containsEntry("contentType", "text/plain; charset=us-ascii");
+            assertThat(value.get("Message-ID")).matches("^<.*>$");
+            assertThat(value.get("mimeMessage"))
+                .contains("testApi")
+                .contains("A test text message");
 
-        final Invocation.Builder deleteRequest = api.path("/api/user/" + userId).request();
-        final Response userDeleteResponse = deleteRequest.delete();
-        assertThat(userDeleteResponse.getStatus()).isEqualTo(200);
-        assertThat(deleteRequest.delete().getStatus()).isEqualTo(400);
+            final Invocation.Builder deleteRequest = api.path("/api/user/" + userId).request();
+            try (Response userDeleteResponse = deleteRequest.delete()) {
+                assertThat(userDeleteResponse.getStatus()).isEqualTo(200);
+            }
+            try(Response userDeleteResponse = deleteRequest.delete()) {
+                assertThat(userDeleteResponse.getStatus()).isEqualTo(400);
+            }
 
-        final Response readinessResponse = api.path("/api/service/readiness")
-            .request(MediaType.APPLICATION_JSON).get(Response.class);
-        assertThat(readinessResponse.getStatus()).isEqualTo(200);
-        assertThat(readinessResponse.readEntity(String.class))
-            .isEqualTo("{\"message\":\"Service running\"}");
+            final Response readinessResponse = api.path("/api/service/readiness")
+                .request(MediaType.APPLICATION_JSON).get(Response.class);
+            assertThat(readinessResponse.getStatus()).isEqualTo(200);
+            assertThat(readinessResponse.readEntity(String.class))
+                .isEqualTo("{\"message\":\"Service running\"}");
+        }
     }
 
     private GreenMailStandaloneRunner createAndConfigureRunner(Properties properties) {

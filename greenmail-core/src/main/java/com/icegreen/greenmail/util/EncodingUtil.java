@@ -13,7 +13,7 @@ import java.util.Base64;
  */
 public class EncodingUtil {
     /**
-     * Constant for 8-Bit encoding, which can be resembled by {@value #EIGHT_BIT_ENCODING}
+     * Constant for 8-Bit encoding, which can be resembled by {@value}
      */
     public static final String EIGHT_BIT_ENCODING = "ISO-8859-1";
     /**

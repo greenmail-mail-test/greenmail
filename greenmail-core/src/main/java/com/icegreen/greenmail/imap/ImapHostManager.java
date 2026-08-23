@@ -49,14 +49,14 @@ public interface ImapHostManager {
 
     /**
      * Returns a reference to an existing Mailbox. The requested mailbox
-     * must already exists on this server and the requesting user must have at
+     * must already exist on this server and the requesting user must have at
      * least lookup rights.
      * <p>
      * TODO: should default behaviour be to return null?
      *
      * @param user        User making the request.
      * @param mailboxName String name of the target.
-     * @return an Mailbox reference.
+     * @return a Mailbox reference.
      */
     MailFolder getFolder(GreenMailUser user, String mailboxName);
 
@@ -70,7 +70,7 @@ public interface ImapHostManager {
      * @param user        User making the request.
      * @param mailboxName String name of the target.
      * @param mustExist   Specified behaviour where a mailbox is missing or non-viewable.
-     * @return an Mailbox reference.
+     * @return a Mailbox reference.
      * @throws com.icegreen.greenmail.store.FolderException
      *          if mailbox does not exist locally, and mustExist is true.
      */
@@ -117,7 +117,7 @@ public interface ImapHostManager {
      *
      * @param user        User making the request.
      * @param mailboxName String name of the target
-     * @return an Mailbox reference.
+     * @return a Mailbox reference.
      * @throws com.icegreen.greenmail.store.FolderException
      *                                if mailbox already exists, locally or remotely,
      *                                or if mailbox cannot be created locally.
@@ -173,7 +173,7 @@ public interface ImapHostManager {
             throws FolderException, AuthorizationException;
 
     /**
-     * Returns an collection of mailboxes on this host. The specified
+     * Returns a collection of mailboxes on this host. The specified
      * user must have at least lookup rights for each mailbox returned.
      * If the subscribedOnly flag is set, only mailboxes to which the
      * specified user is currently subscribed should be returned.
@@ -209,7 +209,7 @@ public interface ImapHostManager {
             throws FolderException;
 
     /**
-     * Returns an collection of mailboxes on this host. The specified
+     * Returns a collection of mailboxes on this host. The specified
      * user must have at least lookup rights for each mailbox returned.
      * If the subscribedOnly flag is set, only mailboxes to which the
      * specified user is currently subscribed should be returned.

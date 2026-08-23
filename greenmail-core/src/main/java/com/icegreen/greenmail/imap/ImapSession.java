@@ -34,9 +34,9 @@ public interface ImapSession {
     void closeConnection();
 
     /**
-     * Closes the connection for this session with a final good-bye message.
+     * Closes the connection for this session with a final goodbye message.
      *
-     * @param  byeMessage the good-bye message.
+     * @param  byeMessage the goodbye message.
      */
     void closeConnection(String byeMessage);
 

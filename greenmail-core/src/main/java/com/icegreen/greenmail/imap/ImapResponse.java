@@ -43,7 +43,7 @@ public class ImapResponse implements ImapConstants {
 
     /**
      * Writes a standard tagged OK response on completion of a command,
-     * with a response code (eg READ-WRITE)
+     * with a response code (e.g. READ-WRITE)
      * Response is written as:
      * <pre>     a01 OK [responseCode] COMMAND_NAME completed.</pre>
      *

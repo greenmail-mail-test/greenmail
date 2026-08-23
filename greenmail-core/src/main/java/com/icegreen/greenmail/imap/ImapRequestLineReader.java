@@ -111,7 +111,7 @@ public class ImapRequestLineReader {
      * such a character exists. If no current character has been seen, the method moves to
      * the next character, consumes it, and moves on to the subsequent one.
      *
-     * @throws ProtocolException if a the current character can't be obtained (eg we're at
+     * @throws ProtocolException if the current character can't be obtained (e.g. we're at
      *                           end-of-file).
      */
     public char consume() throws ProtocolException {

@@ -242,8 +242,8 @@ public class ImapProtocolTest {
 
                 // The connection must still be usable after a rejected search.
                 Response[] ok = (Response[]) folder.doCommand(protocol -> protocol.command("SEARCH 1", null));
-                assertThat(((IMAPResponse) ok[0]).isBAD()).isFalse();
-                assertThat(((IMAPResponse) ok[0]).getRest()).isEqualTo("1");
+                assertThat(ok[0].isBAD()).isFalse();
+                assertThat(ok[0].getRest()).isEqualTo("1");
                 assertThat(ok[ok.length - 1].isOK()).isTrue();
             }
         } finally {

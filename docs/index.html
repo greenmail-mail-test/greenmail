@@ -1280,7 +1280,7 @@ Session session = greenMail.getImap().createSession(); // Will have configured p
                 <p>GreenMail provides direct access to internal user mailboxes and received messages:</p>
                 <pre><code class="language-java"><!-- @formatter:off -->
 // All messages received for emails ending with "localhost" and subject containing "match"
-final List<MimeMessage> messages = greenMail.findReceivedMessages(
+final List&lt;MimeMessage&gt; messages = greenMail.findReceivedMessages(
         u -> u.getEmail().toLowerCase().endsWith("localhost")      /* Predicate for user account, selecting users by email ending with 'localhost' */,
         m -> MimeMessageHelper.getSubject(m, "").contains("match") /* Predicate for messages, selecting messages with subject attribute containing "match"*/
     ).collect(Collectors.toList());

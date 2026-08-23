@@ -1,7 +1,6 @@
 package com.icegreen.greenmail.imap.commands;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import jakarta.mail.Folder;
@@ -27,12 +26,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FetchCommandTest {
     @Rule
     public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP_IMAP);
-    private GreenMailUser user;
     private IMAPStore store;
 
     @Before
     public void beforeEachTest() throws MessagingException {
-        user = greenMail.setUser("foo@localhost", "pwd");
+        greenMail.setUser("foo@localhost", "pwd");
         store = greenMail.getImap().createStore();
 
         MimeMultipart alternative = new MimeMultipart("alternative");

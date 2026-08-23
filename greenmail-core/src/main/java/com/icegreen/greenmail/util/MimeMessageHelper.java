@@ -17,7 +17,7 @@ public class MimeMessageHelper {
      *
      * @param msg            the mime message
      * @param defaultIfError default to return should an exception occur.
-     * @return
+     * @return subject or provided default
      */
     public static String getSubject(MimeMessage msg, String defaultIfError) {
         try {

@@ -9,7 +9,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static com.icegreen.greenmail.spring.GreenMailBeanDefinitionParser.DEFAULT_SERVER_STARTUP_TIMEOUT;
 
 /**
- * Tests GreenMailBean configured via xml namespace handler.
+ * Tests GreenMailBean configured via XML namespace handler.
  *
  * @author Marcel May (mm)
  */

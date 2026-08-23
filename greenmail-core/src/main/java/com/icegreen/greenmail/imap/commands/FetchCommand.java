@@ -985,7 +985,7 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
                      [RFC-822] group syntax is indicated by a special
                      form of address structure in which the host name
                      field is NIL.  If the mailbox name field is also
-                     NIL, this is an end of group marker (semi-colon in
+                     NIL, this is an end of group marker (semicolon in
                      RFC 822 syntax).  If the mailbox name field is
                      non-NIL, this is a start of group marker, and the
                      mailbox name field holds the group name phrase.

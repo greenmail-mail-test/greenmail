@@ -19,8 +19,8 @@ import org.junit.jupiter.api.extension.RegisterExtension;
  * To use this extension you need to use {@code @RegisterExtension} Junit5 mechanism and made variable {@code static}.<br>
  * But if you want to remove {@code static} keyword annotate test class with {@code @TestInstance(TestInstance.Lifecycle.PER_CLASS)}.
  * <p>
- * By default you get a new GreenMail instance per method which works with {@link BeforeEach}.
- * You can use {@link GreenMailExtension#withPerMethodLifecycle(boolean)} to control this behavior - eg to speed
+ * By default, you get a new GreenMail instance per method which works with {@link BeforeEach}.
+ * You can use {@link GreenMailExtension#withPerMethodLifecycle(boolean)} to control this behavior - e.g. to speed
  * up at the cost of isolation using only {@link BeforeAll}
  * </p>
  * <pre>

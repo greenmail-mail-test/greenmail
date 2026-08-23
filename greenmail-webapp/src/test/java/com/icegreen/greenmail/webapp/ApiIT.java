@@ -62,7 +62,7 @@ public class ApiIT {
                 "'serviceConfigurations':[" +
                 "{'protocol':'POP3','hostname':'127.0.0.1','port':10110}," +
                 "{'protocol':'SMTP','hostname':'127.0.0.1','port':10025}]}",
-            response.readEntity(String.class).replaceAll("\"", "'"));
+            response.readEntity(String.class).replace("\"", "'"));
     }
 
     @AfterClass

@@ -106,11 +106,11 @@ public class ImapHostManagerImpl
                 deleteFolder(user, mf);
             }
 
-            // Delete account mail box
+            // Delete account mailbox
             MailFolder root = store.getMailbox(USER_NAMESPACE);
             store.deleteMailbox(store.getMailbox(root, user.getQualifiedMailboxName()));
 
-            // Delete Quota
+            // Delete quota
             getStore().deleteQuota(user.getQualifiedMailboxName());
         } catch (FolderException e) {
             throw new IllegalStateException("Can not delete private mail account for " + user, e);
