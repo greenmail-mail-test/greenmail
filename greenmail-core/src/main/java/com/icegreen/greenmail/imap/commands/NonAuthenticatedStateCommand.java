@@ -12,7 +12,6 @@ import com.icegreen.greenmail.imap.ImapSessionState;
  * A base class for ImapCommands only valid in the NON_AUTHENTICATED state.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 abstract class NonAuthenticatedStateCommand extends CommandTemplate {
 

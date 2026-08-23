@@ -29,7 +29,6 @@ import java.util.List;
  *
  * @author <a href="mailto:charles@benett1.demon.co.uk">Charles Benett</a>
  * @author Darrell DeBoer &lt;darrell@apache.org&gt;
- * @version $Revision: 109034 $
  */
 public interface ImapHostManager {
 

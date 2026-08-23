@@ -23,7 +23,6 @@ import java.util.Date;
  * Handles processing for the APPEND imap command.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 class AppendCommand extends AuthenticatedStateCommand {
     public static final String NAME = "APPEND";

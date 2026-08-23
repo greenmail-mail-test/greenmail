@@ -14,7 +14,6 @@ import com.icegreen.greenmail.store.FolderException;
 
 /**
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 public interface UidEnabledCommand {
     void doProcess(ImapRequestLineReader request,

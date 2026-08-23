@@ -18,7 +18,6 @@ import java.util.Date;
  * way of handling *all* messages needs to be available for James (maybe MovingMessage?)
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 public class StoredMessage {
     private UidAwareMimeMessage mimeMessage;

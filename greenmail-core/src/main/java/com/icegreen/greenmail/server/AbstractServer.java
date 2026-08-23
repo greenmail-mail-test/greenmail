@@ -31,7 +31,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author Wael Chatila
- * @version $Id: $
  * @since Feb 2, 2006
  */
 public abstract class AbstractServer extends Thread implements Service {

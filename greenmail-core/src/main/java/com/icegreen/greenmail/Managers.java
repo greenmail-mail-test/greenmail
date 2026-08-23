@@ -12,7 +12,6 @@ import com.icegreen.greenmail.user.UserManager;
 
 /**
  * @author Wael Chatila
- * @version $Id: $
  * @since Jan 27, 2006
  */
 public class Managers {

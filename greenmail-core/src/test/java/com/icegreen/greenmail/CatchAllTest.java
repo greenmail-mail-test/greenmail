@@ -10,7 +10,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Wael Chatila
- * @version $Id: $
  * @since May 27th, 2009
  */
 public class CatchAllTest {

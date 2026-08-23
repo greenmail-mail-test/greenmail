@@ -14,7 +14,6 @@ import java.util.Collection;
  * and manipulation of all {@link com.icegreen.greenmail.store.MailFolder Mailboxes} stored on this server.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 public interface Store {
     /**

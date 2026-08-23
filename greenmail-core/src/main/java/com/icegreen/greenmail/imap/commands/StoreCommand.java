@@ -17,7 +17,6 @@ import jakarta.mail.Flags;
  * Handles processeing for the STORE imap command.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 class StoreCommand extends SelectedStateCommand implements UidEnabledCommand {
     public static final String NAME = "STORE";

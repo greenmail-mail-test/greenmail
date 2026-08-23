@@ -11,7 +11,6 @@ import com.icegreen.greenmail.pop3.Pop3State;
 
 /**
  * @author Wael Chatila
- * @version $Id: $
  * @since Jan 28, 2006
  */
 public class NoopCommand extends Pop3Command {

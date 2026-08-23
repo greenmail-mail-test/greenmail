@@ -14,7 +14,6 @@ import com.icegreen.greenmail.store.MailFolder;
  * Handles processeing for the DELETE imap command.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 class DeleteCommand extends AuthenticatedStateCommand {
     public static final String NAME = "DELETE";

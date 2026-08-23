@@ -17,7 +17,6 @@ import java.util.List;
  * Handles processeing for the COPY imap command.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 class CopyCommand extends SelectedStateCommand implements UidEnabledCommand {
     public static final String NAME = "COPY";

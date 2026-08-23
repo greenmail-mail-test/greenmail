@@ -15,7 +15,6 @@ package com.icegreen.greenmail.store;
  * Mailbox Referral.
  *
  * @author <a href="mailto:charles@benett1.demon.co.uk">Charles Benett</a>
- * @version 0.1 on 14 Dec 2000
  */
 public class FolderException extends Exception {
     static final long serialVersionUID = 8759050490529078967L;

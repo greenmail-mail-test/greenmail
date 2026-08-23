@@ -24,7 +24,6 @@ import java.util.List;
  * how it will fit in with the other mail storage in James.
  *
  * @author <a href="mailto:darrell@apache.org">Darrell DeBoer</a>
- * @version $Revision: 109034 $
  */
 public interface MailFolder {
     String getName();

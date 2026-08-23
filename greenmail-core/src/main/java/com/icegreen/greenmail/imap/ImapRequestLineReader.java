@@ -16,7 +16,6 @@ import java.io.OutputStream;
  * TODO need to look at encoding, and whether we should be wrapping an InputStream instead.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 public class ImapRequestLineReader {
     private final InputStream input;

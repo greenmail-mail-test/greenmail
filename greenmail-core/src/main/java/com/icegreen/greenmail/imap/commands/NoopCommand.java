@@ -16,7 +16,6 @@ import com.icegreen.greenmail.store.FolderException;
  * Handles processeing for the NOOP imap command.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 class NoopCommand extends CommandTemplate {
     public static final String NAME = "NOOP";

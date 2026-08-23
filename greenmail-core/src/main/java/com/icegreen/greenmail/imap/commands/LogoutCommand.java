@@ -15,7 +15,6 @@ import com.icegreen.greenmail.imap.ProtocolException;
  * Handles processeing for the LOGOUT imap command.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 class LogoutCommand extends CommandTemplate {
     public static final String NAME = "LOGOUT";

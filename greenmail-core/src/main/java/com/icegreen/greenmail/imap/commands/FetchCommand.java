@@ -31,7 +31,6 @@ import java.util.regex.Pattern;
  * https://tools.ietf.org/html/rfc3501#section-6.4.5
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
     public static final String NAME = "FETCH";

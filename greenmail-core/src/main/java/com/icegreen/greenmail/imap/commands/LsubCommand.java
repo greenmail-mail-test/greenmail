@@ -14,7 +14,6 @@ import java.util.Collection;
 
 /**
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 class LsubCommand extends ListCommand {
     public static final String NAME = "LSUB";

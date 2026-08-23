@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
  * core functionality useful for all {@link com.icegreen.greenmail.imap.commands.ImapCommand} implementations.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 abstract class CommandTemplate
         implements ImapCommand, ImapConstants {

@@ -22,7 +22,6 @@ import java.util.Collection;
  * Handles processeing for the LIST imap command.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 class ListCommand extends AuthenticatedStateCommand {
     public static final String NAME = "LIST";

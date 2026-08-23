@@ -13,7 +13,6 @@ import com.icegreen.greenmail.server.AbstractServer;
 
 /**
  * @author Wael Chatila
- * @version $Id: $
  * @since Apr 16, 2005
  */
 public class Retriever implements AutoCloseable {

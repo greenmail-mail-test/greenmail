@@ -18,7 +18,6 @@ import org.eclipse.angus.mail.imap.protocol.BASE64MailboxEncoder; // NOSONAR
  * Handles processeing for the STATUS imap command.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 class StatusCommand extends AuthenticatedStateCommand {
     public static final String NAME = "STATUS";

@@ -18,7 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * TODO: Make the underlying store configurable with Phoenix.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 public class ImapHostManagerImpl
     implements ImapHostManager, ImapConstants {

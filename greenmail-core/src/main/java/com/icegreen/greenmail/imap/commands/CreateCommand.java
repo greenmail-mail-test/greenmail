@@ -13,7 +13,6 @@ import com.icegreen.greenmail.store.FolderException;
  * Handles processeing for the CREATE imap command.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 class CreateCommand extends AuthenticatedStateCommand {
     public static final String NAME = "CREATE";

@@ -8,7 +8,6 @@ package com.icegreen.greenmail.imap.commands;
 
 /**
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 class ExamineCommand extends SelectCommand {
     public static final String NAME = "EXAMINE";

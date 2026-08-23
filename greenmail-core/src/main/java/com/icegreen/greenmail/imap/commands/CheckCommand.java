@@ -16,7 +16,6 @@ import com.icegreen.greenmail.store.FolderException;
  * Handles processeing for the CHECK imap command.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 class CheckCommand extends SelectedStateCommand {
     public static final String NAME = "CHECK";

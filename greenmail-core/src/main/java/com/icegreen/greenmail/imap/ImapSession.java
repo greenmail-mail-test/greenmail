@@ -17,7 +17,6 @@ import com.icegreen.greenmail.user.UserManager;
  * server, and continues until that connection is closed.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 public interface ImapSession {
     /**

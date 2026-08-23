@@ -16,7 +16,6 @@ import com.icegreen.greenmail.imap.ImapSessionState;
  * interface should encapsulate all commands specific processing.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 public interface ImapCommand {
     /**

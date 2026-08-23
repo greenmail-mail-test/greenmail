@@ -14,7 +14,6 @@ import java.util.Map;
  * Command instances are created on demand, when first accessed.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 public class ImapCommandFactory {
     private final Map<String, Class<? extends ImapCommand>> imapCommands = new HashMap<>();

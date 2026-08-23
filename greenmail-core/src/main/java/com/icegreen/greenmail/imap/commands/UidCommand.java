@@ -16,7 +16,6 @@ import com.icegreen.greenmail.store.FolderException;
  * Handles processing for the UID imap command.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 class UidCommand extends SelectedStateCommand {
     public static final String NAME = "UID";

@@ -25,7 +25,6 @@ import java.util.Locale;
 
 /**
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 public class CommandParser {
     /**

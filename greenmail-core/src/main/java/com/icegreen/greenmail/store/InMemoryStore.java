@@ -18,7 +18,6 @@ import com.icegreen.greenmail.imap.ImapConstants;
  * and development. Note: this implementation does not persist *anything* to disk.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 public class InMemoryStore
     implements Store, ImapConstants {

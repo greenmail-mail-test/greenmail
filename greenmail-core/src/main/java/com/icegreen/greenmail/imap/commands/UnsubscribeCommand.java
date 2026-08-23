@@ -16,7 +16,6 @@ import com.icegreen.greenmail.store.FolderException;
  * Handles processeing for the UNSUBSCRIBE imap command.
  *
  * @author Darrell DeBoer <darrell@apache.org>
- * @version $Revision: 109034 $
  */
 class UnsubscribeCommand extends AuthenticatedStateCommand {
     public static final String NAME = "UNSUBSCRIBE";

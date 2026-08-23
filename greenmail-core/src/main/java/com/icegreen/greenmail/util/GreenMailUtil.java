@@ -25,7 +25,6 @@ import java.util.Random;
 
 /**
  * @author Wael Chatila
- * @version $Id: $
  * @since Jan 29, 2006
  */
 public class GreenMailUtil {

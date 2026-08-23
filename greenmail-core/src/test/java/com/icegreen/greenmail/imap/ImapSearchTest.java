@@ -31,7 +31,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Wael Chatila
- * @version $Id: $
  * @since Jan 28, 2006
  */
 public class ImapSearchTest {

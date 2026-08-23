@@ -31,7 +31,6 @@ import java.util.List;
  *   S: +OK maildrop has 2 messages (320 octets)
  *
  * @author Marcel May
- * @version $Id: $
  * @since Dec 21, 2006
  */
 public class RsetCommand extends Pop3Command {
