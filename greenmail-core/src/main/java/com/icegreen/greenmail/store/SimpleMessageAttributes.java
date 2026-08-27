@@ -770,9 +770,10 @@ public class SimpleMessageAttributes
             if (null == header || 0 == header.length) {
                 return null;
             }
-            if (header.length > 1) {
-                throw new IllegalArgumentException("Header creation assumes only one occurrence of header instead of " + header.length);
-            }
+            // A message may repeat a header such as Content-Disposition. RFC 5322 allows at
+            // most one, but a crafted message can carry several; use the first occurrence
+            // instead of throwing IllegalArgumentException, which escaped parseMimePart (it
+            // only catches MessagingException) and crashed message store and FETCH.
             return new Header(header[0]);
         }
     }
