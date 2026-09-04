@@ -53,8 +53,18 @@ class AuthenticateCommand extends NonAuthenticatedStateCommand {
                 base64 = parser.astring(request);
             }
             parser.endLine(request);
-            // Create a new SASL message for XOAUTH2
-            SaslXoauth2Message xoauth2Message = SaslXoauth2Message.parseBase64Encoded(base64);
+            // Create a new SASL message for XOAUTH2. The decoder rejects malformed input
+            // (invalid base64, wrong part count, CR/LF in the decoded fields) with an
+            // IllegalArgumentException, so fail the attempt with a tagged NO instead of
+            // letting that escape and tear down the connection.
+            final SaslXoauth2Message xoauth2Message;
+            try {
+                xoauth2Message = SaslXoauth2Message.parseBase64Encoded(base64);
+            } catch (IllegalArgumentException ex) {
+                log.error("Expected base64 encoded XOAUTH2 message", ex);
+                response.commandFailed(this, "Invalid XOAUTH2 authentication string");
+                return;
+            }
             if (session.getUserManager().test(xoauth2Message.getUsername(), xoauth2Message.getAccessToken())) {
                 GreenMailUser user = session.getUserManager().getUser(xoauth2Message.getUsername());
                 session.setAuthenticated(user);
