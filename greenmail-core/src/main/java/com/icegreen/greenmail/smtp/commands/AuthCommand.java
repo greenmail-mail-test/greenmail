@@ -90,7 +90,17 @@ public class AuthCommand extends SmtpCommand {
             initialResponse = commandParts[2];
         }
 
-        SaslMessage saslMessage = parseInitialResponse(initialResponse);
+        // decodeBase64 and SaslMessage.parse reject malformed input (invalid base64,
+        // wrong part count, CR/LF in the decoded fields) with an IllegalArgumentException.
+        // Fail the attempt with 535 instead of letting that escape and close the connection.
+        final SaslMessage saslMessage;
+        try {
+            saslMessage = parseInitialResponse(initialResponse);
+        } catch (IllegalArgumentException ex) {
+            log.error("Expected base64 encoded SASL PLAIN message", ex);
+            conn.send(AUTH_CREDENTIALS_INVALID);
+            return;
+        }
         AuthenticationState authenticationContext = new PlainAuthenticationState(saslMessage);
         state.getMessage().setAuthenticationState(authenticationContext);
 
@@ -113,15 +123,21 @@ public class AuthCommand extends SmtpCommand {
             String username = conn.readLine();
             conn.send(SMTP_SERVER_CONTINUATION + "UGFzc3dvcmQ6"); // "Password:"
             String pwd = conn.readLine();
-            String plainUsername = EncodingUtil.decodeBase64(username);
-            String plainPwd = EncodingUtil.decodeBase64(pwd);
-            AuthenticationState authenticationContext = new LoginAuthenticationState(plainUsername, plainPwd);
-            state.getMessage().setAuthenticationState(authenticationContext);
+            try {
+                String plainUsername = EncodingUtil.decodeBase64(username);
+                String plainPwd = EncodingUtil.decodeBase64(pwd);
+                AuthenticationState authenticationContext = new LoginAuthenticationState(plainUsername, plainPwd);
+                state.getMessage().setAuthenticationState(authenticationContext);
 
-            if (manager.getUserManager().test(plainUsername, plainPwd)) {
-                conn.setAuthenticated(true);
-                conn.send(AUTH_SUCCEDED);
-            } else {
+                if (manager.getUserManager().test(plainUsername, plainPwd)) {
+                    conn.setAuthenticated(true);
+                    conn.send(AUTH_SUCCEDED);
+                } else {
+                    conn.send(AUTH_CREDENTIALS_INVALID);
+                }
+            } catch (IllegalArgumentException ex) {
+                // Not valid base64: fail the attempt with 535 instead of closing the connection.
+                log.error("Expected base64 encoded user name and password for AUTH LOGIN", ex);
                 conn.send(AUTH_CREDENTIALS_INVALID);
             }
         }
@@ -132,15 +148,22 @@ public class AuthCommand extends SmtpCommand {
             conn.send(SMTP_SYNTAX_ERROR +
                 " : Unsupported auth mechanism with unexpected values. Line is: <" + Arrays.toString(commandParts) + ">");
         } else {
-            XOAuth2AuthenticationState authenticationContext = new XOAuth2AuthenticationState(
-                SaslXoauth2Message.parseBase64Encoded(commandParts[2]) );
-            state.getMessage().setAuthenticationState(authenticationContext);
+            try {
+                XOAuth2AuthenticationState authenticationContext = new XOAuth2AuthenticationState(
+                    SaslXoauth2Message.parseBase64Encoded(commandParts[2]) );
+                state.getMessage().setAuthenticationState(authenticationContext);
 
-            if (manager.getUserManager().test(authenticationContext.getUsername(),
-                authenticationContext.getAccessToken())) {
-                conn.setAuthenticated(true);
-                conn.send(AUTH_SUCCEDED);
-            } else {
+                if (manager.getUserManager().test(authenticationContext.getUsername(),
+                    authenticationContext.getAccessToken())) {
+                    conn.setAuthenticated(true);
+                    conn.send(AUTH_SUCCEDED);
+                } else {
+                    conn.send(AUTH_CREDENTIALS_INVALID);
+                }
+            } catch (IllegalArgumentException ex) {
+                // Not valid base64 or malformed XOAUTH2 message: fail the attempt with
+                // 535 instead of closing the connection.
+                log.error("Expected base64 encoded XOAUTH2 message", ex);
                 conn.send(AUTH_CREDENTIALS_INVALID);
             }
         }

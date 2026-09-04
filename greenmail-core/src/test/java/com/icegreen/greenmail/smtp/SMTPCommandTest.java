@@ -113,6 +113,46 @@ public class SMTPCommandTest {
     }
 
     @Test
+    public void authRejectsMalformedSaslResponseWithoutClosingConnection() throws IOException, MessagingException {
+        Session smtpSession = greenMail.getSmtp().createSession();
+        try (SMTPTransport smtpTransport = new SMTPTransport(smtpSession, smtpURL)) {
+            Socket smtpSocket = new Socket(hostAddress, port); // Closed by transport
+            smtpTransport.connect(smtpSocket);
+            assertThat(smtpTransport.isConnected()).isTrue();
+
+            // Undecodable base64: answer 535 and keep the connection open.
+            smtpTransport.issueCommand("AUTH PLAIN !!!not-base64!!!", -1);
+            assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace(AuthCommand.AUTH_CREDENTIALS_INVALID);
+            smtpTransport.issueCommand("NOOP", -1);
+            assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace("250 Is that all?");
+
+            // A decoded PLAIN message carrying CR/LF is rejected by the SASL parser; same reply.
+            smtpTransport.issueCommand("AUTH PLAIN " + Base64.getEncoder().encodeToString(
+                "\u0000crlf\r\nuser\u0000pwd".getBytes(StandardCharsets.UTF_8)), -1);
+            assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace(AuthCommand.AUTH_CREDENTIALS_INVALID);
+            smtpTransport.issueCommand("NOOP", -1);
+            assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace("250 Is that all?");
+
+            // XOAUTH2 initial response without the required parts: same reply.
+            smtpTransport.issueCommand("AUTH XOAUTH2 " + Base64.getEncoder().encodeToString(
+                "user=x".getBytes(StandardCharsets.UTF_8)), -1);
+            assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace(AuthCommand.AUTH_CREDENTIALS_INVALID);
+            smtpTransport.issueCommand("NOOP", -1);
+            assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace("250 Is that all?");
+
+            // LOGIN exchange with an undecodable base64 user name/password: same reply.
+            smtpTransport.issueCommand("AUTH LOGIN", 334);
+            assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace("334 VXNlcm5hbWU6" /* Username: */);
+            smtpTransport.issueCommand("!!!baduser!!!", -1);
+            assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace("334 UGFzc3dvcmQ6" /* Password: */);
+            smtpTransport.issueCommand("!!!badpass!!!", -1);
+            assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace(AuthCommand.AUTH_CREDENTIALS_INVALID);
+            smtpTransport.issueCommand("NOOP", -1);
+            assertThat(smtpTransport.getLastServerResponse()).isEqualToNormalizingWhitespace("250 Is that all?");
+        }
+    }
+
+    @Test
     public void mailSenderAUTHSuffix() throws IOException, MessagingException {
         Session smtpSession = greenMail.getSmtp().createSession();
 
