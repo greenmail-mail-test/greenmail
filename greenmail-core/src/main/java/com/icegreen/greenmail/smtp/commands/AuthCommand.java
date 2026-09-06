@@ -97,7 +97,10 @@ public class AuthCommand extends SmtpCommand {
         try {
             saslMessage = parseInitialResponse(initialResponse);
         } catch (IllegalArgumentException ex) {
-            log.error("Expected base64 encoded SASL PLAIN message", ex);
+            if(log.isDebugEnabled()) {
+                log.debug("Expected base64 encoded SASL PLAIN message", ex);
+            }
+            log.warn("Invalid SASL PLAIN authentication response. Enable debug logging for details.");
             conn.send(AUTH_CREDENTIALS_INVALID);
             return;
         }
@@ -137,7 +140,10 @@ public class AuthCommand extends SmtpCommand {
                 }
             } catch (IllegalArgumentException ex) {
                 // Not valid base64: fail the attempt with 535 instead of closing the connection.
-                log.error("Expected base64 encoded user name and password for AUTH LOGIN", ex);
+                if(log.isDebugEnabled()) {
+                    log.debug("Expected base64 encoded user name and password for AUTH LOGIN", ex);
+                }
+                log.warn("Invalid AUTH LOGIN authentication response. Enable debug logging for details.");
                 conn.send(AUTH_CREDENTIALS_INVALID);
             }
         }
@@ -163,7 +169,10 @@ public class AuthCommand extends SmtpCommand {
             } catch (IllegalArgumentException ex) {
                 // Not valid base64 or malformed XOAUTH2 message: fail the attempt with
                 // 535 instead of closing the connection.
-                log.error("Expected base64 encoded XOAUTH2 message", ex);
+                if(log.isDebugEnabled()) {
+                    log.debug("Expected base64 encoded XOAUTH2 message", ex);
+                }
+                log.warn("Invalid XOAUTH2 authentication response. Enable debug logging for details.");
                 conn.send(AUTH_CREDENTIALS_INVALID);
             }
         }

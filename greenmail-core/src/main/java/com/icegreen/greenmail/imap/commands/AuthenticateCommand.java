@@ -61,7 +61,10 @@ class AuthenticateCommand extends NonAuthenticatedStateCommand {
             try {
                 xoauth2Message = SaslXoauth2Message.parseBase64Encoded(base64);
             } catch (IllegalArgumentException ex) {
-                log.error("Expected base64 encoded XOAUTH2 message", ex);
+                if(log.isDebugEnabled()) {
+                    log.debug("Expected base64 encoded XOAUTH2 message", ex);
+                }
+                log.warn("Invalid XOAUTH2 authentication response. Enable debug logging for details.");
                 response.commandFailed(this, "Invalid XOAUTH2 authentication string");
                 return;
             }

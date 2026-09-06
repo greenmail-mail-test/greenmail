@@ -98,7 +98,10 @@ public class AuthCommand
         try {
             saslMessage = SaslMessage.parse(EncodingUtil.decodeBase64(initialResponse));
         } catch(IllegalArgumentException ex) { // Invalid Base64
-            log.error("Expected base64 encoding but got <{}>", initialResponse, ex); /* GreenMail is just a test server */
+            if(log.isDebugEnabled()) {
+                log.debug("Expected base64 encoding but got <{}>", initialResponse, ex); /* GreenMail is just a test server */
+            }
+            log.warn("Invalid XOAUTH2 authentication response. Enable debug logging for details.");
             conn.println("-ERR Authentication failed, expected base64 encoding : " + ex.getMessage() );
             return;
         }
