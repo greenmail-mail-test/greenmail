@@ -102,7 +102,9 @@ public class ListBasedStoredMessageCollection implements StoredMessageCollection
 
     @Override
     public List<StoredMessage> getMessages() {
-        return Collections.unmodifiableList(mailMessages);
+        synchronized (mailMessages) {
+            return new ArrayList<>(mailMessages);
+        }
     }
 
     @Override
