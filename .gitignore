@@ -236,3 +236,5 @@ gradle-app.setting
 #Misc
 test.log
 _site
+.vscode/
+.gemini/
