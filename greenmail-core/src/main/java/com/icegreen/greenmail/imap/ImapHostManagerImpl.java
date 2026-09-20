@@ -62,6 +62,9 @@ public class ImapHostManagerImpl
     @Override
     public MailFolder getFolder(GreenMailUser user, String mailboxName) {
         String name = getQualifiedMailboxName(user, mailboxName);
+        if (null == name) {
+            return null; // Not accessible for user
+        }
         return store.getMailbox(name);
     }
 
@@ -136,6 +139,10 @@ public class ImapHostManagerImpl
     public MailFolder createMailbox(GreenMailUser user, String mailboxName)
         throws FolderException {
         String qualifiedName = getQualifiedMailboxName(user, mailboxName);
+        if (null == qualifiedName) {
+            throw new FolderException("Cannot create mailbox " + mailboxName +
+                " outside of the namespace of user " + user.getEmail());
+        }
         if (store.getMailbox(qualifiedName) != null) {
             throw new FolderException("Mailbox " + mailboxName + " already exists.");
         }
@@ -286,6 +293,9 @@ public class ImapHostManagerImpl
         throws FolderException {
         List<MailFolder> mailboxes = new ArrayList<>();
         String qualifiedPattern = getQualifiedMailboxName(user, mailboxPattern);
+        if (null == qualifiedPattern) {
+            return mailboxes; // Not accessible for user
+        }
 
         for (MailFolder folder : store.listMailboxes(qualifiedPattern)) {
             if (subscribedOnly && !subscriptions.isSubscribed(user, folder)) {
@@ -324,7 +334,7 @@ public class ImapHostManagerImpl
     /**
      * Convert a user specified store name into a server absolute name.
      * If the mailboxName begins with the namespace token,
-     * return as-is.
+     * return as-is, provided it is within the namespace of this user.
      * If not, need to resolve the Mailbox name for this user.
      * Example:
      * <br> Convert "INBOX" for user "Fred.Flinstone" into
@@ -341,7 +351,7 @@ public class ImapHostManagerImpl
         }
 
         if (mailboxName.startsWith(NAMESPACE_PREFIX)) {
-            return mailboxName;
+            return isWithinUserNamespace(userNamespace, mailboxName) ? mailboxName : null;
         } else {
             if (mailboxName.isEmpty()) {
                 return USER_NAMESPACE + HIERARCHY_DELIMITER + userNamespace;
@@ -350,6 +360,25 @@ public class ImapHostManagerImpl
                     HIERARCHY_DELIMITER + mailboxName;
             }
         }
+    }
+
+    /**
+     * Checks if an absolute mailbox name addresses the namespace root or the namespace of the user,
+     * ie <i>#mail</i> or <i>#mail.&lt;user&gt;...</i>.
+     * <p>
+     * Compares the path components the way the store resolves them, which ignores empty
+     * components and the case of a component.
+     *
+     * @param userNamespace       the namespace of the user, see {@link GreenMailUser#getQualifiedMailboxName()}.
+     * @param absoluteMailboxName the absolute mailbox name or list pattern.
+     * @return true, if the name addresses the namespace root or the namespace of the user.
+     */
+    private static boolean isWithinUserNamespace(String userNamespace, String absoluteMailboxName) {
+        StringTokenizer tokens = new StringTokenizer(absoluteMailboxName, HIERARCHY_DELIMITER);
+        if (!tokens.hasMoreTokens() || !USER_NAMESPACE.equalsIgnoreCase(tokens.nextToken())) {
+            return false;
+        }
+        return !tokens.hasMoreTokens() || userNamespace.equalsIgnoreCase(tokens.nextToken());
     }
 
     /**
