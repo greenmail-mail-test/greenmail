@@ -1,6 +1,7 @@
 package com.icegreen.greenmail.imap.commands;
 
 import com.icegreen.greenmail.imap.ImapConstants;
+import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.user.GreenMailUser;
@@ -464,6 +465,65 @@ public class ImapProtocolTest {
         } finally {
             store.close();
         }
+    }
+
+    @Test
+    public void testAbsoluteMailboxNameOfOtherUserIsNotAccessible() throws MessagingException, FolderException {
+        final GreenMailUser other = greenMail.setUser("other@localhost", "pwd2");
+        GreenMailUtil.sendTextEmail("other@localhost", "bar@localhost", "Test other", "Test other content",
+            greenMail.getSmtp().getServerSetup());
+        greenMail.waitForIncomingEmail(11);
+
+        final String namespace = ImapConstants.USER_NAMESPACE + ImapConstants.HIERARCHY_DELIMITER;
+        final String fooNamespace = namespace + user.getQualifiedMailboxName();
+        final String otherInbox = namespace + other.getQualifiedMailboxName()
+            + ImapConstants.HIERARCHY_DELIMITER + ImapConstants.INBOX_NAME;
+
+        store.connect("other@localhost", "pwd2");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+
+            // Listing must not reveal the mailboxes of foo@localhost
+            for (final String cmd : new String[]{
+                "LIST \"\" \"" + namespace + "*\"",
+                "LIST \"\" \"" + namespace + "%\"",
+                "LIST \"\" \"" + fooNamespace + ".*\"",
+                "LIST \"" + fooNamespace + "\" \"*\"",
+                "LSUB \"\" \"" + fooNamespace + ".*\""
+            }) {
+                Response[] ret = (Response[]) folder.doCommand(protocol -> protocol.command(cmd, null));
+                assertThat(ret).as(cmd).hasSize(1);
+                assertThat(ret[0].isOK()).as(cmd).isTrue();
+            }
+
+            // Each of these addresses a mailbox of foo@localhost. SELECT deselects, so it comes last.
+            for (final String cmd : new String[]{
+                "STATUS \"" + fooNamespace + ".INBOX\" (MESSAGES)",
+                "STATUS \"" + fooNamespace.toUpperCase() + ".inbox\" (MESSAGES)",
+                "STATUS \"" + namespace + "." + user.getQualifiedMailboxName() + "..INBOX\" (MESSAGES)",
+                "CREATE \"" + fooNamespace + ".planted\"",
+                "SUBSCRIBE \"" + fooNamespace + ".INBOX\"",
+                "COPY 1 \"" + fooNamespace + ".INBOX\"",
+                "EXAMINE \"" + fooNamespace + ".INBOX\"",
+                "SELECT \"" + fooNamespace + ".INBOX\""
+            }) {
+                Response[] ret = (Response[]) folder.doCommand(protocol -> protocol.command(cmd, null));
+                assertThat(ret[ret.length - 1].isNO()).as(cmd).isTrue();
+            }
+
+            // The own namespace stays accessible by absolute name
+            Response[] ret = (Response[]) folder.doCommand(protocol ->
+                protocol.command("STATUS \"" + otherInbox + "\" (MESSAGES)", null));
+            assertThat(ret[ret.length - 1].isOK()).isTrue();
+            assertThat(ret[0].toString()).contains("MESSAGES 1");
+        } finally {
+            store.close();
+        }
+
+        final ImapHostManager imapHostManager = greenMail.getManagers().getImapHostManager();
+        assertThat(imapHostManager.getInbox(user).getMessageCount()).isEqualTo(10);
+        assertThat(imapHostManager.listMailboxes(user, "*")).hasSize(1);
     }
 
     @Test
