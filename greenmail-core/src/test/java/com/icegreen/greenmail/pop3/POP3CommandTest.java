@@ -217,4 +217,35 @@ public class POP3CommandTest {
         });
     }
 
+    @Test
+    public void uidlWithMalformedMessageNumberReturnsErrWithoutClosingConnection() throws Exception {
+        String to = "test@localhost";
+        GreenMailUser user = greenMail.setUser(to, "pwd");
+        // UIDL builds a MsgRangeFilter from the client supplied argument, which parses it with
+        // Integer.parseInt / a range pattern. A non-numeric argument raises NumberFormatException and
+        // a malformed range (e.g. "1:2:3") raises IllegalStateException. UidlCommand only caught
+        // FolderException, so the unchecked exception escaped and Pop3Handler tore the connection down,
+        // unlike its sibling commands (RETR/DELE/LIST/TOP) which answer -ERR and keep the connection.
+        MailFolder inbox = greenMail.getManagers().getImapHostManager().getFolder(user, "INBOX");
+        inbox.store(GreenMailUtil.newMimeMessage("Subject: s\r\nFrom: from@localhost\r\n\r\nbody\r\n"));
+
+        withConnection((printStream, reader) -> {
+            assertThat(reader.readLine()).startsWith("+OK POP3 GreenMail Server v");
+            printStream.print("USER " + to + CRLF);
+            assertThat(reader.readLine()).startsWith("+OK");
+            printStream.print("PASS pwd" + CRLF);
+            assertThat(reader.readLine()).startsWith("+OK");
+
+            printStream.print("UIDL notanumber" + CRLF);
+            assertThat(reader.readLine()).startsWith("-ERR");
+
+            printStream.print("UIDL 1:2:3" + CRLF);
+            assertThat(reader.readLine()).startsWith("-ERR");
+
+            // Connection is still usable, so a valid UIDL still resolves the message.
+            printStream.print("UIDL 1" + CRLF);
+            assertThat(reader.readLine()).startsWith("+OK 1 ");
+        });
+    }
+
 }

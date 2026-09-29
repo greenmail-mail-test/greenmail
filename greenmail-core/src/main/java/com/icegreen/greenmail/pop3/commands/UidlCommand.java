@@ -9,7 +9,6 @@ package com.icegreen.greenmail.pop3.commands;
 import com.icegreen.greenmail.foedus.util.MsgRangeFilter;
 import com.icegreen.greenmail.pop3.Pop3Connection;
 import com.icegreen.greenmail.pop3.Pop3State;
-import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.StoredMessage;
 
@@ -52,7 +51,7 @@ public class UidlCommand
 
                 conn.println(".");
             }
-        } catch (FolderException me) {
+        } catch (Exception me) {
             conn.println("-ERR " + me);
         }
     }
