@@ -80,7 +80,11 @@ public class MapBasedStoredMessageCollection implements StoredMessageCollection 
     @Override
     public List<StoredMessage> getMessages(MsgRangeFilter range) {
         final List<StoredMessage> messagesInRange = new ArrayList<>();
-        int i = 0;
+        // Message numbers are 1-based, so the first message is position 1. The
+        // list-based sibling collection filters on i + 1; this used the 0-based
+        // index, so every POP3 message-number command (LIST/RETR/DELE/TOP/UIDL)
+        // resolved to the wrong message (and the last message was unreachable).
+        int i = 1;
         synchronized (mailMessages) {
             for (final StoredMessage message : mailMessages.values()) {
                 if (range.includes(i)) {
