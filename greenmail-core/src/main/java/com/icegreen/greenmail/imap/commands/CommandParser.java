@@ -10,6 +10,7 @@ import com.icegreen.greenmail.imap.ImapConstants;
 import com.icegreen.greenmail.imap.ImapRequestLineReader;
 import com.icegreen.greenmail.imap.ProtocolException;
 import com.icegreen.greenmail.store.MessageFlags;
+import com.icegreen.greenmail.util.EncodingUtil;
 import org.eclipse.angus.mail.imap.protocol.BASE64MailboxDecoder;
 
 import jakarta.mail.Flags;
@@ -239,10 +240,14 @@ public class CommandParser {
      * "{" charCount "}" CRLF *CHAR8
      * Note before calling, the request should be positioned so that nextChar
      * is '{'. Leading whitespace is not skipped in this method.
+     * <p>
+     * The payload is 8-bit protocol data, so it is decoded octet per character, the way
+     * {@link ImapRequestLineReader#nextChar()} reads the rest of the request and the way
+     * {@link com.icegreen.greenmail.imap.ImapResponse} writes it back.
      */
     protected String consumeLiteral(ImapRequestLineReader request)
             throws ProtocolException {
-        return new String(consumeLiteralAsBytes(request));
+        return new String(consumeLiteralAsBytes(request), EncodingUtil.CHARSET_EIGHT_BIT_ENCODING);
     }
 
     protected byte[] consumeLiteralAsBytes(ImapRequestLineReader request)

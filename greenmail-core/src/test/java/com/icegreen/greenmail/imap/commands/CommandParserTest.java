@@ -57,6 +57,17 @@ public class CommandParserTest {
             .isEqualTo(payload.toString());
     }
 
+    /**
+     * A literal carries 8-bit protocol data, so every announced octet must reach the value
+     * as itself. Decoding with a multi byte charset maps octets that do not form a valid
+     * sequence to the replacement character, which also makes distinct payloads equal.
+     */
+    @Test
+    public void consumeLiteralKeepsEightBitOctets() throws ProtocolException {
+        assertThat(consumeLiteral("{2+}\r\n\u00e4\u00fc")).isEqualTo("\u00e4\u00fc");
+        assertThat(consumeLiteral("{1+}\r\n\u00e4")).isNotEqualTo(consumeLiteral("{1+}\r\n\u00fc"));
+    }
+
     @Test
     public void consumeLiteralRejectsMissingOctetCount() {
         assertThatThrownBy(() -> consumeLiteral("{+}\r\n"))
