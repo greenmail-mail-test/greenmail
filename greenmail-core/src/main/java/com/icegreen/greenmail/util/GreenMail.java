@@ -446,6 +446,8 @@ public class GreenMail extends ConfiguredGreenMail {
         }
         try {
             return Files.isHidden(path) ||
+                // Ignore Unix-style hidden paths with DOT-prefix also on Windows
+                (path.getFileName() != null && path.getFileName().toString().startsWith(".")) ||
                 (path.getParent() != null &&
                     isHiddenOrInHiddenDir(baseDirectory, path.getParent()));
         } catch (IOException e) {
