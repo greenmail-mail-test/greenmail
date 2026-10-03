@@ -63,4 +63,4 @@ jobs:
           cache: 'maven'
       - name: Build with Maven
         # See https://maven.apache.org/ref/current/maven-embedder/cli.html
-        run: .\mvnw.cmd --batch-mode -V --fail-at-end --errors install -Pdocker
+        run: .\mvnw.cmd --batch-mode -V --fail-at-end --errors install
