@@ -16,14 +16,24 @@ on:
       - ".circleci/**"
       - ".github/dependabot.yml"
   workflow_dispatch: # Manual trigger
+    inputs:
+      runner:
+        description: Runner to use for the build
+        type: choice
+        options:
+          - ubuntu
+          - windows
+        required: true
+        default: ubuntu
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+env:
+  ConcurrentCloseIT_ITERATIONS: "1000"
 jobs:
   build:
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.runner == 'ubuntu' }}
     runs-on: ubuntu-latest
-    env:
-      ConcurrentCloseIT_ITERATIONS: "1000"
     strategy:
       matrix:
         java: [ '11', '17', '21', '25' ]
@@ -39,3 +49,18 @@ jobs:
       - name: Build with Maven
         # See https://maven.apache.org/ref/current/maven-embedder/cli.html
         run: ./mvnw --batch-mode -V --fail-at-end --errors install -Pdocker
+  build-windows:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.runner == 'windows' }}
+    runs-on: windows-latest
+    name: Windows Java 25
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set-up Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: 'zulu'
+          java-version: 25
+          cache: 'maven'
+      - name: Build with Maven
+        # See https://maven.apache.org/ref/current/maven-embedder/cli.html
+        run: .\mvnw.cmd --batch-mode -V --fail-at-end --errors install -Pdocker
