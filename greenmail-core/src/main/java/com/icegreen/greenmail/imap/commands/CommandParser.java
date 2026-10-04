@@ -155,10 +155,13 @@ public class CommandParser {
         }
 
         try {
+            // RFC 3501 time is a 24-hour clock (2DIGIT ":" 2DIGIT ":" 2DIGIT), so the hour
+            // field must be HH. With the 12-hour hh and no am/pm marker a noon time such as
+            // 12:33:30 is parsed as 00:33:30, storing a wrong INTERNALDATE.
             // You can use Z or zzzz
-            return new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss Z", Locale.US).parse(dateString);
+            return new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss Z", Locale.US).parse(dateString);
         } catch (ParseException e) {
-            throw new ProtocolException("Invalid date format <" + dateString + ">, should comply to dd-MMM-yyyy hh:mm:ss Z");
+            throw new ProtocolException("Invalid date format <" + dateString + ">, should comply to dd-MMM-yyyy HH:mm:ss Z");
         }
     }
 

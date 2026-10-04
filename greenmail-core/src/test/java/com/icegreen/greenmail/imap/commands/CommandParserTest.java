@@ -6,6 +6,10 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -146,6 +150,23 @@ public class CommandParserTest {
         assertThat(ranges[0].getLowVal()).isEqualTo(1L);
         assertThat(ranges[1].getLowVal()).isEqualTo(3L);
         assertThat(ranges[1].getHighVal()).isEqualTo(5L);
+    }
+
+    @Test
+    public void dateTimeParsesNoonHourInTwentyFourHourFormat() throws ProtocolException {
+        // RFC 3501 date-time uses a 24-hour clock, so 12:33:30 must stay noon.
+        // With the 12-hour hh field it was shifted to 00:33:30 (midnight), the #211 symptom.
+        Date parsed = dateTime("\"18-Jul-2017 12:33:30 +0000\"\r\n");
+
+        Calendar expected = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+        expected.clear();
+        expected.set(2017, Calendar.JULY, 18, 12, 33, 30);
+        assertThat(parsed).isEqualTo(expected.getTime());
+    }
+
+    private static Date dateTime(String line) throws ProtocolException {
+        ByteArrayInputStream in = new ByteArrayInputStream(line.getBytes(StandardCharsets.ISO_8859_1));
+        return new CommandParser().dateTime(new ImapRequestLineReader(in, null));
     }
 
     private static IdRange[] parseIdRange(String line) throws ProtocolException {
