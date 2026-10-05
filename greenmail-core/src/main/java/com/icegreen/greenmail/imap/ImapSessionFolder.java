@@ -89,7 +89,8 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
             this.expungedMsns.clear();
 
             // TODO - renumber any cached ids (for now we assume the modifiedFlags has been cleared)\
-            if (!(modifiedFlags.isEmpty() && !sizeChanged)) {
+            // A pending size change holds no message number, so it does not have to be reported first.
+            if (!modifiedFlags.isEmpty()) {
                 throw new IllegalStateException("Need to do this properly...");
             }
             return expungedMsnsArray;
