@@ -62,26 +62,44 @@ public final class ImapSessionImpl implements ImapSession {
             }
 
             // Message updates
-            final List<ImapSessionFolder.FlagUpdate> flagUpdates = selected.getFlagUpdates();
-            for (ImapSessionFolder.FlagUpdate update : flagUpdates) {
-                int msn = update.getMsn();
-                Flags updatedFlags = update.getFlags();
-                StringBuilder out = new StringBuilder("FLAGS ");
-                out.append(MessageFlags.format(updatedFlags));
-                if (update.getUid() != null) {
-                    out.append(" UID ");
-                    out.append(update.getUid());
-                }
-                response.fetchResponse(msn, out.toString());
-            }
+            flagUpdateResponses(selected, response);
 
             // Expunged messages
             if (!omitExpunged) {
-                int[] expunged = selected.getExpunged();
-                for (int msn : expunged) {
-                    response.expungeResponse(msn);
-                }
+                expungeResponses(selected, response);
             }
+        }
+    }
+
+    @Override
+    public void expungedResponses(ImapResponse response) {
+        ImapSessionFolder selected = getSelected();
+        if (selected != null) {
+            // The flag updates refer to the message numbers before the expunge, so they go first
+            flagUpdateResponses(selected, response);
+            expungeResponses(selected, response);
+        }
+    }
+
+    private void flagUpdateResponses(ImapSessionFolder selected, ImapResponse response) {
+        final List<ImapSessionFolder.FlagUpdate> flagUpdates = selected.getFlagUpdates();
+        for (ImapSessionFolder.FlagUpdate update : flagUpdates) {
+            int msn = update.getMsn();
+            Flags updatedFlags = update.getFlags();
+            StringBuilder out = new StringBuilder("FLAGS ");
+            out.append(MessageFlags.format(updatedFlags));
+            if (update.getUid() != null) {
+                out.append(" UID ");
+                out.append(update.getUid());
+            }
+            response.fetchResponse(msn, out.toString());
+        }
+    }
+
+    private void expungeResponses(ImapSessionFolder selected, ImapResponse response) {
+        int[] expunged = selected.getExpunged();
+        for (int msn : expunged) {
+            response.expungeResponse(msn);
         }
     }
 

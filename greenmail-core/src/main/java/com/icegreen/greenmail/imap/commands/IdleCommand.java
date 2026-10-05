@@ -24,7 +24,7 @@ class IdleCommand extends SelectedStateCommand {
         session.unsolicitedResponses(response);
         request.commandContinuationRequest();
         ImapSessionFolder folder = session.getSelected();
-        IdleFolderListener listener = new IdleFolderListener(response);
+        IdleFolderListener listener = new IdleFolderListener(response, session);
         try {
             folder.addListener(listener);
             waitForClientDone(request);
@@ -51,9 +51,11 @@ class IdleCommand extends SelectedStateCommand {
 
     private static class IdleFolderListener implements FolderListener {
         private final ImapResponse response;
+        private final ImapSession session;
 
-        private IdleFolderListener(ImapResponse response) {
+        private IdleFolderListener(ImapResponse response, ImapSession session) {
             this.response = response;
+            this.session = session;
         }
 
         @Override
@@ -66,7 +68,10 @@ class IdleCommand extends SelectedStateCommand {
 
         @Override
         public void expunged(int msn) {
-            response.expungeResponse(msn);
+            // The selected mailbox of the session listens to the folder as well and keeps this expunge
+            // as pending. Send the pending responses instead of another EXPUNGE, as otherwise the
+            // expunge is reported a second time when the client is done with idling.
+            session.expungedResponses(response);
         }
 
         @Override
