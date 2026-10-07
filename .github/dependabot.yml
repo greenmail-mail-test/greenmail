@@ -13,11 +13,11 @@ updates:
       interval: "daily"
     open-pull-requests-limit: 20
     ignore:
-      - dependency-name: "org.springframework"
+      - dependency-name: "org.springframework*:*"
         update-types: ["version-update:semver-major"]
-      - dependency-name: "org.slf4j"
+      - dependency-name: "org.slf4j:*"
         update-types: ["version-update:semver-major"]
-      - dependency-name: "org.glassfish.jersey"
+      - dependency-name: "org.glassfish.jersey*:*"
         update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "docker"
