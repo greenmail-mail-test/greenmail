@@ -107,4 +107,14 @@ public interface ImapSession {
 
     void unsolicitedResponses(ImapResponse request, boolean omitExpunged) throws FolderException;
 
+    /**
+     * Sends the pending FLAGS and EXPUNGE responses of the selected mailbox to the client.
+     * <p>
+     * In contrast to {@link #unsolicitedResponses(ImapResponse)} this does not access the mailbox itself,
+     * so it can be invoked while the mailbox notifies its listeners, eg for a session which is idling.
+     *
+     * @param response The response to write to
+     */
+    void expungedResponses(ImapResponse response);
+
 }
