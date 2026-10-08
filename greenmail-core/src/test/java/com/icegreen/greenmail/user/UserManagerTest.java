@@ -3,18 +3,22 @@ package com.icegreen.greenmail.user;
 import com.icegreen.greenmail.imap.ImapConstants;
 import com.icegreen.greenmail.imap.ImapHostManager;
 import com.icegreen.greenmail.imap.ImapHostManagerImpl;
+import com.icegreen.greenmail.mail.MailAddress;
+import com.icegreen.greenmail.mail.MovingMessage;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.store.InMemoryStore;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CyclicBarrier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -169,6 +173,65 @@ public class UserManagerTest {
 
         assertThat(userManager.listUser()).isNotEmpty();
         assertThat(userManager.test("foo", "bar")).isTrue();
+    }
+
+    @Test
+    public void autoCreateOfSameUserIsAtomic() throws Exception {
+        final int threads = 8;
+        for (int round = 0; round < 20; round++) {
+            ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
+            UserManager userManager = new UserManager(imapHostManager);
+            userManager.setAuthRequired(false);
+
+            List<Exception> exceptions = runConcurrently(threads,
+                () -> userManager.test("foo@localhost", "foo@localhost"));
+
+            assertThat(exceptions).isEmpty();
+            assertThat(userManager.listUser()).hasSize(1);
+            assertThat(imapHostManager.getInbox(userManager.getUserByEmail("foo@localhost"))).isNotNull();
+        }
+    }
+
+    @Test
+    public void deliveryToSameNewRecipientIsAtomic() throws Exception {
+        final int threads = 8;
+        for (int round = 0; round < 20; round++) {
+            ImapHostManager imapHostManager = new ImapHostManagerImpl(new InMemoryStore());
+            UserManager userManager = new UserManager(imapHostManager);
+            MessageDeliveryHandler handler = userManager.getMessageDeliveryHandler();
+
+            List<Exception> exceptions = runConcurrently(threads, () -> {
+                try {
+                    handler.handle(new MovingMessage(), new MailAddress("foo@localhost"));
+                } catch (MessagingException | UserException e) {
+                    throw new IllegalStateException(e);
+                }
+            });
+
+            assertThat(exceptions).isEmpty();
+            assertThat(userManager.listUser()).hasSize(1);
+        }
+    }
+
+    private static List<Exception> runConcurrently(int threadCount, Runnable task) throws Exception {
+        final List<Exception> exceptions = Collections.synchronizedList(new ArrayList<>());
+        final CyclicBarrier barrier = new CyclicBarrier(threadCount);
+        Thread[] threads = new Thread[threadCount];
+        for (int i = 0; i < threads.length; i++) {
+            threads[i] = new Thread(() -> {
+                try {
+                    barrier.await();
+                    task.run();
+                } catch (Exception e) {
+                    exceptions.add(e);
+                }
+            });
+            threads[i].start();
+        }
+        for (Thread thread : threads) {
+            thread.join();
+        }
+        return exceptions;
     }
 
     @Test
