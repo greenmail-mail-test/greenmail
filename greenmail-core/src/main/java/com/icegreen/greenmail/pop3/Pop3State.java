@@ -66,7 +66,7 @@ public class Pop3State {
             return manager.getUser(username);
         }
         if (!manager.isAuthRequired()) {
-            return manager.createUser(username, username, username);
+            return manager.getOrCreateUser(username, username, username);
         }
         throw new UserException("Unable to find or create user '" + username +"'");
     }

@@ -98,11 +98,11 @@ class HierarchicalFolder implements MailFolder, UIDFolder {
     }
 
 
-    HierarchicalFolder createChild(String mailboxName) {
-        HierarchicalFolder child = new HierarchicalFolder(this, mailboxName);
+    synchronized HierarchicalFolder createChild(String mailboxName) throws FolderException {
         if(children.stream().anyMatch(it->mailboxName.equals(it.name))) {
-            throw new IllegalStateException("Mailbox "+mailboxName+ " already exists in "+children);
+            throw new FolderException("Mailbox "+mailboxName+ " already exists in "+children);
         }
+        HierarchicalFolder child = new HierarchicalFolder(this, mailboxName);
         children.add(child);
         return child;
     }
