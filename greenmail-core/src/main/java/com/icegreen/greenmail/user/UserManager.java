@@ -45,16 +45,7 @@ public class UserManager {
         } else {
             email = mailAddress.getEmail();
         }
-        GreenMailUser user = getUserByEmail(email);
-        if(null==user) {
-            String login = email;
-            String password = email;
-            user = createUser(email, login, password);
-            log.info(
-                "Created user login {} for address {} with password {} because it didn't exist before.",
-                login, email, password);
-        }
-        return user;
+        return getOrCreateUser(email, email, email);
     };
 
     public UserManager(ImapHostManager imapHostManager) {
@@ -79,7 +70,36 @@ public class UserManager {
         return loginToUser.values().stream().filter(predicate);
     }
 
-    public GreenMailUser createUser(String email, String login, String password) throws UserException {
+    /**
+     * Gets the user of the given email or login, creating it if it does not exist yet.
+     * <p>
+     * Lookup and creation are atomic, so concurrent requests for a not yet known user
+     * (eg two SMTP connections delivering to the same new recipient) share one user
+     * instead of one of them failing because the other one won the race.
+     *
+     * @param email    the email address.
+     * @param login    the login.
+     * @param password the password.
+     * @return the existing or newly created user, never null.
+     * @throws UserException if the user can not be created.
+     */
+    public synchronized GreenMailUser getOrCreateUser(String email, String login, String password)
+        throws UserException {
+        GreenMailUser user = getUserByEmail(email);
+        if (null == user) {
+            user = getUser(login);
+        }
+        if (null != user) {
+            return user;
+        }
+        user = createUser(email, login, password);
+        log.info(
+            "Created user login {} for address {} with password {} because it didn't exist before.",
+            login, email, password);
+        return user;
+    }
+
+    public synchronized GreenMailUser createUser(String email, String login, String password) throws UserException {
         log.debug("Creating user {}", email);
         // Check that user does not exist
         if(getUserByEmail(email)!=null) {
@@ -97,7 +117,7 @@ public class UserManager {
         return user;
     }
 
-    public void deleteUser(GreenMailUser user) {
+    public synchronized void deleteUser(GreenMailUser user) {
         log.debug("Deleting user {}", user);
         GreenMailUser deletedUser = loginToUser.remove(normalizerUserName(user.getLogin()));
         if (deletedUser != null) {
@@ -115,12 +135,10 @@ public class UserManager {
         GreenMailUser u = getUser(userId);
 
         if (!authRequired) {
-            if (null == u) { // Auto create user
-                try {
-                    createUser(userId, userId, password);
-                } catch (UserException e) {
-                    throw new IllegalStateException("Failed to create user with userid=" + userId, e);
-                }
+            try {
+                getOrCreateUser(userId, userId, password); // Auto create user
+            } catch (UserException e) {
+                throw new IllegalStateException("Failed to create user with userid=" + userId, e);
             }
 
             return true; // Always authenticate successfully if no auth required
