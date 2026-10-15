@@ -38,12 +38,12 @@ public class ListCommand
                 }
 
                 StoredMessage msg = msgList.get(0);
-                conn.println("+OK " + msgNumStr + " " + msg.getMimeMessage().getSize());
+                conn.println("+OK " + msgNumStr + " " + msg.getAttributes().getSize());
             } else {
                 List<StoredMessage> messages = inbox.getNonDeletedMessages();
                 conn.println("+OK");
                 for (StoredMessage msg : messages) {
-                    conn.println(inbox.getMsn(msg.getUid()) + " " + msg.getMimeMessage().getSize());
+                    conn.println(inbox.getMsn(msg.getUid()) + " " + msg.getAttributes().getSize());
                 }
 
                 conn.println(".");
