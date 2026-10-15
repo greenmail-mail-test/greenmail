@@ -11,7 +11,6 @@ import com.icegreen.greenmail.pop3.Pop3State;
 import com.icegreen.greenmail.store.MailFolder;
 import com.icegreen.greenmail.store.StoredMessage;
 
-import jakarta.mail.MessagingException;
 import java.util.List;
 
 
@@ -39,11 +38,7 @@ public class StatCommand
         long total = 0;
 
         for (StoredMessage msg : messages) {
-            try {
-                total += msg.getMimeMessage().getSize();
-            } catch (MessagingException e) {
-                throw new RuntimeException(e);
-            }
+            total += msg.getAttributes().getSize();
         }
 
         return total;

@@ -248,4 +248,32 @@ public class POP3CommandTest {
         });
     }
 
+    @Test
+    public void listAndStatReportWholeMessageSize() throws Exception {
+        String to = "test@localhost";
+        GreenMailUser user = greenMail.setUser(to, "pwd");
+        String raw = "Subject: s\r\nFrom: from@localhost\r\n\r\nbody\r\n";
+        MailFolder inbox = greenMail.getManagers().getImapHostManager().getFolder(user, "INBOX");
+        inbox.store(GreenMailUtil.newMimeMessage(raw));
+        inbox.store(GreenMailUtil.newMimeMessage(raw));
+
+        withConnection((printStream, reader) -> {
+            assertThat(reader.readLine()).startsWith("+OK POP3 GreenMail Server v");
+            printStream.print("USER " + to + CRLF);
+            assertThat(reader.readLine()).startsWith("+OK");
+            printStream.print("PASS pwd" + CRLF);
+            assertThat(reader.readLine()).startsWith("+OK");
+
+            printStream.print("STAT" + CRLF);
+            assertThat(reader.readLine()).isEqualTo("+OK 2 " + 2 * raw.length());
+            printStream.print("LIST 1" + CRLF);
+            assertThat(reader.readLine()).isEqualTo("+OK 1 " + raw.length());
+            printStream.print("LIST" + CRLF);
+            assertThat(reader.readLine()).isEqualTo("+OK");
+            assertThat(reader.readLine()).isEqualTo("1 " + raw.length());
+            assertThat(reader.readLine()).isEqualTo("2 " + raw.length());
+            assertThat(reader.readLine()).isEqualTo(".");
+        });
+    }
+
 }
