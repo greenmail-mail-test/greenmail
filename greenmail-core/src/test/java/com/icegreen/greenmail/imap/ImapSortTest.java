@@ -121,6 +121,38 @@ public class ImapSortTest {
         }
     }
 
+    @Test
+    public void testSortByWholeMessageSize() throws Exception {
+        GreenMailUser user = greenMail.setUser("to3@localhost", "pwd");
+        MailFolder folder = greenMail.getManagers().getImapHostManager().getFolder(user, "INBOX");
+        Session session = greenMail.getImap().createSession();
+
+        MimeMessage largerHeaders = new MimeMessage(session);
+        largerHeaders.setSubject("larger headers");
+        largerHeaders.setText("x");
+        largerHeaders.setHeader("X-Padding", "x".repeat(200));
+        folder.store(largerHeaders);
+
+        MimeMessage largerBody = new MimeMessage(session);
+        largerBody.setSubject("larger body");
+        largerBody.setText("0123456789");
+        folder.store(largerBody);
+
+        final Store store = greenMail.getImap().createStore();
+        store.connect("to3@localhost", "pwd");
+        try {
+            IMAPFolder imapFolder = (IMAPFolder) store.getFolder("INBOX");
+            imapFolder.open(Folder.READ_WRITE);
+
+            Message[] sortedMessages = imapFolder.getSortedMessages(new SortTerm[]{SortTerm.SIZE});
+            assertThat(sortedMessages).hasSize(2);
+            assertThat(sortedMessages[0].getSubject()).isEqualTo("larger body");
+            assertThat(sortedMessages[1].getSubject()).isEqualTo("larger headers");
+        } finally {
+            store.close();
+        }
+    }
+
     /**
      * Create the two messages with different recipients, etc. for testing and add them to the folder.
      *
