@@ -52,7 +52,7 @@ class StoredMessageSorter implements Comparator<StoredMessage> {
                         compareResult = doCompare(getFrom(m1), getFrom(m2));
                         break;
                     case SIZE:
-                        compareResult = doCompare(m1.getMimeMessage().getSize(), m2.getMimeMessage().getSize());
+                        compareResult = doCompare(m1.getAttributes().getSize(), m2.getAttributes().getSize());
                         break;
                     case SUBJECT:
                         compareResult = doCompare(
