@@ -12,6 +12,7 @@ import com.icegreen.greenmail.smtp.SmtpConnection;
 import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpState;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,7 +54,7 @@ public class MailCommand
                 msg.setReturnPath(fromAddr);
             }
 
-            if (parameters != null && parameters.toUpperCase().contains("SMTPUTF8")) {
+            if (parameters != null && parameters.toUpperCase(Locale.ROOT).contains("SMTPUTF8")) {
                 msg.setSmtpUtf8(true);
             }
 

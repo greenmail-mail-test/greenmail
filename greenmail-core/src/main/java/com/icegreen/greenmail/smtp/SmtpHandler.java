@@ -14,6 +14,7 @@ import com.icegreen.greenmail.smtp.commands.SmtpCommandRegistry;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.Locale;
 
 public class SmtpHandler extends AbstractSocketProtocolHandler {
 
@@ -85,7 +86,7 @@ public class SmtpHandler extends AbstractSocketProtocolHandler {
             return;
         }
 
-        String commandName = currentLine.substring(0, 4).toUpperCase();
+        String commandName = currentLine.substring(0, 4).toUpperCase(Locale.ROOT);
         SmtpCommand command = registry.getCommand(commandName);
 
         if (command == null) {

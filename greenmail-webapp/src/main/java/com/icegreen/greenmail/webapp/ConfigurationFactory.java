@@ -1,5 +1,6 @@
 package com.icegreen.greenmail.webapp;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -41,9 +42,9 @@ public class ConfigurationFactory {
             Protocol protocol;
             int dotIdx = pParamName.indexOf('.');
             if (dotIdx < 0) { // PROTOCOLNAME
-                protocol = Protocol.valueOf(pParamName.toUpperCase());
+                protocol = Protocol.valueOf(pParamName.toUpperCase(Locale.ROOT));
             } else {
-                protocol = Protocol.valueOf(pParamName.substring(0, dotIdx).toUpperCase());
+                protocol = Protocol.valueOf(pParamName.substring(0, dotIdx).toUpperCase(Locale.ROOT));
             }
             Configuration.ServiceConfiguration serviceConf =
                 pConf.getServiceConfigurationByProtocol(protocol);
