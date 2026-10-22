@@ -368,7 +368,7 @@ public abstract class SearchTermBuilder {
         if (flagValue == null || flagValue.trim().isEmpty()) {
             throw new IllegalArgumentException("Can not convert empty string to mail flag");
         }
-        String flag = flagValue.trim().toUpperCase();
+        String flag = flagValue.trim().toUpperCase(Locale.ROOT);
         switch (flag) {
             case "ANSWERED":
                 return Flags.Flag.ANSWERED;

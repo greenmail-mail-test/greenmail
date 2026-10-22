@@ -15,6 +15,7 @@ import com.icegreen.greenmail.user.UserManager;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.Locale;
 import java.util.StringTokenizer;
 
 
@@ -70,7 +71,7 @@ public class Pop3Handler extends AbstractSocketProtocolHandler {
             return;
         }
 
-        String commandName = new StringTokenizer(currentLine, " ").nextToken().toUpperCase();
+        String commandName = new StringTokenizer(currentLine, " ").nextToken().toUpperCase(Locale.ROOT);
         Pop3Command command = registry.getCommand(commandName);
 
         if (command == null) {

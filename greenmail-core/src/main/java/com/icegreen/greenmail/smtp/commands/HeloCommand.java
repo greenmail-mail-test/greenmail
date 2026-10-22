@@ -10,6 +10,8 @@ import com.icegreen.greenmail.smtp.SmtpConnection;
 import com.icegreen.greenmail.smtp.SmtpManager;
 import com.icegreen.greenmail.smtp.SmtpState;
 
+import java.util.Locale;
+
 
 /**
  * EHLO/HELO command.
@@ -28,7 +30,7 @@ public class HeloCommand
         extractHeloName(conn, commandLine);
         state.clearMessage();
 
-        boolean isEhlo = commandLine.toUpperCase().startsWith("EHLO");
+        boolean isEhlo = commandLine.toUpperCase(Locale.ROOT).startsWith("EHLO");
         if (isEhlo) {
             conn.send("250-" + conn.getServerGreetingsName());
             conn.send("250-AUTH " + AuthCommand.SUPPORTED_AUTH_MECHANISM);

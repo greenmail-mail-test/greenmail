@@ -257,7 +257,7 @@ public class GreenMail extends ConfiguredGreenMail {
         try {
             for (StoredMessage msg : msgs) {
                 String tos = GreenMailUtil.getAddressList(msg.getMimeMessage().getAllRecipients());
-                if (null != tos && tos.toLowerCase().contains(domain.toLowerCase())) {
+                if (null != tos && tos.toLowerCase(Locale.ROOT).contains(domain.toLowerCase(Locale.ROOT))) {
                     ret.add(msg.getMimeMessage());
                 }
             }
@@ -424,7 +424,7 @@ public class GreenMail extends ConfiguredGreenMail {
 
     private String getUserBaseMailboxName(ImapHostManager imapHostManager, GreenMailUser user) throws FolderException {
         String inbox = imapHostManager.getInbox(user).getFullName();
-        if (!inbox.toUpperCase().endsWith(ImapConstants.INBOX_NAME)) {
+        if (!inbox.toUpperCase(Locale.ROOT).endsWith(ImapConstants.INBOX_NAME)) {
             throw new IllegalStateException("Mail folder '" + inbox + "' is not expected " + ImapConstants.INBOX_NAME + " folder");
         }
         return inbox.substring(0, inbox.length() - ImapConstants.INBOX_NAME.length());
