@@ -7,6 +7,7 @@
 package com.icegreen.greenmail.imap.commands;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -78,7 +79,7 @@ public class ImapCommandFactory {
     }
 
     public ImapCommand getCommand(String commandName) {
-        Class<? extends ImapCommand> cmdClass = imapCommands.get(commandName.toUpperCase());
+        Class<? extends ImapCommand> cmdClass = imapCommands.get(commandName.toUpperCase(Locale.ROOT));
 
         if (cmdClass == null) {
             return null;

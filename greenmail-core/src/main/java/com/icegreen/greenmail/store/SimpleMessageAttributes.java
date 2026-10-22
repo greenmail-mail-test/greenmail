@@ -532,11 +532,11 @@ public class SimpleMessageAttributes
             } else {
                 //1. primary type -------
                 buf.append('\"');
-                buf.append(escapeHeader(primaryType.toUpperCase()));
+                buf.append(escapeHeader(primaryType.toUpperCase(Locale.ROOT)));
                 buf.append('\"');
                 //2. sec type -------
                 buf.append(" \"");
-                buf.append(escapeHeader(secondaryType.toUpperCase()));
+                buf.append(escapeHeader(secondaryType.toUpperCase(Locale.ROOT)));
                 buf.append('\"');
                 //3. params -------
                 buf.append(' ');

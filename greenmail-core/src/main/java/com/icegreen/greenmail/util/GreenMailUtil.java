@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Random;
 
@@ -90,7 +91,7 @@ public class GreenMailUtil {
                 }
                 return false;
             } else {
-                return !m.getContentType().trim().toLowerCase().startsWith("text");
+                return !m.getContentType().trim().toLowerCase(Locale.ROOT).startsWith("text");
             }
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
