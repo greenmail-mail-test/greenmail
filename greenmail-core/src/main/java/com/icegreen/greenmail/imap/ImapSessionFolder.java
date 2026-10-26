@@ -49,7 +49,7 @@ public class ImapSessionFolder implements MailFolder, FolderListener, UIDFolder 
         for (int i = 0; i < uids.length; i++) {
             long messageUid = uids[i];
             if (uid == messageUid) {
-                return i + 1;
+                return correctForExpungedMessages(i + 1);
             }
         }
         throw new FolderException("No such message with uid " + uid + " in folder " + folder.getName());
