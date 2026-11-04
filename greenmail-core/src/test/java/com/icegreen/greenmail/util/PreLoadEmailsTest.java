@@ -13,7 +13,9 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,7 +47,19 @@ public class PreLoadEmailsTest {
                     └── test-1.eml
          */
         final GreenMailUser existingUser = greenMail.setUser("bar@localhost", "bar@localhost", "bar");
-        greenMail.loadEmails(FileSystems.getDefault().getPath("test-classes/preload"));
+        final var preloadDirectory = Optional.ofNullable(
+                getClass().getClassLoader().getResource("preload"))
+            .map(resource -> {
+                try {
+                    return Paths.get(resource.toURI());
+                } catch (final URISyntaxException e) {
+                    throw new IllegalStateException(
+                        "Invalid preload resource URL: " + resource, e);
+                }
+            })
+            .orElseThrow(() ->
+                new IllegalStateException("Missing test resource directory: preload"));
+        greenMail.loadEmails(preloadDirectory);
         final ImapServer imap = greenMail.getImap();
         try (IMAPStore store = imap.createStore()) {
             store.connect("foo@localhost", "foo@localhost");
