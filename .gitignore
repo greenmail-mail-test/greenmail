@@ -145,7 +145,7 @@ local.properties
 # PDT-specific
 .buildpath
 
-# sbteclipse plugin 
+# sbteclipse plugin
 .target
 
 # TeXlipse plugin
@@ -238,3 +238,5 @@ test.log
 _site
 .vscode/
 .gemini/
+/greenmail-core/*.log
+/greenmail-core/*.pkcs12
