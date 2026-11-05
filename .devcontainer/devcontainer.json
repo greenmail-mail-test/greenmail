@@ -1,0 +1,13 @@
+{
+    "name": "GreenMail container",
+    "image": "ubuntu:latest",
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {},
+        "ghcr.io/devcontainers/features/java:1": {
+            "version": "latest",
+            "jdkDistro": "open"
+        }
+    },
+    "containerUser": "root",
+    "postCreateCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}"
+}
