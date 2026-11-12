@@ -19,6 +19,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Map;
 import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,7 +41,12 @@ public class Pop3ServerTest {
             "testPop3Capabilities@localhost", "pwd");
         store.connect("testPop3Capabilities@localhost", "pwd");
         try {
-            assertThat(store.capabilities()).containsKey("UIDL");
+            Map<String, String> capabilities = store.capabilities();
+            assertThat(capabilities).containsKey("UIDL");
+            assertThat(capabilities).containsKey("TOP");
+            assertThat(capabilities).containsKey("USER");
+            assertThat(capabilities).containsKey("SASL");
+            assertThat(capabilities).containsKey("IMPLEMENTATION");
         } finally {
             store.close();
         }

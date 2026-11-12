@@ -23,7 +23,6 @@ public class TopCommand
         extends Pop3Command {
     @Override
     public boolean isValidForState(Pop3State state) {
-
         return state.isAuthenticated();
     }
 
@@ -34,7 +33,7 @@ public class TopCommand
             MailFolder inbox = state.getFolder();
             String[] cmdLine = cmd.split(" ");
             if (cmdLine.length < 3)
-                throw new IllegalArgumentException("range and line count required");
+                throw new IllegalArgumentException("Range and line count required");
 
             String msgNumStr = cmdLine[1];
             List<StoredMessage> msgList = inbox.getMessages(new MsgRangeFilter(msgNumStr, false));
