@@ -238,3 +238,4 @@ test.log
 _site
 .vscode/
 .gemini/
+.junie/
