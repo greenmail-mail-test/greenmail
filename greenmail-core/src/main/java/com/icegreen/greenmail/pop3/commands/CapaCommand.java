@@ -2,6 +2,7 @@ package com.icegreen.greenmail.pop3.commands;
 
 import com.icegreen.greenmail.pop3.Pop3Connection;
 import com.icegreen.greenmail.pop3.Pop3State;
+import com.icegreen.greenmail.server.BuildInfo;
 
 /**
  * Handles the CAPA command.
@@ -34,9 +35,11 @@ public class CapaCommand extends Pop3Command {
 
     @Override
     public void execute(Pop3Connection conn, Pop3State state, String cmd) {
-        // We don't support any additional capabilities
         conn.println("+OK");
+        conn.println("IMPLEMENTATION GreenMail Server v" + BuildInfo.INSTANCE.getProjectVersion());
         conn.println("UIDL");
+        conn.println("TOP");
+        conn.println("USER");
         conn.println("SASL "+ AuthCommand.Pop3SaslAuthMechanism.list());
         conn.println(".");
     }
