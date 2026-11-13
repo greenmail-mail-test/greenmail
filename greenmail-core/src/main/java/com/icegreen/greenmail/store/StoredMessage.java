@@ -68,8 +68,13 @@ public class StoredMessage {
         this.receivedDate = receivedDate;
         this.uid = uid;
         try {
+            String messageId = mimeMessage.getMessageID();
             this.mimeMessage = new UidAwareMimeMessage(mimeMessage, uid, receivedDate);
-            this.attributes = new SimpleMessageAttributes(mimeMessage, receivedDate);
+            if (messageId != null) {
+                mimeMessage.setHeader("Message-ID", messageId);
+                this.mimeMessage.setHeader("Message-ID", messageId);
+            }
+            this.attributes = new SimpleMessageAttributes(this.mimeMessage, receivedDate);
         } catch (MessagingException e) {
             throw new IllegalStateException("Could not parse mime message " + mimeMessage + " with uid " + uid, e);
         }
