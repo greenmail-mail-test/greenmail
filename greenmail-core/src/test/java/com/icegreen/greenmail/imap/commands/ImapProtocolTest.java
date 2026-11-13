@@ -161,6 +161,25 @@ public class ImapProtocolTest {
     }
 
     @Test
+    public void testFetchPartialBodyHasSpaceBeforeLiteral() throws MessagingException {
+        store.connect("foo@localhost", "pwd");
+        try {
+            IMAPFolder folder = (IMAPFolder) store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+
+            // RFC 3501: msg-att-static = "BODY" section ["<" number ">"] SP nstring
+            for (final String section : new String[]{"BODY.PEEK[]<0.20>", "BODY.PEEK[TEXT]<0.10>"}) {
+                Response[] ret = (Response[]) folder.doCommand(
+                    protocol -> protocol.command("UID FETCH 1 (" + section + ")", null));
+                assertThat(ret[ret.length - 1].isOK()).isTrue();
+                assertThat(ret[0].toString()).containsPattern("BODY\\[[A-Z]*\\]<0> \\{\\d+}");
+            }
+        } finally {
+            store.close();
+        }
+    }
+
+    @Test
     public void testFetchPartialOffsetBeyondContent() throws MessagingException {
         store.connect("foo@localhost", "pwd");
         try {

@@ -309,7 +309,8 @@ class FetchCommand extends SelectedStateCommand implements UidEnabledCommand {
             byte[] newBytes = new byte[len];
             System.arraycopy(bytes, start, newBytes, 0, len);
             bytes = newBytes;
-            response.append('<').append(partial.start).append('>');
+            // RFC 3501: msg-att-static = "BODY" section ["<" number ">"] SP nstring
+            response.append('<').append(partial.start).append('>').append(SP);
         }
         return bytes;
     }
