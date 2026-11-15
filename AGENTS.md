@@ -1,4 +1,4 @@
-# GreenMail Copilot Instructions
+# GreenMail Agent & Contributor Instructions
 
 ## Build & Test Commands
 
@@ -7,7 +7,8 @@
 ./mvnw clean install -Pdocker
 ```
 - `-Pdocker` includes Docker image build (optional, omit to skip)
-- Requires JDK 11+ and Maven 3.9.x
+- Requires JDK 11+ and Maven 3.9.x to build
+- **Java Compatibility**: Main sources target Java 8 bytecode (`<maven.compiler.release>8</maven.compiler.release>`). Do **not** use Java 9+ APIs (`List.of()`, `Set.of()`, `Map.of()`, `var`, etc.) in `src/main/java`. Test sources target Java 11 (`<maven.compiler.testRelease>11</maven.compiler.testRelease>`) and may use Java 11 APIs.
 - Default goal is `install`
 
 ### Run tests
@@ -18,25 +19,19 @@
 # Skip integration tests for faster feedback
 ./mvnw clean verify -DskipITs
 
-# Run a specific test class
-./mvnw test -Dtest=ImapServerTest
+# Run a specific test class (optionally scoped with -pl <module> for faster feedback)
+./mvnw test -pl greenmail-core -Dtest=ImapServerTest
 
 # Run a specific test method
-./mvnw test -Dtest=ImapServerTest#testRetrieveSimple
+./mvnw test -pl greenmail-core -Dtest=ImapServerTest#testRetrieveSimple
 
 # Run integration tests only
 ./mvnw verify -DskipTests
 ```
 
-### Generate site documentation
-```bash
-mvn site -Psite
-```
-
 ### Code quality
-- Checkstyle is configured and runs during builds
-- PMD and FindBugs plugins are available in pom.xml
-- Javadoc generation is part of the build
+- PMD plugin is configured in pom.xml (`./mvnw pmd:check`)
+- Javadoc generation is attached during the release profile (`./mvnw verify -Prelease`)
 
 ## Architecture Overview
 
@@ -70,7 +65,9 @@ GreenMail is a virtual mail server for testing SMTP, IMAP, and POP3 protocols. I
 - **Assertions**: Use AssertJ (`assertThat()`) for readable assertions
 - **Common setup**: `ServerSetupTest` provides pre-configured server setups (SMTP, IMAPS, IMAP, POP3, etc.)
 
-Example (JUnit4):
+For protocol-level output when diagnosing issues or running tests, enable verbose mode on the relevant `ServerSetup` with `setVerbose(true)`.
+
+Example (JUnit4 - used in greenmail-core):
 ```java
 @Rule
 public final GreenMailRule greenMail = new GreenMailRule(
@@ -85,11 +82,28 @@ public void testSendAndRetrieve() throws Exception {
 }
 ```
 
+Example (JUnit5 - provided by greenmail-junit5):
+```java
+@RegisterExtension
+static final GreenMailExtension greenMail = new GreenMailExtension(
+    new ServerSetup[]{ServerSetupTest.SMTP, ServerSetupTest.IMAP}
+);
+
+@Test
+void testSendAndRetrieve() {
+    GreenMailUtil.sendTextEmail("to@test.com", "from@test.com", 
+        "subject", "body", greenMail.getSmtp());
+    // assertions...
+}
+```
+
 ### Package Organization
 Each protocol handler follows a consistent pattern:
 - `commands/`: Protocol command implementations
 - `commands/parser/`: Command parsing logic
 - Protocol state management and protocol handler implementations
+
+For RFC references, protocol-version caveats, implementation entry points, and representative tests, see [the mail protocol RFC index](docs/implementation/protocol-rfc-index.md). Use it as a navigation aid, not as a claim of complete RFC conformance.
 
 ### Import Statements
 Use Jakarta EE imports (not javax.*):
@@ -110,13 +124,13 @@ Before implementing changes, review [CONTRIBUTING.md](CONTRIBUTING.md):
 - **Include tests**: Every bug fix or feature should include a test case
 - **Minimize dependencies**: GreenMail prioritizes being lightweight
 - **Backward compatibility**: Be aware that changes may affect multiple versions/branches
-- **Avoid cosmetic changes**: Refactoring and reformatting alone won't be accepted without prior discussion
+- **Avoid cosmetic changes**: Refactoring and reformatting alone won't be accepted without prior discussion. Adhere to `.editorconfig` (4 spaces for Java, 2 for XML, LF line endings) and avoid reformatting untouched code.
 - **Branches**: Active branches are `master` (2.1), `releases/2.0.x`, and `releases/1.6.x`
 
 ## CI/CD
 
 The CI pipeline in `.github/workflows/ci.yml`:
-- Runs on Java 11, 17, and 21
+- Runs on Java 11, 17, 21, and 25
 - Builds with Docker profile enabled
 - Runs on push to master, release branches, and all PRs
 - Uses Maven caching for faster builds
