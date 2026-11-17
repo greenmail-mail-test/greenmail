@@ -1,5 +1,6 @@
 * text eol=lf
 *.eml text eol=crlf
+mvnw.cmd text eol=crlf
 
 *.gif binary
 *.ico binary
